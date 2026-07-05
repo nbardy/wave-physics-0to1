@@ -10,7 +10,7 @@ if (!root) throw new Error('#root element missing from index.html')
 
 createRoot(root).render(
   <React.StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <App />
     </BrowserRouter>
   </React.StrictMode>,
