@@ -56,6 +56,7 @@ export class DyeRendererGPU {
       const NY: f32 = ${solver.ny}.0;
       const BG = vec3f(${(247 / 255).toFixed(5)}, ${(249 / 255).toFixed(5)}, ${(252 / 255).toFixed(5)});
       const DYE = ${hexToVec3(PALETTE.dye)};
+      const DYE2 = ${hexToVec3(PALETTE.dye2)};
       const WALL = ${hexToVec3(PALETTE.wall)};
       const DIV = ${hexToVec3(PALETTE.div)};
 
@@ -64,11 +65,12 @@ export class DyeRendererGPU {
       @group(0) @binding(1) var<storage, read> dye: array<f32>;
       @group(0) @binding(2) var<storage, read> solid: array<u32>;
       @group(0) @binding(3) var<storage, read> div: array<f32>;
+      @group(0) @binding(4) var<storage, read> dye2: array<f32>;
 
       fn cell(i: u32, j: u32) -> u32 { return i + j * u32(NX); }
 
       fn bilerp(field: u32, x: f32, y: f32) -> f32 {
-        // field: 0 = dye, 1 = div — WGSL can't pass storage arrays around
+        // field: 0 = dye, 1 = div, 2 = dye2 — WGSL can't pass storage arrays around
         let cx = clamp(x, 0.0, NX - 1.001);
         let cy = clamp(y, 0.0, NY - 1.001);
         let i0 = u32(floor(cx));
@@ -81,9 +83,12 @@ export class DyeRendererGPU {
         if (field == 0u) {
           a = dye[cell(i0, j0)]; b = dye[cell(i1, j0)];
           c = dye[cell(i0, j1)]; d = dye[cell(i1, j1)];
-        } else {
+        } else if (field == 1u) {
           a = div[cell(i0, j0)]; b = div[cell(i1, j0)];
           c = div[cell(i0, j1)]; d = div[cell(i1, j1)];
+        } else {
+          a = dye2[cell(i0, j0)]; b = dye2[cell(i1, j0)];
+          c = dye2[cell(i0, j1)]; d = dye2[cell(i1, j1)];
         }
         return a + (b - a) * tx + (c - a) * ty + (a - b - c + d) * tx * ty;
       }
@@ -106,8 +111,11 @@ export class DyeRendererGPU {
         let si = u32(clamp(round(gx), 0.0, NX - 1.0));
         let sj = u32(clamp(round(gy), 0.0, NY - 1.0));
         if (solid[cell(si, sj)] != 0u) { return vec4f(WALL, 1.0); }
+        // subtractive two-dye blend: each species darkens BG toward its own
+        // color, so overlap mixes like real dyes instead of one hiding the other
         let t = clamp(bilerp(0u, gx, gy), 0.0, 1.0);
-        var rgb = mix(BG, DYE, t);
+        let t2 = clamp(bilerp(2u, gx, gy), 0.0, 1.0);
+        var rgb = clamp(BG - t * (BG - DYE) - t2 * (BG - DYE2), vec3f(0.0), vec3f(1.0));
         if (U.mode == 1.0) {
           let dv = min(abs(bilerp(1u, gx, gy)) * U.div_gain, 1.0);
           rgb = mix(rgb, DIV, dv);
@@ -155,6 +163,7 @@ export class DyeRendererGPU {
           { binding: 1, resource: { buffer: this.solver.dye.cur } },
           { binding: 2, resource: { buffer: this.solver.solidBuf } },
           { binding: 3, resource: { buffer: this.solver.div } },
+          { binding: 4, resource: { buffer: this.solver.dye2.cur } },
         ],
       }),
     )

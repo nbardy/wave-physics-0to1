@@ -36,14 +36,17 @@
 // not stability, same contract as the CPU solver.
 
 import { f32Buffer, u32Buffer, FieldPair, Kernel } from './compute'
+import { stampAirfoilMask } from '../airfoil'
 import type { SolverToggles } from '../solver'
 
 export interface GpuSolverConfig {
   nx: number
   ny: number
-  inflow: number // cells/s, fixed on the left edge
+  inflow: number // cells/s, fixed on the left edge (upper half when shearing)
+  inflowLower: number // cells/s, lower half of the inlet — pass `inflow` for a uniform stream
   visc: number // ν in cells²/s (mutable per step via .visc)
-  dyeRows: number[] // inflow-edge emitter rows
+  dyeRows: number[] // inflow-edge emitter rows (amber)
+  dye2Rows: number[] // inflow-edge emitter rows for the second dye (rose) — [] for none
   toggles: SolverToggles
 }
 
@@ -60,6 +63,7 @@ export class FluidSolverGPU {
   readonly ny: number
   visc: number
   inflow: number
+  inflowLower: number
   dyeDecay = 0.9995
   toggles: SolverToggles
 
@@ -67,6 +71,7 @@ export class FluidSolverGPU {
   readonly u: FieldPair
   readonly v: FieldPair
   readonly dye: FieldPair
+  readonly dye2: FieldPair // second dye species; zero everywhere unless dye2Rows feed it
   readonly p: FieldPair
   readonly div: GPUBuffer
   readonly solidBuf: GPUBuffer
@@ -75,9 +80,11 @@ export class FluidSolverGPU {
   private readonly vScratch: GPUBuffer
   private readonly uHat: GPUBuffer // MacCormack forward-pass fields
   private readonly vHat: GPUBuffer
-  private readonly dyeHat: GPUBuffer
+  private readonly dyeHat: GPUBuffer // shared by dye and dye2: in-pass dispatch order serializes them
   private readonly dyeRowsBuf: GPUBuffer
   private readonly nDyeRows: number
+  private readonly dye2RowsBuf: GPUBuffer
+  private readonly nDye2Rows: number
   private readonly params: GPUBuffer
   private readonly paramsData = new Float32Array(12)
   private impulse: { x: number; y: number; fx: number; fy: number; r: number } | null = null
@@ -91,13 +98,18 @@ export class FluidSolverGPU {
     this.ny = cfg.ny
     this.visc = cfg.visc
     this.inflow = cfg.inflow
+    this.inflowLower = cfg.inflowLower
     this.toggles = { ...cfg.toggles }
     const n = cfg.nx * cfg.ny
 
-    const initU = new Float32Array(n).fill(cfg.inflow)
+    const initU = new Float32Array(n)
+    for (let j = 0; j < cfg.ny; j++) {
+      initU.fill(j >= cfg.ny >> 1 ? cfg.inflowLower : cfg.inflow, j * cfg.nx, (j + 1) * cfg.nx)
+    }
     this.u = new FieldPair(device, n, initU)
     this.v = new FieldPair(device, n)
     this.dye = new FieldPair(device, n)
+    this.dye2 = new FieldPair(device, n)
     this.p = new FieldPair(device, n)
     this.div = f32Buffer(device, n)
     this.solid = new Uint32Array(n)
@@ -109,6 +121,8 @@ export class FluidSolverGPU {
     this.dyeHat = f32Buffer(device, n)
     this.nDyeRows = cfg.dyeRows.length
     this.dyeRowsBuf = u32Buffer(device, new Uint32Array(cfg.dyeRows.length ? cfg.dyeRows : [0]))
+    this.nDye2Rows = cfg.dye2Rows.length
+    this.dye2RowsBuf = u32Buffer(device, new Uint32Array(cfg.dye2Rows.length ? cfg.dye2Rows : [0]))
     this.params = device.createBuffer({
       size: this.paramsData.byteLength,
       usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
@@ -125,6 +139,18 @@ export class FluidSolverGPU {
         if ((i - cx) ** 2 + (j - cy) ** 2 <= r * r) this.solid[i + j * this.nx] = 1
       }
     }
+    this.device.queue.writeBuffer(this.solidBuf, 0, this.solid as BufferSource)
+    this.mg.setSolid(this.solid)
+  }
+
+  /**
+   * Replace the obstacle with an airfoil at the given tilt. Called per slider
+   * move: re-stamping between fixed steps is a quasi-static boundary motion —
+   * cells the wing vacates restart from zero velocity, which reads as a brief
+   * shadow in the wake and is gone within a few steps.
+   */
+  setAirfoil(pivotX: number, pivotY: number, chord: number, angleRad: number) {
+    stampAirfoilMask(this.solid, this.nx, this.ny, pivotX, pivotY, chord, angleRad)
     this.device.queue.writeBuffer(this.solidBuf, 0, this.solid as BufferSource)
     this.mg.setSolid(this.solid)
   }
@@ -159,6 +185,7 @@ export class FluidSolverGPU {
     d[7] = imp?.fy ?? 0
     d[8] = imp?.r ?? 0
     d[9] = imp ? 1 : 0
+    d[10] = this.inflowLower
     this.device.queue.writeBuffer(this.params, 0, d as BufferSource)
 
     const enc = this.device.createCommandEncoder({ label: 'solver-step' })
@@ -176,6 +203,7 @@ export class FluidSolverGPU {
     // encoder-level commands, which WebGPU forbids inside an open pass.
     const sources = enc.beginComputePass()
     if (this.nDyeRows > 0) this.k.injectDye.run(sources, [this.dye.cur, this.dyeRowsBuf], this.nDyeRows, 1)
+    if (this.nDye2Rows > 0) this.k.injectDye.run(sources, [this.dye2.cur, this.dye2RowsBuf], this.nDye2Rows, 1)
     if (imp) this.k.impulse.run(sources, [P, this.u.cur, this.v.cur], nx, ny)
     sources.end()
 
@@ -227,6 +255,14 @@ export class FluidSolverGPU {
     this.k.correctScalar.run(pass, [P, this.u.cur, this.v.cur, this.dye.cur, this.dyeHat, this.dye.alt], nx, ny)
     this.dye.swap()
 
+    if (this.nDye2Rows > 0) {
+      // dyeHat is free again — dye's passes above are ordered before these
+      this.k.advectScalarFwd.run(pass, [P, this.u.cur, this.v.cur, this.dye2.cur, this.dyeHat], nx, ny)
+      this.k.advectScalarBwd.run(pass, [P, this.u.cur, this.v.cur, this.dyeHat, this.dye2.alt], nx, ny)
+      this.k.correctScalar.run(pass, [P, this.u.cur, this.v.cur, this.dye2.cur, this.dyeHat, this.dye2.alt], nx, ny)
+      this.dye2.swap()
+    }
+
     pass.end()
     this.device.queue.submit([enc.finish()])
   }
@@ -245,16 +281,18 @@ export class FluidSolverGPU {
   // reads race-free (dispatch N's writes are visible to dispatch N+1).
   private boundaries(pass: GPUComputePassEncoder) {
     this.k.bcColumnsSolid.run(pass, [this.params, this.solidBuf, this.u.cur, this.v.cur, this.dye.cur], this.nx, this.ny)
+    if (this.nDye2Rows > 0) this.k.bcScalar.run(pass, [this.solidBuf, this.dye2.cur], this.nx, this.ny)
     this.k.bcRows.run(pass, [this.u.cur, this.v.cur], this.nx, this.ny)
   }
 
   destroy() {
     for (const b of [
       this.u.cur, this.u.alt, this.v.cur, this.v.alt,
-      this.dye.cur, this.dye.alt, this.p.cur, this.p.alt,
+      this.dye.cur, this.dye.alt, this.dye2.cur, this.dye2.alt,
+      this.p.cur, this.p.alt,
       this.div, this.solidBuf, this.uScratch, this.vScratch,
       this.uHat, this.vHat, this.dyeHat,
-      this.dyeRowsBuf, this.params,
+      this.dyeRowsBuf, this.dye2RowsBuf, this.params,
     ]) b.destroy()
     this.mg.destroy()
   }
@@ -274,6 +312,7 @@ interface SolverKernels {
   pressure: Kernel
   subtractGrad: Kernel
   bcColumnsSolid: Kernel
+  bcScalar: Kernel
   bcRows: Kernel
   injectDye: Kernel
   impulse: Kernel
@@ -306,6 +345,7 @@ function solverKernels(device: GPUDevice, nx: number, ny: number): SolverKernels
       pressure: new Kernel(device, src.pressure, 'pressure-jacobi'),
       subtractGrad: new Kernel(device, src.subtractGrad, 'subtract-gradient'),
       bcColumnsSolid: new Kernel(device, src.bcColumnsSolid, 'bc-columns-solid'),
+      bcScalar: new Kernel(device, src.bcScalar, 'bc-scalar'),
       bcRows: new Kernel(device, src.bcRows, 'bc-rows'),
       injectDye: new Kernel(device, src.injectDye, 'inject-dye'),
       impulse: new Kernel(device, src.impulse, 'impulse'),
@@ -389,8 +429,12 @@ class MultigridPoisson {
       const F = this.levels[l]
       const C = this.levels[l + 1]
       const t = mgTransferWgsl(F.nx, F.ny, C.nx, C.ny)
-      this.restrictK.push(mgKernel(device, t.restrictK, `mg-restrict-${F.nx}to${C.nx}`))
-      this.prolongK.push(mgKernel(device, t.prolong, `mg-prolong-${C.nx}to${F.nx}`))
+      // cache labels must carry BOTH dimensions: two solvers can share a width
+      // at different heights (wing channel vs cylinder channel), and a label
+      // collision here hands one of them transfer kernels with the wrong NY
+      // baked in — garbage restriction, wild velocities (found the hard way)
+      this.restrictK.push(mgKernel(device, t.restrictK, `mg-restrict-${F.nx}x${F.ny}to${C.nx}x${C.ny}`))
+      this.prolongK.push(mgKernel(device, t.prolong, `mg-prolong-${C.nx}x${C.ny}to${F.nx}x${F.ny}`))
     }
   }
 
@@ -585,7 +629,7 @@ function wgsl(nx: number, ny: number) {
     struct Params {
       dt: f32, a: f32, inflow: f32, dye_decay: f32,
       imp_x: f32, imp_y: f32, imp_fx: f32, imp_fy: f32,
-      imp_r: f32, imp_on: f32, pad0: f32, pad1: f32,
+      imp_r: f32, imp_on: f32, inflow_lo: f32, pad1: f32,
     }
   `
   const bilerp = (name: string) => /* wgsl */ `
@@ -799,12 +843,29 @@ function wgsl(nx: number, ny: number) {
       ${entry}
         ${guard}
         if (solid[k] != 0u) { u[k] = 0.0; v[k] = 0.0; dye[k] = 0.0; return; }
-        if (i == 0u) { u[k] = P.inflow; v[k] = 0.0; return; }
+        if (i == 0u) {
+          u[k] = select(P.inflow, P.inflow_lo, j >= NY / 2u);
+          v[k] = 0.0;
+          return;
+        }
         if (i == NX - 1u) {
           u[k] = u[k - 1u];
           v[k] = v[k - 1u];
           dye[k] = dye[k - 1u];
         }
+      }
+    `,
+    // Scalar-only boundary rules (dye2): zero in solids, copy at the outflow.
+    // The u/v/dye trio rides bcColumnsSolid; a second full run of that kernel
+    // would redo the velocity writes, so the extra species gets its own pass.
+    bcScalar: /* wgsl */ `
+      ${prelude}
+      @group(0) @binding(0) var<storage, read> solid: array<u32>;
+      @group(0) @binding(1) var<storage, read_write> s: array<f32>;
+      ${entry}
+        ${guard}
+        if (solid[k] != 0u) { s[k] = 0.0; return; }
+        if (i == NX - 1u) { s[k] = s[k - 1u]; }
       }
     `,
     // Pass B: free-slip walls. Reads row 1 / NY−2, stable after pass A.

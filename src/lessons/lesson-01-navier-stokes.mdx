@@ -1,4 +1,5 @@
 import { CylinderFlow } from '../sims/CylinderFlow'
+import { WingFlow } from '../sims/WingFlow'
 import { FlowVis } from '../sims/FlowVis'
 import { ParticleBox } from '../sims/ParticleBox'
 import { ParcelProbe } from '../sims/ParcelProbe'
@@ -18,24 +19,32 @@ import { RippleWaves } from '../sims/RippleWaves'
 
 # Building the Navier–Stokes Equations
 
-Water is the most familiar substance in human life. We drink it, swim in it, stir it
-into coffee — and almost none of us can say a single true sentence about why it moves
-the way it does.
+In 1822 a French bridge engineer named Claude-Louis Navier wrote down an equation for
+how water moves. It is short enough to fit on a single line, and it works — it flies
+airplanes, forecasts hurricanes, and renders every ocean Pixar has ever animated. It
+is also, two hundred years later, still not understood: there is a standing prize of
+one million dollars for anyone who can prove its solutions don't secretly break, and
+nobody has claimed it.
 
-We are going to build the equation that governs it. The demonstration below is that
-equation at work — a stream flowing past a gray cylinder, carrying
-<C k="dye">dye</C> that curls into a trail of eddies. The slider changes exactly one
-property of the fluid, and that single number is the oldest debt in this article; it
-gets paid, but not soon:
+That unproven line of mathematics is running right now, a few centimeters below this
+paragraph. Mathematics has not yet decided whether the equation deserves to work. The
+wing flies anyway.
 
-<CylinderFlow variant="hero" />
+<WingFlow variant="hero" />
+
+You can tilt the wing with the slider. Tilted gently, the two currents of
+<C k="dye">dye</C> part at the nose and rejoin cleanly behind the wing; tilted too
+far, the flow lets go of the wing entirely. That letting-go has a name, and the name
+is the last debt this article pays.
 
 The mathematics of fluids has a reputation, and some unfamiliar words will come up
 along the way. You shouldn't feel pressured to memorize any of them — every quantity in
 this article is color-coded, so <C k="vel">velocity</C> is always this blue,
-<C k="dye">dye and drifting parcels</C> are always amber, and when something goes
-physically wrong you will see it in <C k="div">violet</C>. The prose and the pictures
-speak the same colors.
+<C k="dye">dye and drifting parcels</C> are always amber — except the wing's lower
+current, which wears <C k="dye2">rose</C> so the two streams can't be confused — and
+when something goes physically wrong you will see it in <C k="div">violet</C>. The
+prose and the pictures speak the same colors. (The amber and the rose are the same
+water wearing different shirts; color marks where a current came from, nothing more.)
 
 One honest contract before we start: the flows in this article are two dimensional,
 and the fluid never compresses. Real water lives in three dimensions, but everything
@@ -296,11 +305,13 @@ Everything a flow becomes is a negotiation between them.
 
 ## The Competition
 
-Let's give the negotiation a stage. Below is our cylinder again, and one slider. At
-the honey end, viscosity wins: the flow oozes around the obstacle and reunites,
-orderly and symmetric. Drag toward the other end and advection takes over — the wake
-begins to waver, then rolls up into the alternating street of eddies from the top of
-this article, and beyond that it frays toward chaos:
+Let's give the negotiation a stage. The wing that opened this article is a
+complicated character, so the demonstration below swaps in the simplest obstacle
+there is — a plain cylinder — and one slider. At the honey end, viscosity wins: the
+flow oozes around the obstacle and reunites, orderly and symmetric. Drag toward the
+other end and advection takes over — the wake begins to waver, then rolls up into an
+alternating street of eddies like the trail peeling off the tilted wing, and beyond
+that it frays toward chaos:
 
 <CylinderFlow variant="regime" />
 
@@ -321,9 +332,10 @@ order-of-magnitude, for our little grid.
 The Reynolds number is why a bacterium and a jumbo jet inhabit different universes. A
 swimming bacterium lives at $Re$ around $10^{-5}$ — to it, water is thicker than honey
 is to us, and coasting is impossible; stop swimming and you halt within a fraction of
-an atom's width. A 747's wing cruises at $Re$ around $10^8$. Your coffee, freshly
-stirred, swirls at a few thousand — comfortably in eddy country, as the spiral off
-your spoon confirms.
+an atom's width. A 747's wing cruises at $Re$ around $10^8$ — which obliges me to
+confess that the wing at the top of this article, flying at a few hundred, is
+aerodynamically a moth. Your coffee, freshly stirred, swirls at a few thousand —
+comfortably in eddy country, as the spiral off your spoon confirms.
 
 <Waypoint>
 You now hold a velocity field $\mathbf{u}$, a derivative $D/Dt$ that rides it, the
@@ -513,11 +525,13 @@ to blur (in principle forever; in practice our backward-tracing scheme sneaks in
 little blur of its own, as confessed earlier). Switch off pressure and you recognize
 the violet catastrophe of the broken fluid — now as a diagnosis rather than a mystery.
 
-One confession completes the ceremony. Whether solutions of these equations, in three
-dimensions, always remain smooth — or can spontaneously concentrate infinite velocity
-into a point — is not known. Not "hard": *unknown*. It is one of the seven Clay
-Millennium Prize Problems, and the equation you just assembled with sliders carries a
-standing million-dollar bounty for whoever settles it.
+One confession completes the ceremony, because this article opened with a debt.
+Whether solutions of these equations, in three dimensions, always remain smooth — or
+can spontaneously concentrate infinite velocity into a point — is not known. Not
+"hard": *unknown*. That is the million dollars from the first paragraph: the Clay
+Mathematics Institute lists this among its seven Millennium Prize Problems, and the
+prize waits for whoever settles it. The equation you just assembled with sliders is
+the one nobody can prove makes sense.
 
 ## Running the Equation
 
@@ -535,12 +549,19 @@ divergence and touches nothing else:
 
 <SolverXray />
 
-Chain the four moves and you get water. And with that, the demonstration from the top
-of this article surrenders its mystery. Here it is again — the same solver, the same
-street of eddies. The slider was the Reynolds number all along. This time you can also
-stir it with your pointer:
+Chain the four moves and you get water. And with that, the wing from the top of this
+article comes back — same solver, same two currents, no term left in it you haven't
+built. It returns wearing more controls than any figure so far: the tilt from before,
+a Reynolds slider, and your pointer, which can now stir the stream directly:
 
-<CylinderFlow variant="finale" />
+<WingFlow variant="finale" />
+
+Tilted gently, the currents hug the surface and leave in a narrow, orderly wake —
+this is a wing at work, bending the oncoming flow smoothly downward. Tilted too far,
+the upper current lets go of the surface: the narrow wake bursts into a broad tumble
+of eddies, and the smooth bending is gone. That letting-go is known as a *stall* —
+the debt from the first figure, paid. The flow, asked to turn a corner sharper than
+its momentum allows, declines.
 
 Fair warnings, so you know exactly what you're holding: the backward-tracing step
 blurs fine detail, so our flows are a touch more viscous than the dial admits; true
@@ -595,7 +616,8 @@ clarity no online tutorial matches.
 Bartosz Ciechanowski's *Airfoil* is the finest interactive exposition of fluid
 intuition ever put on the web, and this lesson is openly in conversation with it — he
 builds the physical feel for pressure and viscosity with a patience I can only point
-at, and stops exactly where this article begins: at the equations.
+at, and stops exactly where this article begins: at the equations. The wing at the
+top of this page tips its hat to his.
 
 And braintruffle's video series *Mastering fluid dynamics* climbs from molecules to
 continuum with visuals that justify the watch time on their own.

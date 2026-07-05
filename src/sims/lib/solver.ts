@@ -14,6 +14,8 @@
 // Jacobi → subtract ∇p). Each stage is individually toggleable because §11's
 // marquee figure kills terms one at a time.
 
+import { stampAirfoilMask } from './airfoil'
+
 export interface SolverToggles {
   advect: boolean // (u·∇)u — the flow carries itself
   diffuse: boolean // ν∇²u — neighbours drag on neighbours
@@ -29,6 +31,7 @@ export class FluidSolver {
   u: Float32Array
   v: Float32Array
   dye: Float32Array
+  dye2: Float32Array // second dye species (the wing's rose current); same physics as dye
   p: Float32Array
   div: Float32Array
   solid: Uint8Array
@@ -37,6 +40,7 @@ export class FluidSolver {
   private dye0: Float32Array
 
   inflow: number
+  inflowLower: number // inflow speed for the lower half of the inlet; equals inflow unless a sim sets shear (Kelvin–Helmholtz)
   visc: number
   dyeDecay = 0.9995
   toggles: SolverToggles = { advect: true, diffuse: true, project: true }
@@ -46,11 +50,13 @@ export class FluidSolver {
     this.nx = nx
     this.ny = ny
     this.inflow = inflow
+    this.inflowLower = inflow
     this.visc = visc
     const n = nx * ny
     this.u = new Float32Array(n).fill(inflow)
     this.v = new Float32Array(n)
     this.dye = new Float32Array(n)
+    this.dye2 = new Float32Array(n)
     this.p = new Float32Array(n)
     this.div = new Float32Array(n)
     this.solid = new Uint8Array(n)
@@ -72,12 +78,26 @@ export class FluidSolver {
     }
   }
 
+  /** Replace the obstacle with an airfoil at the given tilt (clears any previous mask). */
+  setAirfoil(pivotX: number, pivotY: number, chord: number, angleRad: number) {
+    stampAirfoilMask(this.solid, this.nx, this.ny, pivotX, pivotY, chord, angleRad)
+  }
+
   /** Continuous dye feed: a stripe of emitters on the inflow edge. */
   injectDyeStripe(rows: number[], amount = 1) {
     for (const j of rows) {
       const jj = Math.max(1, Math.min(this.ny - 2, j))
       this.dye[this.idx(1, jj)] = amount
       this.dye[this.idx(2, jj)] = amount
+    }
+  }
+
+  /** Same feed for the second dye species. */
+  injectDye2Stripe(rows: number[], amount = 1) {
+    for (const j of rows) {
+      const jj = Math.max(1, Math.min(this.ny - 2, j))
+      this.dye2[this.idx(1, jj)] = amount
+      this.dye2[this.idx(2, jj)] = amount
     }
   }
 
@@ -179,12 +199,13 @@ export class FluidSolver {
     const nx = this.nx
     const ny = this.ny
     for (let j = 0; j < ny; j++) {
-      // inflow: fixed stream on the left; outflow: copy on the right
-      this.u[this.idx(0, j)] = this.inflow
+      // inflow: fixed stream on the left (upper/lower speeds may shear); outflow: copy on the right
+      this.u[this.idx(0, j)] = j >= ny >> 1 ? this.inflowLower : this.inflow
       this.v[this.idx(0, j)] = 0
       this.u[this.idx(nx - 1, j)] = this.u[this.idx(nx - 2, j)]
       this.v[this.idx(nx - 1, j)] = this.v[this.idx(nx - 2, j)]
       this.dye[this.idx(nx - 1, j)] = this.dye[this.idx(nx - 2, j)]
+      this.dye2[this.idx(nx - 1, j)] = this.dye2[this.idx(nx - 2, j)]
     }
     for (let i = 0; i < nx; i++) {
       // free-slip walls: no flow through, tangential flow allowed
@@ -199,6 +220,7 @@ export class FluidSolver {
         this.u[k] = 0
         this.v[k] = 0
         this.dye[k] = 0
+        this.dye2[k] = 0
       }
     }
   }
@@ -231,12 +253,15 @@ export class FluidSolver {
     this.dye0.set(this.dye)
     this.advectField(this.dye, this.dye0, dt)
     for (let k = 0; k < this.dye.length; k++) this.dye[k] *= this.dyeDecay
+    this.dye0.set(this.dye2)
+    this.advectField(this.dye2, this.dye0, dt)
+    for (let k = 0; k < this.dye2.length; k++) this.dye2[k] *= this.dyeDecay
   }
 }
 
 // ---------------------------------------------------------------- rendering
 
-/** Render dye (amber), solids (gray), optionally pressure or divergence tint. */
+/** Render dye (amber) and dye2 (rose), solids (gray), optionally pressure or divergence tint. */
 export class SolverRenderer {
   private off: HTMLCanvasElement
   private img: ImageData
@@ -265,11 +290,13 @@ export class SolverRenderer {
         d[o + 3] = 255
         continue
       }
-      // base: background → amber dye
-      const t = Math.min(s.dye[k], 1)
-      let r = 247 + (217 - 247) * t
-      let g = 249 + (119 - 249) * t
-      let b = 252 + (6 - 252) * t
+      // base: background darkened toward amber by dye and toward rose by dye2 —
+      // subtractive, so overlap blends like real dyes instead of one hiding the other
+      const t1 = Math.min(s.dye[k], 1)
+      const t2 = Math.min(s.dye2[k], 1)
+      let r = Math.max(0, 247 - t1 * (247 - 217) - t2 * (247 - 219))
+      let g = Math.max(0, 249 - t1 * (249 - 119) - t2 * (249 - 39))
+      let b = Math.max(0, 252 - t1 * (252 - 6) - t2 * (252 - 119))
       if (overlay === 'pressure') {
         const pv = Math.max(-1, Math.min(1, s.p[k] * 4))
         if (pv > 0) {

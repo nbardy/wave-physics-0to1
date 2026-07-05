@@ -5,6 +5,7 @@
 export const PALETTE = {
   vel: '#2563eb', // velocity, arrows
   dye: '#d97706', // dye, markers, parcels
+  dye2: '#db2777', // the second dye current (wing hero, shear layers) — same substance, different shirt
   pHi: '#dc2626', // pressure above ambient
   pLo: '#0891b2', // pressure below ambient
   div: '#7c3aed', // divergence — the crime

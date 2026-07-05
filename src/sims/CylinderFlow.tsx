@@ -5,8 +5,10 @@ import { acquireGpu } from './lib/gpu/context'
 import { FluidSolverGPU } from './lib/gpu/solver_gpu'
 import { DyeRendererGPU, type Overlay } from './lib/gpu/render_gpu'
 
-// §1 hero · §7 regime tour · §9 broken fluid · §12 finale — one component,
-// one protagonist: the flow past a cylinder, computed live by Stable Fluids.
+// §7 regime tour · §9 broken fluid — the cylinder, the simplest obstacle
+// there is, computed live by Stable Fluids. (The wing that opens and closes
+// the article lives in WingFlow.tsx; this component keeps the cylinder's
+// hard-won Kármán tuning to itself.)
 //
 // Two backends, same scheme: WebGPU compute at 4× grid resolution
 // (lib/gpu/solver_gpu.ts — where the Kármán street actually appears, because
@@ -39,9 +41,7 @@ const GDISC_R = DISC_R * SCALE
 // two adjacent rows per emitter: streaklines stay visible when cells shrink 4×
 const GDYE_ROWS = DYE_ROWS.flatMap((j) => [j * SCALE, j * SCALE + 1])
 
-export type CylinderVariant = 'hero' | 'regime' | 'broken' | 'finale'
-
-type Stir = { x: number; y: number; dx: number; dy: number }
+export type CylinderVariant = 'regime' | 'broken'
 
 function reOf(inflow: number, discR: number, visc: number) {
   return (inflow * discR * 2) / visc
@@ -58,7 +58,7 @@ function drawLabels(
   re: number,
   brokenTime: number,
 ) {
-  if (variant === 'regime' || variant === 'finale') {
+  if (variant === 'regime') {
     ctx.fillStyle = 'rgba(26,31,43,0.65)'
     ctx.font = '12px ui-sans-serif, system-ui'
     ctx.fillText(`Re ≈ ${Math.round(re)}`, 10, h - 10)
@@ -70,11 +70,7 @@ function drawLabels(
   }
 }
 
-function createCpuCylinder(
-  variant: CylinderVariant,
-  reRef: { current: number },
-  stirRef: { current: Stir | null },
-): Stepper {
+function createCpuCylinder(variant: CylinderVariant, reRef: { current: number }): Stepper {
   const solver = new FluidSolver(NX, NY, INFLOW, viscOf(INFLOW, DISC_R, reRef.current))
   // disc slightly off the vertical center-line: the tiny asymmetry that lets
   // the vortex street start (a perfectly symmetric solve would sit unstable)
@@ -91,17 +87,6 @@ function createCpuCylinder(
       while (acc >= FIXED_DT && guard < 3) {
         solver.visc = viscOf(INFLOW, DISC_R, reRef.current)
         solver.injectDyeStripe(DYE_ROWS, 1)
-        const stir = stirRef.current
-        if (stir) {
-          solver.addImpulse(
-            Math.round(stir.x * NX),
-            Math.round(stir.y * NY),
-            stir.dx * 220,
-            stir.dy * 220,
-            5,
-          )
-          stirRef.current = null
-        }
         solver.step(FIXED_DT)
         if (variant === 'broken') {
           solver.computeDivergence() // keep the meter live
@@ -122,7 +107,6 @@ function createGpuCylinder(
   device: GPUDevice,
   variant: CylinderVariant,
   reRef: { current: number },
-  stirRef: { current: Stir | null },
   width: number,
   height: number,
 ): Stepper {
@@ -130,8 +114,10 @@ function createGpuCylinder(
     nx: GNX,
     ny: GNY,
     inflow: GINFLOW,
+    inflowLower: GINFLOW,
     visc: viscOf(GINFLOW, GDISC_R, reRef.current),
     dyeRows: GDYE_ROWS, // emitters run every step, like injectDyeStripe per substep
+    dye2Rows: [],
     toggles: { advect: true, diffuse: true, project: variant !== 'broken' },
   })
   solver.addDisc(Math.round(GNX * 0.26), Math.round(GNY * 0.5) + SCALE, GDISC_R)
@@ -149,18 +135,6 @@ function createGpuCylinder(
       while (acc >= FIXED_DT && guard < 3) {
         re = reRef.current
         solver.visc = viscOf(GINFLOW, GDISC_R, re)
-        const stir = stirRef.current
-        if (stir) {
-          // impulse strength is in cells/s — scales with the grid like inflow
-          solver.addImpulse(
-            Math.round(stir.x * GNX),
-            Math.round(stir.y * GNY),
-            stir.dx * 220 * SCALE,
-            stir.dy * 220 * SCALE,
-            5 * SCALE,
-          )
-          stirRef.current = null
-        }
         solver.step(FIXED_DT)
         if (variant === 'broken') {
           solver.computeDivergence() // keep the meter live
@@ -190,7 +164,6 @@ function createGpuCylinder(
 function createCylinder(
   variant: CylinderVariant,
   reRef: { current: number },
-  stirRef: { current: Stir | null },
   width: number,
   height: number,
 ): Stepper {
@@ -199,10 +172,10 @@ function createCylinder(
   acquireGpu().then((gpu) => {
     if (disposed) return
     if (gpu.kind === 'ready') {
-      inner = createGpuCylinder(gpu.device, variant, reRef, stirRef, width, height)
+      inner = createGpuCylinder(gpu.device, variant, reRef, width, height)
     } else {
       console.info(`CylinderFlow: CPU solver fallback — ${gpu.reason}`)
-      inner = createCpuCylinder(variant, reRef, stirRef)
+      inner = createCpuCylinder(variant, reRef)
     }
   })
   return {
@@ -225,27 +198,11 @@ export function CylinderFlow({
   const [re, setRe] = useState(variant === 'broken' ? 120 : 90)
   const reRef = useRef(re)
   reRef.current = re
-  const stirRef = useRef<Stir | null>(null)
-  const last = useRef<{ x: number; y: number } | null>(null)
-
-  const onPointer = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (variant !== 'finale') return
-    const el = e.currentTarget.querySelector('canvas')
-    if (!el) return
-    const rect = el.getBoundingClientRect()
-    const x = (e.clientX - rect.left) / rect.width
-    const y = (e.clientY - rect.top) / rect.height
-    if (x < 0 || x > 1 || y < 0 || y > 1) return
-    if (e.buttons > 0 && last.current) {
-      stirRef.current = { x, y, dx: x - last.current.x, dy: y - last.current.y }
-    }
-    last.current = { x, y }
-  }
 
   return (
-    <div className={variant === 'finale' ? 'sim-stir' : undefined} onPointerMove={onPointer} onPointerDown={onPointer}>
-      <Sim height={height} create={(w, h) => createCylinder(variant, reRef, stirRef, w, h)}>
-        {variant !== 'hero' && variant !== 'broken' && (
+    <div>
+      <Sim height={height} create={(w, h) => createCylinder(variant, reRef, w, h)}>
+        {variant === 'regime' && (
           <label className="sim-slider">
             <span>honey</span>
             <input
@@ -257,20 +214,6 @@ export function CylinderFlow({
               onChange={(e) => setRe(Number(e.target.value))}
             />
             <span>Re</span>
-          </label>
-        )}
-        {variant === 'hero' && (
-          <label className="sim-slider">
-            <span></span>
-            <input
-              type="range"
-              min={2}
-              max={400}
-              step={1}
-              value={re}
-              onChange={(e) => setRe(Number(e.target.value))}
-            />
-            <span>the one slider</span>
           </label>
         )}
       </Sim>

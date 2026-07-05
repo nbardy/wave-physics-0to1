@@ -106,8 +106,10 @@ async function runChecks(device: GPUDevice): Promise<CheckResult[]> {
       nx: NX,
       ny: NY,
       inflow,
+      inflowLower: inflow,
       visc: 0,
       dyeRows: [],
+      dye2Rows: [],
       toggles: { advect: true, diffuse: false, project: false },
     })
     solver.writeDye(gaussianBlob(40, 44))
@@ -134,8 +136,10 @@ async function runChecks(device: GPUDevice): Promise<CheckResult[]> {
         nx: NX,
         ny: NY,
         inflow: 26,
+        inflowLower: 26,
         visc: 26 * 14 / 90, // Re 90, the hero default
         dyeRows: [10, 30, 50, 70],
+        dye2Rows: [],
         toggles: { advect: true, diffuse: true, project },
       })
       s.addDisc(Math.round(NX * 0.26), Math.round(NY * 0.5) + 1, 7)
@@ -183,8 +187,10 @@ async function runChecks(device: GPUDevice): Promise<CheckResult[]> {
       nx: NX,
       ny: NY,
       inflow: 26,
+      inflowLower: 26,
       visc,
       dyeRows: [10, 30, 50, 70],
+      dye2Rows: [],
       toggles: { advect: true, diffuse: true, project: true },
     })
     gpu.addDisc(Math.round(NX * 0.26), Math.round(NY * 0.5) + 1, 7)
