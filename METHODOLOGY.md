@@ -149,7 +149,13 @@ Now — and only now — the voice pass. Rules from the corpus (Essence §2):
 - **The anti-checklist** — none of these may appear: numbered figure references,
   captions, rhetorical questions, "obviously/simply/clearly," pop culture in body
   prose, inline citations, motivational filler, apologies for difficulty, unresolved
-  plants, an equation whose symbols weren't first seen on canvas.
+  plants, an equation whose symbols weren't first seen on canvas, and **promissory
+  templates** — "by the end of this article you will know/have…", "in this article
+  we'll build, piece by piece…", "you'll know exactly what X is": sentences that
+  narrate the reading experience instead of the thing (play-test finding, 2026-07).
+  Debts are planted as flat declaratives that carry the content of the promise, not
+  its schedule ("that single number is the oldest debt in this article; it gets
+  paid, but not soon").
 
 ---
 
