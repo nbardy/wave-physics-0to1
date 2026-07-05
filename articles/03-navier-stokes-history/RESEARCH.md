@@ -286,7 +286,135 @@ lesson 01's no-slip contract.
   exact algorithm running lesson 01's hero figure. The ring for the whole pair of
   lessons: the reader's toy is this history's latest sentence.
 
-## 12. Story assets — quotes, numbers, ironies (collected for the plan)
+## 12. The mathematical sub-blocks — where the tools themselves came from
+
+The equation could not be written until its mathematics existed; each block has its
+own history, and several arrived *because of* the fluid problem, not before it.
+
+- **Calculus (1665–87 / 1684)** — Newton had fluxions but wrote the *Principia*
+  geometrically; the notation that made continuum mechanics *writable* was
+  **Leibniz's**, spread by **Johann Bernoulli** (who taught it to both l'Hôpital and
+  Euler). The Newton–Leibniz priority war had a real casualty: British mathematics
+  clung to fluxion notation for a century, which is a large part of why the
+  1687→1845 story is Swiss/French/German until its very last chapter. Cambridge only
+  re-imported continental calculus in the 1810s (the Analytical Society — Babbage,
+  Herschel, Peacock — campaigning for "the principles of pure d-ism against the
+  dot-age of the university"). **Stokes was a direct beneficiary**: he belonged to
+  the first Cambridge generation trained in continental methods, one generation
+  after they arrived. No Analytical Society, plausibly no Stokes 1845.
+- **Partial differential equations (1747–1750s)** — did not exist before
+  d'Alembert's vibrating string; Euler immediately generalized the machinery. So the
+  PDE, as a mathematical object, is *native to wave physics* — fluids didn't borrow
+  the tool, the tool was invented next door and both problems share a birth decade.
+- **The vibrating-string controversy (1747–1770s)** — d'Alembert, Euler, and Daniel
+  Bernoulli publicly fought over what counts as a *solution*: d'Alembert's arbitrary
+  functions vs. Daniel's trigonometric series. Nobody won; the fight was settled two
+  generations later by **Fourier (1807/1822)**, whose heat-equation analysis made
+  series-of-modes rigorous enough to use. This is the wave course's own founding
+  quarrel, and it feeds the fluid story directly (next bullet).
+- **The Laplacian / diffusion operator** — potential theory grew in *celestial*
+  mechanics (Laplace's equation, 1780s); the **∇² as smoothing-toward-neighbors**
+  reading that lesson 01 §6 teaches is the mathematics of **Fourier's heat
+  conduction (1807/1822)**. The personal link is direct: **Fourier was Navier's
+  mentor and friend** (Navier was his protégé and later his literary executor's
+  circle). Navier's viscous term is formally the heat operator applied to momentum —
+  invented one desk away.
+- **The stress tensor (1822)** — Cauchy's answer to "what is force *inside* a
+  material?", provoked by refereeing **Navier's own 1821 elasticity memoir**. Linear
+  algebra of stress before the word "tensor" existed (Voigt coins it in 1898). This
+  is the container concept: once you have Cauchy's tensor, *any* material is one
+  constitutive law away from an equation of motion — fluids, elastic solids, and
+  eventually general relativity's stress-energy all live in it.
+- **Vector notation (1880s–1900s)** — the form everyone recognizes, with ∇, div, and
+  curl, is **younger than the equation by ~60 years**: Hamilton's quaternions
+  (1843) → Gibbs's and Heaviside's vector calculus (1880s–90s). Navier, Poisson,
+  Saint-Venant, and Stokes all wrote three separate scalar component equations. The
+  compact $\partial_t\mathbf{u} + (\mathbf{u}\cdot\nabla)\mathbf{u} = -\nabla p/\rho
+  + \nu\nabla^2\mathbf{u}$ is a *20th-century typographical object* — even the
+  equation's familiar *face* had to be discovered.
+- **Dimensional analysis** — implicit in Stokes 1851, explicit in Reynolds 1883,
+  systematized only in 1914 (Buckingham's Π theorem). $Re$ predates the general
+  theory of dimensionless groups by thirty years.
+- **Functional analysis (1900s–30s)** — Lebesgue integration (1902) and the ideas
+  that became Sobolev spaces and distributions. **Leray (1934) essentially invented
+  weak derivatives for this problem** — Sobolev's papers came after (1936–38),
+  Schwartz's distributions a decade later. The equation didn't just consume
+  mathematics; at both ends of its life (PDEs at birth, weak solutions in old age)
+  it *generated* the mathematics that studies it.
+
+## 13. The network — who met whom, who read whom, who refused
+
+The story is not a relay of strangers; it is three tight clusters and one hermit.
+
+**Cluster 1 — Basel/St. Petersburg/Berlin (1720s–1760s).** Johann Bernoulli taught
+Euler (Basel). Daniel Bernoulli and Euler were close friends and daily colleagues at
+the St. Petersburg Academy (1727–33) and corresponded for forty years — hydrodynamics
+gestated *inside that correspondence*, and it's to Euler that Daniel mailed the "I am
+robbed of my entire Hydrodynamics" complaint about his own father. Euler and
+d'Alembert were wary rivals who read each other closely: Euler's Berlin Academy
+effectively judged (and declined to award) d'Alembert's 1749 resistance essay —
+d'Alembert felt robbed and feuded for years — and Euler's 1757 equations visibly
+build on d'Alembert's methods with less credit than d'Alembert wanted. So *both*
+foundational documents (Bernoulli's and d'Alembert's) arrive wrapped in a priority
+grievance, with Euler as the common correspondent, judge, and beneficiary.
+
+**Cluster 2 — Paris, 1820s–40s.** Navier, Cauchy, Poisson, Fourier, and (a
+generation younger) Saint-Venant all orbited the same three institutions: the
+Académie des Sciences, the École Polytechnique, and the Ponts et Chaussées. They did
+not merely fail to cite each other — they argued in person and in print: Cauchy's
+stress theory was sparked while refereeing Navier's elasticity memoir; **Navier and
+Poisson fought a public polemic (1828–29)** over molecular vs. continuum foundations
+(the exact fault line the equation's five derivations straddle); Saint-Venant's 1834
+memoir sat unpublished at the Académie for years (hence his priority date, 1837, and
+his consolation note of 1843). The five derivations were not five isolated flashes —
+within Paris they were **one continuous argument** about what a fluid *is*.
+
+**The hermit — Stokes (Cambridge, 1840s).** Stokes derived his equations essentially
+alone and discovered the French literature *afterwards* — his 1845 paper opens by
+acknowledging that Navier, Poisson, and Saint-Venant got there first, and proceeds
+anyway, because his continuum route (no molecules) was the one worth keeping. The
+Channel, plus a century of notational schism (§12), had made two separate worlds.
+
+**The bridge — Stokes to Reynolds.** Stokes, as Secretary of the Royal Society,
+was the referee who handled **Reynolds's 1883 dye paper**; the dimensionless group
+Reynolds isolated already appears embryonically in Stokes's own 1851 pendulum memoir.
+The two men close the loop between "the equation as written" and "the equation as it
+behaves" across a thirty-year mentorship-at-a-distance.
+
+**The fateful ten minutes — Prandtl to Göttingen.** In the Heidelberg audience for
+Prandtl's 1904 talk sat **Felix Klein**, who recognized what he'd heard and recruited
+Prandtl to Göttingen that same year. Everything downstream — Blasius, von Kármán,
+the Göttingen school, modern aerodynamics — flows through that single act of
+listening. (Eckert and Bodenschatz–Eckert document the scene.)
+
+**Turbulence's odd couple.** Richardson (Quaker pacifist, ambulance driver, wrote
+the cascade as a poem) and Kolmogorov (Moscow probabilist) never met; K41 is the
+poem made rigorous, via Obukhov, Kolmogorov's student. Garnish: **Heisenberg's 1923
+doctoral thesis, under Sommerfeld, was on turbulence** — the man who made
+uncertainty a principle cut his teeth on the equation that still keeps one.
+
+## 14. The gaps ledger — what stayed undiscovered, and for how long
+
+| The missing piece | Stated / needed | Landed | Gap |
+|---|---|---|---|
+| viscosity law → sitting in an equation of motion | 1687 (Newton's hypothesis) | 1822 (Navier) | **135 yr** |
+| a law of motion for fluids at all | 1687 (*Principia*) | 1757 (Euler) | 70 yr |
+| the drag paradox → its resolution | 1752 (d'Alembert) | 1904 (Prandtl) | **152 yr** |
+| the boundary condition (slip vs. no-slip) | 1822 (Navier proposes *slip*) | ~1850s (Stokes + Poiseuille data settle no-slip) | ~30 yr of open controversy |
+| trusting the equation (five derivations to consensus) | 1822 | ~1850s (Stokes drag + Poiseuille match) | ~30 yr |
+| what the vorticity does | 1757 (implicit in Euler) | 1858 (Helmholtz's vortex theorems) | 100 yr |
+| when flow goes turbulent | known to everyone forever | 1883 (Reynolds's number) | — |
+| the equation's familiar vector *form* | 1845 (content complete) | ~1900s (Gibbs–Heaviside notation adopted) | ~60 yr |
+| the joint name "Navier–Stokes" | 1845 | early 20th century usage | ~60–80 yr |
+| does a solution even *exist*? | 1822 (question implicit) | 1934 (Leray, weak; 3D smooth **still open**) | **112 yr → 204 yr and counting** |
+
+Two footnotes with modern teeth: Navier's "wrong" slip boundary condition was
+rehabilitated — slip lengths are real and measured in **microfluidics and
+nanochannels**, so the 1822 controversy is current research again; and the
+molecular-vs-continuum fault line of the Paris polemics is exactly the modern
+boundary between molecular dynamics and continuum CFD.
+
+## 15. Story assets — quotes, numbers, ironies (collected for the plan)
 
 - Timeline spine: **1687** Newton's hypothesis → **1738/39** the Bernoulli theft →
   **1747** the wave equation → **1752** the zero → **1757** Euler's field →
@@ -306,7 +434,7 @@ lesson 01's no-slip contract.
   historical order — because history, like the lesson, advanced by watching the
   current theory fail visibly.*
 
-## 13. Sources
+## 16. Sources
 
 Primary modern scholarship, for Further Reading candidates:
 

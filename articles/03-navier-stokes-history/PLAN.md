@@ -280,6 +280,49 @@ physician's capillaries, ten minutes in Heidelberg; "I find it…" sentence;
 benediction — *and the equation still keeps one secret, priced at a million
 dollars.*
 
+### Stage-2 addendum — the deeper lineage layer (RESEARCH §12–14), mapped to sections
+
+The research doc's toolbox / network / gaps material threads into the ladder above
+rather than adding sections; per-section riders:
+
+- **§3 rider**: the Newton–Leibniz notation schism, one paragraph — Britain clings
+  to fluxions for a century, which is why the next 130 years of the story are
+  Swiss/French/German. Planted debt: paid in §8 (Stokes as the first
+  continental-trained Cambridge generation).
+- **§5 riders**: the vibrating-string controversy (d'Alembert vs. Euler vs. Daniel
+  Bernoulli on what counts as a *solution* — the wave course's own founding quarrel,
+  settled only by Fourier); and Euler's academy judging d'Alembert's 1749 essay —
+  both founding documents arrive wrapped in a grievance, Euler the common judge and
+  beneficiary.
+- **§6 rider**: PDEs did not predate the problem — the tool was invented next door
+  (1747, for a wave) and both stories share a birth decade.
+- **§7 riders**: **Fourier was Navier's mentor** — the viscous term is the heat
+  operator applied to momentum, invented one desk away; and **Navier's own boundary
+  condition was slip, not no-slip** — wrong for 1822's pipes, rehabilitated in
+  modern microfluidics (a debt paid as a §8 aside plus a coda footnote).
+- **§8 riders**: the Paris cluster framing — the five derivations were **one
+  continuous in-person argument** (Cauchy refereeing Navier's memoir; the public
+  Navier–Poisson polemic of 1828–29 over molecules vs. continuum); Stokes the
+  hermit, discovering the French literature only after deriving his own; and the
+  notation confession — every one of the five wrote three scalar component
+  equations; the vector face on our term stack is a 20th-century typographical
+  object (flagged here, paid in §12).
+- **§9 rider**: Stokes was the Royal Society referee of Reynolds's 1883 paper, and
+  the number appears embryonically in Stokes's own 1851 memoir — a thirty-year
+  mentorship-at-a-distance.
+- **§10 rider**: Felix Klein in the Heidelberg audience → Prandtl recruited to
+  Göttingen the same year; the whole aerodynamic century flows through one act of
+  listening.
+- **§11 riders**: Leray invented his weak derivatives *before* Sobolev's spaces
+  existed — the equation generates mathematics at both ends of its life; garnish:
+  Heisenberg's doctoral thesis (Sommerfeld, 1923) was on turbulence.
+- **§13 option (fig 74)**: the **gaps ledger as a figure** — horizontal bars laid on
+  the hero timeline showing how long each piece hung open (135 years for the viscous
+  term, 152 for the paradox, 204-and-counting for smoothness). Cheap (static bars on
+  the existing scrubber chrome), and it is the lesson's thesis drawn as one picture.
+  Adopt if §13 survives the drought audit; otherwise fold the three numbers into
+  Final Words prose.
+
 ---
 
 ## Palette contract — inherited, not invented
