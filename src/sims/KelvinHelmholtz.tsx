@@ -16,16 +16,21 @@ import { DyeRendererGPU } from './lib/gpu/render_gpu'
 // wiggle is fed in near the inlet (wind tunnels do the same with a vibrating
 // ribbon). The wiggle seeds the roll-up; the shear layer does all the growing.
 
+// Tuned in-browser (GPU backend, 2026-07): shear 14 / ν 0.4 / trip 3.2 @ 1.1 s
+// gives a train of textbook billows by mid-channel with max|u| ≈ 1.17× the
+// upper stream. At ν 1.5 the layer thickens faster than the instability grows
+// and the interface only ripples — don't "clean up" the small ν without
+// re-checking the billows actually roll.
 const NX = 144
 const NY = 88
 const BASE = 26 // cells/s, mean stream speed
 const FIXED_DT = 1 / 40
-const KH_VISC = 1.5 // cells²/s — low enough that advection wins at full shear
-const TRIP_PERIOD = 0.8 // s — sets the billow wavelength: λ ≈ BASE·period
+const KH_VISC = 0.4 // cells²/s — low enough that advection wins at full shear
+const TRIP_PERIOD = 1.1 // s — sets the billow wavelength: λ ≈ BASE·period
 const TRIP_X = 10
-const TRIP_AMP = 1.1 // cells/s per step at full shear, scaled by shear fraction
-const DYE_ROWS = [8, 14, 20, 26, 32, 38] // amber, upper half
-const DYE2_ROWS = [50, 56, 62, 68, 74, 80] // rose, lower half
+const TRIP_AMP = 3.6 // cells/s per step at full shear, scaled by shear fraction
+const DYE_ROWS = [8, 14, 20, 26, 32, 38, 42] // amber, upper half
+const DYE2_ROWS = [46, 50, 56, 62, 68, 74, 80] // rose, lower half
 
 const SCALE = 4
 const GNX = NX * SCALE
@@ -123,7 +128,7 @@ function createGpuKh(
 }
 
 export function KelvinHelmholtz({ height = 280 }: { height?: number }) {
-  const [shear, setShear] = useState(10)
+  const [shear, setShear] = useState(14)
   const shearRef = useRef(shear)
   shearRef.current = shear
 

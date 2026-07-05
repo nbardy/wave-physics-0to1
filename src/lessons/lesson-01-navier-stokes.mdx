@@ -26,30 +26,30 @@ is also, two hundred years later, still not understood: there is a standing priz
 one million dollars for anyone who can prove its solutions don't secretly break, and
 nobody has claimed it.
 
-That unproven line of mathematics is running right now, a few centimeters below this
-paragraph. Mathematics has not yet decided whether the equation deserves to work. The
-wing flies anyway.
+That unproven line is running right now, a few centimeters below this paragraph.
+Mathematics has not yet decided whether the equation deserves to work. The wing flies
+anyway.
 
 <WingFlow variant="hero" />
 
-You can tilt the wing with the slider. Tilted gently, the two currents of
-<C k="dye">dye</C> part at the nose and rejoin cleanly behind the wing; tilted too
-far, the flow lets go of the wing entirely. That letting-go has a name, and the name
-is the last debt this article pays.
+The two currents of <C k="dye">dye</C> part at the wing's nose, slide along its two
+faces, and braid into the trail of eddies behind it. The slider changes exactly one
+property of the stream, and that single number is the oldest debt in this article;
+it gets paid, but not soon.
 
 The mathematics of fluids has a reputation, and some unfamiliar words will come up
 along the way. You shouldn't feel pressured to memorize any of them — every quantity in
 this article is color-coded, so <C k="vel">velocity</C> is always this blue,
-<C k="dye">dye and drifting parcels</C> are always amber — except the wing's lower
-current, which wears <C k="dye2">rose</C> so the two streams can't be confused — and
-when something goes physically wrong you will see it in <C k="div">violet</C>. The
-prose and the pictures speak the same colors. (The amber and the rose are the same
-water wearing different shirts; color marks where a current came from, nothing more.)
+<C k="dye">dye and drifting parcels</C> are always amber — the wing's lower current
+wears <C k="dye2">rose</C> — and when something goes physically wrong you will see it
+in <C k="div">violet</C>. The prose and the pictures speak the same colors. The amber
+and the rose are the same water wearing different shirts; a color only marks where a
+current came from.
 
 One honest contract before we start: the flows in this article are two dimensional,
 and the fluid never compresses. Real water lives in three dimensions, but everything
-we'll build survives the upgrade — the flat versions are simply the ones we can see
-clearly. We'll begin by learning to see them.
+we'll build survives the upgrade — the flat versions are the ones we can see whole.
+We'll begin by learning to see them.
 
 ## Seeing Flow
 
@@ -93,12 +93,8 @@ runs faster:
 
 <FlowVis mode="speed" />
 
-And of course the instruments stack:
-
-<FlowVis mode="combo" />
-
-We can now see a flow three different ways. It's time to ask what, exactly, we are
-looking at.
+We can now see a flow three different ways. What an arrow actually *is*, we haven't
+said.
 
 ## A Field of Velocities
 
@@ -144,7 +140,7 @@ Writing "the average velocity of the water near a given spot, at a given moment"
 get old quickly. Let's compress it: we'll write $\mathbf{u}(x, y, t)$ for the
 <C k="vel">velocity</C> at position $(x, y)$ and time $t$ — the entire arrow grid,
 every arrow at every point at every instant, folded into one symbol. A quantity that
-has a value at every point like this is known as a *field*.
+has a value at every point like this is a *field*.
 
 We can watch a field from the footbridge. The harder question is what the field looks
 like to something *in* the water.
@@ -155,9 +151,8 @@ Imagine a patch of <C k="dye">dye</C> sitting in a steady stream, and two instru
 measuring the dye's concentration. One is a probe bolted to the riverbed. The other
 rides the current — a parcel of water we've tagged and released.
 
-Here is the question that unlocks this whole section. The stream below is perfectly
-steady: its velocity field and its dye patch never change in time. Nothing about the
-picture depends on the clock.
+The stream below is perfectly steady: its velocity field and its dye patch never
+change in time. Nothing about the picture depends on the clock.
 
 <Predict
   question="If the field never changes in time, will the drifting parcel's readout change?"
@@ -216,8 +211,8 @@ And a vortex winds it into a spiral:
 
 <DyeCarry field="vortex" />
 
-This carrying-and-deforming is known as *advection*. For any carried quantity $q$, in
-a world with no other physics, the parcel's value simply never changes —
+This carrying-and-deforming is *advection*. For any carried quantity $q$, in
+a world with no other physics, the parcel's value never changes —
 $Dq/Dt = 0$ — which, unpacked with our new derivative, reads:
 
 $$\frac{\partial q}{\partial t} \;=\; -(\mathbf{u}\cdot\nabla)\,q$$
@@ -226,7 +221,7 @@ Here is the turn the whole subject pivots on. Velocity is itself carried by the 
 A gust of fast water doesn't stay behind while the river moves on — the fast water *is*
 water, and it goes where the water goes. So $q$ above can be $\mathbf{u}$ itself, and
 the advection term becomes $(\mathbf{u}\cdot\nabla)\,\mathbf{u}$: **the field carrying
-the field**. The equation feeds on its own output. This self-reference is known as
+the field**. The equation feeds on its own output. This self-reference is
 *nonlinearity*, and it is the single reason fluids can braid, swirl, and surprise —
 and the reason no one has fully tamed the equation we're building.
 
@@ -267,9 +262,9 @@ and drag the slider to change how strongly the layers grip each other:
 
 Two things are worth noticing. The sharp corners go first — friction attacks
 *differences* between neighbours, and nowhere do neighbours disagree more than at an
-edge. And the fluid never slips along the walls: real fluid sticks to solid surfaces,
-a behavior known as the *no-slip condition*, and the walls quietly bleed momentum out
-of the jet until nothing is left.
+edge. And the fluid never slips along the walls: real fluid sticks to solid
+surfaces — the *no-slip condition* — and the walls quietly bleed momentum out of the
+jet until nothing is left.
 
 The same smoothing acts wherever two speeds meet. Fast water flowing over slow water
 blends across the seam:
@@ -310,8 +305,8 @@ complicated character, so the demonstration below swaps in the simplest obstacle
 there is — a plain cylinder — and one slider. At the honey end, viscosity wins: the
 flow oozes around the obstacle and reunites, orderly and symmetric. Drag toward the
 other end and advection takes over — the wake begins to waver, then rolls up into an
-alternating street of eddies like the trail peeling off the tilted wing, and beyond
-that it frays toward chaos:
+alternating street of eddies like the two-colored trail braiding off the wing at the
+top of this article, and beyond that it frays toward chaos:
 
 <CylinderFlow variant="regime" />
 
@@ -409,7 +404,7 @@ created or destroyed:
 
 <CylinderFlow variant="broken" />
 
-This is clearly wrong! Dye piles up against the cylinder and *soaks into it*; the
+This is just wrong. Dye piles up against the cylinder and *soaks into it*; the
 stream stacks water into heaps as if it were sand. Real water does not pile up in a
 corner of the cup — push water into a spot that's already full and it pushes back,
 instantly, and goes around.
@@ -428,7 +423,7 @@ a spot that manufactures new fluid out of nothing. Catch it inside the loop:
 <DivergenceLoop withSource={true} />
 
 The loop catches a stubborn surplus, and the <C k="div">violet</C> shading marks the
-scene of the crime. The local, per-point version of this counting rule is known as the
+scene of the crime. The local, per-point version of this counting rule is the
 *divergence*, written $\nabla\cdot\mathbf{u}$ — roughly, the net outflow from a tiny
 neighbourhood. For real, incompressible fluid the law is stark:
 
@@ -450,8 +445,8 @@ pushes fluid away; your job is to cancel the crime:
 
 Too low a hill, and fluid keeps piling up. Too high, and you've overcorrected — the
 hill hollows the spot out, a crime in the other direction. There is exactly one
-height at which the books balance. You have just done, by hand and by eye, what real
-pressure does everywhere in every fluid, continuously, without a hand on any slider:
+height at which the books balance. You have just done by eye what real pressure does
+everywhere in every fluid, continuously, with no one at the slider:
 where fluid begins to pile, pressure rises and pushes it apart; where fluid begins to
 thin, pressure falls and draws it back. Any imbalance corrects itself before it can
 grow.
@@ -464,7 +459,7 @@ you can look at each alone:
 
 <HelmholtzSplit />
 
-That split is known as the *Helmholtz decomposition* — shown here, proven in the
+That split is the *Helmholtz decomposition* — shown here, proven in the
 further reading. It tells us the fix always exists: whatever mess a flow proposes, its
 piling part is the gradient of some hill-and-valley landscape, so *some* pressure
 field's push can cancel it exactly, leaving only honest swirl behind.
@@ -477,7 +472,7 @@ $$\nabla^2 p \;=\; \frac{\rho}{\Delta t}\,\nabla\cdot\mathbf{u}^*$$
 
 — where $\mathbf{u}^*$ is the flow *before* correction. You don't need to unpack this
 one symbol by symbol; read it as "the pressure landscape whose disagreement-with-
-neighbours matches the crime." An equation of this shape is known as a *Poisson
+neighbours matches the crime." An equation of this shape is a *Poisson
 equation*, and a computer solves it by patient negotiation: every cell repeatedly
 updates its pressure toward what its four neighbours (and the local crime) suggest.
 Scrub through that negotiation yourself:
@@ -486,8 +481,8 @@ Scrub through that negotiation yourself:
 
 At zero sweeps: all <C k="div">crime</C>, no pressure. A few dozen sweeps of
 neighbourly negotiation later, the <C k="pHi">hill</C> has risen and the crime is
-gone. These sweeps are known as *Jacobi iterations*, and our simulations run a few
-dozen of them every frame, at every one of ten thousand cells.
+gone. These sweeps are *Jacobi iterations*, and our simulations run dozens of them
+at every cell of the grid, every frame.
 
 One last thing deserves saying plainly, because it is the strangest fact in this
 article. Pressure has no equation of its own — no $\partial p/\partial t$ anywhere.
@@ -510,7 +505,7 @@ $$\underbrace{\frac{\partial \mathbf{u}}{\partial t}}_{\text{change at a point}}
 These are the incompressible Navier–Stokes equations — Claude-Louis Navier and George
 Gabriel Stokes arrived at them a century and a half before anyone could compute with
 them. There is no term in that line you have not personally dragged a slider through.
-($\mathbf{f}$ is simply any push from outside — gravity, a propeller, your spoon.)
+($\mathbf{f}$ is any push from outside — gravity, a propeller, your spoon.)
 
 And because every term is now a friend, we can do something textbooks can't: perform
 surgery on the equation while it runs. The demonstration below is our channel with
@@ -528,10 +523,9 @@ the violet catastrophe of the broken fluid — now as a diagnosis rather than a 
 One confession completes the ceremony, because this article opened with a debt.
 Whether solutions of these equations, in three dimensions, always remain smooth — or
 can spontaneously concentrate infinite velocity into a point — is not known. Not
-"hard": *unknown*. That is the million dollars from the first paragraph: the Clay
-Mathematics Institute lists this among its seven Millennium Prize Problems, and the
-prize waits for whoever settles it. The equation you just assembled with sliders is
-the one nobody can prove makes sense.
+"hard": *unknown*. That is the million dollars from the first paragraph — one of the
+seven Clay Millennium Prize Problems — and the equation you just assembled with
+sliders is the one nobody can prove makes sense.
 
 ## Running the Equation
 
@@ -550,24 +544,21 @@ divergence and touches nothing else:
 <SolverXray />
 
 Chain the four moves and you get water. And with that, the wing from the top of this
-article comes back — same solver, same two currents, no term left in it you haven't
-built. It returns wearing more controls than any figure so far: the tilt from before,
-a Reynolds slider, and your pointer, which can now stir the stream directly:
+article surrenders its mystery. Here it is again — same solver, same two currents,
+no term left in it you haven't built — and the oldest debt comes due: the slider was
+the Reynolds number all along. Drag it to the honey end and the braid dissolves into
+a glassy, orderly wake; drag it back and the eddies return. This time you can also
+stir the stream with your pointer:
 
 <WingFlow variant="finale" />
 
-Tilted gently, the currents hug the surface and leave in a narrow, orderly wake —
-this is a wing at work, bending the oncoming flow smoothly downward. Tilted too far,
-the upper current lets go of the surface: the narrow wake bursts into a broad tumble
-of eddies, and the smooth bending is gone. That letting-go is known as a *stall* —
-the debt from the first figure, paid. The flow, asked to turn a corner sharper than
-its momentum allows, declines.
-
 Fair warnings, so you know exactly what you're holding: the backward-tracing step
 blurs fine detail, so our flows are a touch more viscous than the dial admits; true
-turbulence cascades down to scales far below any grid; and a plane channel on ten
-thousand cells is not the ocean. I would advise against using this solver to design a
-submarine. But every term in it is honest, and every one of them is yours now.
+turbulence cascades down to scales far below any grid; a plane channel a few hundred
+cells long is not the ocean; and on a browser without WebGPU the whole thing runs at
+a quarter of the resolution, where the street softens into a gentle waver. I would
+advise against using this solver to design a submarine. But every term in it is
+honest, and every one of them is yours now.
 
 ## Where Waves Live
 

@@ -6,28 +6,32 @@ import { FluidSolverGPU } from './lib/gpu/solver_gpu'
 import { DyeRendererGPU } from './lib/gpu/render_gpu'
 
 // §1 hero · §12 finale — the wing. Two currents of dye (amber above, rose
-// below) split at the leading edge of a NACA airfoil; the tilt slider is the
-// angle of attack. Tilt far enough and the upper current tears off the
-// surface — the finale names that. CylinderFlow keeps the cylinder variants
-// (§7 regime, §9 broken); this component exists so the wing can't disturb
-// the cylinder's hard-won Kármán tuning.
+// below) split at the nose of a NACA airfoil and braid into the wake. The
+// one slider is the Reynolds number, unlabeled in the hero — the article's
+// oldest debt, named in §7 and paid in §12. CylinderFlow keeps the cylinder
+// variants (§7 regime, §9 broken); this component exists so the wing can't
+// disturb the cylinder's hard-won Kármán tuning.
 //
-// Backends and honesty rules follow CylinderFlow exactly: WebGPU compute at
-// 4× grid (where the wake actually sheds), CPU reference otherwise, fixed
-// timestep, Reynolds number defined on the chord: Re = U·c/ν.
+// The wing flies level (tilt 0). A tilt-to-stall slider was built and
+// play-tested first: in this short channel the tilted wake LOCKS into a
+// steady deflected jet at moderate angles (blockage), and near the inclined
+// trailing edge the thin-body staircase drives a spurious wall-jet (~7× the
+// inflow, measured) — so the stall story is dishonest at this resolution and
+// was cut. Measured at tilt 0, chord 24: σ(wake)/U = 0.00 at Re 20 (glassy
+// ooze) → 0.02 at 200 → 0.28 at 500 (sustained braided street), max|u| ≤
+// 1.2·U across Re 200–600. Backends and honesty rules follow CylinderFlow:
+// WebGPU compute at 4× grid, CPU reference otherwise, fixed timestep.
 
 const NX = 144
 const NY = 88
 const INFLOW = 26 // cells/s
-const CHORD = 40 // cells
+const CHORD = 24 // cells
 const PIVOT_X = Math.round(NX * 0.3)
 const PIVOT_Y = Math.round(NY * 0.5)
 const FIXED_DT = 1 / 40
-const HERO_RE = 250 // chord-based; dynamically similar to the cylinder hero's Re ≈ 90 on its diameter
+const HERO_RE = 500 // chord-based Re = U·c/ν; the braided street is fully alive here
 const DYE_ROWS = [12, 20, 28, 36, 42] // amber, upper half
 const DYE2_ROWS = [46, 52, 60, 68, 76] // rose, lower half
-// re-stamping the mask mid-drag is cheap but not free; skip sub-half-degree moves
-const RESTAMP_EPS = (0.4 * Math.PI) / 180
 
 const SCALE = 4
 const GNX = NX * SCALE
@@ -47,28 +51,20 @@ function viscOf(inflow: number, chord: number, re: number) {
   return (inflow * chord) / re
 }
 
-function drawLabels(
-  ctx: CanvasRenderingContext2D,
-  h: number,
-  variant: WingVariant,
-  tiltDeg: number,
-  re: number,
-) {
+function drawLabels(ctx: CanvasRenderingContext2D, h: number, variant: WingVariant, re: number) {
+  if (variant !== 'finale') return
   ctx.fillStyle = 'rgba(26,31,43,0.65)'
   ctx.font = '12px ui-sans-serif, system-ui'
-  const tilt = `tilt ${Math.round(tiltDeg)}°`
-  ctx.fillText(variant === 'finale' ? `${tilt} · Re ≈ ${Math.round(re)}` : tilt, 10, h - 10)
+  ctx.fillText(`Re ≈ ${Math.round(re)}`, 10, h - 10)
 }
 
 function createCpuWing(
   variant: WingVariant,
-  tiltRef: { current: number },
   reRef: { current: number },
   stirRef: { current: Stir | null },
 ): Stepper {
   const solver = new FluidSolver(NX, NY, INFLOW, viscOf(INFLOW, CHORD, reRef.current))
-  let stamped = (tiltRef.current * Math.PI) / 180
-  solver.setAirfoil(PIVOT_X, PIVOT_Y, CHORD, stamped)
+  solver.setAirfoil(PIVOT_X, PIVOT_Y, CHORD, 0)
   const renderer = new SolverRenderer(solver)
 
   let acc = 0
@@ -78,11 +74,6 @@ function createCpuWing(
       let guard = 0
       while (acc >= FIXED_DT && guard < 3) {
         solver.visc = viscOf(INFLOW, CHORD, reRef.current)
-        const angle = (tiltRef.current * Math.PI) / 180
-        if (Math.abs(angle - stamped) > RESTAMP_EPS) {
-          solver.setAirfoil(PIVOT_X, PIVOT_Y, CHORD, angle)
-          stamped = angle
-        }
         solver.injectDyeStripe(DYE_ROWS, 1)
         solver.injectDye2Stripe(DYE2_ROWS, 1)
         const stir = stirRef.current
@@ -103,7 +94,7 @@ function createCpuWing(
     },
     draw(ctx, w, h) {
       renderer.draw(ctx, w, h, 'none')
-      drawLabels(ctx, h, variant, tiltRef.current, (INFLOW * CHORD) / solver.visc)
+      drawLabels(ctx, h, variant, (INFLOW * CHORD) / solver.visc)
     },
   }
 }
@@ -111,7 +102,6 @@ function createCpuWing(
 function createGpuWing(
   device: GPUDevice,
   variant: WingVariant,
-  tiltRef: { current: number },
   reRef: { current: number },
   stirRef: { current: Stir | null },
   width: number,
@@ -127,8 +117,7 @@ function createGpuWing(
     dye2Rows: GDYE2_ROWS,
     toggles: { advect: true, diffuse: true, project: true },
   })
-  let stamped = (tiltRef.current * Math.PI) / 180
-  solver.setAirfoil(GPIVOT_X, GPIVOT_Y, GCHORD, stamped)
+  solver.setAirfoil(GPIVOT_X, GPIVOT_Y, GCHORD, 0)
   const dpr = window.devicePixelRatio || 1
   const renderer = new DyeRendererGPU(device, solver, width * dpr, height * dpr)
 
@@ -141,11 +130,6 @@ function createGpuWing(
       while (acc >= FIXED_DT && guard < 3) {
         re = reRef.current
         solver.visc = viscOf(GINFLOW, GCHORD, re)
-        const angle = (tiltRef.current * Math.PI) / 180
-        if (Math.abs(angle - stamped) > RESTAMP_EPS) {
-          solver.setAirfoil(GPIVOT_X, GPIVOT_Y, GCHORD, angle)
-          stamped = angle
-        }
         const stir = stirRef.current
         if (stir) {
           solver.addImpulse(
@@ -164,7 +148,7 @@ function createGpuWing(
     },
     draw(ctx, w, h) {
       renderer.draw(ctx, w, h, 'none')
-      drawLabels(ctx, h, variant, tiltRef.current, re)
+      drawLabels(ctx, h, variant, re)
     },
     dispose() {
       renderer.destroy()
@@ -176,7 +160,6 @@ function createGpuWing(
 /** Same pending-backend contract as CylinderFlow: `inner` null IS the probe state. */
 function createWing(
   variant: WingVariant,
-  tiltRef: { current: number },
   reRef: { current: number },
   stirRef: { current: Stir | null },
   width: number,
@@ -187,10 +170,10 @@ function createWing(
   acquireGpu().then((gpu) => {
     if (disposed) return
     if (gpu.kind === 'ready') {
-      inner = createGpuWing(gpu.device, variant, tiltRef, reRef, stirRef, width, height)
+      inner = createGpuWing(gpu.device, variant, reRef, stirRef, width, height)
     } else {
       console.info(`WingFlow: CPU solver fallback — ${gpu.reason}`)
-      inner = createCpuWing(variant, tiltRef, reRef, stirRef)
+      inner = createCpuWing(variant, reRef, stirRef)
     }
   })
   return {
@@ -210,12 +193,9 @@ export function WingFlow({
   variant: WingVariant
   height?: number
 }) {
-  const [tilt, setTilt] = useState(12)
   const [re, setRe] = useState(HERO_RE)
-  const tiltRef = useRef(tilt)
-  tiltRef.current = tilt
   const reRef = useRef(re)
-  reRef.current = variant === 'hero' ? HERO_RE : re
+  reRef.current = re
   const stirRef = useRef<Stir | null>(null)
   const last = useRef<{ x: number; y: number } | null>(null)
 
@@ -235,33 +215,19 @@ export function WingFlow({
 
   return (
     <div className={variant === 'finale' ? 'sim-stir' : undefined} onPointerMove={onPointer} onPointerDown={onPointer}>
-      <Sim height={height} create={(w, h) => createWing(variant, tiltRef, reRef, stirRef, w, h)}>
+      <Sim height={height} create={(w, h) => createWing(variant, reRef, stirRef, w, h)}>
         <label className="sim-slider">
-          <span>level</span>
+          <span>{variant === 'finale' ? 'honey' : ''}</span>
           <input
             type="range"
-            min={0}
-            max={24}
-            step={0.5}
-            value={tilt}
-            onChange={(e) => setTilt(Number(e.target.value))}
+            min={20}
+            max={600}
+            step={5}
+            value={re}
+            onChange={(e) => setRe(Number(e.target.value))}
           />
-          <span>tilted</span>
+          <span>{variant === 'finale' ? 'Re' : 'the one slider'}</span>
         </label>
-        {variant === 'finale' && (
-          <label className="sim-slider">
-            <span>honey</span>
-            <input
-              type="range"
-              min={20}
-              max={600}
-              step={5}
-              value={re}
-              onChange={(e) => setRe(Number(e.target.value))}
-            />
-            <span>Re</span>
-          </label>
-        )}
       </Sim>
     </div>
   )

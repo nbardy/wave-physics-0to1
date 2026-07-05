@@ -4,6 +4,8 @@ import { StringSection } from '../sims/StringSection'
 import { MobiusComb } from '../sims/MobiusComb'
 import { RopeCircle } from '../sims/RopeCircle'
 import { RegaugeBrush } from '../sims/RegaugeBrush'
+import { RailwayTowns } from '../sims/RailwayTowns'
+import { DiaryEraser } from '../sims/DiaryEraser'
 import { TransportNeedle } from '../sims/TransportNeedle'
 import { ConnectionTuner } from '../sims/ConnectionTuner'
 import { HolonomyLoop } from '../sims/HolonomyLoop'
@@ -186,12 +188,16 @@ there. For the string, nobody ever had to choose. That is worth saying plainly n
 because the reason will matter soon.
 
 There is a household precedent. Before railway time, every town set noon by its own
-sun; comparing clocks across towns required a convention, and no convention was more
-correct than another. The anchor carries one honest disanalogy, and it cuts our way:
-the towns at least had a shared sky to appeal to — our clocks, we will see, have
-nothing of the kind.
+sun, and comparing clocks across towns required a convention. In the demonstration
+below, every hand ticks at the same true rate; the slider sweeps the zero-marks from
+solar noons to one shared railway convention:
 
-{/* fig gap: the railway-time anchor's own figure (plan §5) — a row of towns, each with its own local noon, and the convention lines between them */}
+<RailwayTowns />
+
+Notice what the reform touches: the <C k="gauge">green marks</C> move, and not one
+hand changes its motion — no convention was more correct than another. The anchor
+carries one honest disanalogy, and it cuts our way: the towns at least had a shared
+sky to appeal to — our clocks, we will see, have nothing of the kind.
 
 Our rope, however, hangs in a room whose "up" every point shares — so its clock
 faces have quietly inherited an alignment. Below, each face's zero-mark is drawn in
@@ -329,10 +335,17 @@ absorbs.
 </Waypoint>
 
 One suspicion before we celebrate — and on the line it is not paranoia but a theorem:
-every <C k="conn">$A$</C> we have met was written by our own brush, and every $A$ on
-a line can be erased by one — a diary of brushstrokes, nothing more. What rescues $A$
-from bookkeeping is the plane. Where the needle has many ways to travel, the diary
-theory becomes testable — and the ways need not agree.
+every <C k="conn">$A$</C> we have met was written by our own brush. Below is the
+scene exactly as the tuner left it — mangled labels, a rule tuned to match — and a
+slider holding one prepared counter-stroke:
+
+<DiaryEraser />
+
+Notice the lockstep: the labels' derivative and <C k="conn">$A$</C> dance down to
+zero together, while $D\theta$ never moves a pixel. The entire rule was a diary of
+brushstrokes, erasable in one motion — and on a line, every $A$ dies this way. What
+rescues $A$ from bookkeeping is the plane. Where the needle has many ways to travel,
+the diary theory becomes testable — and the ways need not agree.
 
 ## Around a Loop
 

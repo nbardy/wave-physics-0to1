@@ -92,4 +92,18 @@ function despeckle(solid: Uint8Array | Uint32Array, nx: number, ny: number): voi
       }
     }
   }
+  // Kill checkerboard joins: two solid cells touching only corner-to-corner
+  // leave a zero-width fluid gap the velocity can't cross but the pressure
+  // stencil thinks is open — at certain tilts this pumped local velocities to
+  // ~7× the inflow (measured). Filling one orthogonal neighbor closes the gap.
+  for (let j = 0; j < ny - 1; j++) {
+    for (let i = 0; i < nx - 1; i++) {
+      const a = solid[i + j * nx]
+      const b = solid[i + 1 + j * nx]
+      const c = solid[i + (j + 1) * nx]
+      const d = solid[i + 1 + (j + 1) * nx]
+      if (a && d && !b && !c) solid[i + 1 + j * nx] = 1
+      else if (b && c && !a && !d) solid[i + j * nx] = 1
+    }
+  }
 }
