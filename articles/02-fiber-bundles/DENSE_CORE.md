@@ -43,8 +43,10 @@ with the century's most sensitive instrument and wasn't there. School's
 resolution — "fields don't need a medium" — is a name, not an answer. Then the
 hero figure: one electromagnetic wave, dual-pane — the textbook E/B arrows above,
 the same wave below as a pulse running down a line of clocks, a ripple in the
-rule they use to compare notes — with the
-IOU: *by the end you will know why the bottom picture is the more honest one.*
+rule they use to compare notes — with the IOU as a flat declarative, never a
+promissory template (anti-checklist, 2026-07): *the top picture is the familiar
+one; the bottom picture is the honest one — and the distance between those two
+sentences is this whole article.*
 
 ## The payoff
 
