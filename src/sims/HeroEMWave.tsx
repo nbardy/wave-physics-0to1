@@ -14,24 +14,18 @@ import { AWAVE_N, createAWave } from './lib/awave'
 //            needle is a reference needle parallel-transported from the left
 //            end under the live A(x), so the pulse arrives as a traveling kink
 //            in what "parallel" means.
-// One knob: time speed (the house default). Endless: pulses re-enter at left.
+// One knob: time speed (the house default). The line is a ring (periodic ends)
+// run at Courant number 1 — the leapfrog's exact step — so the pulse loops
+// forever without dispersing; no re-pluck theatrics needed.
 
 const CLOCKS = 26
 
 function createHero(speedRef: { current: number }): Stepper {
-  const wave = createAWave(true)
-  let sinceLaunch = 0
+  const wave = createAWave(true, { boundary: 'periodic', courant: 1 })
 
   return {
     step(dt) {
-      const scaled = dt * speedRef.current
-      wave.step(scaled)
-      sinceLaunch += scaled
-      // keep the stage alive: re-pluck after the pulse has crossed and left
-      if (sinceLaunch > 7) {
-        wave.pluck(0.12, 1)
-        sinceLaunch = 0
-      }
+      wave.step(dt * speedRef.current)
     },
     draw(ctx, w, h) {
       ctx.clearRect(0, 0, w, h)
@@ -110,7 +104,8 @@ function createHero(speedRef: { current: number }): Stepper {
 }
 
 export function HeroEMWave() {
-  const [speed, setSpeed] = useState(0.7)
+  // default deliberately slow (play-tested): the pulse should stroll, not sprint
+  const [speed, setSpeed] = useState(0.15)
   const speedRef = useRef(speed)
   speedRef.current = speed
   return (

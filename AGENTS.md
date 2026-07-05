@@ -19,7 +19,24 @@ in this order:
 
 Article docs live in per-article subfolders: `articles/NN-slug/{DENSE_CORE,PLAN,RESEARCH}.md`
 (DENSE_CORE = the compressed inspiration — thesis, hook, payoff, ranked insights —
-written first; it wins conflicts with later drafts).
+written first; it wins conflicts with later drafts). Per-article handoff state lives
+in `articles/NN-slug/HANDOFF.md`.
+
+## Scale and style: heuristics, not rules
+
+Ciechanowski's articles tend to run ~3,000–16,500 words and ~21–120 figures, with
+density settling around one figure per ~85–180 words. We use none of these as rules
+— they are heuristics. **Our article length matches the length of the story**: we
+don't drone on, we don't cut short; we match the content of what we want to teach
+and the blocks and layers it actually needs. Density is the same: we often arrive
+near the corpus density on our own, but an article type that begs more prose, more
+LaTeX, or full proofs is welcome to them, and an article that is visual through and
+through settles figure-heavy. Plan-stage figure counts are feasibility estimates,
+never quotas.
+
+More generally: **we don't mechanistically copy the previous author's style.** We
+study his style, recover the *philosophy* behind his decision-making, and work
+forward from our own intuition and taste with guiding principles.
 
 ## The repo
 
@@ -78,18 +95,22 @@ branches.
   claim softened to "demonstrated"; θ color-bound at its christening; Herbert
   (not Jeremy) Bernstein; epigraph = three sentences; thesis/inversion
   exactly-once vows re-verified). Status: `draft`.
-- **Lesson 02 Stage-5 debts** (before `published`): densify figures toward the
-  plan's 67 (currently 39; the four `{/* fig gap: … */}` comments in the MDX mark
-  the planned-but-unbuilt figures: railway-towns anchor, dictionary row replays
-  beyond the one built, which-force gallery, linked vortex rings); the §6→§7 and
+- **Lesson 02 Stage-5 debts** (before `published`): an editorial read per section —
+  "does any moment here need a figure it doesn't have?" (plan counts are estimates,
+  not quotas; see METHODOLOGY's rhythm-audit note). The four `{/* fig gap: … */}`
+  comments in the MDX mark planned-but-unbuilt figures judged worth building:
+  railway-towns anchor, dictionary row replays
+  beyond the one built, which-force gallery, linked vortex rings; the §6→§7 and
   §11-coda droughts that those figures would break; epigraph tweet wording is
   UNVERIFIED against the live tweet (X blocks anonymous reads — needs a logged-in
   check of candidate status 1077751816400433152, then add the year to the
   attribution); mobile/touch pass; the lesson-01-style caption inconsistency
   (ESSENCE bans captions, some sims render hint text) needs a global decision.
-- **Stage 5 debts** (before `published`): densify figures toward the plan's ~80
-  (currently 32, rhythm-correct but sections lean); static-fallback sentences;
-  real-device mobile pass. Resolved 2026-07: the Kármán street (WebGPU solver, above);
+- **Lesson 01 Stage-5 debts** (before `published`): the same editorial read — lesson
+  01 is rhythm-correct at 32 figures (plan estimated ~80; publish at whatever length
+  teaches best, adding a figure only where a specific moment wants one);
+  real-device mobile pass. (Static-fallback sentences: requirement dropped 2026-07 —
+  the figures are the argument.) Resolved 2026-07: the Kármán street (WebGPU solver, above);
   mobile layout overflow (control rows now wrap; was 146px of horizontal scroll at
   375px) and touch drags (`.sim-stir` wrapper sets `touch-action: none` on the three
   pointer-interactive figures, so stirring no longer scrolls the page). Known

@@ -131,14 +131,17 @@ Now — and only now — the voice pass. Rules from the corpus (Essence §2):
 
 - **Rhythm audit** (mechanical, scriptable): words-per-figure in band; no >3-paragraph
   droughts; knob count ≤1 except flagged finales; adjacency (figure-figure without
-  prose) ≈ never.
+  prose) ≈ never. The band and any plan-stage figure count are *diagnostics, not
+  quotas*: scale and density are judged per article by what the lesson and the story
+  need. Never add or cut a figure to hit a number — a figure is added because a
+  moment needs one; a short article that lands is finished at its own length.
 - **Palette audit**: same quantity = same color in every figure and every prose span;
   no orphan colors.
 - **Ledger audit**: every "we'll get back to this" has its "Recall that…"; the hero
   figure returns understood.
 - **Reader-respect furniture**: global pause, restart buttons, touch-friendly drags,
-  reasonable mobile cost. Our addition: a static-fallback sentence per marquee figure
-  (color is his single point of failure; we owe a fallback).
+  reasonable mobile cost. (No static-fallback sentences — the figures *are* the
+  argument; a prose understudy per figure defeats the point. Decided 2026-07.)
 - **Endings ritual**: Further Reading with 2–3 sentences of specific, earned praise per
   source → Final Words: an "I find it…" sentence + a re-enchantment benediction
   ("perhaps the next time you…"). Ours additionally lands the equation one last time —
