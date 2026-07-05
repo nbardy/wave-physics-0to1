@@ -9,7 +9,9 @@ genuinely finished article calibrates the bar for the other two.
 1. `AGENTS.md` — repo rules, sim honesty rules, and **"Scale and style: heuristics,
    not rules"** (load-bearing for this thread: the plan's ~80 figures is an
    estimate, NOT a target; the article publishes at whatever length teaches best).
-2. `ESSENCE_OF_VOICE_AND_DESIGN.md` — the voice/design rules the audits check against.
+2. `ESSENCE_OF_VOICE_AND_DESIGN.md` **and `NICKS_VOICE.md`** — the two poles of the
+   voice (read ESSENCE's new preamble: it is a measurement, not a recipe; blend
+   rule: structure → ESSENCE wins, prose temperature → NICKS_VOICE wins).
 3. `METHODOLOGY.md` — Stage 5 gate (rhythm/palette/ledger audits, anti-checklist).
 4. `articles/01-navier-stokes/PLAN.md` — the skeleton this was built from.
 5. `src/lessons/lesson-01-navier-stokes.mdx` — the article itself. Read it end to
@@ -19,9 +21,32 @@ genuinely finished article calibrates the bar for the other two.
 
 - 13 sections, 32 live figures, ~4,900 words (153 w/fig), 9 earned equations,
   2 `<Predict>` widgets, 2 `<Waypoint>`s. Verified in-browser at 60 fps.
-- Hero (`CylinderFlow`) runs on the WebGPU compute solver (`src/sims/lib/gpu/`,
-  see `PLAN_GPU_SOLVER.md`) with a real self-sustaining Kármán street at 4× grid;
-  CPU-fallback browsers get the older "waver" version.
+- **Hero swapped 2026-07-05 (evening): the wing.** The intro is now the 1822 /
+  million-dollar-wager opening ("The wing flies anyway."), and the hero/finale is
+  `WingFlow.tsx` — a level NACA airfoil with two dye currents (amber above,
+  rose below — new `dye2` palette key) braiding into a Kármán street,
+  mystery-Re slider preserved (min 20, max 600, default 500; braid alive ≥ ~350,
+  glassy ooze at the honey end — all measured, see WingFlow header). Ledger
+  rewires that came with it: §6 now *introduces* the cylinder ("simplest obstacle
+  there is"); §7 confesses the hero wing is "aerodynamically a moth"; §11's
+  Millennium confession is a CALLBACK to the intro's wager (no longer a cold
+  reveal); §12 finale returns the wing (Re revealed + stir). A tilt-to-stall
+  slider was built first and CUT after play-testing — confined-channel blockage
+  locks the tilted wake steady, and the inclined staircase mask drives a spurious
+  ~7×U wall-jet; the honest write-up is in `WingFlow.tsx`'s header comment.
+- Two solver bugs found and fixed during the swap (comments at both sites):
+  multigrid restrict/prolong kernel-cache labels lacked NY (two grids sharing a
+  width poisoned each other), and sub-cell-thin obstacle tails are near-singular
+  for the Neumann pressure stencil (`airfoil.ts` floors thickness in chord units
+  and despeckles the mask).
+- `KelvinHelmholtz.tsx` is built and tuned (two-color billow train, one shear
+  knob, trip-wire confession in the header) but NOT placed in the MDX — an
+  editorial decision for the user: candidate slots are §5 (after ShearBlend) or
+  §6; or leave it for a later lesson.
+- Hero (`CylinderFlow`, §7 regime + §9 broken) runs on the WebGPU compute solver
+  (`src/sims/lib/gpu/`, see `PLAN_GPU_SOLVER.md`) with a real self-sustaining
+  Kármán street at 4× grid; CPU-fallback browsers get the older "waver" version
+  (the wing's CPU fallback is likewise softer — same documented pattern).
 - Infrastructure: palette contract in `src/sims/lib/palette.ts`; `<C>` colored-term
   component; field kit `src/sims/lib/field.ts`; CPU solver `src/sims/lib/solver.ts`.
 - Already resolved: mobile control-row overflow, touch drags (`.sim-stir`,
@@ -49,10 +74,14 @@ genuinely finished article calibrates the bar for the other two.
    - *Ledger*: every plant pays off — fig 2's honey/water redeemed in §6–7; the
      unexplained Re slider named in §7; the hero returns understood in §12; the
      Millennium confession lands in §11.
-   - *Voice* (re-run even though Stage 4 ran): we-builds/you-touches/I-confesses;
-     phenomenon-first jargon; "Unfortunately/Thankfully/However" as the plot
-     devices; zero rhetorical questions; ≤2 exclamations; boundary check after
-     every formula.
+   - *Voice* (re-run against the REWRITTEN Stage 4 — it changed 2026-07-06): the
+     moves, not the phrases. Known tics to fix in this article: "…is known as"
+     appears ~10× (his rate is ~2/post) — keep phenomenon-first, vary or drop the
+     phrase; check hinge-word repetition the same way.
+   - *Sibling audit* ⚠ cross-thread: lessons 01 and 02 currently share their Final
+     Words skeleton beat-for-beat ("The next time you… / I find it… / and now
+     you…"). One of the two endings must be rewritten from its own material —
+     coordinate with the lesson-02 thread on which article keeps the current shape.
    - *Anti-checklist*: no numbered figure references, no captions, no
      "obviously/simply/clearly", no inline citations, no unresolved plants.
 5. **Caption-policy coordination** ⚠ cross-thread: some sims render hint text;

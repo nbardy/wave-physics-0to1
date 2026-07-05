@@ -416,6 +416,12 @@ boundary between molecular dynamics and continuum CFD.
 
 ## 15. Story assets — quotes, numbers, ironies (collected for the plan)
 
+**These are raw ore, not prose.** Pre-ranked punchlines are a slop hazard: an
+article assembled from quips is a trivia listicle with figures. At most one of
+these per section, each re-derived in the article's own voice at the moment the
+physics has earned it; any superlative ("ugliest," "worst," "first") must survive a
+"says who?" check against the sources in §16 before it appears in prose.
+
 - Timeline spine: **1687** Newton's hypothesis → **1738/39** the Bernoulli theft →
   **1747** the wave equation → **1752** the zero → **1757** Euler's field →
   **1822** Navier's term → **1823/29/37/45** the rediscoveries → **1883** Reynolds's

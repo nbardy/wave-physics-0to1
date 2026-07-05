@@ -11,7 +11,9 @@ settled structure without strong cause.
 1. `AGENTS.md` — repo rules, sim honesty rules, and **"Scale and style: heuristics,
    not rules"** (figure counts are estimates, not quotas — this article is math-heavy
    by nature and is *allowed* to be prose/LaTeX-rich; density is judged by the story).
-2. `ESSENCE_OF_VOICE_AND_DESIGN.md` and `METHODOLOGY.md` (Stage 5 gate).
+2. `ESSENCE_OF_VOICE_AND_DESIGN.md`, **`NICKS_VOICE.md`**, and `METHODOLOGY.md`
+   (Stage 4 was rewritten 2026-07-06 with a pastiche guard — the Essence tics are
+   evidence, not required wording; NICKS_VOICE owns prose temperature).
 3. `articles/02-fiber-bundles/DENSE_CORE.md` — the thesis/hook/payoff ranking.
    **House rule: DENSE_CORE wins conflicts with later drafts.**
 4. `articles/02-fiber-bundles/PLAN.md` and `RESEARCH.md` — skeleton + grounding
@@ -59,9 +61,14 @@ settled structure without strong cause.
 6. **Stage 5 audits** (METHODOLOGY): rhythm (droughts, ≤1 knob except the flagged
    UWM finale), palette (every quantity keeps its color; θ especially), ledger
    (RopeCircle's planted energy meter pays off; the Möbius plant; the Wu–Yang
-   reveal earns its §3–§8 setup; hero `HeroEMWave` returns understood), voice pass,
-   anti-checklist (no captions, no rhetorical questions, no inline citations —
-   sources quarantined to Further Reading).
+   reveal earns its §3–§8 setup; hero `HeroEMWave` returns understood), voice pass
+   against the rewritten Stage 4 (known tic here: "Notice" ×7 — vary the readout
+   move), anti-checklist (no captions, no rhetorical questions, no inline
+   citations — sources quarantined to Further Reading), and the new **sibling
+   audit** ⚠ cross-thread: this article's Final Words shares its skeleton
+   beat-for-beat with lesson 01's ("The next time… / I find it… / and now you
+   own…") — one of the two must be rewritten from its own material; coordinate
+   with the lesson-01 thread on which.
 7. **Remove the temporary `/stack-check` smoke-test section** for lesson-02 sims if
    it still exists (AGENTS.md flagged it) — but keep the WebGPU invariant checks
    that lesson 01 relies on. Verify what `/stack-check` currently contains before

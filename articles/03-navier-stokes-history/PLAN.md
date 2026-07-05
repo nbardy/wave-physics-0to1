@@ -273,12 +273,14 @@ history, told with the mathematics intact); **Eckert, *The Dawn of Fluid Dynamic
 scene, beautifully reconstructed); **Reynolds 1883** (open access — read a
 founding paper with plates the reader has now reproduced); **Fefferman's Clay
 problem statement** (the open question, stated in four pages); **Stam 1999** (the
-paper the reader's toy runs on — now readable as history). Final Words: the
-re-enchantment turn — the next time you see the equation's name, it is not a label
-but a two-century argument: a bridge engineer, a blind-to-each-other quintet, a
-physician's capillaries, ten minutes in Heidelberg; "I find it…" sentence;
-benediction — *and the equation still keeps one secret, priced at a million
-dollars.*
+paper the reader's toy runs on — now readable as history). Final Words does the
+three jobs (land the earned thing, re-enchant, send the reader back to the world)
+in *this article's own words* — METHODOLOGY Stage 5's sibling audit applies with
+force here, because lessons 01 and 02 already spent the "the next time you… / I
+find it…" skeleton; this ending must not rhyme with theirs. The material to land:
+the equation's name is not a label but a two-century argument — a bridge engineer,
+a blind-to-each-other quintet, a physician's capillaries, ten minutes in
+Heidelberg — and it still keeps one secret, priced at a million dollars.
 
 ### Stage-2 addendum — the deeper lineage layer (RESEARCH §12–14), mapped to sections
 

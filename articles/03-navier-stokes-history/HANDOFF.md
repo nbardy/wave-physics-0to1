@@ -14,7 +14,13 @@ already-built (and GPU-accelerated) sim family.
    not rules"** (the plan's ~72 figures / ~10,500 words are feasibility estimates;
    the article's real length matches the length of the story — and this story is
    long because it's good, not because a number says so).
-2. `ESSENCE_OF_VOICE_AND_DESIGN.md` and `METHODOLOGY.md`.
+2. `ESSENCE_OF_VOICE_AND_DESIGN.md`, **`NICKS_VOICE.md`**, and `METHODOLOGY.md`.
+   Stage 4 carries a pastiche guard (2026-07-06): the Essence doc's phrasings are
+   one author's fingerprint, cited as evidence of the moves — never required
+   wording; NICKS_VOICE owns prose temperature. This article writes third, so the
+   **sibling audit** bites hardest here: lessons 01 and 02 have already spent
+   several surface patterns (including the Final Words skeleton) — check against
+   both before writing hooks, waypoints, and the ending.
 3. `articles/03-navier-stokes-history/RESEARCH.md` — the verified content base.
    §1–11 = chronology (who built what, when); §12 = where the mathematical
    sub-blocks came from; §13 = the who-met-whom network; §14 = the gaps ledger;
@@ -76,7 +82,7 @@ images; names aren't jargon; math is re-encountered, not re-earned).
    readout), then the voice pass. Extra audit for this lesson: **tense** — past for
    people, present for water, never blended in one sentence carelessly.
 4. **Stage 5** — the standard audits (rhythm as smell test, palette, ledger,
-   anti-checklist) plus this lesson's own:
+   sibling audit, anti-checklist) plus this lesson's own:
    - the §5 paradox ledger is *visibly* paid in §10 (the meter moves);
    - every nameplate filled by §12 except the deliberately blank end of the
      timeline;

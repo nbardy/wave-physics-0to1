@@ -5,6 +5,16 @@ corpus: all 22 posts downloaded and read (~155,000 words, 908 interactive figure
 Study texts: `research/ciechanowski/`. Four full close-reading reports:
 `research/reports/`. Claims below are measured or quoted, not remembered.
 
+> **How to read this document.** It is a *measurement of one author*, not a recipe.
+> The quantified tics below — his hinge words, his "…is known as," his ×369 "Let's,"
+> his 22-word average, his 2–3 deadpan jokes — are a fingerprint he converged on
+> over a decade. A phrasing is a signature when one author arrives at it slowly, and
+> pastiche when we copy it on day one. Extract the *philosophy behind each decision*
+> (why emotion lives in discourse structure; why the name comes after the
+> phenomenon; why he confesses every lie) and render it in our own voice —
+> `NICKS_VOICE.md` owns the prose temperature; METHODOLOGY Stage 4 states the
+> blend and the pastiche guard. Never write toward these counts.
+
 **The one-line thesis** (from the evolution study): his 2019 transformation was not a
 style change but *an audience change executed with total discipline* — he kept every
 2014 instinct (puns, failure-first, beauty-talk, foreshadowing, "Final Words") and

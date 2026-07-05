@@ -48,8 +48,12 @@ once real lessons exist.
 | # | Lesson | Status |
 |---|--------|--------|
 | 01 | Building the Navier–Stokes Equations (part-by-part deep dive) | Draft |
-| 02 | Fiber Bundles, the Universal Medium | Planned |
+| 02 | Fiber Bundles, the Universal Medium | Draft |
 | 03 | The History of Navier–Stokes (who discovered what, and when) | Planned |
+
+House style docs (read in the order AGENTS.md gives): `ESSENCE_OF_VOICE_AND_DESIGN.md`
+(the studied pole) → `NICKS_VOICE.md` (Nick's pole + the blend) → `SLOP.md` (the
+detector) → `METHODOLOGY.md` (the five-stage process).
 
 ## Deploy (Cloudflare Pages)
 

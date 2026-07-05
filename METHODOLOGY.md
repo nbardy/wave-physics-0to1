@@ -104,26 +104,47 @@ argument and the prose is its legend.
 
 **Output: full prose at final quality. Gate: the voice audit passes.**
 
-Now — and only now — the voice pass. Rules from the corpus (Essence §2):
+Now — and only now — the voice pass. Three source documents govern it:
+`ESSENCE_OF_VOICE_AND_DESIGN.md` for the *philosophy of the moves*,
+`NICKS_VOICE.md` for the *prose temperature* (the blend rule lives in AGENTS.md:
+structure → ESSENCE wins, temperature → NICKS_VOICE wins), and `SLOP.md` as the
+detector to read the result against — 15 families, four tests; judge with the
+tests, never grep for the families.
 
-- **Pronoun regime**: *we* builds, *you* touches (permissive "you can drag," never
-  imperatives), *I* only to confess a staging decision. Present tense throughout.
-- **Jargon protocol**: phenomenon first, name second ("…is known as"), amnesty stated
-  once up front, etymology as an occasional reward.
-- **Plot devices**: "Unfortunately," for the naive failure; "Thankfully," for the
-  rescue; "However" for the twist. Emotion in discourse markers, not adjectives.
-- **One load-bearing metaphor per section**, audited ("an imperfect, but convenient
-  analogy"). Analogies must be simpler *physical* systems, ideally with their own
-  figure.
+**The pastiche guard, first.** The Essence doc is a measurement of one author's
+converged fingerprint. A phrasing is a *signature* when one author converges on it
+over a decade, and *pastiche* when we copy it on day one. So every rule below names
+a MOVE; the quoted phrases beside it are his rendering of the move, cited as
+evidence — never as required wording. If a specific phrase from the Essence doc
+appears in our article more than about twice, that's compliance-by-grep, not voice
+(measured failure: an early draft used "…is known as" 10× in 4,900 words; his rate
+is ~2 per post). Find our own words for the move every time.
+
+The moves:
+
+- **Pronoun regime**: *we* builds, *you* touches (permissive, never imperative),
+  *I* only to confess a staging decision. Present tense for the physics.
+- **Phenomenon first, name second**: the reader meets the thing before its label;
+  amnesty stated once up front; etymology as an occasional reward. ("…is known as"
+  is *one* rendering — vary it or just let the name arrive.)
+- **Emotion lives in discourse structure, not adjectives**: the naive failure gets
+  its own turn, the rescue its own beat, the twist its own hinge. (His hinge words —
+  "Unfortunately," "Thankfully," "However" — are fingerprint, not requirement.)
+- **One load-bearing metaphor per section**, used hard, then audited for its limits.
+  Analogies are simpler *physical* systems, ideally with their own figure.
 - **Numbers as dessert**: concrete, astonishing, deployed only after intuition.
 - **Calibrated hedges** on approximate claims only; flat declaratives on hard ones.
-- **Confess every distortion** at the moment it appears ("I'm making it much larger so
-  you can see it"; "very much not to scale").
-- **Sentence music**: ~22-word average, long build → short verdict. Zero rhetorical
-  questions. Exclamation budget: ≤2 per post, spent on counterintuitive truth only.
+- **Confess every distortion** at the moment it appears.
+- **Long build → short verdict** as the default cadence; no drama fragments; zero
+  rhetorical questions; exclamations spent only on counterintuitive truth. (His
+  ~22-word average is *his* music — ours comes from NICKS_VOICE.)
 - **Boundary-value check after every formula.**
 - Close every simplification loop; pay every planted debt; end sections on forward
   hooks, not summaries.
+
+**Humor and warmth cannot be scheduled.** The corpus stat ("deadpan 2–3× per post")
+describes what taste produced, not a quota to fill. A joke goes in because it
+arrived while writing; if none arrived, the article ships drier and that's fine.
 
 ## Stage 5 — POLISHED POST
 
@@ -142,10 +163,20 @@ Now — and only now — the voice pass. Rules from the corpus (Essence §2):
 - **Reader-respect furniture**: global pause, restart buttons, touch-friendly drags,
   reasonable mobile cost. (No static-fallback sentences — the figures *are* the
   argument; a prose understudy per figure defeats the point. Decided 2026-07.)
-- **Endings ritual**: Further Reading with 2–3 sentences of specific, earned praise per
-  source → Final Words: an "I find it…" sentence + a re-enchantment benediction
-  ("perhaps the next time you…"). Ours additionally lands the equation one last time —
-  understanding increases wonder, *and now you can compute with it*.
+- **Endings**: Further Reading gives each source 2–3 sentences of specific, earned
+  praise. Final Words has three *jobs*, not a template: land the earned thing one
+  last time, re-enchant (understanding increases wonder), and send the reader back
+  to the world. The renderings are free and MUST differ per article — "I find it…"
+  and "the next time you…" are Ciechanowski's phrasings, and our first two drafts
+  both reused them beat-for-beat (measured 2026-07: near-identical ending skeletons).
+  Write each ending from the article's own material; if it could be swapped onto a
+  sibling article by changing the nouns, it isn't an ending yet.
+- **Sibling audit** (new, from the same finding): with every prior article open,
+  compare this article's hook move, section-transition habits, waypoint phrasing,
+  Predict framing, and Final Words against its siblings. The *pedagogy grammar* may
+  repeat (failure chain, ring, waypoints — that's the method); the *surface
+  language* may not. Any sentence skeleton that appears in two articles gets
+  rewritten in one of them.
 - **The anti-checklist** — none of these may appear: numbered figure references,
   captions, rhetorical questions, "obviously/simply/clearly," pop culture in body
   prose, inline citations, motivational filler, apologies for difficulty, unresolved
@@ -155,7 +186,15 @@ Now — and only now — the voice pass. Rules from the corpus (Essence §2):
   narrate the reading experience instead of the thing (play-test finding, 2026-07).
   Debts are planted as flat declaratives that carry the content of the promise, not
   its schedule ("that single number is the oldest debt in this article; it gets
-  paid, but not soon").
+  paid, but not soon"). This anti-checklist is the corpus-measured subset; the full
+  15-family slop taxonomy with its detection tests lives in `SLOP.md`.
+
+**On audits themselves**: an audit may return zero findings — "this is fine" is a
+legitimate, complete result. Finding-counts are not a quality metric, and "all
+findings applied" is not a virtue: mechanically accepting every critic note sands
+prose to the safe middle, which is slop's other face. Each finding is a proposal;
+the author (thread) judges it against the article's own voice and may decline with
+a reason.
 
 ---
 

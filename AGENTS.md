@@ -6,12 +6,17 @@ in this order:
 
 1. **`ESSENCE_OF_VOICE_AND_DESIGN.md`** — what the master actually does (measured from
    all 22 posts; corpus in `research/`). The rules of voice, design, and pedagogy.
-2. **`METHODOLOGY.md`** — the essence inverted into our five-stage process:
+2. **`NICKS_VOICE.md`** — the other pole: Nick's own voice, measured from ~7,200 of his
+   prompts, and the blend rule the articles are written in (Ciechanowski's discipline,
+   Nick's blood; prose temperature → NICKS_VOICE wins, structure → ESSENCE wins).
+3. **`SLOP.md`** — the detector: 15 slop families and the four tests (topic-swap,
+   delete, who's-talking, the Nick test). Judgment calls, never grep gates.
+4. **`METHODOLOGY.md`** — the essence inverted into our five-stage process:
    concept → skeleton → blocked content → final draft → polished post. Includes our
    four standing deviations (we cash out the math; prediction before reveal; waypoints;
    named solvers).
-3. **`articles/01-navier-stokes/PLAN.md`** — the full-length plan for lesson 01.
-4. **`articles/02-fiber-bundles/PLAN.md`** — the full-length plan for lesson 02 (waves as sections
+5. **`articles/01-navier-stokes/PLAN.md`** — the full-length plan for lesson 01.
+6. **`articles/02-fiber-bundles/PLAN.md`** — the full-length plan for lesson 02 (waves as sections
    of bundles; the connection as the universal medium; seeded by the Weinstein tweet
    quoted at its top). Its subject-matter grounding — what the tweet technically
    refers to, the papers, the 1858→1986 history — is **`articles/02-fiber-bundles/RESEARCH.md`**;
@@ -70,6 +75,22 @@ branches.
 
 ## Where things stand
 
+- **Voice system complete (2026-07-06)**: `NICKS_VOICE.md` (fingerprint measured from
+  ~7,200 of Nick's prompts + the world-tubes ChatGPT distillation archived in
+  `research/voice/`) and `SLOP.md` (15 families, 4 tests), wired into the reading
+  order and METHODOLOGY Stages 4–5. **Open voice items**: (1) the *print register*
+  (NICKS_VOICE §6–§7) has exactly one ground-truth sample (Nick's lesson-01 intro
+  markup) — ratify it by voice-sweeping ONE lesson-01 section and having Nick mark it
+  up before sweeping everything; (2) pending editorial decision: a visible question
+  layer (`<Q>` interjections in Nick's voice at section hinges) vs. the fully fused
+  blend — recommendation on record: no two-voice Socratic dialogue in main lessons
+  (the reader is the second voice; Q/A word-count would ghettoize Nick's voice into
+  question lines); if a true dialogue article is ever wanted, lesson 03 (history) is
+  the natural host — real interlocutors, real wrong physics (d'Alembert's paradox);
+  (3) after ratification, full voice sweep of lessons 01–02; (4) more ChatGPT-thread
+  voice sources expected — fold into NICKS_VOICE provenance on arrival, and re-weigh
+  its §4 (old blog voice is disavowed; probated devices: escalate-then-deflate,
+  aphorism budget).
 - **Lesson 01 is built end-to-end** (Stage 4 of METHODOLOGY): all 13 sections, 32 live
   figures, ~4,900 words (153 w/fig — inside the corpus band), 9 earned equations,
   2 Predict widgets, 2 Waypoints, verified in-browser at 60 fps. Status: `draft`.
@@ -79,12 +100,24 @@ branches.
   off-screen figures via IntersectionObserver (perf: 8 → 61 fps).
 - **WebGPU compute solver** (`sims/lib/gpu/` — see `PLAN_GPU_SOLVER.md`): WGSL port of
   the Stable Fluids scheme with MacCormack-corrected advection and a multigrid
-  pressure solve, running the hero (`CylinderFlow`) at 4× grid resolution with typed
+  pressure solve, running the lesson-01 hero at 4× grid resolution with typed
   CPU fallback. This resolves the "waver, not a Kármán street" Stage-5 debt on
   WebGPU-capable browsers: the street self-starts and sustains (kick-test σ ratio
   1.23 at 1.45 ms/step; both MacCormack and multigrid are load-bearing — see the
   PLAN's measurement table). Live invariant checks on `/stack-check`. CPU-fallback
   browsers still get the v1 waver.
+- **Lesson 01 hero/finale is now the two-color wing** (`WingFlow.tsx`, 2026-07-05):
+  a NACA airfoil, level, with amber/rose dye currents braiding into the wake and
+  the mystery-Re slider (debt planted in the intro, paid in §12). The intro is the
+  1822/million-dollar wager; §11's Millennium confession is its callback.
+  `CylinderFlow` keeps §7 regime + §9 broken. The solver grew a second dye species
+  (`dye2`, rose) and a split-inflow option (`inflowLower`, for Kelvin–Helmholtz);
+  `sims/lib/airfoil.ts` stamps the mask. A tilt-to-stall hero was built and CUT
+  after play-testing: in this short channel the tilted wake locks steady (blockage)
+  and the inclined thin-body staircase drives a spurious ~7× wall-jet — details in
+  `WingFlow.tsx`'s header and `articles/01-navier-stokes/HANDOFF.md`.
+  `KelvinHelmholtz.tsx` (two-color billows, one shear knob) is built, tuned, and
+  awaiting an editorial decision on placement — not yet in the MDX.
 - **Lesson 02 (fiber bundles) is built end-to-end** (Stage 4, audited): 11 sections,
   39 figure instances from 14 components (~188 w/fig), 7,349 words, 8 earned
   equations each with a boundary check, 2 Predicts, 2 Waypoints, browser-verified
