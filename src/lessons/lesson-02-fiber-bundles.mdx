@@ -42,20 +42,18 @@ know why the bottom one is the more honest of the two.
 One more demonstration belongs on the table before we build anything — the strangest
 experimental fact this subject owns, met here long before you could explain it.
 Below, a beam splits along two paths around a sealed central core, and the arrivals
-collect on a screen as a pattern of stripes. The figure asks you to take exactly one
-fact on credit, so let's state the loan as a contract: where the stripes fall is a
-real, repeatable laboratory measurement — the honest readout of the two journeys.
-(I've drawn the paths and stripes for legibility, wildly not to scale.) The one
+collect on a screen as a pattern of stripes. Take exactly one fact on credit: where
+the stripes fall is a real, repeatable laboratory measurement. (I've drawn the paths and stripes for legibility, wildly not to scale.) The one
 control is a dial on the sealed core:
 
 <ABInterference mode="plant" />
 
-Turn the dial and the stripes slide — though nothing measurable touches either path.
+You can turn the dial, and the stripes slide — though nothing measurable touches
+either path.
 This demonstration should look impossible. Before we are done, it will look
 inevitable.
 
-Some unfamiliar words are coming, and you shouldn't feel pressured to memorize any of
-them — every quantity in this article is color-coded, so the
+Unfamiliar words are coming; nothing needs memorizing — every quantity in this article is color-coded, so the
 <C k="theta">wave value we watch</C> is always amber, the
 <C k="conn">rule that acts on it</C> is always blue, our own
 <C k="gauge">relabelings</C> are always green, and whatever
@@ -72,7 +70,8 @@ looked at in an unfamiliar way:
 
 <StringSection stage="string" />
 
-Let's make the space of possibilities visible: over every point of the line, a faint
+Notice the wave doing the only thing it knows: at each point, a height, changing in
+time. Let's make the space of possibilities visible: over every point of the line, a faint
 vertical rail — the private space of values that one point owns. The string's height
 at a point is a position on that point's rail:
 
@@ -83,11 +82,13 @@ every point, a continuous fluid of them.
 
 Seen this way, a wave stops being a shape and becomes a *decision*: at every point,
 one choice from that point's rail. The demonstration below draws the same wave as its
-threading — one amber bead per rail, the wave being the run of beads:
+threading — one <C k="theta">amber bead</C> per rail, the wave being the run of
+beads:
 
 <StringSection stage="section" />
 
-The rail over a point is known as a *fiber* — the menu of values on offer there. The
+Notice the beads riding their rails — the same wave, now a run of choices. The rail
+over a point is known as a *fiber* — the menu of values on offer there. The
 threading — one choice per fiber, varying smoothly — is known as a *section*.
 
 One more piece of anatomy: the strip all the rails sweep out together, the space
@@ -98,7 +99,9 @@ every possible graph lives inside, is known as the *total space*:
 Now we can reread the previous lesson's notation with new eyes. We wrote $y(x,t)$
 for the string's height, and the symbol was carrying this structure all along:
 $y(x,t)$ is the choice made in the fiber over $x$ at time $t$ — a moving section.
-Nothing about the wave ever leaves the strip. However,
+Nothing about the wave ever leaves the strip. Boundary check: a string at rest is
+the flat threading, zero chosen on every rail — the old picture survives whole
+inside the new one. However,
 the strip is hiding a choice that nothing in the string ever exposed — and to flush
 it out, we have to bend the strip.
 
@@ -119,14 +122,14 @@ one — same rails, same neighborhoods, same game:
 
 <MobiusComb kind="mobius" />
 
-Unfortunately, the game is now unwinnable. Comb however you like: the section is
+Unfortunately, the game is now unwinnable. You can comb however you like: the section is
 forced through zero, every single time, and the meter catches the crossing. This
 shape is known as the *Möbius band*, and your failure is not clumsiness — it is a
 theorem. The twist lives in no particular place, since every local patch is innocent;
 the whole is different in kind, and no smooth re-combing removes it.
 
 This is what makes a bundle a bundle: *locally a product, glued by choices* — the
-gluing is data with consequences, not pedantry. Keep this flip in your pocket; near
+gluing is data with consequences, not pedantry. This flip goes in our pocket; near
 the end of the article we will need to know exactly what kind of twist it is.
 
 Notice what else was never forced on us: the shape of the fiber itself. Nothing says
@@ -152,11 +155,13 @@ height but an angle:
 
 <RopeCircle stage="extract" />
 
-We'll write $\theta(x,t)$ for that angle: a circle-valued section. Its total space, a
-line of circle fibers, is a cylinder — with the roles swapped since the band game:
-there the base was a circle and the fibers were segments; here the base is a line and
-the fiber is the circle. Only this total space gets the name *cylinder*; the
-untwisted band keeps its own name.
+We'll write <C k="theta">$\theta(x,t)$</C> for that angle: a circle-valued section.
+Its total space, a line of circle fibers, is a cylinder — with the roles swapped
+since the band game: there the base was a circle and the fibers were segments; here
+the base is a line and the fiber is the circle. Only this total space gets the name
+*cylinder*; the untwisted band keeps its own name. Boundary check: stop the whirl
+and every needle rests at one angle — a constant section, the string's rest state
+translated.
 
 Here, then, is the protagonist of the rest of this article: the clock-row, with a
 graph pane beneath it plotting $\theta(x)$ — the bundle picture above, its reading
@@ -198,9 +203,10 @@ to write yet:
 
 <RegaugeBrush stage="pre" />
 
-Now the crime. You hold a *regauge brush*: stroking it across the row smoothly
+Now comes the crime. You hold a *regauge brush*: stroking it across the row smoothly
 rotates each clock's zero-mark by an angle <C k="gauge">$\alpha(x)$</C> of your
-choosing — repainting the dials, touching nothing else. Commit before you brush:
+choosing — repainting the dials, touching nothing else. A commitment is due before
+you brush:
 
 <Predict
   question="The brush repaints each clock's zero-mark without touching the rope. Will either energy meter change?"
@@ -252,7 +258,7 @@ on the next fiber counts as the same direction — precisely the statement the
 prankster attacked, but now carried as explicit data rather than inherited from the
 scenery.
 
-Time to put it to work. Below, a wave has been mangled by a brushstroke of fixed
+Let's put it to work. Below, a wave has been mangled by a brushstroke of fixed
 shape — visibly the same bump the last section's brush applied — and you hold one
 slider: the amplitude of a transport rule with that same bump shape. The graph pane
 gains a second trace, the wave as *read through your rule* — a needle carried by
@@ -364,8 +370,8 @@ rotation-per-step around it, written $\oint A$:
 <HolonomyLoop mode="explore" />
 
 Notice what the meter cares about. Position changes nothing while the core stays
-outside; only *enclosure* counts. Keep that — it is the entire mystery of the sealed
-core, waiting for us.
+outside; only *enclosure* counts. That single fact is the entire mystery of the
+sealed core, waiting for us.
 
 The planet under you has been performing this trick on travelers forever. Below, the
 same amber needle lies flat on a globe and is carried along a triangle — along the
@@ -378,7 +384,7 @@ The needle comes home turned by a quarter turn, having never once been rotated o
 purpose. An imperfect, but convenient analogy — and the imperfection is the important
 part: on the globe, the sphere's own shape writes the transport rule; on our plane of
 clocks the floor is flat, and a *field* writes it. Same phenomenon, different author.
-Hold onto that distinction; the sealed core will redeem it.
+The distinction is worth keeping; the sealed core will redeem it.
 
 Holonomy, so far, is a per-loop fact. Shrink the loop and it becomes a per-area
 density — a number waiting for a name.
@@ -391,7 +397,7 @@ around the loop, and the running total of a violet density over the area inside:
 
 <HolonomyLoop mode="shrink" />
 
-Halve the radius and the collected rotation drops fourfold: the loop's take is
+Halving the radius drops the collected rotation fourfold: the loop's take is
 proportional to its *area*. So the honest local object is rotation per area — a
 density, written <C k="curv">$F$</C> — and on our plane it has an exact recipe, along
 with the equality your two meters have been agreeing about at every radius:
@@ -418,7 +424,7 @@ a diary scores zero on every loop, and anything a loop meter reads is *not diary
 One sentence to keep two twists apart, as promised. The Möbius flip is *topology*:
 discrete, all-or-nothing, surviving any smooth re-combing. Holonomy is *geometry*:
 continuous, tunable, a per-area density. Different kinds of twist — and the case that
-needs the distinction is two sections away from paying for it.
+needs the distinction is already on the table, waiting to pay for it.
 
 What we now hold is a field you cannot gauge away, measured in loops. Physics has a
 name for it.
@@ -467,21 +473,35 @@ driven:
   </tbody>
 </table>
 
+The gauge row rereads best with the crime replayed under its new name — the same
+brush, the same untouched rope, now performing what physicists call a gauge
+transformation:
+
+<RegaugeBrush stage="brush" />
+
+Notice that nothing new happens, which is the point: the crime was already the
+physics; only the vocabulary was waiting.
+
 Two rows deserve a sentence each. The time-against-space row asks time to join the
 base — a step in time is a step too, carrying its own rotation-per-step — and I draw
 that only schematically; the honest four-dimensional picture survives, per our
 contract. And the gauge row is kept history: physicists took the word *gauge* from
 Weyl's rulers and never gave it back, so the prankster's freedom carries a surveyor's
-name. The violet map you painted two figures ago now reads differently — it is a map
+name. The violet map you painted now reads differently — it is a map
 of <C k="bfield">magnetic field</C>:
 
 <HolonomyLoop mode="field" />
+
+Notice that nothing in the map moved — the same violet, the same bright core; only
+its name changed.
 
 This table exists in the literature under its own name: the **Wu–Yang dictionary**,
 written in 1975, when C. N. Yang — trying to understand what his own theory *was* —
 asked the mathematician next door at Stony Brook, Jim Simons, and discovered that
 geometry had built the entire apparatus decades earlier, under other names, for other
-reasons.
+reasons. Boundary check on the dictionary itself: switch the rule flat — $A = 0$,
+the room's free gift — and the physics column empties: no <C k="efield">E</C>, no
+<C k="bfield">B</C>, no flux. The string's whole world is the dictionary's zero row.
 
 One column, however, is still blank: nothing yet says what stands in the fibers when
 *nature* runs this construction — whose clocks these are. Time to pay the debts.
@@ -527,12 +547,14 @@ The demonstration from the top of this article is hereby made inevitable: loops 
 bookkeeping" does not survive contact with the data!
 
 One dessert before the act closes. In 1931 — the same year, with no contact — Dirac
-published the magnetic monopole, deriving from clock-consistency alone that electric
-charge must come in integers, and Hopf published a way of arranging circles over a
+published the magnetic monopole, deriving from clock-consistency alone that if even
+one monopole exists anywhere, electric charge must come in whole-number multiples of
+one fixed unit — and Hopf published a way of arranging circles over a
 sphere so that the whole is twisted though every patch is innocent. They are the same
 object: the monopole's field is the natural transport rule on Hopf's circle
 arrangement, and nobody noticed for forty-six years. You can drag the base point
-below and watch its fiber circle swing; drag anywhere else to orbit:
+below and watch its fiber circle swing — and, a second drag flagged as the small
+indulgence it is, drag anywhere else to orbit the view:
 
 <HopfMonopole />
 
@@ -552,8 +574,8 @@ frozen while needles and clocks performed. Nothing in nature is scenery.
 
 ## The Wave in the Connection
 
-Unfreeze <C k="conn">$A$</C>. Give the connection a life of its own — the simplest
-possible one: it costs energy for the rule to curve, and it costs energy for the rule
+Let's unfreeze <C k="conn">$A$</C> and give the connection a life of its own — the
+simplest possible one: it costs energy for the rule to curve, and it costs energy for the rule
 to change. This is the one thing in this article we add by hand, and the confession
 deserves full volume: the repair was forced on us, but its dynamics is a postulate —
 the simplest on offer. The postulate carries a rider, stated here and not derived:
@@ -572,7 +594,7 @@ end:
 What travels down the row is not any needle, and not a substance between them — it is
 the *redefinition of where each needle wants to rest*, arriving point by point, late.
 Two confessions where they land: I have slowed time enormously — across a desk the
-redefinition arrives in about a nanosecond, and the lateness *is* the wave. And the
+redefinition arrives in a few nanoseconds, and the lateness *is* the wave. And the
 needles read the curvature <C k="curv">$F$</C>, while the wave itself rides in
 <C k="conn">$A$</C> — the dual-pane mapping the opening figure has been promising.
 These compasses are not even an analogy; they read the curvature of the very
@@ -585,11 +607,9 @@ from; a connection is exactly a definition of "unchanged from point to point," a
 nothing more; so the connection is the minimal possible medium — pure comparison, no
 substance — and light is a wave in the meaning of "same." (The railway towns rhyme
 one last time: news of a time reform running down the telegraph line is a ripple in
-the convention itself — though a reform every town adopts at once is pure gauge, the
-brush's work, and carries nothing; the ripple light carries is the part no reform can
-remove, the curvature.)
+the convention itself.)
 
-Your turn to make one. Below is a stretch of frozen <C k="conn">$A$</C>; you can drag
+Now you can make one yourself. Below is a stretch of frozen <C k="conn">$A$</C>; you can drag
 one point of the blue curve and let go:
 
 <ConnectionWave mode="pluck" />
@@ -616,7 +636,8 @@ $E_y = -\partial A_y/\partial t$ is the time-against-space curvature;
 $B_z = \partial A_y/\partial x$ is the space-against-space one. Both nonzero, both
 immune to the brush, both moving in step. And one payoff arrives free: the waving
 component lies *across* the direction of travel — light's transversality, the fact
-you first met as a whirled rope, now explained rather than assumed.
+you first met as a whirled rope, now demonstrated rather than assumed — with the
+final piece of its argument waiting at the hero's return.
 
 House rules require naming the solver: the figures in this section run *leapfrog* on
 $A_y$ over a one-dimensional grid — two stored time levels, $E$ read from their
@@ -651,8 +672,7 @@ laboratory's own motion, is the rider confessed above: kept, not re-derived.
 And the inversion, once, plainly: we never added light to this article. We admitted
 that clocks have no shared zero; the ordinary derivative died; the only possible
 repair was a compensating field; and the repair, granted the simplest life of its
-own, turned out to run at $c$, wave transversally, and carry in-step electric and
-magnetic readouts. You don't add light to physics — you can't keep it out. Forces are
+own, turned out to run at $c$ and carry in-step electric and magnetic readouts. You don't add light to physics — you can't keep it out. Forces are
 what it costs to do calculus in a universe with no absolute conventions, and *light
 is a traveling ripple in the rule for comparing phases, existing because calculus had
 to be repaired*.
@@ -710,7 +730,8 @@ needle *lengths* as well as angles, because interference needs something to add,
 an angle alone cannot cancel.
 
 Stop four is different in kind, and the figure says so at the moment the dial lands:
-the on-screen equation trades its amber $\theta$ for blue $A$ —
+the on-screen equation trades its <C k="theta">amber $\theta$</C> for
+<C k="conn">blue $A$</C> —
 
 <UWMPreset mode="light" />
 
@@ -761,11 +782,13 @@ this is fringe. It is the standard mathematics of the Standard Model, taught in 
 physics graduate program and almost nowhere else — told to the public essentially
 once, in 1981, in a magazine article that taught the bundles beautifully and never
 let the connection wave. This article is the second telling, with your hands on the
-figures this time.
+figures this time. And the dial's grayed far stops are not decoration; they are the
+course ahead — clock faces that refuse to commute, and the stranger waves that rules
+acting on one another must carry.
 
 ## Further Reading
 
-Jeremy Bernstein and Anthony Phillips, [*Fiber Bundles and Quantum
+Herbert Bernstein and Anthony Phillips, [*Fiber Bundles and Quantum
 Theory*](https://www.scientificamerican.com/article/fiber-bundles-and-quantum-theory/),
 Scientific American, July 1981 (a [free
 PDF](https://www.math.stonybrook.edu/~tony/fb-and-qt/Fiber%20Bundles%20and%20Quantum%20Theory.pdf)
@@ -803,7 +826,8 @@ reveal, performed with superconducting shielding so that no skeptic could object
 half-stripe displacement, pinned at exactly half a turn of phase, is one of the
 cleanest yes-or-no answers in the history of the subject.
 
-And the seed itself: Eric Weinstein's tweet, quoted at the top. Four sentences that
+And the seed itself: Eric Weinstein's
+[tweet](https://twitter.com/ericrweinstein), quoted at the top. Three sentences that
 compress this entire article — the lesson is the long proof that terminates at its
 own epigraph.
 
@@ -811,8 +835,8 @@ own epigraph.
 
 The next time light crosses a room to reach your eye, there is no jelly quivering in
 between. There is a bundle — a circle of phase standing over every point of the
-dark — and the light is its geometry ringing: the rule for comparing "same,"
-redefining itself point by point, arriving late.
+dark — and the light is its geometry ringing: the comparison rule redefining itself
+point by point, arriving late.
 
 I find it a lasting astonishment that the century that lost its medium had already
 been handed a better one, by mathematicians it never thought to call. Understanding

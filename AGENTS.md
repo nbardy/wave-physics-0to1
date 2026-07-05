@@ -68,19 +68,25 @@ branches.
   1.23 at 1.45 ms/step; both MacCormack and multigrid are load-bearing — see the
   PLAN's measurement table). Live invariant checks on `/stack-check`. CPU-fallback
   browsers still get the v1 waver.
-- **Lesson 02 (fiber bundles) is in Stage 3 (building)**: the plan passed a
-  38-finding multi-critic gate (5 lenses, adversarially verified) and was rewritten
-  accordingly — now 11 sections / 67 figures; Möbius is §3, §7/§8 split
-  loop-vs-curvature, §9 the Wu–Yang reveal, §10 the wave, §11 the Universal Wave
-  Machine finale. Built and browser-verified so far: `sims/lib/clocks.ts` (clock kit),
-  `sims/lib/awave.ts` (shared 1-D connection-wave leapfrog, absorbing ends),
-  `StringSection`, `MobiusComb`, `RopeCircle` (with the planted energy meter),
-  `TransportNeedle`, `HeroEMWave` (in-phase E/B per the plan's misconception spec).
-  Remaining sims (RegaugeBrush, ConnectionTuner, HolonomyLoop, GlobeTransport,
-  ABInterference, HopfMonopole, ConnectionWave, UniversalWaveMachine) are being
-  built against the PLAN's per-figure specs. Smoke-test harness: `/stack-check`
-  (temporary section — remove when the lesson MDX lands). Then: MDX prose
-  (Stage 3 blocking + Stage 4 voice), registry → `draft`, Stage 5 audits.
+- **Lesson 02 (fiber bundles) is built end-to-end** (Stage 4, audited): 11 sections,
+  39 figure instances from 14 components (~188 w/fig), 7,349 words, 8 earned
+  equations each with a boundary check, 2 Predicts, 2 Waypoints, browser-verified
+  (all canvases paint, zero console errors). The plan passed a 38-finding
+  multi-critic gate before building; a 4-lens Stage-5 audit produced ~24 prose
+  findings, all applied (voice imperatives → permissive; positional
+  figure/section counting removed; Dirac 1931 made conditional; transversality
+  claim softened to "demonstrated"; θ color-bound at its christening; Herbert
+  (not Jeremy) Bernstein; epigraph = three sentences; thesis/inversion
+  exactly-once vows re-verified). Status: `draft`.
+- **Lesson 02 Stage-5 debts** (before `published`): densify figures toward the
+  plan's 67 (currently 39; the four `{/* fig gap: … */}` comments in the MDX mark
+  the planned-but-unbuilt figures: railway-towns anchor, dictionary row replays
+  beyond the one built, which-force gallery, linked vortex rings); the §6→§7 and
+  §11-coda droughts that those figures would break; epigraph tweet wording is
+  UNVERIFIED against the live tweet (X blocks anonymous reads — needs a logged-in
+  check of candidate status 1077751816400433152, then add the year to the
+  attribution); mobile/touch pass; the lesson-01-style caption inconsistency
+  (ESSENCE bans captions, some sims render hint text) needs a global decision.
 - **Stage 5 debts** (before `published`): densify figures toward the plan's ~80
   (currently 32, rhythm-correct but sections lean); static-fallback sentences;
   real-device mobile pass. Resolved 2026-07: the Kármán street (WebGPU solver, above);
