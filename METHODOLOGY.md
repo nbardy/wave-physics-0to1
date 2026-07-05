@@ -135,9 +135,15 @@ The moves:
 - **Numbers as dessert**: concrete, astonishing, deployed only after intuition.
 - **Calibrated hedges** on approximate claims only; flat declaratives on hard ones.
 - **Confess every distortion** at the moment it appears.
-- **Long build → short verdict** as the default cadence; no drama fragments; zero
-  rhetorical questions; exclamations spent only on counterintuitive truth. (His
-  ~22-word average is *his* music — ours comes from NICKS_VOICE.)
+- **Long build → short verdict** as the default cadence; no drama fragments;
+  exclamations spent only on counterintuitive truth. (His ~22-word average is *his*
+  music — ours comes from NICKS_VOICE.)
+- **Questions: the fork rule** (NICKS_VOICE §6 arbitrates the poles' central
+  conflict — his zero question marks vs. Nick's 59%): a question may appear in
+  print only as a *genuine fork the article immediately adjudicates* — live
+  candidate mechanisms named, the fight staged, the winner called within the
+  section. Decorative wonder stays declarative; "But what does this really mean?"
+  is a question wearing slop's clothes.
 - **Boundary-value check after every formula.**
 - Close every simplification loop; pay every planted debt; end sections on forward
   hooks, not summaries.
@@ -152,10 +158,9 @@ arrived while writing; if none arrived, the article ships drier and that's fine.
 
 - **Rhythm audit** (mechanical, scriptable): words-per-figure in band; no >3-paragraph
   droughts; knob count ≤1 except flagged finales; adjacency (figure-figure without
-  prose) ≈ never. The band and any plan-stage figure count are *diagnostics, not
-  quotas*: scale and density are judged per article by what the lesson and the story
-  need. Never add or cut a figure to hit a number — a figure is added because a
-  moment needs one; a short article that lands is finished at its own length.
+  prose) ≈ never. The band and plan-stage figure counts are *diagnostics, not
+  quotas* — the philosophy is AGENTS.md "Scale and style": a figure is added because
+  a moment needs one; a short article that lands is finished at its own length.
 - **Palette audit**: same quantity = same color in every figure and every prose span;
   no orphan colors.
 - **Ledger audit**: every "we'll get back to this" has its "Recall that…"; the hero
@@ -178,7 +183,9 @@ arrived while writing; if none arrived, the article ships drier and that's fine.
   language* may not. Any sentence skeleton that appears in two articles gets
   rewritten in one of them.
 - **The anti-checklist** — none of these may appear: numbered figure references,
-  captions, rhetorical questions, "obviously/simply/clearly," pop culture in body
+  captions, rhetorical questions (fork questions that the section immediately
+  adjudicates are allowed — Stage 4's fork rule), "obviously/simply/clearly," pop
+  culture in body
   prose, inline citations, motivational filler, apologies for difficulty, unresolved
   plants, an equation whose symbols weren't first seen on canvas, and **promissory
   templates** — "by the end of this article you will know/have…", "in this article
