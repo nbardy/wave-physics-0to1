@@ -1,0 +1,352 @@
+:root {
+  --bg: #fbfbfd;
+  --surface: #ffffff;
+  --ink: #1a1f2b;
+  --ink-soft: #55606f;
+  --line: #e5e8ee;
+  --accent: #2563eb;
+  --accent-soft: #eaf0ff;
+  --max: 760px;
+  --font-ui: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-prose: ui-serif, Georgia, "Iowan Old Style", "Times New Roman", serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* header */
+.site-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem clamp(1rem, 4vw, 2rem);
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.brand {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--ink);
+}
+.brand:hover {
+  text-decoration: none;
+}
+.brand-arrow {
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.site-nav {
+  display: flex;
+  gap: 1.25rem;
+  font-size: 0.9rem;
+}
+
+/* main */
+.content {
+  flex: 1;
+  width: 100%;
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: clamp(1.5rem, 4vw, 3rem) clamp(1rem, 4vw, 2rem);
+}
+
+.site-footer {
+  border-top: 1px solid var(--line);
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+}
+
+/* home */
+.hero h1 {
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  line-height: 1.1;
+  margin: 0 0 0.75rem;
+  letter-spacing: -0.02em;
+}
+.lede {
+  font-size: 1.1rem;
+  color: var(--ink-soft);
+  max-width: 60ch;
+  margin: 0 0 2rem;
+}
+.lesson-list h2 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 0.5rem;
+}
+.lessons {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.lesson-card a {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  transition: border-color 0.15s, transform 0.15s;
+}
+.lesson-card a:hover {
+  text-decoration: none;
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+.lesson-order {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--accent);
+  font-size: 1.2rem;
+}
+.lesson-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.lesson-title {
+  font-weight: 600;
+}
+.lesson-blurb {
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+}
+
+/* badges */
+.badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.12rem 0.45rem;
+  border-radius: 999px;
+  vertical-align: middle;
+  margin-left: 0.4rem;
+}
+.badge-planned {
+  background: #fff4e5;
+  color: #b45309;
+}
+.badge-draft {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.badge-published {
+  background: #e7f8ee;
+  color: #067647;
+}
+
+/* prose / lessons */
+.prose {
+  font-family: var(--font-prose);
+  font-size: 1.08rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.prose h1 {
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+.prose h2 {
+  margin-top: 2rem;
+}
+.prose blockquote {
+  margin: 1.5rem 0;
+  padding: 0.75rem 1.1rem;
+  border-left: 3px solid var(--accent);
+  background: var(--accent-soft);
+  border-radius: 0 8px 8px 0;
+  color: var(--ink-soft);
+}
+.prose code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.9em;
+  background: #f0f2f6;
+  padding: 0.1em 0.35em;
+  border-radius: 5px;
+}
+.tex-block {
+  overflow-x: auto;
+  padding: 0.5rem 0;
+}
+
+/* sim */
+.sim {
+  margin: 1.5rem 0;
+  padding: 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+}
+.sim-canvas {
+  display: block;
+  border-radius: 8px;
+  background: #f7f9fc;
+}
+.sim-controls {
+  display: flex;
+  flex-wrap: wrap; /* mobile: the slider group drops to its own row instead of overflowing */
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.25rem 0.25rem;
+}
+.sim-controls button {
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.35rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+}
+.sim-controls button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.sim-slider {
+  display: flex;
+  flex-wrap: wrap;
+  min-width: 0;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+.sim-slider input[type='range'] {
+  width: clamp(110px, 30vw, 220px);
+  max-width: 100%;
+  accent-color: var(--accent);
+}
+
+/* Wrapper for figures that take pointer drags (stir, probe). Without this,
+   touch-dragging on the canvas scrolls the page instead of reaching the sim. */
+.sim-stir {
+  touch-action: none;
+}
+.sim-seg {
+  display: flex;
+  gap: 0.25rem;
+  margin-left: auto;
+}
+.sim-seg button.seg-active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+.sim-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.9rem;
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+.sim-toggles label {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  cursor: pointer;
+}
+
+/* waypoint — act-boundary consolidation */
+.waypoint {
+  margin: 2rem 0;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  background: var(--surface);
+  font-size: 0.98rem;
+}
+.waypoint-label {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  margin-bottom: 0.35rem;
+}
+
+/* predict — commit before reveal */
+.predict {
+  margin: 1.5rem 0;
+}
+.predict-question {
+  font-style: italic;
+}
+.predict-options {
+  display: flex;
+  gap: 0.6rem;
+}
+.predict-options button {
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.5rem 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+}
+.predict-options button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.predict-committed {
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+.sim figcaption {
+  padding: 0.25rem;
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}

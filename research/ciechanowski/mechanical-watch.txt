@@ -1,0 +1,821 @@
+TITLE: mechanical-watch
+DATE: May 4, 2022
+FIGURES: 93
+
+# Mechanical Watch
+
+
+In the world of modern portable devices, it may be hard to believe that merely a few decades ago the most convenient way to keep track of time was a mechanical watch. Unlike their quartz and smart siblings, mechanical watches can run without using any batteries or other electronic components.
+
+Over the course of this article I’ll explain the workings of the mechanism seen in the demonstration below. You can drag the device around to change your viewing angle, and you can use the slider to peek at what’s going on inside:
+
+
+[FIGURE 1 | hero | ratio_100]
+
+[CONTROL | hero_sl0]
+
+What you see here is known as the movement – the inner part of a mechanical watch that’s usually enclosed in a metal case. In this article I’m focusing on a watch movement itself, since beautiful watch cases merely hide the intricate mechanisms which are the real stars of the show.
+
+The entire watch movement has a lot of parts, and in this blog post I’ll explain the purpose of each one. The world of watchmaking is jargon-heavy, so many of the components may have unfamiliar names, but you shouldn’t feel pressured to remember them – the names and parts will be {color_red|color-coded} for easy reference.
+
+In a functioning watch many parts are in constant motion. By default all animations in this article are enabled, but if you find them distracting, or if you want to save power, you can globally pause all the following demonstrations.{hidden|disabled, but if you prefer to have things moving as you read you can globally unpause them and have animations running.}
+
+While the entire watch movement has many parts, the timekeeping system, which forms the core function of any watch, consists of just seven major elements which we can lay out in a straight line:
+
+
+[FIGURE 2 | hero_movement | ratio_40]
+
+It may not look like much, but these parts still have a lot of interesting details about them that contribute to the {color_hand|second hand} rotating at a correct pace. We’ll start exploring these details by focusing on the source of power for this entire contraption.
+
+
+# Power
+
+
+Purely mechanical devices have a few different ways to power themselves, but one of the simplest methods to store energy is to use a spring. Most springs we see in daily life are coil springs. In the demonstration below, you can move the {color_red|mass} attached to this type of {color_yellow|spring} to see it bounce:
+
+
+[FIGURE 3 | coil_spring | ratio_100]
+
+[CONTROL | coil_spring_sl0]
+
+When a {color_yellow|spring} like this is compressed, it stores some energy that is then released when the compressing tension is removed. Mechanical watches typically use a different kind of spring – a spiral torsion spring. This type of {color_yellow|spring} is loaded when it’s twisted. When let go, the {color_yellow|spring} unwinds in the opposite direction to eventually settle in its natural state:
+
+
+[FIGURE 4 | torsion_spring | ratio_100]
+
+[CONTROL | torsion_spring_sl0]
+
+In a mechanical watch, we ultimately want to show rotating hands, so a spinning motion that a torsion spring provides is particularly useful. A {color_gray|spring} in a typical mechanical watch has a slightly more complicated shape – you can see it below in its relaxed state. By dragging the {color_gray|slider} you can try to wind it midair, but as soon as you let go, it will snap back to its original shape:
+
+
+[FIGURE 5 | mainspring_s | ratio_100]
+
+[CONTROL | mainspring_s_sl0]
+
+As you can see, this {color_gray|spring} is quite strong and it wants to expand very rapidly. To contain the {color_gray|spring} we have to put it in a casing known as a {color_red|barrel}:
+
+
+[FIGURE 6 | mainspring_barrel | ratio_100]
+
+[CONTROL | mainspring_barrel_sl0]
+
+Once in the {color_red|barrel}, the {color_gray|spring} still wants to expand to its original state, but the {color_red|barrel’s} wall keep it in place. This {color_gray|spring} is the storage of energy for the watch and its name, the mainspring, reflects its importance.
+
+Unfortunately, we can’t really get any useful work from the {color_gray|mainspring} in this state – it has already expanded to the largest possible size. To store more energy in it we need to wind it tightly using the {color_yellow|arbor} that we’ll first attach on the inner side of the {color_gray|mainspring}:
+
+
+[FIGURE 7 | mainspring_arbor | ratio_100]
+
+[CONTROL | mainspring_arbor_sl0]
+
+If you look closely, the {color_gray|mainspring} has a little hole near its end – you can see it in the center of the demonstration. The {color_yellow|arbor} has a little hook that grabs onto that hole:
+
+
+[FIGURE 8 | mainspring_arbor_hook | ratio_100]
+
+[CONTROL | mainspring_arbor_hook_sl0]
+
+When the {color_yellow|arbor} is turned, it pulls the {color_gray|mainspring} with it, causing it to wind. In the demonstration below, we’re holding the {color_red|barrel} tight, and you can turn the {color_yellow|arbor} by dragging the slider:
+
+
+[FIGURE 9 | mainspring_wind0 | ratio_100]
+
+[CONTROL | mainspring_wind0_sl0]
+
+Notice that as soon as you let go of the {color_yellow|arbor} by releasing the slider, the {color_gray|mainspring} will turn the {color_yellow|arbor} right back. This is less than desired – we want the {color_red|barrel} to turn instead, so that it can power the other parts of the watch. To get some useful work from the {color_gray|mainspring}, we’ll have to keep holding on to the {color_yellow|arbor} and instead let the {color_red|barrel} go when we want to use the stored energy:
+
+
+[FIGURE 10 | mainspring_wind1 | ratio_100]
+
+[CONTROL | mainspring_wind1_sl0]
+
+We’ll soon see how this is accomplished in practice, but for now we’ll assume that the {color_yellow|arbor} is held tight and the {color_gray|mainspring} ends up rotating the {color_red|barrel}, just like in the demonstration above. Before we finish up with the {color_gray|mainspring} and the {color_red|barrel}, let’s discuss two other details that make this mechanism more reliable. Let me bring up the relaxed spring one more time:
+
+
+[FIGURE 11 | mainspring_s2 | ratio_100]
+
+[CONTROL | mainspring_s2_sl0]
+
+The {color_blue|metal strip} attached to the {color_gray|mainspring} provides additional tension to its outer part. That {color_blue|metal strip} really wants to snap back to its straight shape, so it pushes against the wall of the {color_red|barrel}, creating a lot of friction that keeps the mainspring in place:
+
+
+[FIGURE 12 | mainspring_friction | ratio_100]
+
+This locks the outer end of the {color_gray|mainspring} when the {color_yellow|arbor} moves the inner. If we were to keep winding the {color_gray|spring} past its maximum capacity, we’d overpower that friction letting the {color_gray|mainspring} slip inside – this acts as a safety mechanism to prevent the parts from breaking.
+
+As we’ve seen, in its relaxed state, the {color_gray|mainspring} forms an S-shape with varied curvature throughout. This helps to balance the tension in {color_gray|mainspring’s} different sections when it is inside the {color_red|barrel}. Notice that the inner sections of the wound spring have a much smaller radius than the outer parts. If the relaxed spring was just a straight piece of metal, then after winding, the inner parts would be bent much more than the outer parts. With the S-shaped spring the outer sections of the spring are also under a similar tension because they want to get back to their curve that is bent in the opposite direction.
+
+To secure the {color_gray|mainspring} and prevent dust from getting in we close the {color_red|barrel} with a lid that snaps into its place:
+
+
+[FIGURE 13 | mainspring_lid | ratio_100]
+
+[CONTROL | mainspring_lid_sl0]
+
+We’ve managed to make some parts rotate and one could naively think that we could just attach a {color_hand|watch hand} to the {color_red|barrel} to make it track time. Unfortunately, that won’t really work – you can witness this in the demonstration below. You can see how this “watch” behaves after you wind the {color_gray|mainspring} with the slider and let it go:
+
+
+[FIGURE 14 | mainspring_wind2 | ratio_100]
+
+[CONTROL | mainspring_wind2_sl0]
+
+We clearly have some work to do – the {color_hand|hand} spins way too fast and it only does a few rotations before the {color_gray|mainspring} inside the {color_red|barrel} runs out of the stored energy. Clearly, this contraption won’t let us track time in any reliable way.
+
+If we wanted our watch to run continuously for around 40 hours on a single wind, we’d need the minute hand to complete 40 rotations in that time. Moreover, the second hand should cover around 40 × 60 = 2400 complete rotations in that time. We need to find a way to convert a small number of revolutions of the {color_red|barrel} into a large number of revolutions of the hands. This is where gears come in.
+
+
+# Gears
+
+
+I’ve talked about gears on this blog before, so let me just recap things very briefly. Gears can be used to change the speed of rotation between two different axes. In the demonstration below, you can witness that by observing little dots I put on each gear – the {color_yellow|yellow gear}, which is powered by the bigger {color_red|red gear}, takes much less time to finish a single revolution:
+
+
+[FIGURE 15 | gears_base | ratio_100]
+
+An important aspect of two matching gears is their number of teeth. Each tooth in one gear meets with a space between teeth in the other gear, so within a unit of time both gears rotate by the same number of teeth. If the number of teeth in two gears is different, those gears can take a different amount of time to complete a single rotation. In the demonstration below, you can change the ratio of the number of teeth between the driving {color_red|red gear} and the driven {color_yellow|yellow gear} to see how it affects the speed of rotation of that {color_yellow|yellow gear}:
+
+
+[FIGURE 16 | gears_base2 | ratio_50]
+
+[CONTROL | gears_base2_seg0]
+
+These gears are intended to work with each other so the ratio of teeth is equivalent to the ratio of the gear radii. When the {color_red|driving gear} has more teeth than the {color_yellow|driven gear}, the {color_yellow|driven gear} makes more rotations than the {color_red|driving gear}. We can use this behavior to make the second hand of a watch rotate many times on a single rotation of the barrel.
+
+Let’s consider how much of a speed increase we have to do here. The barrel can rotate close to 7 times on a single wind, but we want the second hand to complete around 2400 revolutions in the same time. We need the ratio of teeth, or the ratio of radii, to be around 343:1. Let’s see how that would look in practice. In the demonstration below, you can use the slider to look at the two gears from further away:
+
+
+[FIGURE 17 | gears_base3 | ratio_50]
+
+[CONTROL | gears_base3_sl0]
+
+As you can see, these proportions are ridiculous – to make the {color_red|red gear} fit in any reasonably sized watch, the {color_yellow|yellow gear} would have to be absolutely tiny and both gears would have to have very fragile, microscopic teeth.
+
+Instead, mechanical watches use a train of gears with multiple gears working in pairs – each pair increases the speed to some extent. In the demonstration below, you can see the four wheels participating in this reduction. Notice that there are two gears on most axes of rotation. You can control the speed of rotation of this gear train using the slider:
+
+
+[FIGURE 18 | gear_train | ratio_50]
+
+[CONTROL | gear_train_sl0]
+
+The {color_red|barrel} acts as the {color_red|first wheel}, it drives the {color_orange|second wheel}, which drives the {color_yellow|third wheel}, which finally drives the {color_green|fourth wheel}. Notice that each big gear drives a smaller gear called a pinion. A pinion is mounted on the same shaft as the next big gear so we’re able to keep increasing the speed on each axis. This approach has significant advantages – we’re able to make the overall mechanism much smaller and we’ll soon use one of the intermediate wheels that rotates at a slower rate to drive minute and hour hands.
+
+Before we finish up with gears, let me quickly mention the shape of their teeth. While many bigger machines use an involute shape for the profile of their gear teeth, mechanical watches commonly use cycloidal profiles which are obtained by rolling a circle on the surface of another circle.
+
+Let’s see how the so-called going train that we’ve assembled works when we wind the {color_gray|mainspring} through the {color_yellow|arbor} and let the watch run:
+
+
+[FIGURE 19 | gear_train2 | ratio_50]
+
+[CONTROL | gear_train2_sl0]
+
+We’ve certainly achieved the goal of the {color_hand|second hand} rotating many times on a single rotation of the {color_red|barrel}, but the speed of revolution of that {color_hand|hand} is still completely untamed. We need to find a way to control the rate of release of the energy stored in the {color_gray|mainspring} – we’ll do this with the escapement.
+
+
+# Escapement
+
+
+Let’s start by looking at the two components that create the escapement – the {color_cyan|escape wheel} and the {color_blue|pallet fork}:
+
+
+[FIGURE 20 | escapement_parts | ratio_100]
+
+Notice the unusual shape of the teeth of the {color_cyan|escape wheel} – it’s very different than the gears we’ve seen before. Its top part hosts a regularly shaped gear that can be used to turn that {color_cyan|wheel}.
+
+The {color_blue|pallet fork} itself is made of metal, but notice the two {color_jewel|pinkish} transparent parts at its end. These are {color_jewel|jewels} made from synthetic ruby. That compound is not only very hard, which prevents its wear, but it also has a low coefficient of friction with steel. Let’s see why these properties are important by observing how these two components interact with each other:
+
+
+[FIGURE 21 | escapement_action | ratio_100]
+
+[CONTROL | escapement_action_sl0]
+
+The {color_cyan|escape wheel} wants to rotate as indicated by the {color_red|red arrow}. The {color_blue|pallet fork} prevents that motion, but as we pivot that {color_blue|pallet fork} back and forth we let the {color_cyan|escape wheel} briefly escape from that jail only to be stopped again.
+
+We’ll see the details of that interaction in a few paragraphs, but right now this mechanism lets us control the rotation of the {color_cyan|escape wheel} by simply moving the {color_blue|pallet fork} from one side to another. Let’s see how these pieces fit into the rest of the assembly. In the demonstration below, I’ve wound the spring for you so the {color_red|barrel}, through the gear train, ends up trying to rotate the {color_cyan|escape wheel}. Using the two buttons you can switch the position of the {color_blue|pallet fork}:
+
+
+[FIGURE 22 | gear_train3 | ratio_50]
+
+[CONTROL | gear_train3_seg0]
+
+The mainspring wants to unwind by rotating the {color_cyan|escape wheel}, but the {color_blue|pallet fork} only allows this to happen for a brief period of time. Because of the gear reduction, the rotation of the {color_red|barrel} is pretty much invisible. However, if you observe the {color_hand|hand} attached to the {color_green|fourth wheel}, you can see it gently rotate as you swing the {color_blue|pallet fork} back and forth.
+
+The little time keeping mechanism is almost fully functional now. The last remaining piece here is a device that will automatically tick the {color_blue|pallet fork} back and forth. However, for the watch to track time correctly that ticking action has to happen at an appropriate cadence. This is where the balance comes in – it forms the beating heart of a watch.
+
+
+# Balance
+
+
+Let’s bring up the first torsion spring we saw before – recall that once you twist it from its original position, it will oscillate back and forth, only to settle after a while:
+
+
+[FIGURE 23 | torsion_spring2 | ratio_100]
+
+[CONTROL | torsion_spring2_sl0]
+
+We can control the rate of this periodic motion by adjusting two parameters. The first one is the stiffness of the spring, which primarily depends on its height, thickness, and length, as well as the type of material from which it’s made. The second one is the mass and its distribution, or, more precisely, the moment of inertia of the object that the spring rotates. Moment of inertia increases when more mass is put further away from the axis of rotation. In the demonstration below, you can tweak both the {color_yellow|stiffness} of the spring and {color_blue|moment of inertia} of the attached mass to see how these parameters affect the period of rotation:
+
+
+[FIGURE 24 | torsion_spring3 | ratio_100]
+
+[CONTROL | torsion_spring3_sl0]
+
+[CONTROL | torsion_spring3_sl1]
+
+[CONTROL | torsion_spring3_sl2]
+
+By carefully tuning these parameters, we can make this system oscillate at a desired rate. This idea of using a torsion spring with attached mass is exactly what mechanical watches use as their source of precise time tracking. The balance is formed by the {color_violet|balance wheel} attached to the {color_gray|balance spring}. In this watch the {color_violet|balance wheel} oscillates back and forth at a fairly high frequency:
+
+
+[FIGURE 25 | balance_wheel | ratio_100]
+
+[CONTROL | balance_wheel_sl0]
+
+At the bottom side of the balance wheel you’ll find another pinkish transparent jewel called {color_jewel|jewel roller}. While small, this part is very important – this {color_jewel|jewel} hits the other end of the {color_blue|pallet fork} as the {color_violet|balance wheel} rotates, which in turn pushes the {color_blue|pallet fork} back and forth. Let’s first look at an overview of how the {color_violet|balance wheel} interacts with the other parts. In the demonstration below, you can slow things down with the slider:
+
+
+[FIGURE 26 | gear_train4 | ratio_40]
+
+[CONTROL | gear_train4_sl0]
+
+Let’s look at this interaction up close, as it deserves a closer attention. In the demonstration below, you can scrub back and forth in time to see all the action as it happens:
+
+
+[FIGURE 27 | gear_train5 | ratio_100]
+
+[CONTROL | gear_train5_sl0]
+
+{gear_train5_explainer|{color_violet|balance wheel} is swinging back} {gear_train5_explainer|{color_jewel|jewel roller} strikes the {color_blue|pallet fork}, knocking it out of position} {gear_train5_explainer|{color_cyan|escape wheel} unlocks and pushes the {color_jewel|jewel} of the {color_blue|pallet fork}} {gear_train5_explainer|{color_blue|pallet fork} pushes the {color_jewel|jewel roller} and the {color_violet|balance wheel}} {gear_train5_explainer|{color_cyan|escape wheel} locks again} {gear_train5_explainer|{color_violet|balance wheel} continues its swing}
+
+As the {color_violet|balance wheel} swings, the {color_jewel|jewel roller} strikes the {color_blue|pallet fork}, which unlocks the {color_cyan|escape wheel}. Once unlocked, the {color_cyan|escape wheel} powered by the mainspring pushes on the {color_blue|pallet fork} which, through the {color_jewel|jewel roller}, pushes on the {color_violet|balance wheel} itself. This causes the {color_violet|balance wheel} to gain some energy, which prevents it from stopping after a while – it’s equivalent to giving a push to a person swinging on a swing. When the {color_violet|balance wheel} comes back, it performs the same action, just in the other direction.
+
+You may also have noticed a subtle dance between the {color_yellow|little horn} at the end of the {color_blue|pallet fork} and the {color_green|notched disk} on the {color_violet|balance wheel}. Those parts make sure that the {color_blue|pallet fork} can switch sides only at the appropriate time – it’s a safety mechanism that prevents the watch from locking up when the watch is shaken or dropped:
+
+
+[FIGURE 28 | gear_train7 | ratio_100]
+
+[CONTROL | gear_train7_sl0]
+
+Once the {color_blue|pallet fork} unlocks the {color_cyan|escape wheel}, that wheel has to start spinning very quickly. This is why gears in the gear train have holes in them – it reduces their moment of inertia so that the {color_red|barrel} can accelerate them more quickly.
+
+It’s also important to mention that the gear train not only increases the speed of the gears, but it also reduces the forces acting on the balance. The {color_red|barrel} itself turns quite forcefully but at the {color_cyan|escape wheel} the torque is greatly reduced, which prevents the {color_cyan|escape wheel} from pushing the {color_blue|pallet fork} and thus the {color_violet|balance wheel} with too much vigor.
+
+Let’s look at the entirety of what we’ve built so far one last time. I’m now running the mechanism at its normal speed:
+
+
+[FIGURE 29 | gear_train6 | ratio_50]
+
+In this watch movement the {color_violet|balance wheel} does a full back and forth swing four times per second, hitting the {color_blue|pallet fork} twice during each cycle, for a total of 8 beats per second or 28,800 beats per hour. While different watches may have different rates, they all do a tiny turn of the {color_hand|second hand} many times per second, which gives mechanical watches the illusion of a very smooth hand motion.
+
+In principle, all the pieces we have here are sufficient for the watch to run, but we’re still missing a few details. More importantly, we’ve just been hanging the parts in the air, so it’s time we started a proper assembly of the complete watch movement.
+
+
+# Mainplate
+
+
+We’ll start with the mainplate, which forms the main body of the movement:
+
+
+[FIGURE 30 | main_plate | ratio_100]
+
+Notice that it has a lot of different openings – we’ll fill them in by the end of this article. The pink elements are yet again {color_jewel|ruby jewels}. They form bearings in which the axes of various components can rotate. Let’s look at a simple jewel up close:
+
+
+[FIGURE 31 | jewel | ratio_100]
+
+Notice that a {color_jewel|jewel} has a small basin in it. To even further reduce energy losses of the rotating components, a small amount of special oil is placed in that cavity. That oil sticks to the {color_jewel|jewel} and a shaft that rotates inside it to further decrease the friction, which lets the watch run longer on a single wind, while also reducing wear on the delicate mechanical parts.
+
+The first two components we will mount onto the mainplate are the {color_cyan|escape wheel} and the {color_blue|pallet fork}:
+
+
+[FIGURE 32 | pallet_fork_assembly | ratio_100]
+
+[CONTROL | pallet_fork_assembly_sl0]
+
+The {color_blue|pallet fork} itself is then topped with the {color_bridge|pallet fork bridge}. That {color_bridge|bridge} holds the other end of the {color_blue|pallet fork’s} axis, and it is attached to the mainplate with {color_dark_gray|two screws}:
+
+
+[FIGURE 33 | pallet_fork_bridge_assembly | ratio_100]
+
+[CONTROL | pallet_fork_bridge_assembly_sl0]
+
+Notice that in this watch the side-to-side movement of the {color_blue|pallet fork} is limited by the shape of the two knobs in the central part of the {color_bridge|pallet fork bridge}:
+
+
+[FIGURE 34 | pallet_fork_limits | ratio_100]
+
+[CONTROL | pallet_fork_limits_sl0]
+
+This ensures that the {color_cyan|escape wheel} can only push the {color_blue|pallet fork} so far before the motion is physically stopped by these knobs.
+
+Next, we can put the rest of the gear train in. All four wheels are cleverly arranged so that they occupy only a small amount of space:
+
+
+[FIGURE 35 | main_plate_gears | ratio_100]
+
+[CONTROL | main_plate_gears_sl0]
+
+Notice that the {color_green|fourth wheel} goes directly through the center of the watch – you can see its axis poking on the other side. By the end of our assembly we’ll attach a second hand on the end of that long axis. To secure all elements in place, we cap them with a {color_bridge|train wheel bridge}, which provides the setting for the other ends of the shafts for all rotating parts. That {color_bridge|bridge} is {color_dark_gray|screwed} to the mainplate to hold everything in place:
+
+
+[FIGURE 36 | main_plate_gears2 | ratio_100]
+
+[CONTROL | main_plate_gears2_sl0]
+
+The only remaining part from the initial mechanism that we haven’t yet mounted is the balance, which forms its own little assembly. Let’s build it up first by attaching all the parts to the {color_bridge|balance bridge}:
+
+
+[FIGURE 37 | balance_assembly | ratio_100]
+
+[CONTROL | balance_assembly_sl0]
+
+Notice that the {color_gray|balance spring} is very delicate and the {color_violet|balance wheel} ends up stretching it out. Because of its thinness, the {color_gray|balance spring} is often referred to as hairspring. The {color_yellow|yellow} and {color_cyan|teal} components both regulate the behavior of the balance. Let’s see how they work in action:
+
+
+[FIGURE 38 | balance_assembly2 | ratio_100]
+
+[CONTROL | balance_assembly2_sl0]
+
+[CONTROL | balance_assembly2_sl1]
+
+The {color_yellow|yellow components} are firmly attached to the {color_gray|balance spring}, and by turning them, we can adjust the resting position of the {color_violet|balance wheel} and its {color_jewel|jewel roller}. This ensures that both the “tick” and “tock” phases of the {color_violet|balance wheel} swing take the same amount of time.
+
+The {color_cyan|teal components} can freely slide on the {color_gray|hairspring}, but they reduce or increase its effective length as they prevent the tail section of the {color_gray|hairspring} from oscillating freely. By adjusting position of these {color_cyan|teal components} we can modify the duration of a single beat and make the watch run slightly faster or slower. That speed regulation can also be fine-tuned using the {color_gray|screw} in the top part – its head is not centered, so when turned it will gently rotate the little {color_cyan|teal fork}.
+
+The {color_gray|hairspring} is made from special alloys like Nivarox that keep the spring’s stiffness invariant to temperature differences, which improves the overall timekeeping accuracy.
+
+The final portion of the balance assembly is the shock protector mechanism, which consists of the {color_yellow|casing}, {color_jewel|two jewels}, and a {color_cyan|tiny spring} that keeps everything in place:
+
+
+[FIGURE 39 | balance_assembly3 | ratio_100]
+
+[CONTROL | balance_assembly3_sl0]
+
+This mechanism protects the fragile tips of the {color_violet|balance shaft} from breaking when the watch experiences a sudden jerk. Let’s see how these pieces act together when the {color_violet|balance shaft} is jolted around:
+
+
+[FIGURE 40 | shock_protector | ratio_100]
+
+[CONTROL | shock_protector_sl0]
+
+When the watch is shaken, the motion of the {color_violet|shaft} is absorbed by the {color_cyan|spring}, similarly to the suspension system in a car. If the jerk is very strong, then the much thicker and stronger part of {color_violet|balance shaft} carries the load through the {color_gray|case}, which protects the fragile tip from breaking.
+
+Let’s attach the entire balance assembly to the rest of the movement we’ve built so far. Notice that the other end of the {color_violet|balance wheel’s} axis also rests on the shock protection jewels embedded in the mainplate:
+
+
+[FIGURE 41 | balance_assembly_assembly | ratio_100]
+
+[CONTROL | balance_assembly_assembly_sl0]
+
+With that last step, we’ve actually finished recreating the core of the watch mechanism that we’ve previously seen floating in the air. However, you may remember that I’ve glanced over the little detail of how to make sure that the {color_gray|mainspring} stays wound. Let’s see what happens if we actually try to wind the watch using the {color_yellow|arbor}. For the sake of clarity I also cut a hole in the top part of the {color_red|barrel} so that you can see the {color_gray|spring} inside:
+
+
+[FIGURE 42 | arbor_spring_wind | ratio_100]
+
+[CONTROL | arbor_spring_wind_sl0]
+
+As long as the {color_yellow|arbor} is held, the {color_gray|mainspring} can power the rest of the watch – you can see the rotation of the {color_hand|second hand} attached to the {color_green|fourth wheel} on the other side of the watch. However, as we let the {color_yellow|arbor} go the {color_gray|mainspring} finds an easy way to release its tension by just turning the {color_yellow|arbor} back – the {color_gray|spring} quickly losses all its stored energy and the watch stops.
+
+To prevent the {color_gray|mainspring} from unwinding on its own, we need to restrain the {color_yellow|arbor} from turning counterclockwise, while still allowing the clockwise rotation so that we can wind the {color_gray|spring}. This seemingly complicated problem is solved with a very simple mechanism known as the click – let’s see how it works.
+
+
+# Click
+
+
+To continue developing our assembly, we firstly need to put a solid foundation in the form of the {color_bridge|barrel bridge} – it holds the {color_red|barrel} in place and provides structure for other parts. Since this {color_bridge|bridge} will make some areas inaccessible, we’re also going to attach a {color_cyan|little lever} that we will get back to at a later point:
+
+
+[FIGURE 43 | arbor_barrel_bridge | ratio_100]
+
+[CONTROL | arbor_barrel_bridge_sl0]
+
+Then, we’ll {color_dark_gray|screw} in the {color_green|ratchet wheel} onto the {color_yellow|arbor}. Notice that the {color_green|ratchet wheel} has a square opening, which matches the square shape of the top part of the {color_yellow|arbor}:
+
+
+[FIGURE 44 | arbor_ratchet_wheel | ratio_100]
+
+[CONTROL | arbor_ratchet_wheel_sl0]
+
+Those matching square shapes will cause the {color_yellow|arbor} to turn when the {color_green|ratchet wheel} is turned. I temporarily removed the {color_dark_gray|screw} to make things easier to see:
+
+
+[FIGURE 45 | arbor_ratchet_wheel_turn | ratio_100]
+
+[CONTROL | arbor_ratchet_wheel_turn_sl0]
+
+Here come the three critical pieces of the puzzle. Firstly, we put the little {color_blue|click} in the opening on top of the {color_bridge|barrel bridge}:
+
+
+[FIGURE 46 | click_assembly | ratio_100]
+
+[CONTROL | click_assembly_sl0]
+
+Within its limited range the {color_blue|click} can rotate back and forth on its little axis:
+
+
+[FIGURE 47 | click_rotation | ratio_100]
+
+[CONTROL | click_rotation_sl0]
+
+The second piece of the puzzle is a {color_red|click spring}. This little piece of metal is very springy. When we {color_green|squeeze} it, it wants to pop back:
+
+
+[FIGURE 48 | click_spring_flex | ratio_100]
+
+[CONTROL | click_spring_flex_sl0]
+
+We compress that {color_red|click spring} a little and we also put it into the {color_bridge|barrel bridge}:
+
+
+[FIGURE 49 | click_spring_assembly | ratio_100]
+
+[CONTROL | click_spring_assembly_sl0]
+
+Notice that when we try to rotate the {color_blue|click}, the {color_red|click spring} will push it back in place as soon as we let go:
+
+
+[FIGURE 50 | click_rotation_spring | ratio_100]
+
+[CONTROL | click_rotation_spring_sl0]
+
+The final piece of the puzzle is the {color_yellow|crown wheel}, which also lands on the {color_bridge|barrel bridge}. It’s secured in a place with a {color_dark_gray|screw} with a left-handed thread – unlike most regular screws this one is fastened when turned in the counterclockwise direction:
+
+
+[FIGURE 51 | crown_wheel_assembly | ratio_100]
+
+[CONTROL | crown_wheel_assembly_sl0]
+
+Notice how the teeth of the {color_yellow|crown wheel} interact with the {color_green|ratchet wheel}. While it looks as if the {color_yellow|crown wheel} was missing every other tooth, the two gears can still mesh and function together. The gaps in the {color_yellow|crown wheel} allow the little post on the {color_blue|click} to fall between the {color_yellow|crown wheel’s} teeth.
+
+If we {color_turn|turn} the {color_yellow|crown wheel} counterclockwise, it will mesh with the {color_green|ratchet wheel} and wind the spring. Notice how the teeth of the {color_yellow|crown wheel} end up pushing the {color_blue|click} away, but it snaps back as soon as there is some space:
+
+
+[FIGURE 52 | crown_wheel_ccw | ratio_100]
+
+[CONTROL | crown_wheel_ccw_sl0]
+
+When the {color_blue|click} snaps back and hits the {color_yellow|crown wheel}, it makes a clicking sound, which explains its name.
+
+The counterclockwise turn of the {color_yellow|crown wheel} allows us to wind the mainspring, so let’s see what happens when we try to {color_turn|turn} it in the opposite direction. In the simulation below, notice how the {color_yellow|crown wheel’s} teeth jam with the {color_blue|click}, preventing the {color_yellow|crown wheel’s} rotation:
+
+
+[FIGURE 53 | crown_wheel_cw | ratio_100]
+
+[CONTROL | crown_wheel_cw_sl0]
+
+This simple mechanism allows us to wind the mainspring by turning the {color_yellow|crown wheel}, which you can do in the demonstration below. The {color_blue|click} also prevents the mainspring from unwinding on its own – that’s why you can’t drag back the slider without restarting the entire simulation:
+
+
+[FIGURE 54 | crown_wheel_go | ratio_100]
+
+[CONTROL | crown_wheel_go_sl0]
+
+The {color_hand|second hand} on the other side of the watch shows how the seconds are tracked, but a functional watch should show minutes and hours as well. Let’s see how this watch movement accomplishes these goals with a set of gears that form the so-called motion works.
+
+
+# Motion Works
+
+
+In our movement, the second hand is cleverly mounted on the fourth wheel of the power train since that wheel rotates once per minute with high precision. For the minute hand to turn at the correct pace, we need some axis to rotate 60 times slower than that. Thankfully, the designers of this watch movement used an ingenious way to harness some of that speed reduction from the other gears.
+
+If you look closely, you can see that the small gear of the {color_yellow|third wheel} from the other side of the watch is exposed through a little opening. We can mount a {color_green|cannon pinion} with its {color_blue|driving wheel} onto the center of the watch and have that {color_blue|driving wheel} mesh with the {color_yellow|small gear}:
+
+
+[FIGURE 55 | cannon_pinion_assembly | ratio_100]
+
+[CONTROL | cannon_pinion_assembly_sl0]
+
+When that {color_yellow|third wheel} rotates, it turns the {color_blue|driving wheel} and thus the {color_green|cannon pinion}. By mounting the minute hand on that {color_green|cannon pinion} we can keep track of passing minutes – the number of teeth in all the involved gears is carefully calculated to achieve the desired 60 times speed reduction compared to the second hand.
+
+Let’s see the functional second hand and minute hand in the demonstration below. The slider lets you control the speed of flowing time so that you don’t have to wait too patiently to see hands change their position:
+
+
+[FIGURE 56 | cannon_pinion_action | ratio_100]
+
+[CONTROL | cannon_pinion_action_sl0]
+
+The hour hand itself needs to rotate 12 times slower than the minute hand, but we can easily achieve that using two additional gears. The intermediate {color_red|minute wheel} meshes with the {color_green|cannon pinion}, and the {color_yellow|hour wheel} meshes with the pinion of that {color_red|minute wheel}:
+
+
+[FIGURE 57 | hour_wheel_assembly | ratio_100]
+
+[CONTROL | hour_wheel_assembly_sl0]
+
+The {color_yellow|hour wheel} can loosely rotate on the {color_green|cannon pinion} so that they can both turn independently of each other. By putting the hour hand on that {color_yellow|hour wheel}, we can finish assembling the mechanism that drives the hands of the watch. I’ve also attached a dial that has each of the twelve hours marked – it actually lets us read the time that the hands are showing:
+
+
+[FIGURE 58 | hour_wheel_action | ratio_100]
+
+[CONTROL | hour_wheel_action_sl0]
+
+Time keeping is the fundamental function of every watch, but many devices go beyond that by adding various additional features known as complications. While our movement is not very sophisticated, it still has a nice complication that shows the current day of the month right in the little window on the right side of the dial. Let’s see how this feature is implemented.
+
+
+# Date
+
+
+The date mechanism in this watch consists of four major parts – the {color_red|jumper spring}, the {color_green|indicator gear}, the {color_bridge|date jumper plate} with its {color_blue|gear}, and the big date ring itself with all possible 31 days imprinted on it:
+
+
+[FIGURE 59 | date_assembly | ratio_100]
+
+[CONTROL | date_assembly_sl0]
+
+To explain how this mechanism works I’ll first hide all the unrelated parts. I’ll also remove the cover from the {color_green|indicator gear}, which reveals a {color_orange|small torsion spring} hidden inside it. Let’s see how these pieces work together when the {color_yellow|hour wheel} rotates. You can go back and forth in time using the slider:
+
+
+[FIGURE 60 | date_action | ratio_100]
+
+[CONTROL | date_action_sl0]
+
+As the {color_yellow|hour wheel} turns, it rotates the {color_blue|gear} in the {color_bridge|date jumper plate}. The other side of that {color_blue|gear} then turns the {color_green|indicator gear} and the {color_orange|torsion spring} attached to it. That {color_orange|spring} snags onto a tooth on the date ring and gets flexed, but at some point it starts to push the date ring forward. When the ring rotates enough the {color_red|jumper spring} rapidly snaps the ring to the next position.
+
+You may wonder why we need this complicated mechanism in the first place. One could naively assume that we could directly tie the rotation of the date ring to the rotation of the {color_yellow|hour wheel}, similarly to how we rotated the {color_yellow|hour wheel} in sync with minutes, albeit at slower pace. Unfortunately, this would cause the current date to continuously rotate under the little window in the dial, making it hard to read. You can see that behavior on the left side in the demonstration below:
+
+
+[FIGURE 61 | date_flow | ratio_60]
+
+On the right side you can see the date indicator as operated by the mechanism that we’ve just built – the date only changes around midnight. You may have realized that the date tracking in our movement is not particularly smart. This watch always counts 31 days every month, so we have to change the date a day after a shorter month occurs. Moreover, if the watch hasn’t been running for a while, the time itself may be incorrectly set. We need to find a way to adjust date and time on our watch.
+
+Thankfully, gears driving the minute hand, the hour hand, and the date indicator are all connected, so we can adjust everything by turning a {color_red|single gear}. I’ll briefly hide the {color_yellow|hour wheel} to make things visible:
+
+
+[FIGURE 62 | hour_wheel_time_set | ratio_100]
+
+[CONTROL | hour_wheel_time_set_sl0]
+
+Notice that when we turn the {color_red|minute wheel} only the {color_green|cannon pinion} turns. That {color_green|pinion} fits tightly inside its {color_blue|driving gear} – it usually turns with that {color_blue|gear}. However, when the {color_blue|driving gear} can’t rotate because it’s blocked by the rest of the gear train, the {color_green|cannon pinion} can overpower the friction of that tight fit and rotate on its own. This lets us set time without interfering with the gear train, which could break the delicate parts.
+
+With the {color_yellow|hour wheel} in place, rotation of the {color_red|minute wheel} also sets the hour, and, if we turn that {color_red|gear} long enough, the date:
+
+
+[FIGURE 63 | hour_wheel_time_set2 | ratio_100]
+
+[CONTROL | hour_wheel_time_set2_sl0]
+
+With every step our watch is becoming more complete, but we still have a few inconveniences in our way. To change the time and to wind the mainspring, we have to turn the internal gears of the movement, which normally are safely hidden inside the watch case.
+
+Moreover, on every month that lasts less than 31 days, we currently have to tweak the time setting, as that’s the only way to adjust the date. Ideally, we’d find a way to set the date separately from the time.
+
+To fix these problems we’ll assemble the keyless works which is a mechanism that will let us resolve all these issues.
+
+
+# Keyless Works
+
+
+Firstly, let’s look at the {color_dark_gray|crown}, which is the main interface for operating the watch, and the {color_gray|stem} that is attached to that crown:
+
+
+[FIGURE 64 | stem_crown | ratio_100]
+
+The crown sits freely on the outside of the watch and is directly touched by the user. Notice that part of the stem has a square cross section. The stem carries two additional components – the {color_red|winding pinion} and the {color_blue|sliding pinion}. First, let’s slide them on to see how they fit:
+
+
+[FIGURE 65 | winding_sliding_pinion | ratio_100]
+
+[CONTROL | winding_sliding_pinion_sl0]
+
+The {color_red|winding pinion} has a circular opening so it can rotate on the {color_gray|stem} easily. However, the {color_blue|sliding pinion} has a square opening which aligns with the section of the {color_gray|stem} that has a square shape. That square interlocking causes the {color_blue|sliding pinion} to rotate with the {color_gray|stem} as the {color_turn|crown turns}:
+
+
+[FIGURE 66 | sliding_pinion_rotation | ratio_100]
+
+[CONTROL | sliding_pinion_rotation_sl0]
+
+Let’s put these pieces into the main assembly. I temporarily removed the date ring so that it doesn’t get in our way:
+
+
+[FIGURE 67 | crown_stem_pinion_assembly | ratio_100]
+
+[CONTROL | crown_stem_pinion_assembly_sl0]
+
+Notice that the {color_red|winding pinion} meshes with the {color_yellow|crown wheel} on the other side of the watch. To actually turn the {color_red|winding pinion} we first have to move the {color_blue|sliding pinion} all the way towards it – I symbolize this pushing force with the {color_blue|blue arrow} below. If we now {color_turn|turn the crown} the matching shape of the neighboring surfaces on the {color_red|winding pinion} and the {color_blue|sliding pinion} causes them to interlock. We’re ultimately able to turn the {color_yellow|crown wheel} and the rest of the mainspring-winding machinery by {color_turn|turning the crown} clockwise:
+
+
+[FIGURE 68 | crown_stem_pinion_turn | ratio_100]
+
+[CONTROL | crown_stem_pinion_turn_sl0]
+
+However, if we {color_turn|rotate} the crown in the other direction, the shape of the neighboring surfaces will push the {color_blue|sliding pinion} away, because the {color_yellow|crown wheel}, and therfore the {color_red|winding pinion}, can’t rotate in the opposite direction. This safety mechanism ensures that any forceful rotation of the crown in the “wrong” direction won’t break the movement.
+
+It seems that we’ve achieved our goal of being able to wind the spring by simply {color_turn|turning the crown}. Unfortunately, we still have a small problem to solve – we need something to actually exert the force that pushes the {color_blue|sliding pinion} towards the {color_red|winding pinion}.
+
+Moreover, in some cases we want the {color_turn|rotation of the crown} to serve different purposes. Other than winding the mainspring, in our watch we want to be able to adjust the date, and, separately, the time. We’ll choose each of those three actions by pulling the crown in and out.
+
+Let’s build a mechanism that will solve these problems. Firstly, we’ll put the {color_yellow|corrector lever} and the {color_green|setting lever} in place:
+
+
+[FIGURE 69 | corrector_setting_level_assembly | ratio_100]
+
+[CONTROL | corrector_setting_level_assembly_sl0]
+
+If we now {color_pull|pull the crown} in and out, these parts will rotate on their little pivots with a fairly complex interaction between them:
+
+
+[FIGURE 70 | corrector_setting_level_interaction | ratio_100]
+
+[CONTROL | corrector_setting_level_interaction_sl0]
+
+With the other parts in the way it may be hard to see what’s going on, so let’s look at these components on their own. Notice the intricate interlocking that happens when we {color_pull|pull the crown} in and out with the slider:
+
+
+[FIGURE 71 | corrector_setting_level_interaction1 | ratio_100]
+
+[CONTROL | corrector_setting_level_interaction1_sl0]
+
+A groove in the {color_gray|stem} ends up locking with a {color_red|small post} in the {color_green|setting lever}, causing it to rotate as the {color_pull|crown is pulled}. The {color_orange|other post} on the {color_green|setting lever} ends up pushing and hooking with the {color_yellow|corrector lever}, making it rotate as well.
+
+So far the mechanism doesn’t do anything interesting, so let’s put the {color_orange|setting wheel} on top of the {color_yellow|corrector lever}:
+
+
+[FIGURE 72 | setting_wheel_asembly | ratio_100]
+
+[CONTROL | setting_wheel_asembly_sl0]
+
+That {color_orange|wheel} can move freely on its post. If we now {color_pull|pull the crown} in and out we can see that the {color_orange|setting wheel} engages with the minute works:
+
+
+[FIGURE 73 | setting_wheel_interaction | ratio_100]
+
+[CONTROL | setting_wheel_interaction_sl0]
+
+By turning that {color_orange|setting wheel} we’ll be able to set time on the watch, but to turn that {color_orange|wheel} we need to slide the {color_blue|sliding pinion} towards it so that the {color_turn|rotation of the crown} and the attached {color_blue|sliding pinion} rotates the {color_orange|setting wheel}:
+
+
+[FIGURE 74 | setting_wheel_sliding_pinion_interaction | ratio_100]
+
+[CONTROL | setting_wheel_sliding_pinion_interaction_sl0]
+
+This poses a challenge – we need to control the position of the {color_blue|sliding pinion} to, depending on the mode, engage the {color_red|winding pinion} to wind the mainspring, or the {color_orange|setting wheel} to set the time. This is where the {color_cyan|yoke} comes in:
+
+
+[FIGURE 75 | yoke_asembly | ratio_100]
+
+[CONTROL | yoke_asembly_sl0]
+
+In the close-up down below you can observe that {color_cyan|yoke} fits into the groove on the {color_blue|sliding pinion}, so as the {color_cyan|yoke} rotates on its pivot, it will push the {color_blue|sliding pinion} in and out, causing it to slide. Additionally, the {color_cyan|yoke} itself is pushed by the {color_green|setting lever} as we {color_pull|pull the crown}:
+
+
+[FIGURE 76 | yoke_interaction | ratio_100]
+
+[CONTROL | yoke_interaction_sl0]
+
+We’re almost done with this little mechanism, we just need to finish the little details. Firstly, we want to keep all the fragile pieces in place – right now nothing prevents them from falling off their careful placement. Secondly, when we {color_pull|pull the crown}, there are no distinctive stops in its movement – by turning the crown we may accidentally change the current mode. Finally, when we {color_pull|push the crown} all the way in to switch back to the winding mode, we want the {color_cyan|yoke} to reliably return to its initial position. This is where the {color_violet|setting lever jumper} comes in – it serves all three of these purposes:
+
+
+[FIGURE 77 | jumper_asembly | ratio_100]
+
+[CONTROL | jumper_asembly_sl0]
+
+That part is {color_dark_gray|screwed} to the mainplate, which prevents the other parts from falling out. Its various arms and legs also help to keep the things pressed down. Let’s see how the {color_violet|setting lever jumper} helps us with other two problems. Notice the three small grooves that I’m pointing out with the {color_dark_gray|gray arrows}:
+
+
+[FIGURE 78 | jumper_interaction | ratio_100]
+
+[CONTROL | jumper_interaction_sl0]
+
+As we {color_pull|pull the crown} in and out, the small post in the {color_green|setting lever} ends up snapping into one of those three places. To jump between the grooves, that small post has to bend the long arm of the {color_violet|jumper}, which creates tension that pushes that small post into the closest groove. We end up with three distinct positions that all the pieces can rest in – once locked we can reliably turn the crown without risk of accidentally changing the current mode.
+
+Finally, on the other end of the {color_violet|setting lever jumper} we also have a thin section that is kept under tension against the {color_cyan|yoke} – I’m pointing its location with a {color_dark_gray|gray arrow}:
+
+
+[FIGURE 79 | jumper_interaction2 | ratio_100]
+
+[CONTROL | jumper_interaction2_sl0]
+
+As the {color_cyan|yoke} rotates, that springy piece of metal wants to rotate the {color_cyan|yoke} back. When the crown is in the date or time setting mode, the {color_green|setting lever} prevents the {color_cyan|yoke} from coming back, but once we return to the winding mode, that spring in the {color_violet|jumper} will rotate the {color_cyan|yoke} back causing the {color_blue|sliding pinion} to move back as well.
+
+There is actually one additional clever bit that’s been hiding in plain sight. If you recall, we put a small {color_cyan|lever} right on the mainplate before we started working on the winding mechanism. The short end of that {color_cyan|lever} fits in the groove of the {color_blue|sliding pinion}. When we {color_pull|pull the crown} and move the {color_blue|sliding pinion}, that {color_cyan|lever} rotates:
+
+
+[FIGURE 80 | stop_lever_interaction | ratio_100]
+
+[CONTROL | stop_lever_interaction_sl0]
+
+When turned all the way, that {color_cyan|lever} rubs against the {color_violet|balance wheel} preventing it from moving – this stops the watch. As a result, when we {color_pull|pull the crown} all the way out to enter the time setting mode, that {color_cyan|stop lever} blocks the {color_violet|balance wheel}, which stops the watch in an action known as hacking. This lets us set the time without the second hand changing on its own at the same time, aiding with more precise time adjustment.
+
+Let’s look at the functions of this entire mechanism one more time with all the participating pieces in place. When the crown is full pushed in, its {color_turn|rotation} will rotate the {color_blue|sliding pinion}, which turns the {color_red|winding pinion}, and then the {color_yellow|crown wheel}, and finally the {color_green|ratchet wheel} to wind the mainspring:
+
+
+[FIGURE 81 | crown_wind | ratio_100]
+
+[CONTROL | crown_wind_sl0]
+
+When the crown is pulled all the way out, its {color_turn|rotation} turns the {color_blue|sliding pinion}, the {color_orange|setting wheel}, and then the {color_red|minute wheel}, the {color_yellow|hour wheel}, and the hidden {color_green|cannon pinion} which allows us to set the time:
+
+
+[FIGURE 82 | crown_time_set | ratio_100]
+
+[CONTROL | crown_time_set_sl0]
+
+Finally, when the crown is pushed roughly halfway through, we enter date setting mode, but to see it work we still need to attach an additional {color_dark_gray|date corrector} that fits into the small groove on the mainplate:
+
+
+[FIGURE 83 | crown_date_set_assembly | ratio_100]
+
+[CONTROL | crown_date_set_assembly_sl0]
+
+Notice that the {color_dark_gray|date corrector} can freely slide up and down in that groove. If we now pull the crown out mid way and {color_turn|turn} it, we end up rotating that {color_dark_gray|date corrector}, which then can engage with the teeth on the inside of the date ring. The {color_red|date jumper spring} makes sure that we lock the date ring at a valid position:
+
+
+[FIGURE 84 | crown_date_set | ratio_100]
+
+[CONTROL | crown_date_set_sl0]
+
+Personally, I think this entire mechanism known as the keyless works is a real mechanical marvel. The intricate interactions are so well balanced and each part serves many different roles. Older pocket watches were wound by a separate key, with the crown being used only to set the time, but modern watches get away with not having a winding key, which explains the keyless name. With just a few carefully shaped pieces and a single crown, we can control various settings of the watch. Before we move on, let’s secure the remaining pieces with the {color_bridge|minute train bridge}:
+
+
+[FIGURE 85 | minute_bridge_assembly | ratio_100]
+
+[CONTROL | minute_bridge_assembly_sl0]
+
+We’re almost done building the watch movement. The final component that we’ll assemble will make the watch automatically wind itself as we roam around.
+
+
+# Automatic Winding
+
+
+When the person wearing a watch moves arms throughout the day, the orientation of that watch in space changes quite a lot. Even during a leisurely walk, the watch swings slightly relative to the ground. Normally, all the energy used to move the watch goes to waste, but an automatic winding mechanism manages to capture some of it to wind the mainspring.
+
+Let’s first try to understand the main idea by attaching the complete automatic winding mechanism to the watch. Its primary part is the {color_blue|weight} that can rotate freely around the center. When that {color_blue|weight} rotates it drives a {color_yellow|bunch of gears}, with the {color_orange|last one} connecting to the {color_green|ratchet wheel} that is used to wind the mainspring hidden inside the {color_red|barrel}:
+
+
+[FIGURE 86 | automatic_assembly_base | ratio_100]
+
+[CONTROL | automatic_assembly_base_sl0]
+
+The fact that the {color_blue|weight} can rotate freely is critical here. In the demonstration below, you can witness what happens to the {color_blue|weight} as you rotate the watch in space by dragging it around. The gravity works towards the bottom of this website – it always pulls the {color_blue|weight} down, which makes it turn relative to the rest of the watch:
+
+
+[FIGURE 87 | automatic_gravity | ratio_100]
+
+If you recall our discussion of watch winding, you may remember that the {color_green|ratchet wheel} can only turn in one direction with the click preventing the mainspring from just unwinding on its own. However, the {color_blue|weight} can swing back and forth, which would normally imply that any gear system that is connected to that {color_blue|weight} would also rotate in both directions.
+
+If you look at the automatic winding mechanism on its own, you can witness something unusual – as you turn the {color_blue|weight} back and forth with the slider, the {color_orange|output gear} turns only in one direction. I put a little black dot on that {color_orange|gear} to make it easier to see:
+
+
+[FIGURE 88 | automatic_behavior | ratio_100]
+
+[CONTROL | automatic_behavior_sl0]
+
+To understand how this happens let’s first look at all the parts involved in the mechanism:
+
+
+[FIGURE 89 | automatic_assembly | ratio_100]
+
+[CONTROL | automatic_assembly_sl0]
+
+The {color_green|green gear} is attached directly to the bottom of the {color_blue|weight}, so when the {color_blue|weight} rotates, that {color_green|gear} turns the {color_blue|two blue} gears on the underside of the {color_yellow|yellow gears}. Most of this composition is similar to things we’ve seen before with gears kept in place by bridges. However, you may have guessed that the doubled-up pairs of {color_yellow|yellow} and {color_blue|blue} gears are responsible for the magic here. Let’s see how they’re constructed:
+
+
+[FIGURE 90 | reversing_wheel_assembly | ratio_100]
+
+[CONTROL | reversing_wheel_assembly_sl0]
+
+The {color_blue|blue gear} can rotate freely on the {color_yellow|yellow gear}, and the fish-like {color_dark_gray|levers} can also rotate around their axis through the holes in the {color_blue|blue gear}. Notice that the inner part of the {color_yellow|yellow gear} has a particular shape. In the demonstration below, I removed most of the central part of the {color_blue|blue gear} so that you can see what’s going on inside. You can rotate that {color_blue|gear} back and forth using the slider to see how the parts interact:
+
+
+[FIGURE 91 | reversing_wheel_interaction | ratio_100]
+
+[CONTROL | reversing_wheel_interaction_sl0]
+
+Notice that when you rotate the {color_blue|blue gear} counterclockwise, the {color_dark_gray|levers} just slide through the internals of the {color_yellow|yellow gear}. However, when you rotate the {color_blue|blue gear} clockwise, one of the {color_dark_gray|levers} gets stuck and it starts to turn the {color_yellow|yellow gear} with it. This clever mechanism transfers power from the {color_blue|blue gear} to the {color_yellow|yellow gear} only in one direction.
+
+The autowinding assembly contains two such gears – one will drive the {color_orange|output gear} when turned clockwise, and one that turns that {color_orange|gear} when turned counterclockwise. In the demonstration below, you can witness what happens when you rotate the {color_green|gear} attached to the weight. To make things easier to see I removed all of the non functional parts:
+
+
+[FIGURE 92 | automatic_interaction | ratio_100]
+
+[CONTROL | automatic_interaction_sl0]
+
+Notice that I’m highlighting a pair of {color_yellow|yellow} and {color_blue|blue} gears only when they’re actively transferring power directly from the {color_green|weight gear} to the {color_orange|output gear}. Only one such pair is active at a time – the other either spins idly, or acts as an intermediate to change the direction of rotation to make sure the {color_orange|output gear} always winds the spring.
+
+Notice that the {color_orange|output gear} rotates very little relative to the {color_green|gear} attached to the weight, so it takes a lot of arm swinging to fully wind the mainspring. However, over the course of a day the automatic winding mechanism can usually ensure that the mainspring stays wound.
+
+
+# The Size of it All
+
+
+In all the examples so far we had the comfort of looking at the parts at a fairly large magnification, but in this last demonstration down below you can finally see how tiny all the components are. By dragging the slider you can change the viewing size:
+
+
+[FIGURE 93 | credit_card_size | ratio_100]
+
+[CONTROL | credit_card_size_sl0]
+
+That rounded rectangle surrounding the watch corresponds to the size of a credit card – if you have one handy you can put it on screen and drag the slider until the card fits in that outline. Hopefully, this really puts in perspective how small all the parts we’ve talked about are.
+
+
+# Further Watching and Reading
+
+
+There are many YouTube channels dedicated to mechanical watches, but I particularly like Wristwatch Revival, which is dedicated to fixing broken watches, which very often involves a complete dissection of a movement, and a repair or replacement of broken parts. Although the creator is not a professional watchmaker, the videos are packed with information and are very enjoyable to watch.
+
+Watchmaking by George Daniels is a book dedicated to the process of actually making watches from scratch. While few will endeavor this journey, the publication also explains many of the considerations required when designing a watch movement and its parts. Many of the book’s pages are accompanied by pretty technical illustrations that help to explain the concepts.
+
+
+# Final Words
+
+
+In the 1970s mechanical watches started to be dethroned by quartz models, which track time by electronically counting vibrations of a quartz crystal. As technology progressed, typical watches only increased their reliance on digital circuits. Modern smart reincarnations resemble their archetypes only in shape and placement on wrists.
+
+Mechanical watches are not as accurate as digital ones. They require maintenance and are more fragile. Despite all these drawbacks, these devices show a true mastery of engineering. With creative use of miniature gears, levers, and springs, a mechanical watch rises from its dormant components to become truly alive.

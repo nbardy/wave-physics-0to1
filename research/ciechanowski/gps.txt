@@ -1,0 +1,700 @@
+TITLE: gps
+DATE: January 18, 2022
+FIGURES: 62
+
+# GPS
+
+
+Global Positioning System is, without a doubt, one of the most useful inventions of the late 20th century. It made it significantly easier for ships, airplanes, cars, and hikers to figure out where they are with high degree of accuracy.
+
+One of the most exciting aspects of this system are the satellites surrounding Earth. Here’s a current constellation of active satellites, you can drag the view around to see it from different angles:
+
+
+[FIGURE 1 | gps_orbits_hero | ratio_100]
+
+However, the satellites are just a part of what makes GPS possible. While I’ll discuss their motion in depth, over the course of this blog post I’ll also explain how the satellites help a GPS receiver determine where it is, and I’ll dive into the clever methods the system uses to make sure the signals sent all the way from space are reliably decoded on Earth.
+
+We’ll start by creating a positioning system that can tell us where we are. Our initial approach will be quite simple, but we’ll step-by-step improve upon it to build an understanding of the positioning method used by GPS.
+
+
+# Simple Positioning
+
+
+Here’s a small chunk of a world we’ll be playing with. The little {figurine|yellow figurine} represents our position in that world – you can grab and move it around. You can also drag the landscape itself to change the viewing angle. The view on the right represents a map of that landscape – we’ll try to evaluate where exactly the {figurine|figurine} is on this map:
+
+
+[FIGURE 2 | map0 | ratio_60]
+
+This situation may seem a bit daunting, but notice that the landscape we’re in has three little landmarks on the ground that are easy to reference on the map. Just by using these three reference points we can attempt to relate the {figurine|figurine’s} position in the environment to an approximate placement on the map.
+
+Intuitively, if we’re standing right on top of one of the colored landmarks, then we can tell exactly where we are on the map. If we take a single step away from a landmark, then our accuracy will degrade a little, but we’re still reasonably sure of our position. However, as we keep going further away the uncertainty in our estimate increases.
+
+We can draw that estimation of our position on the map using a {figurine|yellow area}. Its size symbolizes uncertainty – the more of a guesswork we’re doing the bigger the circle. We also know where, more or less, to place that {figurine|yellow area} based on our position relative to the landmarks. For instance, if we’re between the green landmark and the blue landmark then we’ll be somewhere between those two dots on the map as well:
+
+
+[FIGURE 3 | map1 | ratio_60]
+
+The further away from a landmark we are, the larger the uncertainty, but the distance to a landmark itself also carries some information. If we attach a rope to a {landmark_blue|landmark} and walk away holding the other end, it will at some point prevent us from going further. Moreover, if we keep the rope taut it will limit our motion to a circular path around that {landmark_blue|landmark}:
+
+
+[FIGURE 4 | string | ratio_100]
+
+Since the rope has a fixed length, every point on that circle is at the same distance to the {landmark_blue|landmark}. Instead of using a rope we can attach a measuring tape to a landmark and track the measured distance as we roam around. A measured distance lets us draw an appropriately sized circle on the map, based on the map’s scale. We know that we have to be somewhere on that circle, because all the points on that circle are equally distant to the {landmark_green|landmark}:
+
+
+[FIGURE 5 | map2 | ratio_60]
+
+If we also keep track of the distance to the {landmark_blue|second landmark} we know that our position is somewhere on the intersection of those two circles because the intersections are the only places that have the expected distances to both locations:
+
+
+[FIGURE 6 | map3 | ratio_60]
+
+With two distance measurements there are only two possible positions on the map where we could be located. Measuring distance to the {landmark_red|third landmark} narrows down that location to just a single choice:
+
+
+[FIGURE 7 | map4 | ratio_60]
+
+Notice that this third measurement is often redundant. We usually just “know” which of the two positions on the map makes sense given our position on the ground relative to the landmarks we see. In the demonstration below we’re measuring distances to just two landmarks, unless we’re almost inline with them, it’s usually fairly clear which answer is the right one:
+
+
+[FIGURE 8 | map5 | ratio_60]
+
+The process of calculating a location of a point using measurement of distances is called trilateration – that procedure lies at the heart of a GPS receiver. However, being tied to two or three measuring tapes is certainly not how any GPS device functions, so let’s keep on making our primitive positioning system better.
+
+
+# Time of Flight
+
+
+The only purpose of the measuring tapes was to measure distances, but there are other ways to figure out how far away something is. For example, when we drive a car at a more or less constant speed of {imperial_word|60 mph}{metric_word|60 km/h} we can easily calculate that after 15 minutes we’ve traveled a distance of around {imperial_word|15 mi}{metric_word|15 km}. As a side note, I’m using {imperial_word|imperial}{metric_word|metric} units here, but you can switch to {imperial_word|the metric}{metric_word|the imperial} system if you prefer.
+
+Instead of driving from point to point we can fly a little drone around. In the simulation below you can control the progress of {user_clock|time} with the slider. The clock marks the time between the drone starting and ending its journey with a blue arc:
+
+
+[FIGURE 9 | map_drone0 | ratio_70]
+
+[CONTROL | map_drone0_sl0]
+
+In the bottom part of the demonstration I put a timeline that also tracks the duration of flight using a bit more compact representation – you can think of it as a clock unwrapped from an arc shape to a straight line. Notice that the length of the blue bar is directly tied to the duration of the flight, which in turn is directly tied to the traveled distance. When you change position, the duration of flight needed to reach the goal changes as well.
+
+The constant velocity of a drone allows us to use time as a measure of distance, because that distance s is proportional to the time of flight t with drone’s velocity v acting as a scaling factor:
+
+Let’s see how we can employ two drones to replicate the measurements we did with two tapes. In the demonstration below we’re sending two drones at the same time, the slider once again controls the {user_clock|time}:
+
+
+[FIGURE 10 | map_drone1 | ratio_70]
+
+[CONTROL | map_drone1_sl0]
+
+As the drones arrive to their destinations we get the direct measure of distance to each landmark as shown by the length of their bars on the timeline. This allows us to draw the circles of range on the map which in turn pinpoints our position.
+
+This method is less restrictive than the measuring tapes we’ve used, but having to fly drones to the landmarks to measure distances is still a bit ridiculous. However, the idea of using time of flight is very promising, we just need to come up with a faster and more convenient messenger.
+
+Thankfully, we don’t have to look too far. We can use the very same substance that allows drones to fly – the air itself. Instead of rapidly moving it around to generate lift for the little machines, we’ll just make noises and let the air propagate sounds through itself.
+
+
+# Do you hear me?
+
+
+While at close ranges the sound seems to propagate almost instantaneously, at longer distances we can certainly witness the limits of the speed of sound – you’ve probably experienced the delay between seeing a lightning bolt and hearing its thunder. There is even a convenient rule of thumb that states that the strike was another {imperial_word|1 mile}{metric_word|1 kilometer} away for every {imperial_word|5}{metric_word|3} seconds of delay.
+
+We can use sound to measure distances with a very simple setup. We’ll put a microphone and a light bulb at each landmark – when a microphone detects a loud sound the light bulb will turn on. To measure the distance to a landmark we’ll make a noise – I’m visualizing the propagation of that noise with a dark ring. As {user_clock|time} passes the sound wave travels further and we can mark how long it took for the lightbulb to turn on:
+
+
+[FIGURE 11 | map_sound0 | ratio_70]
+
+[CONTROL | map_sound0_sl0]
+
+For now we can safely ignore the delay caused by the speed of light – at our limited scale it won’t affect the measurement too much. If we mount microphones and lightbulbs at the other landmarks we can get a reliable system to measure distances, which lets us draw the circles on the map and mark our location:
+
+
+[FIGURE 12 | map_sound1 | ratio_70]
+
+[CONTROL | map_sound1_sl0]
+
+This solution actually works well, but it has a fatal flaw. As soon as someone else tries to estimate their position we may have a hard time recognizing if the flash happened because of our or someone else’s sound. Let’s see what happens when a red figurine also tries to estimate its position:
+
+
+[FIGURE 13 | map_sound2 | ratio_70]
+
+[CONTROL | map_sound2_sl0]
+
+Notice that we have no idea if we should stop the clock on the first or the second flash of a landmark, but regardless of the approach our measurements may be completely wrong. Even when we use the robust method of intersecting three circles we very often fail to converge to a single location. The more users trying to estimate their positions the more error prone everyone’s range estimation would be, especially since they all can start making their noises at different times.
+
+The problem with this approach is that we’ve created an active system in which the landmarks have to actively respond to users’ requests to provide the needed information. As the number of users increases, the complexity of the system grows significantly. Even if we came up with some clever way for the landmarks to distinguish the incoming signals and emit different responses, we’re guaranteed to find some number of users that would overwhelm the infrastructure.
+
+Fortunately, we can solve this problem by flipping it on its head. Instead of the users sending audio signals to the landmarks, we’ll have the landmarks emit the sounds and have the users listen to those sounds.
+
+
+# Do I hear you?
+
+
+Let’s rejig the landmarks to have a speaker that will emit a sound at every minute on the minute, that is when the second hand on the clock shows 0 seconds. When we hear the signal we can then check our clock to see how much time has elapsed and thus measure the distance:
+
+
+[FIGURE 14 | map_sound3 | ratio_70]
+
+[CONTROL | map_sound3_sl0]
+
+It may seem that this solution works well, but it requires a bit more attention. Notice that we’re actually dealing with two different clocks here, one in our hand, and another one, located in the landmark itself, that drives the sound emission. Those two clocks may not be perfectly synchronized with each other.
+
+In the demonstration below you can see the current time as tracked by the landmark on the {system_clock|system clock}, and as tracked by us on {user_clock|our clock} which can be biased by some amount – it could be early or late. Thankfully, with two clocks side by side we can try to correct for that {bias|bias} using the second slider:
+
+
+[FIGURE 15 | clocks | ratio_80]
+
+[CONTROL | clocks_sl0]
+
+[CONTROL | clocks_sl1]
+
+Notice that the timeline at the bottom shows progress of both the {system_clock|system clock} and the {user_clock|user clock} – if the clocks are not synchronized they’re not tracking the same time.
+
+Unfortunately, when we’re out in the open exploring the environment we don’t necessarily have access to the {system_clock|system clock} so we don’t know how to synchronize {user_clock|our clock} with the {system_clock|system clock}. Even if we initially synchronize our clocks, they may drift apart over time. Our measurement of absolute time may be biased relative to the “true” {system_clock|system time}.
+
+This has dire consequences – a landmark always emits its signal on the minute on the {system_clock|system clock}, but we think the signal was emitted on the minute on {user_clock|our clock}. Our estimate of the actual start time may be incorrect. Depending on the {bias|bias} of {user_clock|our clock}, this can cause us to under or overestimate the time of flight:
+
+
+[FIGURE 16 | map_sound4 | ratio_70]
+
+[CONTROL | map_sound4_sl0]
+
+[CONTROL | map_sound4_sl1]
+
+For the sake of clarity I’m still drawing the {system_clock|blue bar} on the timeline, but remember that we actually don’t know what the current {system_clock|system time} is. The system always emits the signal when the {system_clock|blue bar} is at 0 seconds, but we think that the system emitted its signal when the {user_clock|red bar} is at 0 seconds.
+
+If we get lucky and {user_clock|our clock} is synchronized with the {system_clock|system} then what we consider the sound emission time will match exactly the actual emission time. If our clock is running behind, then when we think the signal has just been emitted it has actually been flying through the air for a while. Conversely, if our clock is running ahead, then when the signal is actually emitted we erroneously assume it’s already been in the air for a while.
+
+Because of that unknown {bias|time bias} we’re no longer calculating the true time of flight and therefore we’re not measuring the true range. Instead, we calculate a so-called pseudorange. The length of a pseudorange depends on what we assume the bias to be. This distance uncertainty sounds like trouble, so let’s see how the presence of {bias|bias} affects our ability to draw circles on a map:
+
+
+[FIGURE 17 | map_sound5 | ratio_70]
+
+[CONTROL | map_sound5_sl0]
+
+[CONTROL | map_sound5_sl1]
+
+Notice that the circles on the map now change their radius with our attempts to account for the unknown {bias|bias}. We can no longer rely on just two circles as their intersection points move around with different values of that unknown {bias|bias}.
+
+We’re seemingly in big trouble, but there is an additional assumption we can make – we can safely expect the clocks in the landmarks to be synchronized with each other. Their location is stationary which means they can use large and very precise clocks that are continuously monitored to ensure synchronization. Since all the clocks in the landmarks have the same {system_clock|system time}, this also means that the {bias|bias} of {user_clock|our clock} to each of the landmarks is exactly the same.
+
+Because that {bias|bias} is the same, all three of the measured distances are either too short, or too long by the same amount, and that amount depends precisely on the {bias|bias} of {user_clock|our clock} relative to the {system_clock|system clock}. Here’s where the third measurement becomes indispensable:
+
+
+[FIGURE 18 | map_sound6 | ratio_70]
+
+[CONTROL | map_sound6_sl0]
+
+[CONTROL | map_sound6_sl1]
+
+After we get all three signals and we try to guess what the actual value of {bias|bias} was, there is only one value of {bias|bias} at which all three circles intersect in one place – that’s where we are on the map.
+
+This is a monumental achievement. We’re not only calculating the correct position, but also the exact value of the {bias|bias} of {user_clock|our clock}, so this setup also allows us to synchronize {user_clock|our clock} with the {system_clock|time of the positioning system} – we get a reliable source of accurate time. The only additional cost we had to pay for all of this is the need for the third emitter at a known location.
+
+Moreover, the infrastructure we’ve built is completely agnostic to the number of users it services. The emitted sounds don’t care how many receivers are listening, each one can perceive the sounds on their own without interfering with anyone else’s measurements:
+
+
+[FIGURE 19 | map_sound7 | ratio_70]
+
+[CONTROL | map_sound7_sl0]
+
+[CONTROL | map_sound7_sl1]
+
+
+# Leveling Up
+
+
+So far our movements were restricted to just a flat 2D plane, but interesting things happen when we allow the {figurine|figurine} to get above the ground level. In the demonstration below you can control the user’s vertical position with a slider. To make things simpler, let’s go back to our original idea of using measuring tapes to evaluate the distances:
+
+
+[FIGURE 20 | map_ladder0 | ratio_60]
+
+[CONTROL | map_ladder0_sl0]
+
+Notice that as the figurine gets above the ground level, the distances to the landmarks increase. We can no longer use the method of circles on the map, as they don’t even converge on the same location.
+
+When we allow movement in three dimensions, our transformations of distances to plain circles are no longer valid. Instead, a fixed distance defines an entire sphere around the marked point. For easier visualization let’s first just put all three markers floating freely in a 3D space. A known distance to the first location puts us somewhere on the surface of that sphere:
+
+
+[FIGURE 21 | spheres0 | ratio_100]
+
+[CONTROL | spheres0_sl0]
+
+With a second measurement we can narrow down the possible location to the circle created by an intersection of two spheres:
+
+
+[FIGURE 22 | spheres1 | ratio_100]
+
+[CONTROL | spheres1_sl0]
+
+[CONTROL | spheres1_sl1]
+
+To account for the third measurement we need to add a third intersecting sphere – it lets us narrow down the position to two possible points where three circles intersect:
+
+
+[FIGURE 23 | spheres2 | ratio_100]
+
+[CONTROL | spheres2_sl0]
+
+[CONTROL | spheres2_sl1]
+
+[CONTROL | spheres2_sl2]
+
+While we technically need a fourth sphere to differentiate between those two points, three ranges are usually enough to figure out the exact position – if the centers of the spheres are far enough apart, one of the two possible solutions would be underground or in space.
+
+Let’s see how those concepts fit onto our map. To visualize the spheres we can no longer keep its surface lying flat. To make things easier to reference, I made the map rotate in sync with the main view. Notice that the intersection point of the three spheres lets us pinpoint the position and altitude even as you drag the {figurine|figurine} around:
+
+
+[FIGURE 24 | map_ladder1 | ratio_50]
+
+[CONTROL | map_ladder1_sl0]
+
+Throughout these examples we’ve been using the simple system of measuring tapes, so let’s try to go back to the solution that used sound waves and pseudoranges. Recall that it didn’t require the user to have the clocks perfectly synchronized:
+
+
+[FIGURE 25 | map_ladder2 | ratio_60]
+
+[CONTROL | map_ladder2_sl1]
+
+[CONTROL | map_ladder2_sl2]
+
+[CONTROL | map_ladder2_sl0]
+
+Notice that the new dimension added a new complication. While in a flat case we could have just look for a single value of {bias|bias} for which the three circles have intersected, there are a lot of different values of {bias|bias} for which the three spheres intersect and we’re incapable of precisely determining both the position and the altitude at which we are.
+
+By analogy to the flat case, we need to add a fourth landmark to resolve this problem. We can then look for the value of the unknown {bias|bias} that makes four spheres intersect at a single location:
+
+
+[FIGURE 26 | map_ladder3 | ratio_60]
+
+[CONTROL | map_ladder3_sl1]
+
+[CONTROL | map_ladder3_sl2]
+
+[CONTROL | map_ladder3_sl0]
+
+This method of measuring pseudoranges to at least four emitters at known positions is exactly what GPS uses to calculate the receiver’s position and the time bias of its clock.
+
+Before we continue developing our simple system, it may be worth pausing for a second to show the math underpinning the hand-wavy sphere resizing we’ve been doing so far. We’re dealing with four distances to four emitters and we end up with four equations:
+
+The left sides of the equations are just distances between the {rounded_bg solution|unknown position} of the receiver and each of the {rounded_bg landmark_red|red}, {rounded_bg landmark_green|green}, {rounded_bg landmark_blue|blue}, and {rounded_bg landmark_yellow|yellow} emitters, calculated with 3D Pythagorean theorem. On the right side we have the four times of flight t from the emitters to the receiver, the unknown receiver bias {rounded_bg solution|b}, and velocity of propagation v which so far has been the speed of sound.
+
+We’re ultimately trying to solve this system of equations to get the receiver’s {rounded_bg solution|x}{rounded_bg solution|y}{rounded_bg solution|z} position and its bias {rounded_bg solution|b}, but for the rest of the article I’ll keep using the more abstract description of the problem since the mathematical operations aren’t critical for our understanding of GPS.
+
+
+# Higher, Better, Faster, Stronger
+
+
+It seems that the infrastructure we’ve built allows us to correctly calculate our position and clock correction when we’re close enough to the landmarks. If we want to make our positioning system work on the entire planet like GPS does we still have a few problems to solve.
+
+Firstly, sound waves aren’t the best way to send the signals around. Periodic loud beeping would be annoying to everyone around, but, more importantly, sounds get dispersed in the air quite quickly – you can’t easily hear things that make sounds tens of {imperial_word|miles}{metric_word|kilometers} away.
+
+A good candidate for a better carrier would be light. Similarly to sound, it also has a limited speed of propagation which we can use to measure the traveled distance. The speed of light in vacuum c is absolutely enormous and it has the following exact {imperial_word|value that, per its definition, I’m showing in metric units}{metric_word|value}:
+
+It only takes light one billionth of a second to travel the distance of around {imperial_word|1 foot}{metric_word|30 cm}. Unfortunately, light gets easily obscured by some atmospheric effects like fog, dust, clouds, or smoke so instead of visible light we’ll use another form of electromagnetic radiation – a radio wave of a certain frequency.
+
+The second problem preventing us from deploying this system globally is related to visibility of the signal emitters. So far we assumed that our local environment is perfectly flat, but when a radio wave encounters a hill it gets blocked, which you can experience in the following simulation. In many cases the receiver will never get the signal unless we put the emitter high enough using the second slider:
+
+
+[FIGURE 27 | hill | ratio_80]
+
+[CONTROL | hill_sl0]
+
+[CONTROL | hill_sl1]
+
+By putting the emitter at an altitude we can thankfully mitigate that problem on a local scale. Unfortunately, we’ve also been ignoring another important obstacle – the curvature of the Earth itself. To see that curvature, however, we have to rise way above the ground and venture into the blackness of space.
+
+In the demonstration below you can witness how the emitted waves are masked by the shape of the planet depending on the altitude of the emitter:
+
+
+[FIGURE 28 | visible_area | ratio_60]
+
+[CONTROL | visible_area_sl0]
+
+The Earth’s curvature acts as a hill that obscures areas that lie beyond the horizon as seen by the emitter. Thankfully, the higher we put the emitter, the larger the area it sees. We can visualize that area in three dimensions using a cone:
+
+
+[FIGURE 29 | visible_cone | ratio_110]
+
+[CONTROL | visible_cone_sl0]
+
+Naturally, we can’t build an arbitrarily tall tower, so to put an emitter well above the ground level we’ll have to attach it to a satellite that we’ll place high enough that it sees a reasonably big section of Earth. One could naively hope that we can just put a satellite in any place in space and it will just stay there, but unfortunately things aren’t that simple.
+
+
+# Orbits
+
+
+Let’s see what would happen to an object if we could magically put it motionless in space somewhere around the Earth. In the demonstration below you can drag the yellow object around. Once you let it go it will get pulled by the Earth’s gravity which I’ve symbolized with little blue arrows. As the object starts to move a yellow arrow reflects its current velocity:
+
+
+[FIGURE 30 | satellite_sim0 | ratio_60]
+
+Note that the strength at which the object is pulled towards the planet varies with distance. That force of gravity F pulling an object is proportional to the mass of that object m and mass of the Earth M, but it’s inversely proportional to the square of the distance r between the centers of their masses:
+
+The constant G is known as the gravitational constant and it’s very small – it takes an object of an enormous mass like that of the Earth for the force of gravity to be perceptible at our human scales.
+
+Regardless of where in space we put a motionless object, it will eventually fall down on Earth, but interesting things happen when the object’s initial velocity is not zero. In the demonstration below you can once again drag the object around, but this time it will have some initial velocity that was perhaps given to it by a rocket. Once you let go, the object will initially move in that direction, but the Earth’s gravity will still keep pulling on it:
+
+
+[FIGURE 31 | satellite_sim1 | ratio_60]
+
+Notice that the movement of the object is much more interesting now – the gravity keeps redirecting the object towards the center, but it manages to stay ahead of that pull which results in an elliptical trajectory. Notice that the speed of the object, as shown by the length of the yellow arrow, varies over the course of its journey. When the object is far away from Earth the gravitational field is weak and it takes a while for gravity to change the object’s direction of travel, but close to Earth the strong gravitation quickly accelerates it.
+
+If the trajectory intersects Earth, the object will still fall down on ground, but in other cases it will instead orbit Earth on an elliptical path. You may have also managed to make the trajectory red – the object is on a hyperbolic trajectory and it will just fly away and never come back.
+
+Naturally, we want the radio signal emitters to stay in the vicinity of the Earth so for our purposes only elliptical orbits are useful. I’ve discussed ellipses on this blog before, but it’s worth doing a quick recap.
+
+Before we continue, I need to note that some demonstrations in the following sections are animated – you can play and pause them by {click_word|clicking}{tap_word|tapping} on the button in their bottom left corner. By default all animations are enabled, but if you find them distracting, or if you want to save power, you can globally pause all the following demonstrations.{hidden|disabled, but if you’d prefer to have things moving as you read you can globally unpause them and have animations running.}
+
+The easiest way to draw an ellipse is to take two small pins and wrap a string around them. If we then put a yellow pencil inside that loop and keep the string taut while moving the pencil around we’ll draw an ellipse. By moving the pins closer or further apart we can change the generated shape:
+
+
+[FIGURE 32 | ellipse | ratio_120]
+
+[CONTROL | ellipse_sl0]
+
+Notice that I’m painting sections of the strings with different colors. As we go around the curve, red and blue parts trade lengths, but the sum of their lengths is always the same which is the defining property of an ellipse. The small pins are the focal points of that ellipse.
+
+The shape of an ellipse is determined by its eccentricity. In this string contraption eccentricity is the ratio of the length of the green section to the sum of lengths of red and blue sections. The size of an ellipse is defined by its semi-major axis which is half of its widest point, or half of sum of lengths of red and blue parts. When eccentricity is 0, an ellipse becomes a circle and it’s semi-major axis is just the circle’s radius.
+
+Length of the semi-major axis of a satellite’s elliptical orbit is one of its most important parameters. We’ve already seen how the area of the Earth seen by a satellite changes with the distance. More importantly, as discovered by Kepler and formalized in his third law, the length of the semi-major axis a is tied to the time T it takes a celestial body to complete a single orbit – the quantity known as orbital period:
+
+As a result, the further away the satellite is, the longer it takes to trace a full ellipse which you can experience in the demonstration below. Notice that the ellipse is embedded in a plane known as orbital plane, I’ve visualized it with a {orbital_plane|yellow disc}:
+
+
+[FIGURE 33 | orbital_period | ratio_110]
+
+[CONTROL | orbital_period_sl0]
+
+For example, the International Space Station is very close to Earth and it orbits the planet in just under 93 minutes – roughly 15.5 times per day. Notice that there is only one orbit that takes 23 h 56 min 4 s – the length of a sidereal day during which the Earth performs a single revolution around its axis. Satellites with that orbital period are called geosynchronous. Let’s look at them up close. The red dot shows a point on Earth where a geosynchronous satellite is directly above the observer:
+
+
+[FIGURE 34 | orbital_inclination | ratio_110]
+
+[CONTROL | orbital_inclination_sl0]
+
+[CONTROL | orbital_inclination_sl1]
+
+Notice that after a single revolution of the Earth the satellite returns to the same position. You may have noticed that the {inclination|red slider} controls the inclination of the orbit which is the angle between the {orbital_plane|orbital plane} and the {equatorial_plane|plane} passing through the Earth’s equator known as equatorial plane. When that angle measures 0° the red point doesn’t move on the Earth at all, the satellite is always present at the same point in the sky, and that orbit is known as a geostationary orbit.
+
+A geostationary orbit sounds like a good choice for placing a bunch of satellites of a positioning system, as each one would have a fixed and known position in the sky and a receiver could just measure distances to the ones it sees. However, that approach has a few problems.
+
+In the demonstration below, you can control the number of geostationary satellites that are evenly distributed across the orbit. Each satellite is visible to a different section of the planet, but as the number of satellites grows, some areas of the Earth see more and more satellites. The number of visible satellites from that location on Earth is represented using colors of increasing intensity:
+
+
+[FIGURE 35 | geostat_coverage | ratio_120]
+
+[CONTROL | geostat_coverage_sl0]
+
+With 10 satellites in place all parts of the Earth close to equator have visibility of at least 4 satellites required to calculate the position and time offset. Unfortunately, even with a huge number of geostationary satellites the areas close to the South and North Pole would never see any satellites making the system not completely global.
+
+Another problem with geostationary satellites is related to any configuration where all satellites lie on the same plane. Let’s look at one of those configurations in which the satellites are closer to Earth making things easier to see. In the demonstration below you can drag the red point around to change its position on the globe. The darker red lines show calculated distances to each of the visible satellites:
+
+
+[FIGURE 36 | geostat_distance | ratio_100]
+
+Notice that on the other hemisphere there is a white point that, due to symmetry, has the exact same distances to the satellites! If positioning satellites were arranged on the geostationary orbit we wouldn’t be able to tell if we’re on southern or northern latitudes using trilateration as the only cue because we can’t determine which of the two possible options is the right one.
+
+With those restrictions in mind, we can now discuss how the Global Positioning System solves these problems by using satellites that do not use geostationary orbits and as such do not have a fixed position in the sky for the observers on Earth.
+
+
+# GPS Orbits
+
+
+Let’s look at an orbit of a single GPS satellite around the Earth. The red point shows a location on Earth where the satellite is directly above an observer:
+
+
+[FIGURE 37 | gps_orbits0 | ratio_100]
+
+A single GPS orbit has an inclination of around 55 degrees and an orbital period of 11h 58m 2s which is a half of a sidereal day causing them to pass over the same place on Earth twice per day. This was particularly useful during GPS development when only a limited number of satellites was available, but their periodical visibility in the sky could’ve been consistently relied on.
+
+GPS consists of 6 different orbits placed around the Earth. Originally, each orbit contained 4 satellites for a total of 24 satellites. However, these days there are 30 active GPS satellites which improves accuracy and ensures redundancy. In the demonstration below you can select each of the 6 orbits or show all satellites from the entire constellation:
+
+
+[FIGURE 38 | gps_orbits1 | ratio_100]
+
+Notice that within an orbit the satellites aren’t evenly distributed. As Earth rotates and satellites move around the number of satellites visible from a point on Earth changes. In the demonstration below you can drag the red point on Earth to observe the satellites it sees:
+
+
+[FIGURE 39 | gps_orbits2 | ratio_100]
+
+We can also visualize the number of visible satellites from every point on Earth. Let’s look at that coverage of by marking different regions of Earth with colors of different intensity – it once again represents the number of visible satellites:
+
+
+[FIGURE 40 | gps_orbits3 | ratio_110]
+
+While I’m not accounting for local hills or buildings, you can observe that each part of the Earth is easily covered by at least 4 satellites allowing the receiver to calculate its position and clock bias. We’ll soon see that the more satellites visible, the better accuracy of the predicted position is, but not all placements of satellites are equally favorable.
+
+With all those satellites moving in the sky you may wonder how a receiver can know where the satellites are. The solution to this problem is simple yet absolutely brilliant – each satellite tells the receiver where it is as a part of its broadcasted signal.
+
+
+# Keplerian Elements
+
+
+There are many ways to specify a position in space, but traditionally six Keplerian elements are commonly used. The first two elements, {semi_major_axis|semi-major axis} and {eccentricity|eccentricity}, specify the size and proportions of the orbital ellipse. For satellites, Earth is one of the focal points of the ellipse:
+
+
+[FIGURE 41 | keplerian0 | ratio_110]
+
+[CONTROL | keplerian0_sl0]
+
+[CONTROL | keplerian0_sl1]
+
+GPS satellites have a {semi_major_axis|semi-major axis} of around {imperial_word|16503 mi}{metric_word|26560 km} and {eccentricity|eccentricity} of around 0.02 or smaller.
+
+The next two elements, {inclination|inclination} and {longitude|longitude of the ascending node}, specify the orientation of the orbital plane relative to Earth and distant stars:
+
+
+[FIGURE 42 | keplerian1 | ratio_110]
+
+[CONTROL | keplerian1_sl0]
+
+[CONTROL | keplerian1_sl1]
+
+We’ve already seen {inclination|inclination} in action – GPS satellites operate at an inclination of around 55°. {longitude|Longitude of the ascending node} deserves a bit more explanation. Notice that the ellipse of satellite’s orbit intersects the {equatorial_plane|equatorial plane} at two different locations known as orbital nodes – I’ve marked them with red and green dots. The green one is the ascending node, because the satellite rises up or ascends at that location – it moves north.
+
+{longitude|Longitude of the ascending node} is the angle on the {equatorial_plane|equatorial plane} measured from a certain reference direction that is fixed against distant stars and doesn’t follow the Earth’s rotation. GPS constellation consists of 6 different orbits – their {longitude|longitudes of the ascending nodes} are evenly separated by 60°.
+
+The last two elements, {perigee|argument of perigee} and {true_anomaly|true anomaly}, specify the position of the orbital ellipse and the satellite itself:
+
+
+[FIGURE 43 | keplerian2 | ratio_110]
+
+[CONTROL | keplerian2_sl0]
+
+[CONTROL | keplerian2_sl1]
+
+{perigee|Argument of perigee} defines the orientation of the ellipse within the orbital plane measured from the ascending node to the perigee that is the point on the ellipse closest to Earth – I marked it with a yellow dot. The final parameter is {true_anomaly|true anomaly}, which is the angle between the perigee and the satellite itself as measured at a specific time.
+
+In an idealized scenario, that fixed set of six parameters would be enough to calculate the current and future positions of a satellite at any point in time, but unfortunately there are other effects at play. A satellite’s orbit gets perturbed from pristine Keplerian pathways by other effects like the not perfectly spherical shape of the Earth, the gravity of Moon and Sun, and solar radiation. As part of the broadcasted message GPS satellites also include information of the rate of change of some of those parameters, which allows the receivers to calculate necessary corrections over time.
+
+You may wonder how a GPS satellite knows all of these parameters. All GPS satellites are being tracked by monitoring stations on Earth. Those stations are part of the Control Segment of Global Positioning System which manages the satellites and the contents of messages they broadcast. Every two hours, updated orbital parameters and clock adjustments are uploaded to satellites, which ensures that the information sent from satellites to the receivers is as accurate as possible.
+
+Knowing the position of a satellite on its orbit one can convert from Keplerian elements to {rounded_bg solution|x}{rounded_bg solution|y}{rounded_bg solution|z} coordinates in a Cartesian system tied to Earth. The details aren’t important here, but the calculations account for a lot of different factors including the rotation of the Earth within the short time between the signal emission and the signal reception. As we’ve seen before, the process of figuring out the location also requires accurate tracking of time, but that concept deserves a bit more elaboration.
+
+
+# Time
+
+
+Trilateration with time of flight as a measure of distance requires that the clocks on all emitters are synchronized, and that is indeed the case for GPS. Each satellite carries a precise atomic clock and additionally the control stations can apply corrections to individual satellites to keep them in sync. That unified time is known as GPS time which for technical reasons is offset from the “standard” UTC time by an integer number of seconds.
+
+When it comes to the flow of time on those satellites, there are two important aspects related to Einstein’s theories of relativity. Special relativity states that a fast moving object experiences time dilation – its clocks slow down relative to a stationary observer. The lower the altitude the faster the satellite’s velocity and the bigger the time slowdown due to this effect. On the flip side, general relativity states that clocks run faster in lower gravitational field, so the higher the altitude, the bigger the speedup is.
+
+Those effects are not even and depending on altitude one or the other dominates. In the demonstration below you can witness how the altitude of a satellite affects the dilation of time relative to Earth. The progress of time is tracked by two separate bars. When the yellow bar gets filled it means that one second has elapsed on the satellite. When the blue bar gets filled it signifies that one second has elapsed on Earth. Notice that at high altitudes a second on the satellite finishes faster than a second on Earth, but at very low altitudes a second on the satellite takes longer to finish. Since the actual dilation is minuscule, the difference of bar lengths is greatly magnified to make things easier to see:
+
+
+[FIGURE 44 | time_dilation | ratio_130]
+
+[CONTROL | time_dilation_sl0]
+
+Satellites at the GPS altitude travel at the speed of about {imperial_word|2.4 mi/s}{metric_word|3.87 km/s} relative to Earth, which slows the clock down, but they’re also in weaker gravity which causes the clock to run faster. The latter effect is stronger which in total results in a gain of around 4.4647 × 10−10 seconds per second, or around 38 microseconds a day.
+
+Unfortunately, this is where many sources make a mistake with their interpretation of that result. It’s often erroneously claimed that if GPS didn’t correct for these relativistic effects by slowing down the clocks on satellites, the system would increase its error by around {imperial_word|7.2 mi}{metric_word|11.6 km} per day as this is the distance that light travels in those 38 microseconds.
+
+Those assertions are not true. If relativistic effects weren’t accounted for and we let the clocks on satellites drift, the pseudoranges would indeed increase by that amount every day. However, as we’ve seen, an incorrect clock offset doesn’t prevent us from calculating the correct position. The calculated receiver clock bias would also be correct, but that bias would be relative to the drifting satellite clock making it much less useful.
+
+Moreover, the clocks on satellites don’t have to be explicitly slowed down to fix the cumulative relativistic speed-up of time. As part of their broadcasted message a satellite emits three coefficients that allow the receiver to correct for any offset or speed change of that satellite’s clock.
+
+One area where we explicitly have to account for relativistic effects is caused by slightly eccentric trajectories of the GPS satellites. As a satellite orbits the Earth its distance and speed relative to the planet change, which then causes periodic variations in the satellites’ clock speeds. Since the receiver knows the satellites’ positions it accounts for that relativistic variation when calculating timing corrections.
+
+Unfortunately, this is not the only source of complications for evaluation of the time of flight.
+
+
+# Signal Propagation
+
+
+While for most of their journey GPS signals travel uninterrupted through the vacuum of space, at some point they encounter the Earth’s atmosphere which affects them with two different mechanisms. In the upper part of the atmosphere known as the ionosphere, the solar radiation ionizes gasses, which increases the number of free electrons that slow down propagation of the coded message. The amount of free electrons and the slowdown depend on time of day and overall solar activity.
+
+In the lowest part of the atmosphere, mostly in the troposphere, the larger density of gasses and water vapor increases the index of refraction, which also slows down the radio signals. The water vapor amount can be highly variable, making the delay in signal’s time of flight unpredictable.
+
+The strength of these ionospheric and tropospheric delays also depends on the length of the path that radio signals have to travel in the atmosphere, which in turn depends on the elevation angle of the satellite signal relative to the receiver. We can see this in this backlit view of the Earth:
+
+
+[FIGURE 45 | atmosphere | ratio_60]
+
+[CONTROL | atmosphere_sl0]
+
+As that angle increases, the signal from a satellite travels more sideways and its larger portion gets affected by the atmosphere. To account for this, GPS receivers ignore ranges measured from satellites at very low elevation angles.
+
+While atmospheric effects are primary source of GPS inaccuracies, other sources of disturbances also exist. For example, the clocks on all satellites can’t be perfectly synchronized. The orbital elements and their rates are also measured with some degree of uncertainty, so both the positions and timestamps received from satellites are not exact. On Earth the signal can bounce off different surfaces and take a longer path to reach the receiver compared to direct reception.
+
+Although many of these factors can be to some extent accounted for, the measured distances to satellites will have some degree of error – we no longer deal with a single distance but a certain allowed range of distances. What this means is that the spheres we’ve been intersecting actually have some thickness and we’ll never be able to get a perfect solution where a few spheres of ranges intersect at a single spot.
+
+We can try to visualize this thickness with actual satellites but you’ll probably agree that’s it’s quite hard to see what’s going around on the draggable red point even though I’m trying to reduce the clutter by only drawing halves of the spheres:
+
+
+[FIGURE 46 | gps_orbits4 | ratio_100]
+
+To make things easier to see let’s briefly drop down to a two dimensional case and consider a simplified scenario with signals from just three satellites. In the demonstration below, you can control two parameters: the uncertainty of the measured distance, which ends up corresponding to the thickness of the border of the circle of range, and the {bias|relative position} of these satellites.
+
+
+[FIGURE 47 | overlap | ratio_70]
+
+[CONTROL | overlap_sl0]
+
+[CONTROL | overlap_sl1]
+
+The receiver’s position is somewhere in the intersection of these three regions – the smaller that region the better the accuracy of our position estimation. Naturally, large range uncertainty increases the ambiguity of position, but the relative position of the satellites also matters. If they aren’t well spread, the exactness of calculated location also suffers. In this example we’ve also assumed that the uncertainty of measurement is the same for all satellites, but it usually won’t be the case.
+
+To account for all these issues GPS receivers try to find such a set of four solutions, three position coordinates and the clock bias, that will in some sense be a best fit that minimizes the error – this is where using data from more than 4 satellites allows a receiver to improve the accuracy.
+
+The calculated clock bias may seem like a trivial companion to the much desired location, but it’s very useful in many applications that require time synchronization – we literally get easy, albeit indirect, access to atomic clocks.
+
+Since we’re talking about a receiver on Earth, it’s only appropriate if we come back from the darkness of space to the bright surface of our planet.
+
+So far I’ve been fairly vague about the message that reaches a receiver, what that message contains, and how it’s decoded, but those details are fascinating – I’ll discuss them in the last two sections of this article.
+
+
+# Navigation Message
+
+
+The information sent by a GPS satellite is collectively known as a navigation message. I’ll go over most of its pieces one by one, but first let’s look at its structure. The entire message consists of 25 {frame|frames}, each {frame|frame} consists of 5 {subframe|subframes}. Each {subframe|subframe}, represented by a single row, consists of 10 {word|words}, and each {word|word} consists of 30 bits:
+
+The first two {word|words} of every {subframe|subframe} have the same structure. TLM, or telemetry word, contains a fixed preamble that’s easy to recognize, and some bits intended to check the integrity of the message. HOW, or handover word, is vital for GPS functionality – it timestamps the {subframe|subframe}, which lets the receiver figure out when it was emitted.
+
+The subsequent 8 {word|words} of each {subframe|subframe} carry different payload. The first {subframe|subframe} contains the satellite clock corrections and the week number of GPS time, which, together with the more fine-grained timestamp from handover word lets the receiver calculate the exact time the message was sent.
+
+This {subframe|subframe} also contains a “health” bit, which describes if the navigation data is in a good state. When an orbit of a GPS satellite needs to be adjusted, the Control Segment will temporarily toggle that bit to let the receivers know that they shouldn’t rely on the information from that satellite as it tweaks its position.
+
+The next two {subframe|subframes} contain the already mentioned orbital parameters extended by velocity information which are collectively known as ephemeris parameters – they allow the receiver to calculate the satellite’s position.
+
+The first three {subframe|subframes} are always present in every {frame|frame} and they contain data related to this satellite, but the last two {subframe|subframes} contain the coarse ephemeris data for all satellites – that collection is known as almanac. This lets the receiver approximate when a new satellite would rise above the horizon. The other information carried in these {subframe|subframes} include health of other satellites and some parameters that allow the receiver to try to account for ionospheric delay.
+
+As you can imagine, this entire payload is fairly large, so it is split across 25 pages – a single {frame|frame} contains only a single page placed in the last two {subframe|subframes}. The receiver has to gather all 25 {frame|frames} to fully decode that supplementary information.
+
+The data rate at which GPS satellites send their signals is astonishingly small – they transfer only 50 bits every second. At that rate sending just the text contents of this article would take almost 2.5 hours. This means that a single {subframe|subframe} consisting of 10 {word|words}, each occupying 30 bits, takes 6 seconds to transfer and a single {frame|frame} is received over 30 seconds.
+
+That 6 second granularity of timestamps in each {subframe|subframe} is very coarse, but, as we’ll soon see, the way the bits of the navigation message are encoded and decoded carries with it a lot of additional precision.
+
+
+# GPS Signals
+
+
+While at a high level the navigation message can be divided into {frame|frames}, {subframe|subframes}, and {word|words}, it ultimately consists of individual bits of {data|data}, each equal to either 0 or 1. A GPS satellite emits these bits over time which we can represent on an animated plot. In the demonstration below, when the bit of the {data|source data} has a value of 1 the plot jumps above the horizontal axis, but for 0 it simply stays on it:
+
+
+[FIGURE 48 | signal0 | ratio_20]
+
+The data payload is transferred over radio waves in a specific range of the radio spectrum that is not obscured by atmospheric effects and can reach the receivers on Earth regardless of the outdoor conditions. While modern GPS satellites emit signals at a few different frequencies, the primary civilian signal is broadcasted at 1575.42 MHz by all satellites. I will represent that {carrier|base radio wave} with the following sine wave:
+
+
+[FIGURE 49 | signal1 | ratio_20]
+
+On its own, a steady radio wave like that doesn’t convey much information, but we will use it as a carrier wave that we’ll modulate to make it carry the payload of data. There are many ways to do that modulation. We could, for example, multiply the {carrier|carrier wave} by the stream of {data|data bits} effectively turning the {output|emitted signal} on and off:
+
+
+[FIGURE 50 | signal2 | ratio_60]
+
+For transmission of its signals, GPS uses a different method known as binary phase-shift keying. Conceptually, the binary signal of ones and zeros gets adjusted to replace every 0 with −1, and then that {data|signal} gets multiplied by the {carrier|carrier wave}:
+
+
+[FIGURE 51 | signal3 | ratio_80]
+
+That multiplication by −1 ends up shifting the signal’s phase which explains the name of the method. If we were dealing with just a single satellite this method of encoding would be sufficient as the receiver could just remove the carrier from the {output|incoming signal} and decode the {violet|data bits}:
+
+
+[FIGURE 52 | signal13 | ratio_40]
+
+In reality things are more complicated. There are many satellites broadcasting at the same time, so the data bits from all of them overlap. Additionally, the GPS signals reaching Earth are incredibly weak and they get swamped with noise, which would make a bare data payload indecipherable:
+
+
+[FIGURE 53 | signal12 | ratio_40]
+
+GPS solves this problem by employing another binary code. This {code|code} repeats over time and consists of a predetermined number of so-called chips. In this example there are 6 chips in the {code|code}:
+
+
+[FIGURE 54 | signal14 | ratio_40]
+
+The chipping code changes at a higher rate than the source bits. To encode the signal the satellite multiplies the {data|data bits} of the navigation message by that {code|code}. Let’s see how this idea works in practice:
+
+
+[FIGURE 55 | signal4 | ratio_60]
+
+In this example, for every bit of the {data|data signal}, we’re repeating two sets of the same {code|code}. Notice that the negative value of {data|data signal} ends up flipping the {code|coding signal} as well.
+
+The {data|input data}, the {code|code}, and the {carrier|carrier wave} are all multiplied together to create the {output|final signal} that the satellite emits:
+
+
+[FIGURE 56 | signal5 | ratio_100]
+
+I need to note that for the sake of clarity I’m using a visually compact example – each bit of the {data|navigation message} is represented by 2 lengths of the repeating {code|code}, each {code|code} consists of 6 chips, and each chip lasts 2 wavelengths.
+
+In real GPS signals those numbers are much larger. There are 20 repetitions of the chipping code inside a single bit of the message and each chipping code consists of 1023 individual chips. Each chip then lasts for 1540 wave cycles. If we multiply all these numbers together we get 31,508,400 wave cycles per bit, which, at 50 bits per second, ends up as the exact 1575.42 MHz.
+
+Moreover, we’re actually dealing with an entire family of these codes – every satellite has a unique one. In the demonstration below you can see the first three of the so-called PRN codes that the GPS satellites emit:
+
+
+[FIGURE 57 | signal9 | ratio_60]
+
+Even though the codes look like a binary random noise, they’re in fact pseudorandom which explains their name – PRN stands for pseudorandom noise. Each of those codes is well known and can be easily recreated.
+
+The addition of the code may seem like a needless complication, but it’s actually extremely useful. Those pseudorandom codes have two important properties. The first one defines how well a code correlates with its copy shifted in time. Let’s see what this means in practice on a much shorter code of length 63. In the demonstration below you can slide a {replica|replica of the code} and see the signal it generates when multiplied by the repeated {code|original code}:
+
+
+[FIGURE 58 | signal6 | ratio_80]
+
+[CONTROL | signal6_sl0]
+
+The bottom section of the simulation shows the sum of the {positive_signal|positive} and {negative_signal|negative} areas of the product of the {code|code} and its {replica|replica} as well as the {difference_signal|difference} of these two areas. Notice that when the replica is not aligned the {difference_signal|difference} of areas is relatively small, but when we manage to align the replica with the signal the {difference_signal|difference} shoots up greatly. The correlation of the code signal with a copy of itself, or auto-correlation, is very high only when things are aligned correctly, and that jump in the magnitude of {difference_signal|difference} lets us detect that alignment.
+
+The second important property is related to cross-correlation, or correlation with coding signal from a different satellite. Let’s see what happens when we slide a {replica|replica of code from satellite 1} against a {cyan|code from satellite 2}:
+
+
+[FIGURE 59 | signal7 | ratio_80]
+
+[CONTROL | signal7_sl0]
+
+As you can see, when we slide the {replica|replica} around the {difference_signal|difference of areas} comes up a little bit, but it never reaches the highly discernible peak we’ve seen for auto-correlation.
+
+Those two properties unlock the magic that happens in the receiver. Let’s take a look at a simplified version of those steps, at first using a {output|clean incoming signal} from just a single satellite. The receiver can remove the sinusoidal carrier wave and get the {violet|signal} that is a product of the navigation message and the chipping code:
+
+
+[FIGURE 60 | signal10 | ratio_40]
+
+The receiver can then create the {replica|replica} of the chipping code for a satellite it’s trying to track, and then check if it can find a high correlation peak between the {violet|input signal} and that {replica|replica} as measured in the highlighted region. The receiver tweaks the offset until it finds high {difference_signal|difference of areas} which lets it know it found the correct offset value:
+
+
+[FIGURE 61 | signal11 | ratio_120]
+
+[CONTROL | signal11_sl0]
+
+As you observe the {difference_signal|difference of areas}, that is {positive_signal|positive area} minus {negative_signal|negative area}, after the correct offset is found, you may notice that over time it flips between being positive and negative. Since the coding signal was originally multiplied by the sign-flipping data signal, the flipping we see on the plot is actually the decoded data – you can compare the plot of the {difference_signal|difference of summed areas} to the original {data|data signal} that I’m showing at the bottom for completeness. After the correct offset has been found, the receiver can just look at the sign of that {difference_signal|difference} to decode the data bits.
+
+The time offset of the {replica|replica} provides the receiver with additional timing information that lets it calculate the exact elapsed time of flight. Recall that each subframe of a GPS message is timestamped with a granularity of 6 seconds, which, on its own, would be atrociously low precision.
+
+However, by keeping track of how many bits we’ve seen, how many code repeats we’ve seen, and the chip offset into the code we can significantly improve that precision. The receiver knows how much time each of these components occupies so it can add that duration on top of the timestamp encoded at the beginning of the subframe. We’re effectively timestamping each chip or even its fractions. When the receiver is measuring the time of flight, this method lets it calculate that duration very precisely.
+
+Finally, let’s see how the cross-correlating properties allow the receiver to distinguish between different satellites. In the demonstration below, the {violet|input signal} is a combination of the signals emitted by a few visible satellites as well as some noise. You can select which of the replicas the receiver is generating and adjust the offset to tune in to a satellite’s signal:
+
+
+[FIGURE 62 | signal8 | ratio_120]
+
+[CONTROL | signal8_sl0]
+
+[CONTROL | signal8_seg0]
+
+After some tuning we can find the required time offsets to decode signals from satellite 1, satellite 2, and satellite 3, but we can’t find a good match for satellite 4. This is a likely scenario as only some of all the 30 satellites are visible at once to a receiver.
+
+I need to emphasize that this was a simplified analysis of signal processing intended to illustrate how the chipping code allows the receiver to recover the original data bits. The behavior of an actual receiver is more complicated than what I’ve described. One of those additional complexities worth mentioning is the velocity of a satellite relative to the observer on Earth. Due to Doppler effect this changes the frequency of the signal as seen by the receiver. To correctly acquire the signal the device has to tune in on both the time offset and the appropriate frequency.
+
+Finally, it’s worth reiterating that the receiver doesn’t need to send anything to the satellites, it just listens to the signals that the satellites restlessly emit without knowing if anyone receives them.
+
+
+# Further Watching and Reading
+
+
+GPS MOOC was an online course hosted by Stanford in 2014. Thankfully, the video recordings of the lectures are available on YouTube and I highly recommend them for a deeper dive into GPS workings. Both presenters are experts in their domains and do an excellent job explaining the topics.
+
+The textbook Global Positioning System by Pratap Misra and Per Enge provides an even more detailed exposition of the discussed topics. It’s a thorough, but very readable publication on GPS and satellite navigation – it was my primary source for this article. I particularly liked that the book does a high level overview of all the elements of the system at first and then explores them individually in depth in later chapters.
+
+For a personal description of the history of GPS I recommend the interview with Brad Parkinson, who was the lead architect of the system. While the interview was conducted in 1999, still relatively early days of consumer GPS, Brad correctly predicted an upcoming explosion in widespread personal use.
+
+
+# Final Words
+
+
+It’s fascinating how much complexity and ingenuity is hidden behind the simple act of observing one’s location in a mapping app on a smartphone. What I find particularly remarkable is how many different technological advancements were needed for GPS to work.
+
+Just the satellites themselves required the development of rockets, mastery of orbital controls, and manufacturing prowess to build devices capable of withstanding the extremes of space.
+
+Precise time tracking was made possible by the invention of an atomic clock, while advancements in radio transmission and clever coding algorithms allowed the very weak signal sent by satellites to be correctly deciphered on Earth by receivers, which were in turn dependent on microchips and the digital revolution.
+
+It’s hard not get inspired by the relentless drive of people who kept pushing science and technology forward. All of their work made GPS an indispensable tool in our everyday life.

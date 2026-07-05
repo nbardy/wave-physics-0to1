@@ -1,0 +1,5 @@
+# Cloudflare Pages (static site). No Workers Functions, no Clerk, no Stripe.
+# Deploy:  bunx wrangler pages deploy dist --project-name wave-physics-0to1
+name = "wave-physics-0to1"
+compatibility_date = "2026-07-01"
+pages_build_output_dir = "dist"

@@ -1,0 +1,820 @@
+import { HeroEMWave } from '../sims/HeroEMWave'
+import { ABInterference } from '../sims/ABInterference'
+import { StringSection } from '../sims/StringSection'
+import { MobiusComb } from '../sims/MobiusComb'
+import { RopeCircle } from '../sims/RopeCircle'
+import { RegaugeBrush } from '../sims/RegaugeBrush'
+import { TransportNeedle } from '../sims/TransportNeedle'
+import { ConnectionTuner } from '../sims/ConnectionTuner'
+import { HolonomyLoop } from '../sims/HolonomyLoop'
+import { GlobeTransport } from '../sims/GlobeTransport'
+import { HopfMonopole } from '../sims/HopfMonopole'
+import { ConnectionWave } from '../sims/ConnectionWave'
+import { UniversalWaveMachine, UWMPreset } from '../sims/UniversalWaveMachine'
+
+# Fiber Bundles, the Universal Medium
+
+> What if waves are among the most beautiful & powerful things in the world, and
+> mathematicians generalized diff calculus so that there was a universal medium for
+> all waves, yet didn't tell anyone outside a few theoretical physicists?
+> That would be fiber bundles. Just for openers.
+>
+> — [Eric Weinstein](https://twitter.com/ericrweinstein)
+
+Every wave you have ever met waved *in something* — water, air, a string, the fluid of
+the previous lesson. The light reaching your eye right now waves in nothing that has
+ever been found.
+
+The nineteenth century named the missing substance the *aether* and hunted it with the
+most sensitive instrument it knew how to build; in 1887 Michelson and Morley measured,
+to their lasting dismay, nothing at all. The resolution taught in school — "fields
+don't need a medium" — is a name, not an answer. This article builds the answer. In
+the demonstration below, the top pane is the picture of light you have seen before:
+two families of arrows rising, crossing zero, and falling in step as the wave slides
+by. The bottom pane is the same wave, drawn as a pulse running down a row of clocks.
+The slider controls the speed of time:
+
+<HeroEMWave />
+
+The top picture is the one the textbooks print. By the end of this article you will
+know why the bottom one is the more honest of the two.
+
+One more demonstration belongs on the table before we build anything — the strangest
+experimental fact this subject owns, met here long before you could explain it.
+Below, a beam splits along two paths around a sealed central core, and the arrivals
+collect on a screen as a pattern of stripes. The figure asks you to take exactly one
+fact on credit, so let's state the loan as a contract: where the stripes fall is a
+real, repeatable laboratory measurement — the honest readout of the two journeys.
+(I've drawn the paths and stripes for legibility, wildly not to scale.) The one
+control is a dial on the sealed core:
+
+<ABInterference mode="plant" />
+
+Turn the dial and the stripes slide — though nothing measurable touches either path.
+This demonstration should look impossible. Before we are done, it will look
+inevitable.
+
+Some unfamiliar words are coming, and you shouldn't feel pressured to memorize any of
+them — every quantity in this article is color-coded, so the
+<C k="theta">wave value we watch</C> is always amber, the
+<C k="conn">rule that acts on it</C> is always blue, our own
+<C k="gauge">relabelings</C> are always green, and whatever
+<C k="curv">survives relabeling</C> shows up violet. One honest contract to go with
+the colors: the spaces our waves live over will be a line, a plane, one circle, and
+one globe cameo — everything we build survives the upgrade to three dimensions and
+beyond.
+
+## A Wave Is a Choice at Every Point
+
+Let's begin with the wave we already own. Below is the previous lesson's string,
+carrying a displacement wave — the most familiar object in this article, about to be
+looked at in an unfamiliar way:
+
+<StringSection stage="string" />
+
+Let's make the space of possibilities visible: over every point of the line, a faint
+vertical rail — the private space of values that one point owns. The string's height
+at a point is a position on that point's rail:
+
+<StringSection stage="rails" />
+
+I draw a dozen rails so the picture stays readable; in truth a rail stands over
+every point, a continuous fluid of them.
+
+Seen this way, a wave stops being a shape and becomes a *decision*: at every point,
+one choice from that point's rail. The demonstration below draws the same wave as its
+threading — one amber bead per rail, the wave being the run of beads:
+
+<StringSection stage="section" />
+
+The rail over a point is known as a *fiber* — the menu of values on offer there. The
+threading — one choice per fiber, varying smoothly — is known as a *section*.
+
+One more piece of anatomy: the strip all the rails sweep out together, the space
+every possible graph lives inside, is known as the *total space*:
+
+<StringSection stage="strip" />
+
+Now we can reread the previous lesson's notation with new eyes. We wrote $y(x,t)$
+for the string's height, and the symbol was carrying this structure all along:
+$y(x,t)$ is the choice made in the fiber over $x$ at time $t$ — a moving section.
+Nothing about the wave ever leaves the strip. However,
+the strip is hiding a choice that nothing in the string ever exposed — and to flush
+it out, we have to bend the strip.
+
+## Twist You Cannot Comb Away
+
+Take the strip of rails and bend it into a loop, so the line closes on itself. At the
+seam where the ends meet, we face a decision nothing has forced on us before: how the
+last rail glues to the first. The unassuming choice is straight across, top to top.
+The result is the untwisted band below, and it comes with a game — you can drag to
+comb the amber section all the way around, keeping it away from zero the whole way:
+
+<MobiusComb kind="cylinder" />
+
+Nothing resists you; any nonzero height combs smoothly around and meets itself. Now
+the other gluing: give the strip one half-twist before joining the ends, so top glues
+to bottom. At every individual point this band is indistinguishable from the last
+one — same rails, same neighborhoods, same game:
+
+<MobiusComb kind="mobius" />
+
+Unfortunately, the game is now unwinnable. Comb however you like: the section is
+forced through zero, every single time, and the meter catches the crossing. This
+shape is known as the *Möbius band*, and your failure is not clumsiness — it is a
+theorem. The twist lives in no particular place, since every local patch is innocent;
+the whole is different in kind, and no smooth re-combing removes it.
+
+This is what makes a bundle a bundle: *locally a product, glued by choices* — the
+gluing is data with consequences, not pedantry. Keep this flip in your pocket; near
+the end of the article we will need to know exactly what kind of twist it is.
+
+Notice what else was never forced on us: the shape of the fiber itself. Nothing says
+the thing standing over each point must be a segment. A circle can stand over a point
+just as well.
+
+## The Phase Clock
+
+You have held that fiber in your hands. Take a rope by one end and whirl it, and each
+point of the rope travels a circle around the line it would otherwise rest along —
+the corkscrew wave of a swung jump rope, known to physics as *circular polarization*:
+
+<RopeCircle stage="rope" />
+
+One confession at the moment of borrowing, because this is a real debt: the rope is a
+loaner. Nature's own row of circles — the one this article is finally about — has no
+visible needle and no ambient "up"; what actually stands in its fibers is a debt I
+will pay before we are done. For now, the rope keeps everything drawable.
+
+Let's extract the structure: over each point of the line, a clock face — the circle
+of directions that point's piece of rope can occupy — and the wave is no longer a
+height but an angle:
+
+<RopeCircle stage="extract" />
+
+We'll write $\theta(x,t)$ for that angle: a circle-valued section. Its total space, a
+line of circle fibers, is a cylinder — with the roles swapped since the band game:
+there the base was a circle and the fibers were segments; here the base is a line and
+the fiber is the circle. Only this total space gets the name *cylinder*; the
+untwisted band keeps its own name.
+
+Here, then, is the protagonist of the rest of this article: the clock-row, with a
+graph pane beneath it plotting $\theta(x)$ — the bundle picture above, its reading
+below, and the mapping between the two panes is the lesson. A steady wave runs along
+it, and the figure has gained a small meter:
+
+<RopeCircle stage="clocks" />
+
+The meter is a readout, not a control. It computes the string's energy recipe applied
+to the clocks — rotation rate squared plus twist rate squared,
+$\int [(\partial\theta/\partial t)^2 + c^2 (\partial\theta/\partial x)^2]\,dx$ — and
+holds a steady 1.00 while the wave runs. To write a wave equation for the clocks we
+will need that twist rate $\partial\theta/\partial x$, the analog of the string's
+slope. And waiting inside that innocent derivative is a problem the string never had.
+
+## The Prankster's Derivative
+
+Recall the seam: the gluing of neighboring fibers was a *choice*. The same is true
+all along the line, not just where ends meet — somebody has to decide how one clock's
+face aligns with the next one's, which direction here counts as "the same direction"
+there. For the string, nobody ever had to choose. That is worth saying plainly now,
+because the reason will matter soon.
+
+There is a household precedent. Before railway time, every town set noon by its own
+sun; comparing clocks across towns required a convention, and no convention was more
+correct than another. The anchor carries one honest disanalogy, and it cuts our way:
+the towns at least had a shared sky to appeal to — our clocks, we will see, have
+nothing of the kind.
+
+{/* fig gap: the railway-time anchor's own figure (plan §5) — a row of towns, each with its own local noon, and the convention lines between them */}
+
+Our rope, however, hangs in a room whose "up" every point shares — so its clock
+faces have quietly inherited an alignment. Below, each face's zero-mark is drawn in
+<C k="gauge">green</C>, and the meter has split in two: *rope-energy*, computed from
+the visible motion of the rope, beside *formula-energy* — the previous meter,
+computed from the plotted slopes; I should confess that the second recipe is the
+string's energy formula applied to the plotted $\theta$, the only energy we know how
+to write yet:
+
+<RegaugeBrush stage="pre" />
+
+Now the crime. You hold a *regauge brush*: stroking it across the row smoothly
+rotates each clock's zero-mark by an angle <C k="gauge">$\alpha(x)$</C> of your
+choosing — repainting the dials, touching nothing else. Commit before you brush:
+
+<Predict
+  question="The brush repaints each clock's zero-mark without touching the rope. Will either energy meter change?"
+  a="No — nothing physical changes"
+  b="Yes — at least one meter will jump"
+>
+  <RegaugeBrush stage="brush" />
+</Predict>
+
+The rope-meter sits still. The formula-meter jumps anyway. Nothing physical changed —
+the rope's motion, kept visible in the top pane, never varies under your brush — yet
+the plotted $\theta(x)$ writhes, its slope changes everywhere, and every number built
+from that slope changes with it. What the brush performs is a relabeling:
+
+$$\theta \;\to\; \theta + \alpha(x)$$
+
+One boundary check worth running: a constant <C k="gauge">$\alpha$</C> — every
+zero-mark turned by the same amount — leaves every slope alone. Only a prank that
+*varies from place to place* breaks the derivative, and place-varying pranks are
+exactly what the freedom allows. So the verdict is flat: *the ordinary derivative of
+a section is not a fact about the wave; it is a fact about our labels.* The
+rope-meter stayed honest only because its recipe never consulted the labels — it
+watched a rope hanging in a room whose "up" every point shares. Unfortunately, every
+wave equation ever written is built from derivatives.
+
+For the rope, then, the prankster's freedom is a bookkeeping nuisance. Watch what
+remains when the bookkeeping props are taken away:
+
+<RegaugeBrush stage="stripped" />
+
+The room and the rope fade, leaving clock faces alone in the dark. Nature's clocks,
+I'll confess now and pay in full later, come with no room and no visible needle — no
+experiment has ever read one clock's absolute angle; only comparisons between clocks
+have ever been measured. What we lack — and what nature must somehow also supply — is
+a rule for carrying a needle from one clock to the next.
+
+## The Transport Rule
+
+Let's build the missing rule by hand, as data. In the demonstration below, a needle
+is carried along the line, rotating as it goes by a prescribed amount per step — the
+prescription being a field <C k="conn">$A(x)$</C>, drawn as its own blue curve. The
+slider scales the prescription; at zero, the needle is carried rigidly, in the
+ordinary way:
+
+<TransportNeedle />
+
+That blue curve is a *transport rule*: an answer, at every point, to which direction
+on the next fiber counts as the same direction — precisely the statement the
+prankster attacked, but now carried as explicit data rather than inherited from the
+scenery.
+
+Time to put it to work. Below, a wave has been mangled by a brushstroke of fixed
+shape — visibly the same bump the last section's brush applied — and you hold one
+slider: the amplitude of a transport rule with that same bump shape. The graph pane
+gains a second trace, the wave as *read through your rule* — a needle carried by
+<C k="conn">$A$</C>, plotted as its disagreement with the section — with a ghost of
+the pre-mangle wave as the standing target, and a small meter scoring the residual:
+
+<ConnectionTuner mode="stage1" />
+
+Too little and the reading still writhes; too much and you have overcorrected.
+Somewhere between, the meter locks: read through the right rule, the mangled wave is
+calm. Notice the one thing that never moves while you tune — the raw $\theta$ trace.
+The rule repairs the *reading*, not the labels.
+
+Now the honest version, with a mangling built from several strokes, and three handles
+on your rule:
+
+<ConnectionTuner mode="stage2" />
+
+After some trial and error you may get pretty close. But a real brush has infinitely
+many handles, and matching it stroke for stroke by hand is a hopeless occupation.
+Thankfully, the number your hand has been driving to zero can be named once and for
+all, and its name is the whole rescue. It is the *covariant derivative*:
+
+$$D\theta \;=\; \underbrace{\frac{\partial \theta}{\partial x}}_{\text{measured twist}} \;-\; \underbrace{A}_{\text{expected twist}}$$
+
+— the twist the labels report, minus the twist the <C k="conn">rule</C> expected.
+Boundary check first: with $A = 0$ everywhere, $D$ is the ordinary derivative, and
+everything from the previous lesson survives untouched.
+
+The rescue then completes itself under your own hand. In the demonstration below you
+can brush a fresh <C k="gauge">$\alpha$</C> over the wave you just repaired — and the
+blue curve absorbs the stroke while the $D\theta$ plot sits perfectly still; the
+shift <C k="conn">$A$</C> picks up matches the $\partial\alpha$ of your brushstroke,
+stroke for stroke. And recall the meter that lied: rebuilt from $D\theta$ in place of
+$\partial\theta$, it now holds still under anything you can paint:
+
+<ConnectionTuner mode="law" />
+
+The law your hand just failed to break, written down:
+
+$$\theta \;\to\; \theta + \alpha, \qquad A \;\to\; A + \frac{\partial\alpha}{\partial x}, \qquad D\theta \;\to\; D\theta$$
+
+The prankster relabels; the <C k="conn">rule</C> compensates; every quantity built
+from $D$ means something again. The rebuilt meter is the first physically meaningful
+number our repaired calculus has bought us — the meter that lied now tells the truth.
+
+With it comes a sharper truth about the string. "Just use the room's up" was never an
+*alternative* to choosing a transport rule; it was choosing one — the flat rule,
+$A = 0$, handed to us free by the room the string is embedded in. That is why the
+string and the rope never had this problem: their connection came bundled with the
+scenery. Nature's clocks come with no room, so their transport rule must be bought as
+physical data. The epigraph's first clause is hereby paid in full: this is
+*differential calculus, generalized*, and the mathematicians' name for the whole
+package is a *connection*.
+
+History ran this exact failure chain before us. Hermann Weyl built the first gauge
+theory in 1918 with the wrong fiber — he let the *length scale* be the transported
+thing, with electromagnetism as its rule — and Einstein pointed out that atoms would
+then remember their histories, which their spectral lines visibly don't. The quantum
+phase repaired the theory in 1929: right structure, wrong fiber, eleven years apart.
+Even the inventor's naive version broke first.
+
+<Waypoint>
+You now hold fibers and the sections threading them; the prankster who relabels them
+at will; and a transport rule $A$ whose derivative $D\theta$ makes calculus mean
+something again — governed by one law: whatever the brush does to $\theta$, $A$
+absorbs.
+</Waypoint>
+
+One suspicion before we celebrate — and on the line it is not paranoia but a theorem:
+every <C k="conn">$A$</C> we have met was written by our own brush, and every $A$ on
+a line can be erased by one — a diary of brushstrokes, nothing more. What rescues $A$
+from bookkeeping is the plane. Where the needle has many ways to travel, the diary
+theory becomes testable — and the ways need not agree.
+
+## Around a Loop
+
+The base grows: a plane of clocks. One debt is due at the door — with many directions
+to step, the needle needs a rotation-per-step for each direction it can travel, so
+<C k="conn">$A$</C> upgrades from a scalar to a pair $(A_x, A_y)$, one number per
+direction of step. In the demonstration below, a needle travels from P to Q twice,
+along two different routes, transported by the same rule both times:
+
+<HolonomyLoop mode="two-paths" />
+
+The arrivals disagree. Neither route did anything wrong — every step obeyed the
+rule — yet the needles arrive pointing differently. On a line there was only one way
+to travel, and disagreement had no room to exist; that is exactly why the line could
+prove nothing.
+
+Two paths that disagree from P to Q are the same thing as one closed loop that brings
+a needle home rotated — out along one route, back along the other. So the sharp
+question is about loops, and it deserves a commitment:
+
+<Predict
+  question="Two loops on the plane: one encircles the marked core, one doesn't. Which needle comes home rotated?"
+  a="Both — any loop through a rule picks up rotation"
+  b="Only the loop around the core"
+>
+  <HolonomyLoop mode="two-loops" />
+</Predict>
+
+The loop around the core brings its needle home rotated; the other returns exactly
+as it left. A needle rotated by a round trip is a per-loop fact about the rule, and
+the phenomenon is known as *holonomy*. You can hunt it yourself below — the loop
+keeps a fixed size, you can drag it anywhere on the plane, and the meter totals the
+rotation-per-step around it, written $\oint A$:
+
+<HolonomyLoop mode="explore" />
+
+Notice what the meter cares about. Position changes nothing while the core stays
+outside; only *enclosure* counts. Keep that — it is the entire mystery of the sealed
+core, waiting for us.
+
+The planet under you has been performing this trick on travelers forever. Below, the
+same amber needle lies flat on a globe and is carried along a triangle — along the
+equator, up to the pole, back down to the start — kept as parallel as the ground
+permits at every step. You can drag to orbit, and walk the triangle:
+
+<GlobeTransport />
+
+The needle comes home turned by a quarter turn, having never once been rotated on
+purpose. An imperfect, but convenient analogy — and the imperfection is the important
+part: on the globe, the sphere's own shape writes the transport rule; on our plane of
+clocks the floor is flat, and a *field* writes it. Same phenomenon, different author.
+Hold onto that distinction; the sealed core will redeem it.
+
+Holonomy, so far, is a per-loop fact. Shrink the loop and it becomes a per-area
+density — a number waiting for a name.
+
+## Curvature
+
+Let's do the shrinking with the meters running. The loop below sits at a fixed
+position; the slider is its radius, and two meters run live — the rotation collected
+around the loop, and the running total of a violet density over the area inside:
+
+<HolonomyLoop mode="shrink" />
+
+Halve the radius and the collected rotation drops fourfold: the loop's take is
+proportional to its *area*. So the honest local object is rotation per area — a
+density, written <C k="curv">$F$</C> — and on our plane it has an exact recipe, along
+with the equality your two meters have been agreeing about at every radius:
+
+$$F \;=\; \frac{\partial A_y}{\partial x} - \frac{\partial A_x}{\partial y}, \qquad \oint A \;=\; \iint F$$
+
+Mathematics files the loop-total-equals-area-total statement under the name of
+Stokes; you have just watched it rather than cited it. And <C k="curv">$F$</C> earns
+its own picture — a violet map over the plane, bright where loops collect rotation
+fastest:
+
+<HolonomyLoop mode="field" />
+
+Now the boundary check, and it doubles as the verdict on the suspicion we brought
+from the line. Run the loop meter over a pure diary — a rule $A = \partial\alpha$
+that some brushstroke alone could have written:
+
+<HolonomyLoop mode="gauge-check" />
+
+Zero. Every loop, every position, every radius: zero. The brush can move
+<C k="conn">$A$</C> around, but it cannot create or destroy <C k="curv">$F$</C> — so
+a diary scores zero on every loop, and anything a loop meter reads is *not diary*.
+
+One sentence to keep two twists apart, as promised. The Möbius flip is *topology*:
+discrete, all-or-nothing, surviving any smooth re-combing. Holonomy is *geometry*:
+continuous, tunable, a per-area density. Different kinds of twist — and the case that
+needs the distinction is two sections away from paying for it.
+
+What we now hold is a field you cannot gauge away, measured in loops. Physics has a
+name for it.
+
+## You Have Built Electromagnetism
+
+Here is the dictionary, and every row of it is something your hand has already
+driven:
+
+{/* fig gap: the dictionary as its own figure (plan fig 43), plus one replay figure per row (plan figs 44–48) — rendered here as a table, with one row replayed below */}
+
+<table>
+  <thead>
+    <tr>
+      <th>what you built</th>
+      <th>what physics calls it</th>
+      <th>where you have felt it</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>the <C k="conn">transport rule</C></td>
+      <td>the electromagnetic potential</td>
+      <td>the tuner you drove to calm</td>
+    </tr>
+    <tr>
+      <td>the <C k="gauge">regauge brush</C></td>
+      <td>a gauge transformation</td>
+      <td>the prank that moved no rope</td>
+    </tr>
+    <tr>
+      <td><C k="curv">curvature</C>, space against space</td>
+      <td>the <C k="bfield">magnetic field</C></td>
+      <td>the compass needle, the fridge magnet</td>
+    </tr>
+    <tr>
+      <td><C k="curv">curvature</C>, time against space</td>
+      <td>the <C k="efield">electric field</C></td>
+      <td>the doorknob spark, static cling</td>
+    </tr>
+    <tr>
+      <td><C k="curv">holonomy</C> around a loop</td>
+      <td>magnetic flux</td>
+      <td>the dial on the sealed core</td>
+    </tr>
+  </tbody>
+</table>
+
+Two rows deserve a sentence each. The time-against-space row asks time to join the
+base — a step in time is a step too, carrying its own rotation-per-step — and I draw
+that only schematically; the honest four-dimensional picture survives, per our
+contract. And the gauge row is kept history: physicists took the word *gauge* from
+Weyl's rulers and never gave it back, so the prankster's freedom carries a surveyor's
+name. The violet map you painted two figures ago now reads differently — it is a map
+of <C k="bfield">magnetic field</C>:
+
+<HolonomyLoop mode="field" />
+
+This table exists in the literature under its own name: the **Wu–Yang dictionary**,
+written in 1975, when C. N. Yang — trying to understand what his own theory *was* —
+asked the mathematician next door at Stony Brook, Jim Simons, and discovered that
+geometry had built the entire apparatus decades earlier, under other names, for other
+reasons.
+
+One column, however, is still blank: nothing yet says what stands in the fibers when
+*nature* runs this construction — whose clocks these are. Time to pay the debts.
+Recall the rope, borrowed with a confession; recall the room, stripped away. Said
+plainly, once: the clocks are the *quantum phase* of a charged particle. Every
+electron carries one; it has no room and no visible needle; no experiment has ever
+read one clock's absolute angle — only comparisons between clocks. That is not a
+defect of our instruments. It is the prankster's freedom, real in nature — which is
+why nature is forced to own a connection, and all the quantum mechanics this article
+will need.
+
+So let's return to the sealed core with the overlays unlocked: the loop meter reading
+the region the two paths enclose, and the circulating <C k="conn">blue arrows</C> the
+core drives outside itself, with every trace of <C k="curv">violet</C> confined
+inside, where no path goes:
+
+<ABInterference mode="revealed" />
+
+The stripes are where electrons land, one arrival at a time, and the pattern is known
+as *interference*. The mechanism is machinery you own: each path carries a clock,
+transported by the rule; the two arriving needles are compared at the screen, and
+their alignment decides where the stripes sit. The dial sets the *flux* through the
+core — the holonomy of a region the electrons never enter. Zero curvature along every
+path; nonzero rotation around the loop. The globe's confession is redeemed here too:
+the fringes slide although the floor is flat and neither path crosses any violet —
+the author is the field, not the floor. And the readout pane's axis wears the unit
+the effect repeats in: the pattern recurs exactly once per
+$h/e \approx 4.14 \times 10^{-15}$ weber of enclosed flux, sliding continuously in
+between.
+
+One loophole remained for a determined skeptic — perhaps some stray field leaked onto
+the paths after all. In 1986 Akira Tonomura's team sealed the core inside a
+superconducting sheath, which can trap flux only in half-period units —
+$h/2e \approx 2.07 \times 10^{-15}$ weber, the superconductor's own quantum. The
+fringes were left exactly two options, aligned or displaced by half a stripe, and the
+experiment found the half-stripe displacement — a rotation of half a turn, with the
+field walled off from the electrons entirely:
+
+<ABInterference mode="tonomura" />
+
+The demonstration from the top of this article is hereby made inevitable: loops of
+<C k="conn">$A$</C> move fringes in a laboratory, and "$A$ is fictitious
+bookkeeping" does not survive contact with the data!
+
+One dessert before the act closes. In 1931 — the same year, with no contact — Dirac
+published the magnetic monopole, deriving from clock-consistency alone that electric
+charge must come in integers, and Hopf published a way of arranging circles over a
+sphere so that the whole is twisted though every patch is innocent. They are the same
+object: the monopole's field is the natural transport rule on Hopf's circle
+arrangement, and nobody noticed for forty-six years. You can drag the base point
+below and watch its fiber circle swing; drag anywhere else to orbit:
+
+<HopfMonopole />
+
+Dirac's integer is, in the dictionary's language, the count of the bundle's twist —
+Möbius-style topology, which is why it comes in whole steps while the flux dial
+slides smoothly. The two kinds of twist, kept apart earlier, just carried an
+experiment and a theorem between them.
+
+<Waypoint>
+You now hold the dictionary: $A$ is the electromagnetic potential, its curvature is
+the magnetic and electric field, its holonomy is flux — measured, beyond objection,
+in a lab. And the clocks are the quantum phase of charged matter.
+</Waypoint>
+
+In everything so far, though, <C k="conn">$A$</C> was scenery — set by our hand, then
+frozen while needles and clocks performed. Nothing in nature is scenery.
+
+## The Wave in the Connection
+
+Unfreeze <C k="conn">$A$</C>. Give the connection a life of its own — the simplest
+possible one: it costs energy for the rule to curve, and it costs energy for the rule
+to change. This is the one thing in this article we add by hand, and the confession
+deserves full volume: the repair was forced on us, but its dynamics is a postulate —
+the simplest on offer. The postulate carries a rider, stated here and not derived:
+the simplest dynamics happens to play no favorites among uniformly moving observers.
+The string's wave equation looks identical on paper, but it holds in the frame of the
+string's own material; here there is no material underneath, so that reason for a
+preferred frame is gone — and that no other reason sneaks in is special relativity's
+fact, which this article states and does not earn.
+
+Everything after that confession is consequence, and we can watch the first one on
+household hardware: a row of compass needles, and a bar magnet you can wiggle at one
+end:
+
+<ConnectionWave mode="compass" />
+
+What travels down the row is not any needle, and not a substance between them — it is
+the *redefinition of where each needle wants to rest*, arriving point by point, late.
+Two confessions where they land: I have slowed time enormously — across a desk the
+redefinition arrives in about a nanosecond, and the lateness *is* the wave. And the
+needles read the curvature <C k="curv">$F$</C>, while the wave itself rides in
+<C k="conn">$A$</C> — the dual-pane mapping the opening figure has been promising.
+These compasses are not even an analogy; they read the curvature of the very
+connection this section just unfroze.
+
+Each needle's rest direction is that point's local definition of *calm*. And here is
+the sentence this article exists to earn, carrying full weight exactly once: a
+medium's only essential job is to define calm — the unperturbed state a wave deviates
+from; a connection is exactly a definition of "unchanged from point to point," and
+nothing more; so the connection is the minimal possible medium — pure comparison, no
+substance — and light is a wave in the meaning of "same." (The railway towns rhyme
+one last time: news of a time reform running down the telegraph line is a ripple in
+the convention itself — though a reform every town adopts at once is pure gauge, the
+brush's work, and carries nothing; the ripple light carries is the part no reform can
+remove, the curvature.)
+
+Your turn to make one. Below is a stretch of frozen <C k="conn">$A$</C>; you can drag
+one point of the blue curve and let go:
+
+<ConnectionWave mode="pluck" />
+
+The bump splits into two pulses running opposite ways, and the distance-over-time
+readout clocks both at $c$ — observed before any equation. Here is what your pluck
+obeyed, with one knob bolted down first: doing calculus on $A$ requires parking the
+prankster somewhere, and the standard parking spot is known as the *Lorenz gauge*
+(named here, not derived):
+
+$$\frac{\partial^2 A_y}{\partial t^2} \;=\; c^2\,\frac{\partial^2 A_y}{\partial x^2}$$
+
+The waving quantity is $A_y$, the *transverse* component of the plane's pair — the
+rotation-per-step for steps taken across the line you are watching. I show you one
+line of the plane; the wave is identical along the direction I've hidden. Boundary
+check: an $A_y$ that is constant everywhere solves the equation while curving
+nothing — scenery is a solution, and only changes in the rule propagate.
+
+Both field readouts ride on the pulse, and you can watch them being taken:
+
+<ConnectionWave mode="readouts" />
+
+$E_y = -\partial A_y/\partial t$ is the time-against-space curvature;
+$B_z = \partial A_y/\partial x$ is the space-against-space one. Both nonzero, both
+immune to the brush, both moving in step. And one payoff arrives free: the waving
+component lies *across* the direction of travel — light's transversality, the fact
+you first met as a whirled rope, now explained rather than assumed.
+
+House rules require naming the solver: the figures in this section run *leapfrog* on
+$A_y$ over a one-dimensional grid — two stored time levels, $E$ read from their
+difference, $B$ by centered difference — stable while $c\,\Delta t/\Delta x \le 1$;
+ours runs at $0.9$.
+
+And so the ring closes. The opening figure returns — and it has been running this
+same leapfrog all along, one state array, the top pane drawing no independent
+animation: <C k="efield">$E$</C> is the pulse's time-slope and
+<C k="bfield">$B$</C> its space-slope, the two curvature rows of the dictionary read
+live:
+
+<HeroEMWave />
+
+Because both arrow families are derivatives of one traveling shape $f(x - ct)$, they
+rise and fall in lockstep — the in-step dance the textbook picture presents as a
+coincidence, the clock picture derives. Two confessions as the arrows take their bow:
+the top pane is a fixed oblique projection of the bottom pane's data, never a second
+simulation; and the component waving here is the transverse one — the clock-row's
+original along-the-line $A$ would give an $E$ with no $B$. The top picture is a pair
+of readouts. The bottom picture is the thing being read. That is why the bottom one
+is the more honest of the two.
+
+Michelson and Morley can now rest. Their instrument hunted the rest frame of a
+substance, and a comparison rule is not a substance — no parts, no worldlines,
+nothing to be at rest with respect to. The question, not just the answer, was empty;
+the aether was less disproved than out-defined. Nothing about the rule is observable
+except what survives the brush — its curvature, and its holonomies around loops — and
+neither has a rest frame to hunt. The measured isotropy, light's indifference to the
+laboratory's own motion, is the rider confessed above: kept, not re-derived.
+
+And the inversion, once, plainly: we never added light to this article. We admitted
+that clocks have no shared zero; the ordinary derivative died; the only possible
+repair was a compensating field; and the repair, granted the simplest life of its
+own, turned out to run at $c$, wave transversally, and carry in-step electric and
+magnetic readouts. You don't add light to physics — you can't keep it out. Forces are
+what it costs to do calculus in a universe with no absolute conventions, and *light
+is a traveling ripple in the rule for comparing phases, existing because calculus had
+to be repaired*.
+
+However, the epigraph's boldest clause is still an IOU. It promised a universal
+medium for *all* waves — and we hold exactly one, light. The string, sound, the phase
+wave the clocks carried: every other wave you have ever met still lives in its own
+separate subject, with no bundle in sight.
+
+## One Medium, Every Wave
+
+The claim is proven by a figure, not a paragraph. One construction — choose the
+fiber, choose the connection, write the wave equation with every $\partial$ replaced
+by $D$ — and below it is live: one stepper, the equation on screen with every symbol
+in its contract color, and a dial for the fiber and connection. Behold the knobs
+galore; the finale has earned them:
+
+<UniversalWaveMachine />
+
+The figure carries its own honesty sentence, worth repeating in prose: every mode
+runs the same leapfrog on the same covariant operator; the dial chooses the fiber,
+the mass, and which field is live versus frozen scenery. Let's walk the dial one stop
+at a time.
+
+Stop one — fiber a line, connection trivial:
+
+<UWMPreset mode="string" />
+
+This is the previous lesson's whole world: the string wave, and sound beside it —
+sections of trivial bundles under the trivial connection, the degenerate corner of
+this construction. One wink from the dial: this stop carries a material frame with it
+(its equation holds in the frame of the string's stuff), and the last stop will carry
+none — the dial changes what stands *under* the wave as well as over each point.
+
+Stop two — fiber a circle, <C k="conn">$A$</C> switched off:
+
+<UWMPreset mode="phase" />
+
+A free phase wave, given a small mass $\mu$ so packets visibly spread as they
+travel — without it, this stop would be dynamically identical to the string and show
+nothing new. A confession at the dial: this is the relativistic cousin — second order
+in time, Klein–Gordon by name — of the schoolbook matter wave; a real electron obeys
+a first-order-in-time cousin, Schrödinger's, a difference this article only names.
+What is identical is the coupling, and the coupling is the dial's actual claim: swap
+the fiber, keep the derivative.
+
+Stop three — fiber a circle, a frozen background <C k="conn">$A$</C> with
+<C k="curv">curvature</C>:
+
+<UWMPreset mode="charged" />
+
+A charged wave bending through a field, fringes sliding — the sealed core replayed as
+dynamics. One representation upgrade, confessed: the finale's clocks have grown
+needle *lengths* as well as angles, because interference needs something to add, and
+an angle alone cannot cancel.
+
+Stop four is different in kind, and the figure says so at the moment the dial lands:
+the on-screen equation trades its amber $\theta$ for blue $A$ —
+
+<UWMPreset mode="light" />
+
+Recall that equation; it is the one your pluck obeyed. This stop has no section left
+to wave, because for light the medium itself is the wave — which is this whole
+article, performed by a dial. One free honesty win while we're here: the machine
+stores its connection as one rotation per lattice edge, which is the same memory
+layout the largest physics computations on earth — lattice quantum chromodynamics —
+use for theirs.
+
+Past the dial's last stop, named but not built: nature runs richer fibers than
+circles. The weak and strong forces stand sphere-like faces over each point, with
+transport rules that act on one another — their connections, unlike ours, do not
+commute, which is the one confessed difference — and gravity stands the frames of
+spacetime itself over each event. The sentence never changes: a wave is a section, a
+force is a connection, and the covariant operator does the rest.
+
+{/* fig gap: the which-force picture gallery (plan fig 66) — richer clock faces for weak & strong, frames for gravity, one selector knob, confessed as named-not-built */}
+
+The marriage to the previous lesson also runs deeper than containment. Helicity — the
+number that measured how vortex lines thread through one another — is this lesson's
+Hopf invariant in Arnold's asymptotic sense: exact linking made an average, and
+exactly an integer in the spherical-Clebsch setting. Arnold likewise showed that
+ideal flow is itself geometry — geodesics on the group of volume-preserving
+rearrangements — and from that model's negative curvature made his famous
+back-of-envelope estimate of why long-range weather forecasts must fail. And the
+state of the art in vortex-preserving simulation, Schrödinger's Smoke, runs the
+previous lesson's fluid *on* this lesson's bundle — beating the previous lesson's own
+solver at keeping filaments crisp. That one stays prose, because it cannot be
+simulated honestly at this article's scope, and I would rather say so. The bridge
+between the lessons is theorems, not analogy.
+
+{/* fig gap: two linked vortex rings in drag-to-orbit orthographic 3D with a live Gauss-linking-number readout (plan fig 67) */}
+
+Found, not made — the coda's crown jewel is a conversation. In 1975, holding the
+dictionary, Yang went to Chern and said what any physicist would:
+
+> "This is both thrilling and puzzling, since you mathematicians dreamed up these
+> concepts out of nowhere."
+>
+> "No, no. These concepts were not dreamed up. They were natural and real."
+>
+> — C. N. Yang and S. S. Chern, 1975
+
+Two communities, no contact, one structure — the twins of 1931 were merely the
+sharpest instance. And the epigraph's last clause deserves its honest nuance: none of
+this is fringe. It is the standard mathematics of the Standard Model, taught in every
+physics graduate program and almost nowhere else — told to the public essentially
+once, in 1981, in a magazine article that taught the bundles beautifully and never
+let the connection wave. This article is the second telling, with your hands on the
+figures this time.
+
+## Further Reading
+
+Jeremy Bernstein and Anthony Phillips, [*Fiber Bundles and Quantum
+Theory*](https://www.scientificamerican.com/article/fiber-bundles-and-quantum-theory/),
+Scientific American, July 1981 (a [free
+PDF](https://www.math.stonybrook.edu/~tony/fb-and-qt/Fiber%20Bundles%20and%20Quantum%20Theory.pdf)
+survives online). The one popular telling before this one, and a generous teacher
+still: it explains the neutron's 720° turn with a Philippine wine dance and curvature
+with parallel transport on a rolling cone. What it never does is let the connection
+wave — no dynamics, no Maxwell, no light — which is exactly where this article picked
+up.
+
+Wu and Yang, *Concept of Nonintegrable Phase Factors and Global Formulation of Gauge
+Fields*, Physical Review D, 1975. The dictionary itself — one of the few physics
+papers whose centerpiece is a table, and the table is this article's reveal. Reading
+it after this lesson gives the strange pleasure of finding your own toys in a museum
+case.
+
+John Baez and Javier Muniain, *Gauge Fields, Knots and Gravity*. The gentlest true
+book on exactly this ladder — vector fields to connections to curvature to
+Yang–Mills, with full honesty and no index gymnastics before you are ready. If this
+article left you wanting the real definitions, they are here, in this order.
+
+Tristan Needham, *Visual Differential Geometry and Forms*. Holonomy-first
+differential geometry, a kindred spirit in pictures: curvature is defined by carrying
+vectors around loops and watching how far they come home turned. Our globe
+demonstration is his whole method in miniature.
+
+Richard Feynman, *The Feynman Lectures on Physics*, Volume II, Chapter 15. The
+reality of the vector potential argued with characteristic bluntness, years before
+Aharonov–Bohm was common knowledge — he weighs what deserves to be called a real
+field and concludes that $A$ qualifies. A masterclass in taking bookkeeping seriously
+until it confesses to being physics.
+
+Tonomura et al., *Evidence for Aharonov–Bohm Effect with Magnetic Field Completely
+Shielded from Electron Wave*, Physical Review Letters, 1986. The experiment of our
+reveal, performed with superconducting shielding so that no skeptic could object. The
+half-stripe displacement, pinned at exactly half a turn of phase, is one of the
+cleanest yes-or-no answers in the history of the subject.
+
+And the seed itself: Eric Weinstein's tweet, quoted at the top. Four sentences that
+compress this entire article — the lesson is the long proof that terminates at its
+own epigraph.
+
+## Final Words
+
+The next time light crosses a room to reach your eye, there is no jelly quivering in
+between. There is a bundle — a circle of phase standing over every point of the
+dark — and the light is its geometry ringing: the rule for comparing "same,"
+redefining itself point by point, arriving late.
+
+I find it a lasting astonishment that the century that lost its medium had already
+been handed a better one, by mathematicians it never thought to call. Understanding
+the crossing has not made it less wonderful — and now you own the derivative that
+makes it move.

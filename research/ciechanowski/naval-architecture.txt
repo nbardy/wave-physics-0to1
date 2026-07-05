@@ -1,0 +1,485 @@
+TITLE: naval-architecture
+DATE: July 27, 2021
+FIGURES: 47
+
+# Naval Architecture
+
+
+When I first heard the term naval architecture I thought it was the artistic practice of designing beautiful boats. It turns out it’s a proper scientific discipline dedicated to the engineering of ships.
+
+Over the course of this article we’ll go over different aspects of naval architecture. I’ll explain how ships are propelled, what makes them stay afloat, and how they’re carefully designed to not tip over even in dynamic conditions:
+
+
+[FIGURE 1 | na_hero | ]
+
+[CONTROL | na_hero_sl0]
+
+To understand why a ship rocks side-to-side in the wavy ocean waters, we first have to understand that it’s water itself that’s responsible for all of the ship’s behaviors. We’ll start with a simple device – a water-filled syringe.
+
+
+# Pressure
+
+
+You’ve probably seen a syringe before. When its plunger is pressed, the contents of the syringe come out on the other end. In the demonstration below we have a syringe connected through a thin hose to another container that has a spring in it. The entire system is filled with water. As you increase the force on the plunger observe the little spring being compressed at the other end of the hose:
+
+
+[FIGURE 2 | na_syringe | ]
+
+By applying force on the plunger we increase the pressure in the fluid, which in turn pushes the little piston and compresses the spring. We can measure that pressure using a pressure gauge. In the demonstration below the sliders allow you to control the applied force and the area of the plunger:
+
+
+[FIGURE 3 | na_syringe_pressure | ]
+
+Observe that the pressure P on the gauge is proportional to the perpendicular input force F, but it’s inversely proportional to the area A. We can tie these three values using the following equation:
+
+In metric system pressure is expressed in pascals (Pa) named after Blaise Pascal, while in the imperial system pounds per square inch (psi) are commonly used.
+
+Notice that we no longer have any spring to compress. Even though we’re applying a force the plunger doesn’t move since water, unlike air, is minimally compressible. It’s easy to squeeze an empty, tightly screwed plastic bottle, but when filled to the brim with water the bottle won’t budge much. At the pressures we’re applying here, water practically doesn’t change its volume.
+
+With a syringe, we’ve directly applied a force by pushing on the plunger, however, we could recreate that experiment by putting a heavy, tightly fitting weight on top of water in a container. In the demonstration below you can control how heavy the weight is to see how it affects the pressure read by the gauge:
+
+
+[FIGURE 4 | na_weight_pressure | ]
+
+[CONTROL | na_weight_pressure_sl0]
+
+Note that even when we remove the weight the pressure meter shows a non-zero read. The water itself also has weight so its mass above the point of measurement contributes to the readout as well.
+
+Let’s try to quantify the force exerted by the water. Firstly, notice that the shape of the water above the measurement forms a cylinder with height h and a base surface area A:
+
+
+[FIGURE 5 | na_water_cylinder | ]
+
+The mass m of that cylinder of water is just its volume V times the density ρ of the contained water:
+
+That highlighted volume {na_highlight|V}, however, can also be expressed as the area of the base A times the height h which we can plug into the equation for mass m:
+
+The force of gravity F acting on that water is equal to its mass m times the gravitational acceleration g:
+
+If we now plug all these values to the equation for pressure P = F / A we get:
+
+Which we can simplify by reducing the area A to obtain the final equation for pressure P of liquid with density ρ at a depth h under surface:
+
+Note that the resulting pressure P is independent of the base area, it’s only affected by the height h and density ρ of the water above:
+
+
+[FIGURE 6 | na_water_level | ]
+
+[CONTROL | na_water_level_sl0]
+
+In general the density ρ of water is not constant and depends on temperature and salinity, but at the scales we’re interested in we can assume its value doesn’t change.
+
+If you recall our first demonstration of a loaded syringe, you may remember that the pressure applied to the plunger “travelled” through the hose to act on a spring, which was quite distant from the syringe itself. The very same rules apply here. Observe the pressure shown by the gauge two different spots of this L-shaped container:
+
+
+[FIGURE 7 | na_L | ]
+
+[CONTROL | na_L_sl0]
+
+The right gauge always shows the same pressure even though in some cases there is less water “directly” above it. This may seem a little surprising, but you’d probably agree that if we removed the green plug from the filled container, the water would come out of the opening because of non-zero pressure in that area.
+
+That behavior of pressure in incompressible fluids is known as Pascal’s law. It states that pressure applied to any part of the liquid will be transmitted in all directions. As a result, the pressure in a connected body of water is the same at every level under the free surface.
+
+It’s worth stressing that in these static cases the pressure at a given level depends purely on the height of the body of water. This may have some unexpected consequences. For example, pressure at the bottom of these two containers is exactly the same:
+
+
+[FIGURE 8 | na_barrel | ]
+
+[CONTROL | na_barrel_sl0]
+
+Note how much less water there is in a thin straw compared to the wide container. This scenario is known as Pascal’s barrel. By making the straw longer and filling it with water we can make the pressure inside the barrel arbitrarily large, causing it to explode. While Pascal himself possibly never performed that experiment, some modern recreations have been successful.
+
+
+# Buoyancy
+
+
+On its own pressure doesn’t have any direction – it’s a scalar value, just like temperature is. However, the force exerted by pressure acts in the normal, that is locally perpendicular, direction to the surface of the object. We can visualize the local forces created by the pressure with small arrows:
+
+
+[FIGURE 9 | na_shapes | ]
+
+[CONTROL | na_shapes_sl0]
+
+In fact, these forces act not only on the container itself, but also on any object placed in the water as well. In the demonstration below a red brick is hanging on a string. You can dunk it into water using the slider:
+
+
+[FIGURE 10 | na_brick_container | ]
+
+[CONTROL | na_brick_container_sl0]
+
+From this point on I’ll remove the constraints of containers and we’ll instead move outdoors where we’ll submerge things into vast, peaceful ocean waters. In this new environment the rules of pressure remain the same – after all, we’re still dealing with water.
+
+The brick is now hanging on a string that is attached to a scale, which we’ll lower. Notice that as a larger part of the brick gets underwater, the weight shown by the scale decreases:
+
+
+[FIGURE 11 | na_brick_scale | ]
+
+[CONTROL | na_brick_scale_sl0]
+
+While the horizontal arrows of water pressure forces balance each other, the vertical ones don’t, and the pressure exerts a net positive force that pushes up on the brick. All the small arrows add up to the cumulative force known as buoyancy. In this example {na_buoyancy|buoyancy} is not strong enough to completely overcome the force of {na_gravity|gravity} acting on the brick, but it manages to diminish it to some extent, which reduces the weight as measured by the scale:
+
+
+[FIGURE 12 | na_brick_forces | ]
+
+[CONTROL | na_brick_forces_sl0]
+
+Note that for the sake of clarity, I shifted the arrows apart a little, but in this simple scenario {na_buoyancy|buoyancy} and {na_gravity|gravity} are actually positioned on the same vertical line.
+
+If we use a wooden block instead of a brick, the situation changes a bit. As the block gets gently lowered, it will reach a point where the water is capable of keeping it on the surface and the string gets some slack:
+
+
+[FIGURE 13 | na_brick_wood | ]
+
+[CONTROL | na_brick_wood_sl0]
+
+If we remove the string and manually push a wooden block underwater, the force of {na_buoyancy|buoyancy} will become higher than the block’s {na_gravity|weight}. When we let go of the block, the water will push it up:
+
+
+[FIGURE 14 | na_wood_sub | ]
+
+[CONTROL | na_wood_sub_sl0]
+
+Once the block gains some speed it may even overshoot its steady position, only to get pulled down by {na_gravity|gravity} again. After a while the water resistance slows the oscillating movement enough for the block to find its steady balance.
+
+Let’s try to quantify the force of {na_buoyancy|buoyancy} as created by the pressure. Naturally, the forces here are three dimensional, however, observe that all the horizontal components are matched on the opposite side and they cancel each other out. Only the pressure forces on top and bottom are unbalanced. You can drag the block around to see all the pressure forces acting on it:
+
+
+[FIGURE 15 | na_3d_forces | ]
+
+The pressure PT on top of the brick acting on the top surface area A exerts the force FT equal to:
+
+Similarly, the resulting force FB acting from the bottom is:
+
+And the net force of buoyancy F in the upwards direction is the difference of the two:
+
+Notice however, that the {na_highlight|highlighted} difference is just the height of the submerged part:
+
+
+[FIGURE 16 | na_height | ]
+
+And the product of height h and the base area A is volume V of the submerged object, which gives us the equation that ties the force of buoyancy to the displaced volume V of fluid with density ρ:
+
+Displaced volume is the volume of fluid that would normally occupy a space that is now filled by the object. We can also observe that density ρ times volume V is just mass m:
+
+This is force is just the weight of the displaced fluid. This general rule, known as Archimedes' principle, states that the force of buoyancy is equal to the weight of the fluid that the object has displaced. Note that buoyancy does not depend on the weight of the object itself, it’s only affected by the submerged volume of that object.
+
+You may wonder if the same rule holds for an arbitrary shape. After all, I’ve conveniently used a plain wooden block to simplify the volume and force calculations. However, we can use the same method even for smooth shapes by subdividing them into arbitrarily small rectangular prisms.
+
+In the following demonstration you can use smaller and smaller prisms to approximate the shape of a sphere. For the sake of clarity, I’m only coloring the top and bottom surfaces. You can drag the simulation around to see it from different angles:
+
+
+[FIGURE 17 | na_subdiv | ]
+
+[CONTROL | na_subdiv_sl0]
+
+Notice how quickly a group of blocks starts to resemble the smooth shape of the sphere.
+
+Now that we know that the force of buoyancy depends on the submerged volume we can also analyze what happens when the wooden block is forcefully tilted:
+
+
+[FIGURE 18 | na_wood_tilt | ]
+
+[CONTROL | na_wood_tilt_sl0]
+
+The local forces exerted by pressure are no longer symmetrical so they end up having an uneven effect on the body. At a first glance it may be hard to figure out what the cumulative effect of all those small arrows is. However, just like we can simplify the weight of all particles constituting an object to a single gravity force acting on its center of gravity, we can also simplify the local forces of pressure acting on the surface of an object to a single buoyancy force acting through a center of buoyancy, which I’ve visualized using a {na_buoyancy|small blue circle}:
+
+
+[FIGURE 19 | na_wood_tilt_f | ]
+
+[CONTROL | na_wood_tilt_f_sl0]
+
+As it turns out, the center of buoyancy is just the center of gravity of the displaced water. Note that the {na_buoyancy|force of buoyancy} may not be aligned with the {na_gravity|force of gravity} of the object. That misalignment of forces will create torque causing the object to rotate until it finds its equilibrium, which happens when the forces of {na_gravity|gravity} and {na_buoyancy|buoyancy} are aligned.
+
+
+# Hull
+
+
+In some sense, the floating block of wood we’ve seen so far forms a very simple ship – a raft. It’s not a very practical vessel, as it has small cargo carrying capacity. We also want to make sure that a ship can withhold the elements, so ideally we’d use more robust materials. A solid block of steel won’t float on its own because its weight is much larger than the force of buoyancy acting in it. However, if we hollow out the inside of the block we’ll significantly reduce its mass while maintaining the volume:
+
+
+[FIGURE 20 | na_tub | ]
+
+What we see here is a very simple hull – the main body of a ship. This tub-like body is now capable of floating, despite being made from steel. Note that this ship behaves very similarly to the wooden block:
+
+
+[FIGURE 21 | na_tub_sub | ]
+
+[CONTROL | na_tub_sub_sl0]
+
+This is ultimately how a ship floats. The weight of water it can displace is larger than the weight of the ship itself causing {na_gravity|gravity} and {na_buoyancy|buoyancy} to balance each other. While this hull shape is used on barges, the hull of a typical modern ship looks more like the one in demonstration below. You can drag it around to change the point of view:
+
+
+[FIGURE 22 | na_hull | ]
+
+[CONTROL | na_hull_seg0]
+
+This hull is covered with a deck, but some smaller boats may have an open top. The front part of the ship is called a bow. This hull has a bulbous bow which is the “nose” in the front bottom part – for larger ships it improves the flow around the ship, reducing drag. The back of the ship is called a stern. The left and right side of a ship are respectively called port and starboard. The fin-like object in the back called a rudder is used to steer the ship. The fan-like device next to it is a screw propeller, which, when rotated by an engine, pushes the ship forward.
+
+Most ships have a streamlined shape, which reduces the resistance of motion when sailing as the bow can part water more easily. Other than drag considerations, it may seem that the shape of the hull can be more or less arbitrary. However, naval architects have to consider another very important factor – the stability of the ship.
+
+
+# Stability
+
+
+So far all of the bricks and wooden blocks have been floating in pristine conditions, but in practice open waters are very rarely perfectly calm. Disturbances caused by waves and wind will usually rock the hull from side to side a little:
+
+
+[FIGURE 23 | na_hull_ratio | ]
+
+[CONTROL | na_hull_ratio_sl0]
+
+If you look at the ship from the front, you can see the so called angle of heel, which defines how far a vessel is tilted away from vertical. This front view will be very important for our considerations.
+
+Firstly, let’s see how the proportions of the hull affect the behavior of the ship when external forces are applied. In the demonstration below, the {na_wind|first slider} controls the wind, which will tilt the ship one way or another. The second slider changes the proportions of the hull:
+
+
+[FIGURE 24 | na_wind_tilt | ]
+
+[CONTROL | na_wind_tilt_sl0]
+
+[CONTROL | na_wind_tilt_sl1]
+
+For relatively wider shapes the ship tilts a little due to wind, but it finds its stable position and will return back to vertical when the wind stops. For more vertical shapes, however, the ship will tilt and capsize even when the wind stops. For most ships this is a catastrophic condition.
+
+To understand what’s going on, we need to look how the force of {na_gravity|gravity} and {na_buoyancy|buoyancy} act on a tilted hull. As we’ve seen before, when the ship is tilted the two forces are separated by a certain distance shown below in {na_white|white}:
+
+
+[FIGURE 25 | na_tilt | ]
+
+[CONTROL | na_tilt_sl0]
+
+[CONTROL | na_tilt_sl1]
+
+That {na_white|white line} is the righting arm, which is the horizontal distance between the two forces. The force of {na_buoyancy|buoyancy} acting through this {na_white|arm} exerts a rotating torque on the ship. The curly arrow at the top shows the direction of the turn. For a short and wide cross section of the hull, the force of {na_buoyancy|buoyancy} acts against the tilt of the ship, helping to straighten it up. For a more vertical shape, however, the {na_buoyancy|buoyancy} acts with the tilt of the ship, causing it to rotate even further!
+
+We can visualize the length of the righting arm for different heel angles of the hull using the following plot. When the angle of heel is in the green zone, buoyancy helps the straighten the ship. However, if the ship’s angle is in the red zone, buoyancy tries to heel the ship even more:
+
+
+[FIGURE 26 | na_arm_plot | ]
+
+[CONTROL | na_arm_plot_sl0]
+
+[CONTROL | na_arm_plot_sl1]
+
+Some hull shapes are inherently unstable. The slightest deviation from pristine vertical balance will make the ship flip. However, even hull shapes that are initially stable at some angle reach their limits. All of these examples assume the deck is perfectly sealed and that water doesn’t get into the hull.
+
+Moreover, it’s not just the rectangular proportions that affect the stability of the hull. The ship’s safety is also affected by its cross-sectional shape:
+
+
+[FIGURE 27 | na_curvature_plot | ]
+
+[CONTROL | na_curvature_plot_sl0]
+
+[CONTROL | na_curvature_plot_sl1]
+
+At first glance it may appear that less rectangular, slimmer shapes are inherently better. However, many ships are expected to operate only at reasonable angles of heel out of concern for the safety of passengers and cargo. Within that range the stability is comparable. Additionally, bulky, rectangular hulls allow much higher cargo loading capabilities.
+
+Another way to look at stability is to consider the metacenter, which lies at the intersection of the vertical from the original center of buoyancy with the vertical from the heeled center of buoyancy. I visualized that intersection with a {na_white|white dot}:
+
+
+[FIGURE 28 | na_tilt_meta | ]
+
+[CONTROL | na_tilt_meta_sl0]
+
+[CONTROL | na_tilt_meta_sl1]
+
+As long as the {na_white|metacenter} stays above the center of {na_gravity|gravity} then the heeled ship will try to return to vertical.
+
+Naval architects designing the hull have to ensure that the ship will remain stable across the expected spectrum of angles. Some ships, such as sailboats, are designed to handle a much higher critical angle of heel, but their construction also employs a trick of lowering the center of gravity by using additional weight attached below the hull. This ensures that the metacenter can stay above the center of gravity for a much larger range of angles.
+
+While a ship and its machinery have a relatively fixed mass and position this unfortunately can’t be said about the cargo it carries.
+
+
+# Cargo
+
+
+Most ships sailing on ocean waters carry some sort of cargo, quite often packed in standardized shipping containers. Let’s analyze what happens to the ship as we load it up. In the demonstration below, we’re looking inside the ship. You can control both the {na_highlight_dark|number} and vertical position of the containers:
+
+
+[FIGURE 29 | na_loading | ]
+
+[CONTROL | na_loading_sl0]
+
+[CONTROL | na_loading_sl1]
+
+As containers are added the ship will sink a little and increase its draft – the distance between the bottom of the hull and the waterline. A new balance is created between the increased weight due to the cargo and the increased buoyancy due to larger volume of the submerged part. However, if the heavy cargo is placed too high, the ship will spontaneously capsize after some time.
+
+Let’s analyze how a change of the vertical position of containers on a big ship affects its {na_gravity|center of gravity} and thus the stability curve:
+
+
+[FIGURE 30 | na_cgy_plot | ]
+
+[CONTROL | na_cgy_plot_sl0]
+
+[CONTROL | na_cgy_plot_sl1]
+
+[CONTROL | na_cgy_plot_sl2]
+
+If the cargo is placed relatively low, it can actually significantly increase the stability of the ship. However, for some positions of cargo, the ship’s stable position is tilted to one side or the other, even though the geometry of the hull and carried load are perfectly symmetrical – that angle is known as angle of loll. When the cargo is placed very high this ship becomes completely unstable.
+
+Naturally, when the cargo itself is not horizontally balanced the ship will also find a stable tilted position, which you can witness in the demonstration below. The slider controls the horizontal position of the heavy box:
+
+
+[FIGURE 31 | na_cgx | ]
+
+[CONTROL | na_cgx_sl0]
+
+Once again, the ship will find its static equilibrium at some angle, known as angle of list, which this time is caused by the lateral imbalance. You may have experienced that tilting when you lean on a side of a small rowboat or a kayak.
+
+So far we’ve been keeping the cargo in place, either locked into slots, or tied down to ship itself. However, if we let this heavy box slide the results can be truly catastrophic:
+
+
+[FIGURE 32 | na_slide | ]
+
+[CONTROL | na_slide_sl0]
+
+[CONTROL | na_slide_sl1]
+
+As the ship tilts at some point the friction between the cargo and the floor isn’t high enough to keep the box in place and it starts to slide. This in turn shifts the center of gravity of the ship farther to the side, which causes even bigger tilt. Even when the wind stops the ship won’t return to vertical. We can clearly see how unavoidable the problem becomes on the diagram:
+
+
+[FIGURE 33 | na_cgx_plot | ]
+
+[CONTROL | na_cgx_plot_sl0]
+
+[CONTROL | na_cgx_plot_sl1]
+
+Heavy cargo on a ship has to be locked in place so that it doesn’t change the ship’s balance. While it’s relatively easy to do for boxes, crates, and containers, some forms of cargo are more difficult to tame.
+
+
+# Free Surface
+
+
+A tanker ship can be used to carry chemicals, crude oil, or even orange juice. Notice what happens to this tanker ship as it tilts with the {na_wind|wind}. You can also change the level of liquid in the tank:
+
+
+[FIGURE 34 | na_free_surface | ]
+
+[CONTROL | na_free_surface_sl0]
+
+[CONTROL | na_free_surface_sl1]
+
+Once the ship starts to tilt the liquid inside will move to the side as well, which changes the center of gravity of the ship, which causes even further tilt. Even when the wind stops the ship won’t return to the straight position. However, the opposite wind may be able to move the ship to the other extreme. It’s worth pointing out that neither empty nor full tanks exhibit this problem.
+
+This free surface effect is very dangerous for the ship’s stability. Even ships that aren’t purposely carrying liquid cargo still have to keep fuel and ballast water on board. Moreover, small, bulk materials like sand, gravel, and grains also exhibit a fluid-like behavior and will move around when the relative direction of gravity changes. One of the most straightforward solutions to this free surface problem is to separate the liquid into multiple compartments. This severely limits the movement of the liquid making the ship much more stable:
+
+
+[FIGURE 35 | na_free_surface2 | ]
+
+[CONTROL | na_free_surface2_sl0]
+
+[CONTROL | na_free_surface2_sl1]
+
+Free surface effect also creates particularly dangerous conditions when a ship’s hull is breached and water starts flooding the vessel. The heavy tilt can make the evacuation efforts of the crew and passengers much more difficult despite the ship still being technically afloat.
+
+
+# Waves
+
+
+For the final discussion of stability let’s look at the ship in waves. For prettier visuals we’ll top our hull with a bridge – a platform from which a ship is commanded. The slider controls the amplitude of the waves:
+
+
+[FIGURE 36 | na_wave | ]
+
+[CONTROL | na_wave_sl0]
+
+Notice that as the wave passes through it changes the size and position of the underwater volume of the hull, which in turn shifts the {na_buoyancy|center of buoyancy}, causing the ship to tilt.
+
+Every ship has its natural roll frequency, which determines how quickly a ship rocks side-to-side when disturbed by an external force. When the waves approach the hull at comparable frequency the ship can exhibit a resonant behavior, similarly to how pushing a swing at the right time will make it swing more and more. Naval architects can affect a ship’s rolling behavior with both static and dynamic devices like bilge keels or antiroll tanks.
+
+
+# Propulsion
+
+
+For the final part of this article let’s discuss how a ship manages to move forward. While sails have been a dominant form of ship propulsion for thousands of years, they can’t power a vessel if there is no wind. Modern day ships typically use internal combustion engines that power screw propellers, which look roughly like this:
+
+
+[FIGURE 37 | na_propeller | ]
+
+The shape of a propeller may seem fairly complicated, so let’s try to devise it from first principles. A job of a propeller is to push water backwards, which, by Newton’s third law, pushes the propeller and the ship forwards. To push the water away we’ll use a few paddle-like {na_red|blades} attached to a {na_yellow|hub}, all rotating on a {na_blue|shaft}. We’ll start with just three {na_red|blades} placed symmetrically around the axis of rotation. Observe that we have some freedom in how we orient them:
+
+
+[FIGURE 38 | na_propeller_pitch | ]
+
+[CONTROL | na_propeller_pitch_sl0]
+
+As the propeller rotates around its axis, the forces its blades exert on water vary quite a bit depending on the blades orientation. In the demonstration below the {na_blue|blue arrows} show the forces exerted on water by each blade. The sum of all these forces is shown with the {na_yellow|yellow arrow} and the induced swirl is depicted with the {na_red|red arrow}:
+
+
+[FIGURE 39 | na_propeller_pitch_force | ]
+
+[CONTROL | na_propeller_pitch_force_sl0]
+
+When the blades are oriented sideways they push a lot of water, but only in the {na_red|swirly} motion and the {na_blue|forces} balance each other out. The engine’s work is wasted on dragging the paddles through the water. As we reduce the angle the projected area of the blades in the direction of rotation decreases and so does their pushing power. At limit it becomes negligible when the blades are perpendicular to the axis of rotation.
+
+At intermediate angles some of the work done by the blades is still used to {na_red|swirl} the water, however, the blades also {na_yellow|axially push} the water away. This causes the propeller and the boat to be pushed in the opposite direction. That propeller generates thrust.
+
+In this very simplified analysis we seem to achieve the largest thrust roughly in the middle between the two extremes, but notice that we still have a relatively large drag induced by the blades. In practice the most efficient angle of attack will be much lower. We can visualize it in a top down view of a single blade. For top performance the blade’s direction should stay within the green region:
+
+
+[FIGURE 40 | na_propeller_aoa | ]
+
+[CONTROL | na_propeller_aoa_sl0]
+
+A propeller will work most efficiently if the velocity of a blade relative to water is in that angular range. Let’s look at the {na_blue|final velocity} of the blade a bit closer. Note that while different parts of the blade have the same angular velocity, they have different linear velocity, so the moving blade approaches water with {na_red|rotation-induced velocity} which varies with the distance from the center of the propeller:
+
+
+[FIGURE 41 | na_propeller_radial | ]
+
+Moreover, a functional propeller will push the ship forward, causing it to sail at some speed, so the vessel and its propeller also have some {na_yellow|forward velocity} relative to the water:
+
+
+[FIGURE 42 | na_propeller_forward | ]
+
+The sum of {na_red|rotation-induced velocity} and the {na_yellow|“forward” velocity} creates the {na_blue|final velocity} of the section on the blade. In the following demonstration, the right side shows the frontal view of the blade, making it easier to see the selected section:
+
+
+[FIGURE 43 | na_propeller_aoa2 | ]
+
+Notice that the area of good efficiency is fixed against the {na_blue|final velocity} of the blade. Since different parts of the blade have different velocity against water they should also have a different angle of attack so that locally they can function at maximum efficiency. To account for this the propeller blades have a characteristic twisted shape – their angle of attack decreases with radial distance. In the demonstration below you can control the amount of that twist in the blades:
+
+
+[FIGURE 44 | na_propeller_twist | ]
+
+[CONTROL | na_propeller_twist_sl0]
+
+In its simplest form the twisted surface of a blade is a part of a helicoid, which is a surface swept by a segment that is perpendicular to an axis while simultaneously rotating and moving along that axis:
+
+
+[FIGURE 45 | na_helicoid | ]
+
+A helicoid like the one above is defined by a radius which specifies the extent of the segment and a pitch which describes the distance travelled along the axis during a single revolution. In fact, a helicoid was also used in Archimedes' screw which served as the base idea for first screw propellers employed in ships. With the twist in place each part of the blade stays within the optimum range:
+
+
+[FIGURE 46 | na_propeller_aoa3 | ]
+
+The final consideration is the total blade area, which is a product of the surface of each individual blade and the number of blades. You can change the latter in the demonstration below:
+
+
+[FIGURE 47 | na_propeller_n | ]
+
+[CONTROL | na_propeller_n_seg0]
+
+Notice that in the back view a higher number of blades occupies a larger part of the entire circular shape. The bigger the total blade area the larger the thrust, but only to some extent as the flow around one blade starts to affect the flow around the other blades.
+
+The blades of modern propellers have an airfoil cross section, which contributes to the additional lift on the blades, thus improving their efficiency. However, the pursuit of blade lift has its limitations. When the pressure on the pushing side of the blade increases it also simultaneously decreases on the other side. If that pressure reduces too much the water can locally boil, in effect known as cavitation. When those vapor-filled bubbles repeatedly collapse on the surface of blades they can cause significant damage.
+
+I need to point out that what I’ve discussed above was a simplified analysis of how screw propellers generate thrust – there are entire books dedicated to hydrodynamics of propellers. Propeller design is a complex topic and even minor efficiency gains can result in big savings on fuel used to power the ship’s engines.
+
+
+# Further Watching and Reading
+
+
+Casual Navigation is a YouTube channel dedicated to maritime concepts. In his videos Rob analyzes famous capsizings, discusses antiroll techniques, and explains why the bottoms of the ships are red. The recordings strike a good balance between entertainment and education.
+
+When it comes to books, I recommend Applied Naval Architecture by Robert Zubaly. This entry level publication expands on everything I’ve discussed and touches on other topics like ship strength and floodability.
+
+For a different take on boats I recommend YouTube channel Tips from a Shipwright which is dedicated to documenting the process of building and restoring smaller boats. Over the course of the last few years Louis Sauzedde has recorded his work on two full projects – a work skiff and a dory. Both series show great craftsmanship and expertise. It’s a real joy to follow Lou’s progress in his workshop.
+
+
+# Final Words
+
+
+With experience acquired over millennia, naval architects have mastered the art of controlling the forces acting on hulls to make sure the ships, their passengers, and cargo arrive unharmed at their destination.
+
+Both traditional and naval architects have to devise functional, safe, and habitable structures. However, naval architects face the additional challenge of designing for an ever-changing setting for their creations – the harsh and unpredictable sea.

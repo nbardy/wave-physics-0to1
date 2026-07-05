@@ -1,0 +1,532 @@
+TITLE: exploring-gpgpu-on-ios
+DATE: January 5, 2014
+FIGURES: 0
+
+# Exploring GPGPU on iOS
+
+
+Note: this article is obsolete as there are better ways of doing GPU computation on modern iOS devices. I’m keeping it here as a historical reference.
+
+I’ve always wanted to try some GPGPU programming on iOS. The idea of harnessing the highly parallelized power just tickled my inner geek. Using GPU to run image processing is already a solved problem. Unfortunately, fragment shader calculations do not support the notion of more general computation. With advent of A7 chip and OpenGL ES 3.0, I’ve decided to tackle this problem and I’ve managed to get some exceptionally good results. Granted, the method I rolled in has some limitations and performs well only in fairly computationally heavy situations, but when it works, it works like magic.
+
+As a companion to this article, I created a GitHub repo that contains the source code for many discussed concepts, as well as benchmarks that were run to measure the effectiveness of GPU computation.
+
+
+# Why?
+
+
+Why on earth would one want to use GPU for calculations? The answer is obvious – blazingly fast speed. The following paragraphs consider three different use cases, each with increasing complexity. While the presented examples are somehow naïve, the intention is to highlight the typical patterns of applications that might benefit from GPU-powered calculations. Each example contains a CPU vs GPU comparison chart – a result of direct computation of the presented problem. The timings were measured on the iPad Air (5th generation iPad) with iOS 7.1 beta 2.
+
+
+# The Disappointing Linear Function
+
+
+Let’s start with the most basic function there is – a linear function. There are countless of applications for linear functions, so let’s pick one and see how well it performs:
+
+```
+{n|f}{p|(}{n|x}{p|)} {o|=} {mf|3.4} {o|*} {n|x} {o|+} {mf|10.2}{p|;}
+```
+
+How should we compare the performance of GPU to CPU? While using time is the obvious choice, we shouldn’t focus on raw milliseconds. Comparing run-time for small and large input sets, would render the former one useless, as they would be merely visible on the plot, pitifully overlapping horizontal axis. Instead, we should consider the ratio of CPU to GPU time. Making CPU performance normalized at 1.0, makes the GPU value easy to interpret – if the GPU performs twice as fast as the CPU, then the GPU’s value is 2.0. Here’s the comparison chart for GPU vs CPU for the computed linear function:
+
+The horizontal axis of the chart represents the number of input float values and is in logarithmic scale.
+
+As you can see, GPU sucks in this case. Even for the very large input set (224 = over 16 million values), the GPU runs 0.31 times as “fast” as CPU i.e. it runs over 3 times slower. The only promising result is that the performance increases with input size. For sufficiently large data set, the GPU would overcome the CPU. Notice, however, that representing 224 float values already takes 64 MB of memory. Surely we’d hit memory limits before reaching any beneficial performance level.
+
+
+# The Promising Complication
+
+
+Since linear function was so disappointing let’s reach into some more complicated functions from our math repository. The exponential function transpires in many natural phenomena e.g. exponential decay. Paired with basic trigonometry functions it forms a solution of many differential equations, like the ones that rule the damping. Let’s consider the following complicated mixture of exponent, sine, and cosine with some random coefficients:
+
+```
+{n|f}{p|(}{n|x}{p|)} {o|=} {mf|2.0} {o|*} {n|exp}{p|(}{o|-}{mf|3.0} {o|*} {n|x}{p|)} {o|*} {p|(}{n|sin}{p|(}{mf|0.4} {o|*} {n|x}{p|)} {o|+} {n|cos}{p|(}{o|-}{mf|1.7} {o|*} {n|x}{p|))} {o|+} {mf|3.7}{p|;}
+```
+
+Here’s the comparison chart for GPU vs CPU execution time:
+
+First success! As soon as the input size crosses 216 (little over 65k values), the GPU is faster than the CPU. For very large data sets, the GPU is over 5 times faster.
+
+
+# The Amazing Iteration
+
+
+As exciting as the results of the previous example were, we can do even better. Let’s consider an iterative computation. Imagine a simulation of huge number of bodies in a central gravitational field. Let’s make a few assumptions:
+
+  - each body has the same mass
+
+  - each body has the same initial position, but different initial velocity
+
+  - we can ignore body-to-body interaction
+
+  - the problem is two dimensional
+
+The goal of the calculation is to answer the question: how far have the bodies flown in 10 seconds? In other words, what is the position of every single body after 10 seconds?
+
+Reaching back to fundamentals of physics this simple equation comes to mind:
+
+```
+{n|p}{p|(}{n|t}{p|)} {o|=} {n|p0} {o|+} {n|v0} {o|*} {n|t} {o|+} {mf|0.5} {o|*} {n|a0} {o|*} {n|t} {o|*} {n|t}{p|;}
+```
+
+Unfortunately we can’t merely plug the values in and get the result in one step, because the acceleration of the body is not constant – it depends on the distance from field’s center. A very simple solution is to run the calculation in an iterative fashion, just like most of the physics engines do.
+
+For a given position in space, we can get the body’s acceleration by measuring the value of gravitational force which is governed by Newton’s law of universal gravitation. Since this is merely an example, we can ignore all the constant coefficients and just notice that the force is proportional to the distance squared and points at the center of the field.
+
+Let’s focus on the gist of the iteration itself. Each step will evaluate the current acceleration value, and then update values of both position and velocity using a forward Euler method. The body of the iterative loop goes as follows:
+
+```
+{lnt|1
+}{lnt|2
+}{lnt|3
+}{lnt|4
+}{lnt|5
+}{lnt|6
+}{lnt|7
+}{lnt|8
+}{lnt|9
+}
+```
+
+```
+{kt|float} {n|l} {o|=} {mf|1.0f}{o|/}{n|sqrtf}{p|(}{n|x}{o|*}{n|x} {o|+} {n|y}{o|*}{n|y}{p|);}
+{kt|float} {n|ax} {o|=} {o|-}{n|x}{o|*}{n|l}{o|*}{n|l}{o|*}{n|l}{p|;}
+{kt|float} {n|ay} {o|=} {o|-}{n|y}{o|*}{n|l}{o|*}{n|l}{o|*}{n|l}{p|;}
+
+{n|x} {o|+=} {n|vx}{o|*}{n|dt}{p|;}
+{n|y} {o|+=} {n|vy}{o|*}{n|dt}{p|;}
+
+{n|vx} {o|+=} {n|ax}{o|*}{n|dt}{p|;}
+{n|vy} {o|+=} {n|ay}{o|*}{n|dt}{p|;}
+```
+
+Let’s settle for a time step of 0.1 seconds. Running the loop 100 times will result in good approximation of body’s position at t = 10s. Without further ado, here’s the GPU vs CPU comparison for the computation:
+
+That’s right, the GPU was over 64 times faster. Sixty four. Times. Faster. While this example is somehow contrived (2D over 3D space, ignoring body to body collisions), the result is astonishing. In terms of absolute time, the CPU calculation took over 21 seconds, while the GPU took a third of a second to do the work. Even for as few as 4096 float input values (2048 two dimensional vectors), the GPU is almost twice as fast as the CPU.
+
+
+# How?
+
+
+From developer’s perspective the typical GPU programming works as follow:
+
+  - submit some vertex geometry
+
+  - process it in vertex shader
+
+  - let the GPU figure out the triangles
+
+  - process each fragment in fragment shader
+
+  - present result on the screen
+
+While both vertex and fragment shader are customizable, so far only the fragment shader’s output was accessible to the developer in form of the generated framebuffer.
+
+Long story short, using a new feature of OpenGL ES 3.0 called Transform Feedback, we do have access to the output of the vertex shader.
+
+
+# Transform Feedback
+
+
+Here’s the excerpt from the definition of Transform Feedback:
+
+Transform Feedback is the process of capturing Primitives generated by the Vertex Processing step(s), recording data from those primitives into Buffer Objects. This allows one to preserve the post-transform rendering state of an object and resubmit this data multiple times.
+
+The crucial part is “preserve the post-transform rendering state”. Basically, we let the GPU do the work on the vertex data and then we can access the computed output. Actually, it doesn’t even have to be vertex data per se, the GPU will happily make operations on whatever float values we provide. This is the essence of my method.
+
+Setting up the Transform Feedback in OpenGL takes a dozen lines of code and I’ve done this with help of this short article and this much longer tutorial. The setup can be split into two different steps.
+
+First of all, we should inform OpenGL which shader variables should be used to write output data into the memory buffer. This stage must happen before the shader gets linked. The following two lines of code present the setup, the crucial call being glTransformFeedbackVaryings:
+
+```
+{k|const} {kt|char} {o|*} {n|varyings}{p|[]} {o|=} {p|{}{s|"nameOfOutput1"}{p|,} {s|"nameOfOutput2"}{p|};}
+{n|glTransformFeedbackVaryings}{p|(}{n|program}{p|,} {k|sizeof}{p|(}{n|varyings}{p|)}{o|/}{k|sizeof}{p|(}{o|*}{n|varyings}{p|),} {n|varyings}{p|,} {n|GL_INTERLEAVED_ATTRIBS}{p|);}
+```
+
+The second stage is very similar to a regular draw call setup, although enriched with some additional API calls:
+
+```
+{n|glUseProgram}{p|(}{n|program}{p|);}
+    
+{n|glEnable}{p|(}{n|GL_RASTERIZER_DISCARD}{p|);} {c1|// discard primitives before rasterization stage
+}{c1|}    
+{n|glBindBuffer}{p|(}{n|GL_ARRAY_BUFFER}{p|,} {n|readBuffer}{p|);}
+    
+{cm|/* bind VAO or configure vertex attributes */}
+    
+{n|glBindBufferBase}{p|(}{n|GL_TRANSFORM_FEEDBACK_BUFFER}{p|,} {mi|0}{p|,} {n|writeBuffer}{p|);} {c1|// the output should be written to writeBuffer
+}{c1|}    
+{n|glBeginTransformFeedback}{p|(}{n|GL_POINTS}{p|);}
+{n|glDrawArrays}{p|(}{n|GL_POINTS}{p|,} {mi|0}{p|,} {n|count}{p|);}
+{n|glEndTransformFeedback}{p|();}
+    
+{n|glDisable}{p|(}{n|GL_RASTERIZER_DISCARD}{p|);}
+        
+{n|glFinish}{p|();} {c1|// force the calculations to happen NOW
+}
+```
+
+Note, that there are some differences between desktop and mobile OpenGL implementations. For instance, I couldn’t compile my vertex shader on its own, I had to provide the dummy implementation of fragment shader as well (which apparently is not a requirement on desktop OpenGL).
+
+As a final step, remember to include OpenGLES/ES3/gl.h header.
+
+
+# Writing and Reading to Buffers
+
+
+Unlike traditional PCs, all iOS devices have Unified Memory Architecture. It doesn’t matter whether you read or write from “regular” memory or OpenGL allocated buffer – it’s all the same pool of on-device transistors.
+
+I’ve done some crude tests and in fact, reading from “OpenGL” and “regular” memory takes the same amount of time and this is true for writing to memory as well.
+
+On the desktop PCs, the RAM→VRAM memory transfer usually takes nontrivial amount of time. On the iOS, however, not only can you generate your data directly into OpenGL accessible memory, but also you can read back from it as well, without any apparent penalty! This is fantastic feature of iOS as mobile GPGPU platform.
+
+Accessing data pointer for reading is super easy:
+
+```
+{n|glBindBuffer}{p|(}{n|GL_ARRAY_BUFFER}{p|,} {n|sourceGPUBuffer}{p|);}
+{kt|float} {o|*}{n|memoryBuffer} {o|=} {n|glMapBufferRange}{p|(}{n|GL_ARRAY_BUFFER}{p|,} {mi|0}{p|,} {n|bufferSize}{p|,} {n|GL_MAP_READ_BIT}{p|);}
+    
+{c1|//read from memoryBuffer
+}{c1|}    
+{n|glUnmapBuffer}{p|(}{n|GL_ARRAY_BUFFER}{p|);}
+```
+
+And so is accessing pointer for writing:
+
+```
+{n|glBindBuffer}{p|(}{n|GL_ARRAY_BUFFER}{p|,} {n|targetGPUBuffer}{p|);}
+{kt|float} {o|*}{n|memoryBuffer} {o|=} {n|glMapBufferRange}{p|(}{n|GL_ARRAY_BUFFER}{p|,} {mi|0}{p|,} {n|bufferSize}{p|,} {n|GL_MAP_WRITE_BIT}{p|);}
+    
+{c1|//write to memoryBuffer
+}{c1|}    
+{n|glUnmapBuffer}{p|(}{n|GL_ARRAY_BUFFER}{p|);}
+```
+
+Wrapping up data reading/writing logic in 3 additional lines of OpenGL boilerplate is surely worth the added benefits.
+
+
+# Shader Calculations
+
+
+OpenGL ES shaders are written in GLSL ES which is very much C-like with some sweet vector and matrix additions.
+
+
+# Simple Vector Operations
+
+
+GLSL defines vec4 type that is a four component vector (with x, y, z, and w components). While the language specification is the definite guide on the matter, there are few simple operations that are worth glancing over.
+
+Let a and b be GLSL variables of vec4 type. One can easily multiply all vector components by scalar:
+
+```
+{k|float} {n|c} {o|=} {mf|2.0}{p|;}
+{k|vec4} {n|r} {o|=} {n|a} {o|*} {n|c}{p|;} {c1|// r.x = a.x * c, r.y = a.y * c...}
+```
+
+One can also multiply two vectors component-wise:
+
+```
+{k|vec4} {n|r} {o|=} {n|a} {o|*} {n|b}{p|;} {c1|// r.x = a.x * b.x, r.y = a.y * b.y...}
+```
+
+As well as feed entire vector into plethora of built-in functions:
+
+```
+{k|vec4} {n|r} {o|=} {n|exp}{p|(}{n|a}{p|);} {c1|// r.x = exp(a.x), r.y = exp(a.y)...}
+```
+
+I highly recommend OpenGL ES 3.0 API Reference Card which is a short primer on OpenGL API as well as GLSL cheat sheet. It contains a list of all built-in functions and it is generally recommended to use them instead of manually recoding even the trivial functionality. Built-ins may have direct hardware implementation and thus should be faster than their hand-written counterparts.
+
+
+# Example Shader
+
+
+Here’s the simplest shader written in GLSL ES 3.0 that doubles the input vector:
+
+```
+{lnt| 1
+}{lnt| 2
+}{lnt| 3
+}{lnt| 4
+}{lnt| 5
+}{lnt| 6
+}{lnt| 7
+}{lnt| 8
+}{lnt| 9
+}{lnt|10
+}{lnt|11
+}{lnt|12
+}{lnt|13
+}{lnt|14
+}
+```
+
+```
+{cp|#version 300 es}
+
+{k|in}  {k|vec4} {n|inVec}{p|;}
+{k|out} {k|vec4} {n|outVec}{p|;}
+
+{k|vec4} {n|f}{p|(}{k|vec4} {n|x}{p|)}
+{p|{}
+    {k|return} {mf|2.0} {o|*} {n|x}{p|;}
+{p|}}
+
+{k|void} {n|main}{p|()}
+{p|{}
+    {n|outVec} {o|=} {n|f}{p|(}{n|inVec}{p|);}
+{p|}}
+```
+
+As you can see, it’s very readable. We return a transformed input vector (marked as in) as an output vector (marked as out).
+
+
+# Processing Power
+
+
+Why do we bother doing four calculations at once in a vec4 operations, instead of calculating single float values separately? Because crunching entire vectors is way faster. Some quick benchmarks showed using one vec4 operation instead of four float ones is 3.5 times faster.
+
+What’s even more surprising, we don’t even have to return just one vec4 in a single shader calculation. We can use up to 16 in vectors to feed data to the shader. This seemingly arbitrary number is a platform specific value of MAX_VERTEX_ATTRIBS constant and is set in stone for all A7 devices. For the output vectors we’re limited by the GL_MAX_TRANSFORM_FEEDBACK_INTERLEAVED_COMPONENTS constant which for A7 is equal to 64. This means that we can define at most 16 out variables of vec4 type (since each vec4 has 4 components).
+
+With that knowledge we can extend our shader to take in more input and generate more output:
+
+```
+{lnt| 1
+}{lnt| 2
+}{lnt| 3
+}{lnt| 4
+}{lnt| 5
+}{lnt| 6
+}{lnt| 7
+}{lnt| 8
+}{lnt| 9
+}{lnt|10
+}{lnt|11
+}{lnt|12
+}{lnt|13
+}{lnt|14
+}{lnt|15
+}{lnt|16
+}{lnt|17
+}{lnt|18
+}{lnt|19
+}{lnt|20
+}{lnt|21
+}{lnt|22
+}{lnt|23
+}{lnt|24
+}
+```
+
+```
+{cp|#version 300 es}
+
+{k|in} {k|vec4} {n|inVec1}{p|;}    
+{k|in} {k|vec4} {n|inVec2}{p|;}    
+{k|in} {k|vec4} {n|inVec3}{p|;}    
+{k|in} {k|vec4} {n|inVec4}{p|;}
+
+{k|out} {k|vec4} {n|outVec1}{p|;}
+{k|out} {k|vec4} {n|outVec2}{p|;}
+{k|out} {k|vec4} {n|outVec3}{p|;}
+{k|out} {k|vec4} {n|outVec4}{p|;}
+
+{k|vec4} {n|f}{p|(}{k|vec4} {n|x}{p|)}
+{p|{}    
+    {k|return} {mf|2.0} {o|*} {n|x}{p|;}
+{p|}}
+
+{k|void} {n|main}{p|()}
+{p|{}
+    {n|outVec1} {o|=} {n|f}{p|(}{n|inVec1}{p|);}
+    {n|outVec2} {o|=} {n|f}{p|(}{n|inVec2}{p|);}
+    {n|outVec3} {o|=} {n|f}{p|(}{n|inVec3}{p|);}
+    {n|outVec4} {o|=} {n|f}{p|(}{n|inVec4}{p|);}
+{p|}}
+```
+
+By utilizing this method one achieves much faster execution. For instance going from 1 in/out vector pairs to 16 in/out vector pairs results in over 4 times performance increase (The Disappointing Raise example). In some cases however, the sweet spot is at 8 (The Promising Plot) or even 2 vector pairs (The Amazing Simulation), so this must be tuned manually on a case-by-case basis.
+
+Obviously, writing that much code by hand and changing pieces of function calls all over the place is tedious, so my GitHub implementation generates the shader for a given number of vectors. The only responsibility of programmer is to provide a source for vec4 f(vec4 x) function.
+
+
+# Multi-argument Functions
+
+
+Throughout previous examples I’ve used a simple function that takes one argument and returns one value. However, it’s not that hard to write more complicated functions that take arbitrary (with some moderation) number of arguments.
+
+Let’s consider a multi-argument function y = f(a, b, c) = a*b + c. In terms of math definitions this function is R³ → R. We don’t want to calculate just a single float value (it’s slow), so instead, we will calculate four values at once (an entire vec4 of values). Therefore, a simple shader would have three in vectors and one out vector. Assuming inVec1 contains a₀a₁a₂… values, inVec2 contains b₀b₁b₂… values and so on, the shader code is trivial:
+
+```
+{k|vec4} {n|f}{p|(}{k|vec4} {n|a}{p|,} {k|vec4} {n|b}{p|,} {k|vec4} {n|c}{p|)}
+{p|{}
+    {k|return} {n|a} {o|*} {n|b} {o|+} {n|c}{p|;} {c1|// adding vectors here!}
+{p|}}
+```
+
+While another option is for the data to be fetched from a single continuous buffer with a₀b₀c₀a₁b₁c₁a₂… ordering, notice that the shader would have to pick separate components from a vector and perform calculations one by one, which is hardly optimal.
+
+
+# Single Argument Multivalued Functions
+
+
+Let’s consider a multi-argument function (a, b) = f(x) = (cos(x), sin (x)), which means f is R → R². This function calculates location of point on a unit circle for a given angle x.
+
+We can’t use a regular vec4 f(vec4 x) since we can’t output two vectors from on function. Instead, we could make use of a vec4 f(vec2 x) function, that would transform two input values into four output values. Clearly, the number of out shader vectors would have to be twice as large as number of in vectors.
+
+
+# Multi-argument Multivalued Functions
+
+
+Finally, let’s consider a function (r, s) = f(a, b). This function takes in a 2D vector and returns a 2D vector (R² → R²). Considering previous cases one might argue this decays into calculating two values of regular y = f(x) function, however, this is hardly the case. For instance we can define a function that returns a perpendicular vector f(x, y) = (-y, x). We couldn’t have done that in the plain old f(x) = y. On a side note, since we’re doing calculations on vec4 technically we could look up the next component, but this technique is fairly limited, not to mention the extreme abuse of blindly reducing R² → R² to R → R.
+
+As usual, we want to return as much data as possible, so we’re going to calculate two values of a function at once, packing them into one vec4:
+
+```
+{k|vec4} {n|f}{p|(}{k|vec4} {n|a}{p|)}
+{p|{}
+    {k|return} {k|vec4}{p|(}{o|-}{n|a}{p|.}{n|y}{p|,} {n|a}{p|.}{n|x}{p|,} {o|-}{n|a}{p|.}{n|w}{p|,} {n|a}{p|.}{n|z}{p|);}
+{p|}}
+```
+
+Speaking of crazy R² → R² to R → R reductions, consider function f(x, y) = (3.0 * x, 2.0 * y). In this case the calculation does decay into regular f(x) = y calculation:
+
+```
+{k|vec4} {n|f}{p|(}{k|vec4} {n|a}{p|)}
+{p|{}
+    {k|return} {k|vec4}{p|(}{mf|3.0}{p|,} {mf|2.0}{p|,} {mf|3.0}{p|,} {mf|2.0}{p|)} {o|*} {n|a}{p|;}
+{p|}}
+```
+
+Notice, that this is merely a technical twist since a shader doesn’t care whether the function is R² → R² or R → R, it’s just patiently crunching the numbers.
+
+
+# Build Settings and Caveats
+
+
+For my CPU vs GPU comparison I’ve compiled all programs with following settings.
+
+  - Optimization Level — Fastest, Aggressive Optimizations [-Ofast]
+
+  - Vectorize Loops — Yes
+
+  - Relax IEEE Compliance — Yes
+
+The application was built using Xcode 5.1 (5B45j). I ran the tests on the iOS 7.1 beta2. Due to a bug (Apple Developer account required) in iOS 7.0.x, one can’t apply user defined functions inside shaders used for Transform Feedback. Only main() and built-ins work.
+
+Unsurprisingly, manual “inlining” the body of f function into main did work. If you want to use Transform Feedback on iOS 7.0.x you can’t use function calls, so you’ll have to write a lot of code to make use of all 16 in vectors.
+
+The time measurements were taken by running each test 8 times and then taking the average.
+
+
+# When
+
+
+Now that we’ve seen how much performance the GPU offers and how to use it, let’s discuss the factors that can influence the application of the method.
+
+
+# Data Size and Computation Complexity
+
+
+Basically, there are two requirements for the GPU powered computation to triumph: large data sets and non trivial calculations.
+
+The simple polynomial evaluation inside The Disappointing Linear Function case is the best example of low-overhead calculations. This calculation is an example of fused multiply-add which usually can be executed with just a single instruction. Moreover, clang is smart enough to generate vectorized code – the A7 computes four fused multiply-adds at once. It’s an additional performance boost explaining why the CPU is running circles around the GPU in this case.
+
+The more complex evaluation of The Promising Complication case shows the benefits of parallelization. For large enough inputs, the simultaneous calculation performed by GPU starts winning.
+
+Finally, The Amazing Iteration allows the GPU to show its potential. While the CPU has to calculate each case one by one, the GPU crunches multiple cases at once, leaving the CPU in the dust.
+
+The conclusion here is obvious. There is a huge overhead of firing up the OpenGL machinery, so once started it’s better to keep it rolling. There is one more amazing benefit of running the calculations on the GPU. After firing the calculations, the CPU is free to do whatever it wants.
+
+
+# Precision
+
+
+It must be noted that values returned by GPU calculations might not be equal to the values returned by CPU. Are the GPU vs CPU errors large?
+
+
+# Comparisons
+
+
+Bruce Dawson wrote an amazing article series on floating point format. In part 4 of thereof, he presented a genuinely cool way to compare floating point values. Basically, due to the internal representation of floating point format, interpreting bits of float as int, incrementing that integer, and reinterpreting those new bits as float again, creates the next representable float number. To quote “Dawson’s obvious-in-hindsight theorem”:
+
+If the integer representations of two same-sign floats are subtracted then the absolute value of the result is equal to one plus the number of representable floats between them.
+
+For instance, if the integer difference between two float values is 4, it means that one could fit 3 other float values in between. Quoting Dawson just once more:
+
+The difference between the integer representations tells us how many Units in the Last Place the numbers differ by. This is usually shortened to ULP, as in “these two floats differ by two ULPs.”
+
+Just for the reference, I’ve also calculated the value of relative float error, defined as:
+
+```
+{n|fabsf}{p|((}{n|cpu_value} {o|-} {n|gpu_value}{p|)}{o|/}{n|cpu_value}{p|);}
+```
+
+For the evaluated examples, I will refer to the integer difference as ULP, and to the relative float value error as FLT.
+
+Unfortunately, both methods have some issues for comparing near-zero values, but in general they provide a good overview of what’s going on.
+
+```
+ULP: avg: 0.0620527
+     max: 1
+     min: 0
+FLT: avg: 6.24647e-09
+     max: 1.19209e-07
+     min: 0
+```
+
+The values calculated by GPU are as little as 1 ULP away from the CPU’s result and the average being so low, shows that less than 7% of values were not exactly equal to the CPU computation.
+
+```
+ULP: avg: 0.527707
+     max: 3
+     min: 0
+    
+FLT: avg: 3.34232e-08
+     max: 2.49631e-07
+     min: 0
+```
+
+The maximum ULP error jumped to 3 and the average ULP error increased as well. The relative error still provides a good indication that the value of error is insignificant.
+
+```
+ULP: avg: 46.6319
+     max: 100
+     min: 0
+
+FLT: avg: 3.49051e-06 
+     max: 8.61719e-06
+     min: 0
+```
+
+The maximum value of 100 ULPs is a hint that each iteration accumulated some error. The relative error is still low at 3.49×10-4%.
+
+
+# Reasons
+
+
+By default the precision of float (and, as direct result, of vec2, vec3 and vec4 as well) inside vertex shader is set to highp (GLSL ES 3.0 spec 4.5.4) which essentially is regular IEEE 754 float. Where do the differences in comparison to CPU results come from?
+
+My familiarity with secrets of floating point values is not that great (despite starting to read What Every Computer Scientist Should Know About Floating-Point Arithmetic a couple of times). I have some hypotheses, but you should take them with a grain of salt.
+
+One of the reasons for these effects could be slightly different implementations of exp, pow and trigonometry functions. However, The Disappointing Linear Function doesn’t use any built-ins and the small errors are still there. I suspect the most important reason is that the rounding mode inside GLSL computation is not defined by the specification. This could explain why doing 100 iterations of an algorithm inside GPU results in at most 100 ULPs difference.
+
+
+# Does it Matter?
+
+
+Obviously, if precision is mission critical you wouldn’t use float anyway, jumping to double instead, thus skipping the GPU calculations entirely. Just for the record (and for the sake of linking to an interesting rant), you shouldn’t rely on the math library to perform exact calculations anyway.
+
+For the more mundane tasks, the precision doesn’t matter, unless you do thousands of iterations inside a shader. For games and simple simulations you shouldn’t care at all.
+
+
+# Final Words
+
+
+I’m extremely pleased with the results. It really shows that GPUs inside iOS devices are extremely powerful. I expected perhaps a 3-5x speed improvement, but the extremity of 64x is a shocker. In case of highly iterative calculations, you can reduce the wait time for the user from about a minute to a little under one second. Even though the presented examples were somehow artificial, the benefits of huge performance gains and offloading the CPU are of utmost importance. Without a doubt, using Transform Feedback limits the effectiveness of the method to the brand new devices powered by A7 chip, but as time goes, this will become less of an issue.
+
+As for the further work, a lot can still be done. Now that iOS7 enables reading textures in vertex shader (although some claim it was possible in previous releases as well), one could treat a float texture as a source of truly random (as in random access, not random value) memory resulting in much more advanced vertex shader computation techniques. However, this still doesn’t solve the random write problem.
+
+On the other hand, one might also try going the fragment shader way, using float textures as input and half float textures as output, but it still does not provide full featured GPGPU capabilities.
+
+All those effort will become vein, when Apple provides access to the now private OpenCL framework. Until then, OpenGL abuse is the primary toy for us to play.

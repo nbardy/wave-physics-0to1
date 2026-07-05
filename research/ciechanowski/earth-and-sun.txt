@@ -1,0 +1,269 @@
+TITLE: earth-and-sun
+DATE: October 16, 2019
+FIGURES: 21
+
+# Earth and Sun
+
+
+The day-night cycle and the cycle of the seasons have been an important part of human civilization for millennia. Today the discoveries from centuries ago are well known, but despite the superficial simplicity of Earth revolving around its axis and orbiting the Sun, the interaction between those two actually forms a fairly complex system.
+
+This blog post will talk about space and how our planet moves through it, so it’s only fitting if we embed ourselves in the cosmos itself.
+
+Over the course of this article I’ll try to explain how the Sun and the various motions of the Earth end up making our planet look like in the demonstration below. You can drag the globe around to see it from different perspectives and use the sliders to change the date and time:
+
+
+[FIGURE 1 | es_earth_sunlight | ]
+
+It’s hard to talk about Earth and Sun without referencing a few dimensions and dates. They’ll be shown in {imperial_word|imperial}{metric_word|metric} units (e.g. {imperial_word|1 mi}{metric_word|1 km}) and {imperial_word|an American}{metric_word|an international} date format ({imperial_word|mm/dd/yyyy}{metric_word|dd/mm/yyyy}), but you can switch to {imperial_word|the more universal}{metric_word|American} units if you prefer.
+
+The time of day will be presented in Coordinated Universal Time, or UTC for short, which is roughly a local time in Greenwich in London, UK. This time standard is not adjusted for daylight saving time which is very convenient as it will let us look at the sunlight for the same time of day at different dates.
+
+
+# Size
+
+
+Let’s start by visualizing how enormous the Sun is. In the picture below you’ll find the Earth and the Sun placed next to each other. The Earth is the tiny blue dot on the right side of the Sun:
+
+
+[FIGURE 2 | es_sun_size | ]
+
+The Sun is almost a perfect sphere with a radius of {imperial_word|432,170 mi}{metric_word|695,700 km}. The Earth’s shape resembles an ellipsoid with an average radius of {imperial_word|3958.8 mi}{metric_word|6371 km}. As such, the radius of the Sun is 109 times larger than that of the Earth. Naturally, the Sun doesn’t look that large in the sky, but that’s because the Sun is quite far away from the Earth. Before we see how far away the Sun is we first have to discuss a simple shape that is the base of all planetary orbits – an ellipse.
+
+
+# Ellipse
+
+
+There are multiple ways to define an ellipse, but in the context of space it’s most convenient to speak of it in terms of focal points. An ellipse is a figure consisting of points for which the sum of distances to its two focal points is constant. That’s certainly a mouthful, so an interactive diagram will paint a better picture:
+
+
+[FIGURE 3 | es_ellipse_length | ]
+
+[CONTROL | es_ellipse_length_slider_container]
+
+The small cross represents the center of an ellipse while the two white disks show its focal points. The total length of blue and red segments is the same for every point on the ellipse. The {es_dashed|dashed} line is called the semi-major axis of the ellipse while the {es_dotted|dotted} line is the semi-minor axis.
+
+The defining property of an ellipse is the ratio between a distance {es_c0|c} from the center to a focal point known as linear eccentricity, and a distance {es_c1|a} from the center to the “far point” of the ellipse i.e. the length of its semi-major axis. In the demonstration below you can adjust that ratio with a slider:
+
+
+[FIGURE 4 | es_ellipse_e | ]
+
+[CONTROL | es_ellipse_e_slider_container]
+
+This ratio is known as eccentricity. When an eccentricity is equal to 0 an ellipse becomes a perfect circle, for eccentricity of 1 an ellipse with a fixed major axis length degenerates into a linear segment.
+
+
+# Orbit
+
+
+You may have already heard that the orbit of the Earth is an ellipse and that the Sun is located in one of the focal points of that ellipse. This situation is often visualized like this:
+
+
+[FIGURE 5 | es_fake_orbit | ]
+
+The small cross in the middle shows the center of the ellipse while the small rings, one of which is directly in the center of the Sun, symbolize the focal points. There are two important points on the orbit: the perihelion is the point at which Earth is closest to the Sun, while at the aphelion Earth is the furthest away from the Sun.
+
+Technically, the Sun is not in one of the focal points of the ellipse, but instead the objects in the Solar System revolve around its center of mass. However, the Sun’s mass is so dominant that the actual focal point is fairly close to the Sun’s center.
+
+What we’ve seen above paints a convenient picture, but the actual relative sizes are very different. Below you’ll find a visualization of the Earth’s orbit around the Sun with proper scales. The tiny yellow dot in the middle depicts the Sun. At your current viewing scale the Earth is pretty much invisible, it has a diameter of pixels, so instead its location is shown by an arrow. You may also be barely able to tell that the orbit is elliptical. Its eccentricity is equal to 0.0167 and the Sun is very close to the center:
+
+
+[FIGURE 6 | es_orbit | ]
+
+If you pay a close attention to the position of the Earth at the beginning of a calendar year and compare it with the beginning of the next year you’ll notice that the Earth hasn’t returned to the exact same position – during 365 days the Earth falls a little short of the full orbit. We’ll soon see that there are multiple ways to define “a day”, but unless stated otherwise we’ll assume that it lasts 24 hours, that is 24 × 60 × 60 = 86400 seconds.
+
+The time it takes Earth to get back to the same point on the orbit is called a sidereal year where sidereal means “with respect to stars”. A sidereal year lasts roughly 365.256 days. A sidereal year is actually not the basis of year tracking in civilian time, but we’ll have to wait until the later parts of this article to discuss the period of Earth’s journey around the Sun that defines how we count years.
+
+The eccentricity of the Earth’s orbit is fairly small so the distance between the center of the Sun at aphelion ({imperial_word|94,509,460 mi}{metric_word|152,098,233 km}) is not that much larger than that at perihelion ({imperial_word|91,402,640 mi}{metric_word|147,098,291 km}). As such, the apparent Sun size is only 3.3% smaller when the Sun is the farthest from Earth compared to when it’s closest:
+
+
+[FIGURE 7 | es_sun_peri_ap_size | ]
+
+Given the enormous size differences we’re dealing with from this point on I’ll abandon the exact relative dimensions and instead use whatever size is convenient to demonstrate the discussed subject.
+
+
+# Second Law of Kepler
+
+
+An important aspect of planetary motion are Kepler’s laws of which the second one describes the planet’s speed at different points on the orbit. In the demonstration below you can make the planet orbit the Sun. As Kepler has discovered, traversal of each of the arc of the pie-slice sections of the orbit takes the same amount of time:
+
+
+[FIGURE 8 | es_kepler | ]
+
+[CONTROL | es_kepler_slider_container]
+
+At the bottom part of the simulation you can see the flattened length of the arc the planet sweeps within the same amount of time. When the planet is closer to the Sun it travels a much longer path, that is it moves much faster than when it’s away from the Sun. Kepler’s second law says that the areas of the triangular pieces are the same, so naturally if the height of the triangle is made longer due to a larger distance to the Sun, the base, i.e. the arc swept, has to get shorter to maintain the same area.
+
+For the actual shape of Earth’s orbit the arc length differences are much smaller, but as we’ll discuss, they still impact some aspects of time tracking on Earth.
+
+
+# Orbital Plane
+
+
+So far we’ve been looking at the orbit from above, but a tilted perspective shows that the orbit defines an infinite flat sheet known as the orbital plane. You may drag over the demonstration up and down to change the viewing angle:
+
+
+[FIGURE 9 | es_plane | ]
+
+[CONTROL | es_plane_slider_container]
+
+In fact, all planets in the Solar System have very similar orbital planes which is a consequence of formation of the planets from a protoplanetary disk. It’s worth pointing out that the plane represents a mean – Earth wobbles slightly up and down due to changes in position of the Moon, and, to a smaller extent, of other planets.
+
+At this point we’re still not ready to discuss how a year is measured, but understanding the Earth’s revolution around the Sun will actually help us describe the duration of a day, so let’s discuss the most tangible motion of our planet.
+
+
+# Axial Rotation
+
+
+The Earth rotates around its axis from west to east, or, when seen from above, counter-clockwise. In the simulation below you can change the time of day by dragging the slider. The first important thing to observe is that the axis of rotation is not perpendicular to the orbital plane shown as a horizontal line. Currently the axis is tilted at roughly 23.437° away from the vertical:
+
+
+[FIGURE 10 | es_earth_rotation | ]
+
+If you compare the position of the Earth at the beginning and at the end of a 24 hour cycle you may notice something surprising – the Earth has completed slightly more than one full rotation around its axis.
+
+In fact, a full 360° rotation takes 23 hours, 56 minutes, and little over 4 seconds, a period known as sidereal day. Notice that while the Earth is rotating around its axis, it’s also traveling along its orbit. In the demonstration below, which is very much not to scale, you can see how after one full rotation the point on the Earth that was pointing at the Sun no longer does so and it requires some more time for that location to face the Sun again:
+
+
+[FIGURE 11 | es_earth_rotation_solar_day | ]
+
+[CONTROL | es_earth_rotation_solar_day_slider_container]
+
+Out of all the stars in the sky the Sun is the one of paramount importance to our lives so the base measure of a day is the period after which the same point on Earth points at Sun again. To be more precise, we’re interested in the duration after which the Sun comes around to be directly above the same meridian – a half a circle on the surface of the Earth connecting the poles.
+
+This also brings us to the concept of solar noon, a time of day at which the Sun is located directly over some point at the local meridian. In the demonstration below that meridian is shown with a yellow color while the red dot shows the subsolar point – a location on Earth that points directly towards the Sun:
+
+
+[FIGURE 12 | es_solar_noon | ]
+
+[CONTROL | es_solar_noon_slider_container]
+
+Depending on one’s position on the Earth, during a local solar noon the subsolar point is either directly north, directly south, or directly at the current location. This is also where the terms AM and PM come from. In Latin ante meridiem means before midday, while post meridiem is after midday.
+
+Noon is the time of day at which the Sun is at the highest point in the sky which also means that the shadows cast by the sunlight are the shortest. Naturally, we don’t set our clocks to solar time. Instead, time zones are used to provide a more uniform timing within different regions of the world. Despite heavily irregular shapes the centers of the time zones correspond to roughly noon of local solar time.
+
+The duration between two solar noons is known as a solar day which lasts the familiar 24 hours. However, that’s not completely accurate. If you look closely at the simulation of the sidereal and solar day you’ll notice that we didn’t account for two important factors – eccentricity of the orbit and the axial tilt of the Earth. In fact, 24 hours is the duration of a mean solar day. The actual duration of each individual day varies, but before we witness that variation we have to discuss the most important consequence of the axial tilt.
+
+
+# Axial Tilt
+
+
+If you were to look at the orbital plane from above you’d notice that the axial tilt of the Earth isn’t aligned to either the major or the minor axis of the orbit’s ellipse. In the simulation below you can observe the position of the Earth and its axis of rotation at different points of the year:
+
+
+[FIGURE 13 | es_earth_orbit_axis | ]
+
+The four colored line segments mark four important points on that path:
+
+  - during {nobreak es_spring|March equinox} and {nobreak es_fall|September equinox} in the top-down view the axis of rotation is perpendicular to the direction towards the Sun
+
+  - during {nobreak es_summer|June solstice} and {nobreak es_winter|December solstice} in the top-down view the axis of rotation is parallel to the direction towards the Sun
+
+Moreover, at different times of year either the Northern or the Southern Hemisphere is tilted towards the Sun which is clearly visible when we look at the orbital plane from a side with the point of September equinox pointing directly at us:
+
+
+[FIGURE 14 | es_earth_orbit_axis_side | ]
+
+The change in tilt relative to the Sun causes the familiar cycle of seasons. June solstice marks the time at which the Northern Hemisphere is maximally exposed to the Sun and the summer begins, however, at the same time the Southern Hemisphere is facing away from the Sun and in that part of the world the winter begins. The situation flips during December solstice. During equinoxes both hemispheres are equally exposed, the day and night last roughly 12 hours which gives the event its name – in Latin aequus nox means equal night.
+
+To see the seasons in practice, let’s look at the Earth from the Sun’s perspective. The horizontal line shows the orbital plane:
+
+
+[FIGURE 15 | es_earth_sunlight_sun | ]
+
+Notice, that during summer on the Northern Hemisphere no matter what time of day it is the Sun never “sees” Antarctica – the Sun never rises there. Conversely, during winter on the Northern Hemisphere the Sun always sees that continent and so the Sun doesn’t set during the day.
+
+Being directly exposed to sunlight is only a part of the seasonal picture. Despite constant exposure to Sun during summer on the Southern Hemisphere Antarctica is still a very cold place. It’s the direction at which the sunrays hit the ground that determines the amount of power the surface is exposed to.
+
+In the demonstration below I marked three bands on the surface of the Earth – each one occupies 36° of latitude. The thin lines symbolize sunrays hitting the Earth. By changing the date you can observe how the percentage of all the rays approaching the planet is distributed among those bands:
+
+
+[FIGURE 16 | es_cosine | ]
+
+The more perpendicular to the rays the surface is, the more energy it receives – the factor scales with a cosine of the angle between the surface normal and the direction of the incoming light. During summer months the Northern Hemisphere receives a much higher percentage of incoming rays compared to winter months which explains the average temperature difference between the two seasons.
+
+Finally, it’s also interesting to see the sunlight from a reference frame fixed onto Earth. You can drag around to spin the globe freely in space. Yet again the red dot shows a location of the subsolar point:
+
+
+[FIGURE 17 | es_earth_sunlight2 | ]
+
+What may be a little surprising is that at a fixed time of day the point on Earth that points directly towards the Sun is quite wobbly when the date changes – it not only moves in north-south direction, but also in east-west direction. This effect is visible more clearly on a world map with an equirectangular projection:
+
+
+[FIGURE 18 | es_earth_outline | ]
+
+When seen from Earth this figure 8 shape is known as analemma. In the following demonstration you can see the position of the Sun in the sky as seen at {imperial_word|12:00 PM}{metric_word|12:00} UTC from the Greenwich area in London. I chose this location since its mean solar time is pretty much the same as UTC time. The vertical lines represent angle of azimuth. The one corresponding to 180° is located directly south of the observer. The horizontal lines show angles of altitude – the angle above the horizon. In the bottom right corner you can see which part of the sky is the observer located at the black dot looking at:
+
+
+[FIGURE 19 | es_analemma | ]
+
+The Sun may seem tiny, but its angular diameter is only 0.53°, while the entire analemma spans 2 × 23.437° = 46.874° in the vertical direction. The Sun isn’t always at its highest point in the sky at {imperial_word|12:00 PM}{metric_word|12:00} local mean solar time, sometimes it’s a bit ahead of time and sometimes it’s late.
+
+The difference between the actual apparent solar time and the “expected” mean solar time is described by the equation of time. The two primary causes for the drift is eccentricity of the orbit, which by Kepler’s second law causes variation in the Earth’s orbital speed, and the axial tilt which causes difference of speed of the subsolar point in “around the Earth” direction.
+
+The small daily differences accumulate to fairly big numbers – the Sun can be late by up to 14 minutes and ahead of schedule by up to 16 minutes against its clock-expected position. However, across the entire year the duration of a day averages out to 24 hours.
+
+We finally have a grasp of how “a day” is measured and how important the Sun is in that picture. Moreover, the position of Sun relative to the Earth also plays a critical role for defining a year.
+
+
+# Year
+
+
+If you recall our discussion of the axial tilt you may have assumed that while the direction of the axial tilt isn’t aligned to either major or minor axis of the orbital ellipse it is otherwise static. However, this is not actually the case. The axis itself slowly rotates, when seen from above, in a clockwise direction. In the demonstration below you can see how the direction changes over time. A top down view of the orbit is placed in the bottom right corner:
+
+
+[FIGURE 20 | es_earth_axis_precession | ]
+
+[CONTROL | es_earth_axis_precession_slider_container]
+
+This effect is called axial precession and is caused by gravitational pull of the Sun and the Moon. It takes about 25,772 years for the revolution to complete. Over time the precession will cause Polaris to no longer be the north star as the Earth’s axis will point at some other direction in the starry sky. In a few thousand years it will be spring instead of winter that will begin on the Northern Hemisphere around the time of perihelion.
+
+While the effect is very slow it has an impact on time tracking on Earth. In the exaggerated simulation below you can see how the precession causes the point of March equinox to change. In the bottom right corner you can observe the arc that the axis traverses in this period:
+
+
+[FIGURE 21 | es_tropical_year | ]
+
+[CONTROL | es_tropical_year_slider_container]
+
+The thick outline of the almost complete circle shows the path of Earth between two March equinoxes. This period defines a tropical year which, because of the precession, is shorter than a sidereal year – it lasts roughly 365.2422 days. Given the importance of stable recurrence of the cycle of seasons in the calendar, it’s this period that is the foundation of year tracking on Earth.
+
+The duration of a tropical year is non-integral and after 4 years of 365 days we’re almost a full day away from the actual place on the orbit at which the March equinox occurs. A solution to this problem are leap years which in the Julian calendar occurred every four years.
+
+Notice that this is a little too much of a correction – simply observing a leap year every four years makes a year last 365.25 days on average. Over the centuries the date undershoot was measurable in days and to resolve the situation the Gregorian calendar was introduced in 1582 which, other than skipping over 10 days, added some extra caveats to the simple four-year rule.
+
+Years divisible by 100 are not leap years, unless they’re also divisible by 400 – the year 2000 was a leap year, but the year 2100 won’t be. This causes a year in the Gregorian calendar to on average last 365.2425 days which is a much closer match to the duration of a tropical year.
+
+
+# Everything’s Moving
+
+
+The discussion of axial precession was a hint that many of the parameters of the Earth’s motion that may seem static are in fact anything but — everything about the positioning of the Earth changes as well:
+
+  - The angle of the axial tilt varies between 22.1° and 24.5°
+
+  - The eccentricity of the orbit varies between almost 0.0 and 0.0679 with multiple overlapping cycles of different periods
+
+  - The elliptical orbit itself also rotates – an effect known as apsidal precession
+
+All those cycles have different periods, but they all contribute to the very complex nature of the journey of the Earth through the universe.
+
+
+# Further Watching and Reading
+
+
+As usual a lot of great educational videos can be found on YouTube. Vsauce’s How Earth Moves covers many of the same topics I’ve discussed in a more entertaining way. Earth’s motion around the Sun, not as simple as I thought by Aryan Navabi has good visuals and goes into more details of a long term cyclical nature of Earth’s motions.
+
+For a beautiful explanation of why planets have elliptical orbits I recommend 3Blue1Brown’s Feynman’s Lost Lecture. The video is based on a wonderful book by the same title.
+
+Nick Strobel’s Astronomy Notes provide a good overview of many topics that I haven’t covered in a form of lecture notes. The Solar Analemma by Anthony Ayiomamitis is a five page story about difficulties of capturing analemma on a camera.
+
+In a traditional book form Celestial Calculations by J. L. Lawrence is a great introduction to planetary motions. The book successfully bridges the gap between pop-science overviews of the space and the math-heavy advanced reads.
+
+
+# Final Words
+
+
+I find it captivating that two seemingly separate concepts of a day and a year, driven by two different motions of Earth, are ultimately connected by the Sun and the interaction of its light with our planet.
+
+Compared to the modern definition of a second describing the flow of time in terms of the position of the Sun in the sky may seem archaic, but up until the middle of 20th century a second was simply defined as 1/86400 of a mean solar day.
+
+We’ve since let go of that dependence, but the present day measure is just a much finer and significantly more stable expression of pretty much the same duration. One day we’ll colonize other planets, those planets will have different suns, orbits, and rotation periods, yet a simple second will forever be tied to Earth and Sun.
