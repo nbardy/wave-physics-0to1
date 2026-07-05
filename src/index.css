@@ -1,14 +1,23 @@
 :root {
-  --bg: #fbfbfd;
+  --paper: #fcfcfa; /* warm of pure white, like good stock — not cream */
+  --bg: var(--paper);
   --surface: #ffffff;
-  --ink: #1a1f2b;
-  --ink-soft: #55606f;
-  --line: #e5e8ee;
-  --accent: #2563eb;
+  --ink: #17191d;
+  --ink-soft: #5c6470;
+  --rule: #e8e7e1; /* hairline */
+  --rule-strong: #d7d6cf;
+  --rule-num: #b7b5ab; /* muted section numbers */
+  --line: var(--rule); /* alias: sim/prose/waypoint styles still reference --line */
+  --accent: #2563eb; /* velocity blue — the lesson palette contract */
   --accent-soft: #eaf0ff;
-  --max: 760px;
+  --amber: #b45309; /* dye */
+  --violet: #7c3aed; /* divergence */
+  --green: #067647;
+  --max: 720px;
   --font-ui: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-prose: ui-serif, Georgia, "Iowan Old Style", "Times New Roman", serif;
+  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia,
+    ui-serif, serif;
 }
 
 * {
@@ -38,35 +47,61 @@ a:hover {
   flex-direction: column;
 }
 
-/* header */
+/* header — hidden at the top of the page, slides in once scrolled past the title */
 .site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 1rem;
-  padding: 1rem clamp(1rem, 4vw, 2rem);
-  border-bottom: 1px solid var(--line);
-  background: var(--surface);
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  padding: 0.85rem clamp(1rem, 4vw, 2rem);
+  background: rgba(252, 252, 250, 0.82);
+  backdrop-filter: saturate(1.4) blur(10px);
+  -webkit-backdrop-filter: saturate(1.4) blur(10px);
+  border-bottom: 1px solid var(--rule);
+  transform: translateY(-100%);
+  opacity: 0;
+  visibility: hidden; /* keep nav links out of the tab order while hidden */
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease,
+    visibility 0s linear 0.4s;
+}
+.site-header.is-revealed {
+  transform: translateY(0);
+  opacity: 1;
+  visibility: visible;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease, visibility 0s;
 }
 .brand {
-  font-weight: 700;
-  font-size: 1.05rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: -0.01em;
   color: var(--ink);
 }
 .brand:hover {
   text-decoration: none;
-}
-.brand-arrow {
   color: var(--accent);
-  font-variant-numeric: tabular-nums;
+}
+.brand-mark {
+  color: var(--ink-soft);
+  font-variant-numeric: oldstyle-nums;
 }
 .site-nav {
   display: flex;
-  gap: 1.25rem;
-  font-size: 0.9rem;
+  gap: 1.5rem;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+}
+.site-nav a {
+  color: var(--ink-soft);
+}
+.site-nav a:hover {
+  color: var(--accent);
+  text-decoration: none;
 }
 
 /* main */
@@ -78,101 +113,171 @@ a:hover {
   padding: clamp(1.5rem, 4vw, 3rem) clamp(1rem, 4vw, 2rem);
 }
 
-.site-footer {
-  border-top: 1px solid var(--line);
-  padding: 1.5rem;
-  text-align: center;
+/* colophon — a quiet close, set within the reading measure */
+.site-colophon {
+  max-width: var(--max);
+  margin: 0 auto;
+  width: 100%;
+  padding: 2.5rem clamp(1rem, 4vw, 2rem) 4rem;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 1.5rem;
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  letter-spacing: 0.01em;
   color: var(--ink-soft);
-  font-size: 0.85rem;
 }
 
-/* home */
-.hero h1 {
-  font-size: clamp(1.8rem, 5vw, 2.6rem);
-  line-height: 1.1;
-  margin: 0 0 0.75rem;
-  letter-spacing: -0.02em;
+/* home — front matter set like a manuscript, no boxes */
+.masthead {
+  padding: clamp(2rem, 9vw, 5.5rem) 0 clamp(1.75rem, 5vw, 3rem);
 }
-.lede {
-  font-size: 1.1rem;
-  color: var(--ink-soft);
-  max-width: 60ch;
-  margin: 0 0 2rem;
-}
-.lesson-list h2 {
-  font-size: 0.85rem;
+.masthead-eyebrow {
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
   color: var(--ink-soft);
-  border-bottom: 1px solid var(--line);
-  padding-bottom: 0.5rem;
+  margin: 0 0 1.4rem;
 }
-.lessons {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-.lesson-card a {
-  display: flex;
-  gap: 1rem;
-  align-items: flex-start;
-  padding: 1rem 1.1rem;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--surface);
-  color: var(--ink);
-  transition: border-color 0.15s, transform 0.15s;
-}
-.lesson-card a:hover {
-  text-decoration: none;
-  border-color: var(--accent);
-  transform: translateY(-1px);
-}
-.lesson-order {
-  font-variant-numeric: tabular-nums;
-  font-weight: 700;
-  color: var(--accent);
-  font-size: 1.2rem;
-}
-.lesson-body {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-.lesson-title {
+.masthead-title {
+  font-family: var(--font-display);
   font-weight: 600;
+  font-size: clamp(2.4rem, 7vw, 3.8rem);
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin: 0 0 1.4rem;
+  text-wrap: balance;
 }
-.lesson-blurb {
+.masthead-lede {
+  font-family: var(--font-prose);
+  font-size: clamp(1.05rem, 2.4vw, 1.2rem);
+  line-height: 1.6;
   color: var(--ink-soft);
-  font-size: 0.92rem;
+  max-width: 56ch;
+  margin: 0;
 }
 
-/* badges */
-.badge {
-  display: inline-block;
-  font-size: 0.68rem;
-  font-weight: 700;
+/* curriculum — a table of contents, not cards */
+.toc {
+  padding-bottom: 1rem;
+}
+.toc-eyebrow {
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 0.12rem 0.45rem;
-  border-radius: 999px;
-  vertical-align: middle;
-  margin-left: 0.4rem;
+  color: var(--ink-soft);
+  margin: 0;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid var(--rule-strong);
 }
-.badge-planned {
-  background: #fff4e5;
-  color: #b45309;
+.toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
-.badge-draft {
-  background: var(--accent-soft);
+.toc-item {
+  border-bottom: 1px solid var(--rule);
+}
+.toc-link {
+  display: grid;
+  grid-template-columns: 2.75rem 1fr auto;
+  align-items: baseline;
+  column-gap: clamp(0.9rem, 3vw, 1.6rem);
+  padding: 1.6rem 0;
+  color: var(--ink);
+}
+.toc-link:hover {
+  text-decoration: none;
+}
+.toc-num {
+  font-family: var(--font-display);
+  font-variant-numeric: oldstyle-nums;
+  font-size: 1.55rem;
+  line-height: 1;
+  color: var(--rule-num);
+  transition: color 0.2s ease;
+}
+.toc-head {
+  display: block;
+}
+.toc-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 3vw, 1.45rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  transition: color 0.2s ease;
+}
+.toc-blurb {
+  display: block;
+  margin-top: 0.45rem;
+  font-family: var(--font-prose);
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  max-width: 52ch;
+}
+.toc-arrow {
+  align-self: center;
+  font-family: var(--font-ui);
+  font-size: 1.15rem;
+  color: var(--accent);
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.toc-link:hover .toc-title,
+.toc-link:hover .toc-num,
+.toc-link:focus-visible .toc-title {
   color: var(--accent);
 }
-.badge-published {
-  background: #e7f8ee;
-  color: #067647;
+.toc-link:hover .toc-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+.toc-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 5px;
+  border-radius: 3px;
+}
+
+/* status — a colored micro-label in the quantity palette, not a filled pill */
+.toc-status {
+  font-family: var(--font-ui);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-left: 0.65rem;
+  vertical-align: 0.16em;
+  white-space: nowrap;
+}
+.toc-status--planned {
+  color: var(--amber);
+}
+.toc-status--draft {
+  color: var(--accent);
+}
+.toc-status--published {
+  color: var(--green);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header,
+  .site-header.is-revealed {
+    transform: none;
+    transition: opacity 0.2s ease, visibility 0s;
+  }
+  .toc-arrow {
+    transform: none;
+  }
 }
 
 /* prose / lessons */
