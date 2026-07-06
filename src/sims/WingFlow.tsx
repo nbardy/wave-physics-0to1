@@ -44,6 +44,19 @@ const DYE2_ROWS = [46, 52, 60, 68, 76] // rose, lower half
 // seconds, and that path is already the degraded one.
 const WARMUP_STEPS = 480
 
+// Slider-response seed. The solver is noiseless, so after a drag toward
+// higher Re the street re-grows only from leftover asymmetry — measured at
+// 15–20 s, which reads as "the slider does nothing." One small kick behind
+// the trailing edge whenever Re rises meaningfully seeds the instability the
+// way ambient noise would in a real channel (same instrument as the
+// Kelvin–Helmholtz trip wire and the kick-test diagnostic). The kick sets
+// the phase; the equation still decides whether eddies grow or die.
+const KICK_RE_DELTA = 40 // upward Re change that triggers a seed
+const KICK_COOLDOWN = 0.75 // s between seeds while dragging
+const KICK_VY = 18 // cells/s, ~0.7·U — rings visibly, well under the kick test's 60
+const KICK_X = PIVOT_X + Math.round(CHORD * 0.9)
+const KICK_R = 4
+
 const SCALE = 4
 const GNX = NX * SCALE
 const GNY = NY * SCALE
@@ -79,12 +92,22 @@ function createCpuWing(
   const renderer = new SolverRenderer(solver)
 
   let acc = 0
+  let seedRe = reRef.current
+  let seedCooldown = 0
   return {
     step(dt) {
       acc += dt
       let guard = 0
       while (acc >= FIXED_DT && guard < 3) {
-        solver.visc = viscOf(INFLOW, CHORD, reRef.current)
+        const reNow = reRef.current
+        solver.visc = viscOf(INFLOW, CHORD, reNow)
+        seedCooldown = Math.max(0, seedCooldown - FIXED_DT)
+        if (reNow < seedRe) seedRe = reNow
+        if (reNow - seedRe > KICK_RE_DELTA && seedCooldown === 0) {
+          solver.addImpulse(KICK_X, PIVOT_Y, 0, KICK_VY, KICK_R)
+          seedRe = reNow
+          seedCooldown = KICK_COOLDOWN
+        }
         solver.injectDyeStripe(DYE_ROWS, 1)
         solver.injectDye2Stripe(DYE2_ROWS, 1)
         const stir = stirRef.current
@@ -135,6 +158,8 @@ function createGpuWing(
 
   let acc = 0
   let re = reRef.current
+  let seedRe = reRef.current
+  let seedCooldown = 0
   return {
     step(dt) {
       acc += dt
@@ -142,6 +167,13 @@ function createGpuWing(
       while (acc >= FIXED_DT && guard < 3) {
         re = reRef.current
         solver.visc = viscOf(GINFLOW, GCHORD, re)
+        seedCooldown = Math.max(0, seedCooldown - FIXED_DT)
+        if (re < seedRe) seedRe = re
+        if (re - seedRe > KICK_RE_DELTA && seedCooldown === 0) {
+          solver.addImpulse(KICK_X * SCALE, GPIVOT_Y, 0, KICK_VY * SCALE, KICK_R * SCALE)
+          seedRe = re
+          seedCooldown = KICK_COOLDOWN
+        }
         const stir = stirRef.current
         if (stir) {
           solver.addImpulse(
@@ -238,7 +270,7 @@ export function WingFlow({
             value={re}
             onChange={(e) => setRe(Number(e.target.value))}
           />
-          <span>{variant === 'finale' ? 'Re' : 'the one slider'}</span>
+          <span>{variant === 'finale' ? 'Re' : ''}</span>
         </label>
       </Sim>
     </div>
