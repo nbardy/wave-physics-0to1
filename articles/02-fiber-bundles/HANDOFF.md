@@ -35,15 +35,18 @@ settled structure without strong cause.
 
 ## What is left (in recommended order)
 
-1. **Build the four `{/* fig gap: … */}` figures.** Search the MDX for `fig gap` —
-   these were *judged* worth building (not count-chasing):
-   - the **railway-towns anchor** (household anchor figure),
-   - additional **dictionary-row replays** beyond the one built (Wu–Yang table rows
-     replayed live),
-   - the **which-force gallery**,
-   - **linked vortex rings**.
-   Two of these were chosen specifically to break the **§6→§7 drought** and the
-   **§11-coda drought** — verify the droughts actually close.
+1. ~~Build the four fig-gap figures~~ DONE 2026-07-06: `DictionaryReplay` (5-row
+   selector, after the Wu–Yang table), `RailwayReform` (pure-gauge reform ripple,
+   placed to enact the §10 thesis-paragraph rhyme — green marks flip, no amber
+   hand moves), `WhichForce` (4-force selector, portraits-not-constructions
+   confessed in prose), `LinkedRings` (drag-to-orbit, live Gauss linking integral
+   verified = 1.000 on the Hopf pair, 0.000 unlinked control). All wired into the
+   MDX with connecting prose; all paint in-browser (45/45 canvases, zero console
+   errors); typecheck/build green. Also DONE 2026-07-06: **the owed Final Words
+   rewrite** (Michelson / the-medium-is-an-agreement / Yang–Chern consolation —
+   spent sibling skeleton retired). Remaining editorial check: confirm the two
+   droughts these figures were chosen to break (§6→§7, §11-coda) actually read
+   as closed.
 2. **Editorial read** after those land: section by section, "does any moment need a
    figure it doesn't have?" This article is allowed to settle prose-heavy where the
    math wants prose — judge by the story, not by the 67-figure plan estimate or the

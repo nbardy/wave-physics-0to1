@@ -103,8 +103,9 @@ branches.
   - **Lesson 01** (Navier–Stokes): **PUBLISHED 2026-07-06** (Stage 5 complete: slop
     scan ×2, rhythm compression, ledger closed, hero pre-roll, hysteresis measured);
     hero is the two-color wing → `articles/01-navier-stokes/HANDOFF.md`.
-  - **Lesson 02** (fiber bundles): Stage 4 complete + audited, `draft`, four figure
-    gaps + epigraph verification open → `articles/02-fiber-bundles/HANDOFF.md`.
+  - **Lesson 02** (fiber bundles): Stage 4 complete + audited, `draft`; figure gaps
+    CLOSED + ending rewritten 2026-07-06; epigraph verification (Nick) + mobile
+    pass remain → `articles/02-fiber-bundles/HANDOFF.md`.
   - **Lesson 03** (NS history): BUILT end-to-end 2026-07-06 (`draft`) — ~5,800 words,
     20 figures, 16 new sims, computed drag meters; browser QA incomplete (preview
     env wedged) → `articles/03-navier-stokes-history/HANDOFF.md`.
