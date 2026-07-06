@@ -449,6 +449,61 @@ a:hover {
   font-size: 0.85rem;
   color: var(--ink-soft);
 }
+/* The pending figure: mounted and running behind a frosted veil until the
+   reader commits. Blur strength is chosen so meter digits and flow structure
+   are unreadable — motion shows through, answers don't. */
+.predict-figure {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+}
+.predict-figure > :not(.predict-veil) {
+  transition: filter 0.7s ease;
+}
+.predict-veiled > :not(.predict-veil) {
+  filter: blur(18px) saturate(1.35);
+  pointer-events: none;
+  user-select: none;
+}
+.predict-veil {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.7s ease;
+  background: rgba(252, 251, 248, 0.14);
+}
+.predict-veiled .predict-veil {
+  opacity: 1;
+  pointer-events: auto; /* swallows clicks so the hidden controls can't be poked */
+}
+.predict-veil::after {
+  content: '';
+  position: absolute;
+  inset: -60% -30%;
+  background: linear-gradient(
+    105deg,
+    transparent 42%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 58%
+  );
+  transform: translateX(-70%);
+  animation: predict-shimmer 2.8s ease-in-out infinite;
+}
+@keyframes predict-shimmer {
+  0% {
+    transform: translateX(-70%);
+  }
+  55%,
+  100% {
+    transform: translateX(70%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .predict-veil::after {
+    animation: none;
+  }
+}
 .sim figcaption {
   padding: 0.25rem;
   font-family: var(--font-ui);

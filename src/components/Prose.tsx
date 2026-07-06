@@ -40,6 +40,9 @@ export function Predict({
   children: ReactNode
 }) {
   const [choice, setChoice] = useState<'a' | 'b' | null>(null)
+  // The figure stays mounted throughout: pre-commit it runs live behind a heavy
+  // blur + shimmer veil (the motion teases; the blur keeps meters and shapes
+  // unreadable, so nothing is spoiled), and committing unblurs it in place.
   return (
     <div className="predict">
       <p className="predict-question">{question}</p>
@@ -53,13 +56,17 @@ export function Predict({
           </button>
         </div>
       ) : (
-        <>
-          <p className="predict-committed">
-            You predicted: <em>{choice === 'a' ? a : b}</em> — see for yourself.
-          </p>
-          {children}
-        </>
+        <p className="predict-committed">
+          You predicted: <em>{choice === 'a' ? a : b}</em> — see for yourself.
+        </p>
       )}
+      <div
+        className={choice === null ? 'predict-figure predict-veiled' : 'predict-figure'}
+        aria-hidden={choice === null}
+      >
+        {children}
+        <div className="predict-veil" />
+      </div>
     </div>
   )
 }

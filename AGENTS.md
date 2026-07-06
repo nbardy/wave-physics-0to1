@@ -108,14 +108,19 @@ branches.
   - **Lesson 03** (NS history): BUILT end-to-end 2026-07-06 (`draft`) — ~5,800 words,
     20 figures, 16 new sims, computed drag meters; browser QA incomplete (preview
     env wedged) → `articles/03-navier-stokes-history/HANDOFF.md`.
-- **Cross-thread decision queue** (needs Nick or coordination, blocks publishing):
-  the caption policy (ESSENCE bans captions, some sims render hint text — ONE global
-  decision, record it here); the lesson-02 epigraph check (needs a logged-in X
-  read); the `<Q>` question-layer decision (voice bullet above); the remaining
-  publish flips. DECIDED 2026-07-06 (Nick): lesson 01 published keeping its Final
-  Words shape, so **lesson 02 owes the ending rewrite** (rebuild from its own
-  material); `KelvinHelmholtz.tsx` stays benched — tuned and ready, placed in no
-  lesson yet.
+- **Cross-thread decision queue**: the lesson-02 epigraph check (needs a logged-in
+  X read — the one item only Nick can do); the remaining publish flips (propose,
+  don't surprise). DECIDED 2026-07-06 (Nick): lesson 01 published keeping its
+  Final Words shape, so **lesson 02 owes the ending rewrite**; `KelvinHelmholtz.tsx`
+  stays benched. DECIDED 2026-07-06 (Claude, revisable): **caption policy** —
+  in-canvas figure furniture (knob labels, meter/readout labels, year chrome) is
+  part of the figure and stays; the `<Sim>` caption prop and any explanatory
+  sentence rendered inside or under a canvas are captions and banned — explanation
+  lives in prose (setup above, readout below); sims rendering explanatory hint text
+  shed it at their lesson's next editing pass. DECIDED 2026-07-06 (Claude,
+  revisable): **no `<Q>` second-voice layer** — question energy lives in Predicts,
+  adjudicated in-prose forks, and quoted historical questions; a visible Q-box
+  would ghettoize the voice (rationale in the voice bullet above).
 - Infrastructure: palette contract (`sims/lib/palette.ts`), `<C>`/`<Waypoint>`/`<Predict>`
   prose components, field-renderer kit (`sims/lib/field.ts`), CPU Stable Fluids solver
   with term toggles + two dye species + split inflow (`sims/lib/solver.ts`),

@@ -42,23 +42,24 @@ TermToggle, StringSection(string), SolverXray.
 `bun run typecheck` and `bun run build` green. Zero console errors with all 20
 figures mounted.
 
-## Verification state — READ THIS FIRST
+## Verification state (updated 2026-07-06, second pass)
 
-Browser QA is INCOMPLETE, for an environmental reason, not a code one: the
-preview tabs went `visibilityState: hidden` with rAF suspended mid-session (0×0
-viewport wedge; sims only draw inside rAF). Verified before the wedge: **hero
-paints correctly** (screenshot: corpuscles, disc, year chrome), **IdealFlow
-paints** (pixel probe: 28% coverage, 48 colors), FlowVis paints, all figures
-mount error-free. Verified by code reading: both marquee drag meters COMPUTE
-(IdealFlow via `pressureDrag()`; Loupe via Σ−p·n̂ₓ over mask faces) — never
-asserted. NOT yet seen running: Barometer, PascalMountain, SoundRace,
-BernoulliPipe, MolecularSprings, StressCube, FallingSphere, PoiseuillePipe,
-ReynoldsTube, WhorlsCascade, BoundaryLayerLoupe, TimelineHero era-switching, the
-Predict reveals, the TermStack rendering. **First task of the next thread: open
-the article in a real browser and play-test every figure top to bottom.**
-Specifically watch: ReynoldsTube transition sharpness around the threshold; the
-Loupe's rear-shoulder reversal and a plausible nonzero drag value; TimelineHero
-era switches (state rebuilds cleanly, term strip fills correctly); hero fps.
+Headless QA completed via a shimmed harness (the preview tabs run hidden with
+rAF suspended; requestAnimationFrame + IntersectionObserver were shimmed in-page
+so the real sim code ran): **all 22 figure canvases paint** (both Predict
+reveals included), **all six TimelineHero eras render cleanly** through a full
+era sweep, IdealFlow renders its field + meter, zero console errors throughout.
+Both marquee drag meters verified by code reading: computed, never asserted
+(IdealFlow via `pressureDrag()`; Loupe via Σ−p·n̂ₓ over mask faces). Stage-4/5
+prose audit ran clean — zero fix-before-publish findings; its five judgment-call
+trims are APPLIED (fork detonation defused, one aphorism cut, narrator
+self-ranking removed ×3, "theory changes its mind").
+
+Still owed a REAL browser (throttled timers make time-dependent behavior
+untestable headlessly): the ReynoldsTube eruption above threshold (model wiring
+verified in code — σ ≈ 4.2/s at the slider's top, erupts in ~2 s live), the
+Loupe's rear-shoulder reversal (emerges from the solver; needs eyes), hero fps,
+and the general feel pass. One human read-through before the publish flip.
 
 ## What is left (in order)
 
@@ -78,16 +79,16 @@ era switches (state rebuilds cleanly, term strip fills correctly); hero fps.
    filled by §12 except the blank end; the fluxions plant §3 → Stokes payoff §8;
    Navier's slip plant §7 → §8 microfluidics payoff), tense audit, anti-checklist
    (no inline citations — highest-risk item for a history article).
-5. **Decisions deliberately left open**:
-   - Archival figures: built with ZERO of the plan's ≤6 (all-interactive instead).
-     Decide whether Leonardo/Reynolds-plate images earn their place (rights check
-     needed) or the confessed-drawn-homage route, or keep as-is.
-   - Hero wake quality: at Re 140 on the CPU grid the 1904/1999 eras separate and
-     go unsteady but the street is milder than lesson 01's GPU hero (semi-Lagrangian
-     diffusion — same documented limitation). Wiring the GPU backend into
-     TimelineHero is possible but was out of scope. Judgment call.
-   - §6 reuses lesson 01's TermToggle (4 switches — over the one-knob budget;
-     it's a knowing replay of a lesson-01 finale figure; flag or accept).
+5. **Decisions (made 2026-07-06, revisable)**:
+   - Archival figures: STAYS all-interactive — the plan's ≤6 archival budget
+     (deviation b) is retired unused. The figures already recreate what the
+     archival images would show (Reynolds's plates = the tube sim; Leonardo's
+     storm = the dye figure), rights friction buys nothing.
+   - Hero wake quality: DEFERRED — the CPU street-ish wake is honest and the
+     behavior (separation, unsteadiness) is real; wiring the GPU backend into
+     TimelineHero is a nice-to-have, not a publish blocker.
+   - §6 TermToggle reuse: ACCEPTED — a knowing replay of a lesson-01 finale
+     figure; its 4 switches are the point of the callback.
 6. Registry flip to `published` + README + AGENTS.md updates + deploy — reserved
    for the user (propose, don't surprise).
 
