@@ -27,6 +27,14 @@ Article docs live in per-article subfolders: `articles/NN-slug/{DENSE_CORE,PLAN,
 written first; it wins conflicts with later drafts). Per-article handoff state lives
 in `articles/NN-slug/HANDOFF.md`.
 
+**Each doc owns one thing; principles live in exactly one home.** AGENTS = repo
+mechanics, doc map, cross-thread state. METHODOLOGY = the process and its audits.
+ESSENCE / NICKS_VOICE / SLOP = the voice poles and the detector. HANDOFF = per-article
+state (canonical — never duplicate it here). If two docs disagree on a principle,
+METHODOLOGY wins and the other doc becomes a pointer. And the anti-accretion rule,
+which applies to these docs as much as to prose: **a new rule should usually replace
+a worse one, not stack on it** — when adding guidance, look for what it retires.
+
 ## Scale and style: heuristics, not rules
 
 Ciechanowski's articles tend to run ~3,000–16,500 words and ~21–120 figures, with
@@ -91,61 +99,29 @@ branches.
   voice sources expected — fold into NICKS_VOICE provenance on arrival, and re-weigh
   its §4 (old blog voice is disavowed; probated devices: escalate-then-deflate,
   aphorism budget).
-- **Lesson 01 is built end-to-end** (Stage 4 of METHODOLOGY): all 13 sections, 32 live
-  figures, ~4,900 words (153 w/fig — inside the corpus band), 9 earned equations,
-  2 Predict widgets, 2 Waypoints, verified in-browser at 60 fps. Status: `draft`.
+- **Per-lesson state lives in the HANDOFFs, not here** — one line each:
+  - **Lesson 01** (Navier–Stokes): **PUBLISHED 2026-07-06** (Stage 5 complete: slop
+    scan ×2, rhythm compression, ledger closed, hero pre-roll, hysteresis measured);
+    hero is the two-color wing → `articles/01-navier-stokes/HANDOFF.md`.
+  - **Lesson 02** (fiber bundles): Stage 4 complete + audited, `draft`, four figure
+    gaps + epigraph verification open → `articles/02-fiber-bundles/HANDOFF.md`.
+  - **Lesson 03** (NS history): BUILT end-to-end 2026-07-06 (`draft`) — ~5,800 words,
+    20 figures, 16 new sims, computed drag meters; browser QA incomplete (preview
+    env wedged) → `articles/03-navier-stokes-history/HANDOFF.md`.
+- **Cross-thread decision queue** (needs Nick or coordination, blocks publishing):
+  the caption policy (ESSENCE bans captions, some sims render hint text — ONE global
+  decision, record it here); the lesson-02 epigraph check (needs a logged-in X
+  read); the `<Q>` question-layer decision (voice bullet above); the remaining
+  publish flips. DECIDED 2026-07-06 (Nick): lesson 01 published keeping its Final
+  Words shape, so **lesson 02 owes the ending rewrite** (rebuild from its own
+  material); `KelvinHelmholtz.tsx` stays benched — tuned and ready, placed in no
+  lesson yet.
 - Infrastructure: palette contract (`sims/lib/palette.ts`), `<C>`/`<Waypoint>`/`<Predict>`
   prose components, field-renderer kit (`sims/lib/field.ts`), CPU Stable Fluids solver
-  with term toggles (`sims/lib/solver.ts`), 16 sim components. `<Sim>` freezes
-  off-screen figures via IntersectionObserver (perf: 8 → 61 fps).
-- **WebGPU compute solver** (`sims/lib/gpu/` — see `PLAN_GPU_SOLVER.md`): WGSL port of
-  the Stable Fluids scheme with MacCormack-corrected advection and a multigrid
-  pressure solve, running the lesson-01 hero at 4× grid resolution with typed
-  CPU fallback. This resolves the "waver, not a Kármán street" Stage-5 debt on
-  WebGPU-capable browsers: the street self-starts and sustains (kick-test σ ratio
-  1.23 at 1.45 ms/step; both MacCormack and multigrid are load-bearing — see the
-  PLAN's measurement table). Live invariant checks on `/stack-check`. CPU-fallback
-  browsers still get the v1 waver.
-- **Lesson 01 hero/finale is now the two-color wing** (`WingFlow.tsx`, 2026-07-05):
-  a NACA airfoil, level, with amber/rose dye currents braiding into the wake and
-  the mystery-Re slider (debt planted in the intro, paid in §12). The intro is the
-  1822/million-dollar wager; §11's Millennium confession is its callback.
-  `CylinderFlow` keeps §7 regime + §9 broken. The solver grew a second dye species
-  (`dye2`, rose) and a split-inflow option (`inflowLower`, for Kelvin–Helmholtz);
-  `sims/lib/airfoil.ts` stamps the mask. A tilt-to-stall hero was built and CUT
-  after play-testing: in this short channel the tilted wake locks steady (blockage)
-  and the inclined thin-body staircase drives a spurious ~7× wall-jet — details in
-  `WingFlow.tsx`'s header and `articles/01-navier-stokes/HANDOFF.md`.
-  `KelvinHelmholtz.tsx` (two-color billows, one shear knob) is built, tuned, and
-  awaiting an editorial decision on placement — not yet in the MDX.
-- **Lesson 02 (fiber bundles) is built end-to-end** (Stage 4, audited): 11 sections,
-  39 figure instances from 14 components (~188 w/fig), 7,349 words, 8 earned
-  equations each with a boundary check, 2 Predicts, 2 Waypoints, browser-verified
-  (all canvases paint, zero console errors). The plan passed a 38-finding
-  multi-critic gate before building; a 4-lens Stage-5 audit produced ~24 prose
-  findings, all applied (voice imperatives → permissive; positional
-  figure/section counting removed; Dirac 1931 made conditional; transversality
-  claim softened to "demonstrated"; θ color-bound at its christening; Herbert
-  (not Jeremy) Bernstein; epigraph = three sentences; thesis/inversion
-  exactly-once vows re-verified). Status: `draft`.
-- **Lesson 02 Stage-5 debts** (before `published`): an editorial read per section —
-  "does any moment here need a figure it doesn't have?" (plan counts are estimates,
-  not quotas; see METHODOLOGY's rhythm-audit note). The four `{/* fig gap: … */}`
-  comments in the MDX mark planned-but-unbuilt figures judged worth building:
-  railway-towns anchor, dictionary row replays
-  beyond the one built, which-force gallery, linked vortex rings; the §6→§7 and
-  §11-coda droughts that those figures would break; epigraph tweet wording is
-  UNVERIFIED against the live tweet (X blocks anonymous reads — needs a logged-in
-  check of candidate status 1077751816400433152, then add the year to the
-  attribution); mobile/touch pass; the lesson-01-style caption inconsistency
-  (ESSENCE bans captions, some sims render hint text) needs a global decision.
-- **Lesson 01 Stage-5 debts** (before `published`): the same editorial read — lesson
-  01 is rhythm-correct at 32 figures (plan estimated ~80; publish at whatever length
-  teaches best, adding a figure only where a specific moment wants one);
-  real-device mobile pass. (Static-fallback sentences: requirement dropped 2026-07 —
-  the figures are the argument.) Resolved 2026-07: the Kármán street (WebGPU solver, above);
-  mobile layout overflow (control rows now wrap; was 146px of horizontal scroll at
-  375px) and touch drags (`.sim-stir` wrapper sets `touch-action: none` on the three
-  pointer-interactive figures, so stirring no longer scrolls the page). Known
-  limitation: `<Sim>` sizes its canvas once at mount — device rotation stretches the
-  figure instead of re-laying it out.
+  with term toggles + two dye species + split inflow (`sims/lib/solver.ts`),
+  `sims/lib/airfoil.ts` mask stamping. `<Sim>` freezes off-screen figures via
+  IntersectionObserver.
+- **WebGPU compute solver** (`sims/lib/gpu/` — see `PLAN_GPU_SOLVER.md`): WGSL port
+  of the Stable Fluids scheme, MacCormack advection + multigrid pressure, 4× grid,
+  typed CPU fallback (which still shows the softer "waver"). Live invariant checks
+  on `/stack-check`; measurements in the PLAN's table.

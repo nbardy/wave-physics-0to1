@@ -19,8 +19,11 @@ import { DyeRendererGPU } from './lib/gpu/render_gpu'
 // inflow, measured) — so the stall story is dishonest at this resolution and
 // was cut. Measured at tilt 0, chord 24: σ(wake)/U = 0.00 at Re 20 (glassy
 // ooze) → 0.02 at 200 → 0.28 at 500 (sustained braided street), max|u| ≤
-// 1.2·U across Re 200–600. Backends and honesty rules follow CylinderFlow:
-// WebGPU compute at 4× grid, CPU reference otherwise, fixed timestep.
+// 1.2·U across Re 200–600. Known residue at the honey end (Re 20–90): a
+// steady ~4×U overspeed pocket hugging the tail — the last trace of the
+// thin-body pathology above; stable, and invisible in the dye. Backends and
+// honesty rules follow CylinderFlow: WebGPU compute at 4× grid, CPU
+// reference otherwise, fixed timestep.
 
 const NX = 144
 const NY = 88
@@ -32,6 +35,14 @@ const FIXED_DT = 1 / 40
 const HERO_RE = 500 // chord-based Re = U·c/ν; the braided street is fully alive here
 const DYE_ROWS = [12, 20, 28, 36, 42] // amber, upper half
 const DYE2_ROWS = [46, 52, 60, 68, 76] // rose, lower half
+
+// Pre-roll: the street needs ~10 s of sim time to establish, and the reader
+// lands on this figure first — so the GPU backend runs WARMUP_STEPS fixed
+// steps at creation and the first painted frame is already alive. Same
+// physics, same dt, just queued before the first draw (~0.6 s of GPU work).
+// The CPU fallback skips it: 400 steps would block the main thread for
+// seconds, and that path is already the degraded one.
+const WARMUP_STEPS = 480
 
 const SCALE = 4
 const GNX = NX * SCALE
@@ -118,6 +129,7 @@ function createGpuWing(
     toggles: { advect: true, diffuse: true, project: true },
   })
   solver.setAirfoil(GPIVOT_X, GPIVOT_Y, GCHORD, 0)
+  for (let s = 0; s < WARMUP_STEPS; s++) solver.step(FIXED_DT)
   const dpr = window.devicePixelRatio || 1
   const renderer = new DyeRendererGPU(device, solver, width * dpr, height * dpr)
 

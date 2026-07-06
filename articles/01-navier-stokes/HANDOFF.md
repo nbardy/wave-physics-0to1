@@ -1,5 +1,19 @@
 # HANDOFF — Lesson 01: Building the Navier–Stokes Equations
 
+**State: PUBLISHED 2026-07-06.** 5,240 words, 31 figures, 9 earned equations.
+Final numbers from the Stage-5 close-out: "known as" ×2, banned filler ×0,
+exclamations ×0, zero family-16/17 slop findings on the second full scan; both
+rhythm droughts resolved by prose unification (not new figures, Nick's call); the
+air-viscosity plant tied off in §7; hero pre-rolls 480 steps so the first painted
+frame is alive. Decisions recorded at publish: lesson 02 owes the Final Words
+rewrite (01 keeps the shape); KelvinHelmholtz stays benched; shipped with the
+known device-rotation stretch limitation and the CPU-fallback waver (confessed in
+§12's fair warnings).
+
+Everything below is the pre-publish state, kept for archaeology.
+
+---
+
 **State: Stage 4 complete (built end-to-end, `draft`). Mission of this thread:
 finish Stage 5 and publish.** This is the closest lesson to done; publishing one
 genuinely finished article calibrates the bar for the other two.
@@ -60,12 +74,28 @@ genuinely finished article calibrates the bar for the other two.
    describes something a one-delta overlay could show; marquee moments served by a
    single figure where the plan sketched a sequence. Build only what a specific
    moment asks for. It is a fully acceptable outcome that the answer is "very
-   little" — 32 figures at this rhythm is a legitimate finished article.
+   little" — 31 figures at this rhythm is a legitimate finished article.
+   The 2026-07-06 full-article slop scan (all 17 SLOP.md families + rhythm +
+   ledger; 6 micro-findings fixed, zero family-16/17 hits) pre-identified the only
+   two hands-idle stretches: the §2→§3 boundary and §3's material-derivative math
+   stretch. RESOLVED 2026-07-06 by unification, not new figures (Nick's call): the
+   material-derivative idea was stated 3× (Predict payoff, two-questions list,
+   christening ¶ — now once each with the christening folded into the list); the
+   molecules→field bridge said "leave the molecules behind" twice; the steady-
+   stream setup said "steady" three ways. ~100 words cut; droughts now 4 blocks
+   with the equation inside them. Still open, one soft ledger end: §5 plants
+   "air's ≈0.02 … will matter more than you'd think," §7 pays it only implicitly
+   through the 747's Re — decide explicit tie-off vs. accept.
 2. **Real-device mobile pass.** Known limitation: `<Sim>` sizes its canvas once at
    mount, so device rotation stretches figures — decide fix vs. accept-and-document.
-3. **CPU-fallback honesty check**: browsers without WebGPU see a wake that never
-   becomes a true vortex street. The honesty rules (AGENTS.md) suggest a one-line
-   confession in prose or a rendered hint. Decide and implement.
+3. ~~CPU-fallback honesty check~~ DONE 2026-07-06: confessed in §12 fair-warnings
+   ("on a browser without WebGPU the whole thing runs at a quarter of the
+   resolution, where the street softens into a gentle waver").
+   Also done 2026-07-06: hero pre-roll (WingFlow runs 480 fixed steps at GPU
+   creation, so the first painted frame is already braided — verified in-browser);
+   slider-drag robustness measured (Re 500→20→500 ramp: max|vel| 1.7×U, no NaN;
+   street re-grows to σ 0.21 within ~16 s of returning — same timescale as its
+   original formation, no locked state).
 4. **Stage 5 audits**, per METHODOLOGY:
    - *Rhythm*: no >3-paragraph droughts; ≤1 knob per figure except the flagged §11
      term-toggle finale; figure-adjacent-to-figure ≈ never.
@@ -74,10 +104,19 @@ genuinely finished article calibrates the bar for the other two.
    - *Ledger*: every plant pays off — fig 2's honey/water redeemed in §6–7; the
      unexplained Re slider named in §7; the hero returns understood in §12; the
      Millennium confession lands in §11.
-   - *Voice* (re-run against the REWRITTEN Stage 4 — it changed 2026-07-06): the
-     moves, not the phrases. Known tics to fix in this article: "…is known as"
-     appears ~10× (his rate is ~2/post) — keep phenomenon-first, vary or drop the
-     phrase; check hinge-word repetition the same way.
+   - *Voice*: essence pass DONE 2026-07-06 (this thread). Measured after:
+     "…is known as" 10→3 (kept for material derivative / Reynolds / pressure);
+     clearly/simply/obviously 6→0; exclamations 1→0 ("This is clearly wrong!" →
+     "This is just wrong." — blunt-verdict blend rule); meta-narration cut
+     ("Here is the question that unlocks…", "It's time to ask what, exactly…",
+     "And of course the instruments stack:" + the combo figure it introduced);
+     §10 "by hand and by eye…without a hand" collision fixed; §11 callback
+     tightened; stale "ten thousand cells" fixed at both sites (Jacobi ¶ and
+     fair-warnings); CPU-fallback confession added to fair-warnings. Words
+     5,335. Fork-question hinges: both drafts REJECTED by Nick as manufactured
+     cleverness — the incident and rules are now SLOP.md families 16–17 ("the X
+     is just the Y" rebrand; staged suspects). Lesson 01 ships with NO fork
+     hinges; the device stays reserved for genuinely live forks.
    - *Sibling audit* ⚠ cross-thread: lessons 01 and 02 currently share their Final
      Words skeleton beat-for-beat ("The next time you… / I find it… / and now
      you…"). One of the two endings must be rewritten from its own material —

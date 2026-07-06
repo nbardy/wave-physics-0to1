@@ -84,8 +84,8 @@ the flow around them, each dragging a ghostly trail of where it has been:
 Notice that the two instruments genuinely disagree about what to report. An
 <C k="vel">arrow</C> watches one place and sees many different parcels of water pass
 through it. A <C k="dye">marker</C> watches one parcel of water and carries it through
-many different places. Keep that distinction close; in a moment it will become the
-heart of our first equation.
+many different places. Keep that distinction close; it is the heart of our first
+equation.
 
 Sometimes we don't care about direction at all — only about how fast things are moving
 everywhere at once. For that we can paint speed as color, brighter blue where the flow
@@ -131,16 +131,11 @@ Out of all the disorder, order emerges — and it emerges *per region*: average 
 one spot and you get that spot's arrow; average around another and you get another.
 
 That is what our arrow grid has been all along: every <C k="vel">arrow</C> is the
-average velocity of the swarm of molecules near a point. This picture also lets us
-leave the molecules behind — from here on, when we say the fluid has a
-<C k="vel">velocity</C> at a point, we mean this average, and we never need to count
-particles again.
-
-Writing "the average velocity of the water near a given spot, at a given moment" will
-get old quickly. Let's compress it: we'll write $\mathbf{u}(x, y, t)$ for the
-<C k="vel">velocity</C> at position $(x, y)$ and time $t$ — the entire arrow grid,
-every arrow at every point at every instant, folded into one symbol. A quantity that
-has a value at every point like this is a *field*.
+average velocity of the swarm of molecules near a point — and with that, we can leave
+the molecules behind. From here on we'll write $\mathbf{u}(x, y, t)$ for the
+<C k="vel">velocity</C> at position $(x, y)$ and time $t$: the whole arrow grid,
+every point, every instant, folded into one symbol. A quantity with a value at every
+point like this is a *field*.
 
 We can watch a field from the footbridge. The harder question is what the field looks
 like to something *in* the water.
@@ -149,10 +144,8 @@ like to something *in* the water.
 
 Imagine a patch of <C k="dye">dye</C> sitting in a steady stream, and two instruments
 measuring the dye's concentration. One is a probe bolted to the riverbed. The other
-rides the current — a parcel of water we've tagged and released.
-
-The stream below is perfectly steady: its velocity field and its dye patch never
-change in time. Nothing about the picture depends on the clock.
+rides the current — a parcel of water we've tagged and released. The stream below is
+perfectly steady: nothing in it depends on the clock.
 
 <Predict
   question="If the field never changes in time, will the drifting parcel's readout change?"
@@ -165,19 +158,18 @@ change in time. Nothing about the picture depends on the clock.
 The <C k="wall">bolted probe</C> reads a flat line forever — its spot never changes.
 But the <C k="dye">drifting parcel</C> sweeps into the dye patch, through its heart,
 and out the far side, and its readout rises and falls even though *nothing in the
-river ever changed*. The parcel experiences change not because the world changed, but
-because it moved through a world that varies from place to place.
+river ever changed*. All of the parcel's change comes from one source: its own motion
+through a world that varies from place to place.
 
-So "how fast is this quantity changing" is genuinely two different questions:
+So "how fast is this quantity changing" is two different questions:
 
 - at a fixed point: the field's own change in time, written $\partial q/\partial t$,
-- riding the flow: the change a moving parcel feels.
+- riding the flow: the change a moving parcel feels — the *material derivative*,
+  written $D/Dt$.
 
-The parcel's version has a name — it is known as the *material derivative*, written
-$D/Dt$ — and the two questions differ by exactly one thing: motion through spatial
-variation. A parcel moving with velocity $\mathbf{u}$ through a quantity that varies
-in space at rate $\nabla q$ picks up change at the rate $\mathbf{u}\cdot\nabla q$,
-even in a frozen world:
+The two differ by exactly the carried piece: a parcel moving with velocity
+$\mathbf{u}$ through a quantity that varies in space at rate $\nabla q$ picks up
+change at the rate $\mathbf{u}\cdot\nabla q$:
 
 $$\frac{Dq}{Dt} \;=\; \underbrace{\frac{\partial q}{\partial t}}_{\text{change at a point}} \;+\; \underbrace{(\mathbf{u}\cdot\nabla)\,q}_{\text{change from being carried}}$$
 
@@ -301,7 +293,7 @@ Everything a flow becomes is a negotiation between them.
 ## The Competition
 
 Let's give the negotiation a stage. The wing that opened this article is a
-complicated character, so the demonstration below swaps in the simplest obstacle
+complicated shape, so the demonstration below swaps in the simplest obstacle
 there is — a plain cylinder — and one slider. At the honey end, viscosity wins: the
 flow oozes around the obstacle and reunites, orderly and symmetric. Drag toward the
 other end and advection takes over — the wake begins to waver, then rolls up into an
@@ -310,8 +302,8 @@ top of this article, and beyond that it frays toward chaos:
 
 <CylinderFlow variant="regime" />
 
-The remarkable thing is that this entire zoo is governed by a single number. Double
-the speed of the flow and halve the viscosity, and the wake looks the same. What
+This entire zoo is governed by a single number. Double the speed of the flow and
+halve the viscosity, and the wake looks the same. What
 matters is only the *ratio* of stirring to smoothing — how much momentum the flow
 carries versus how quickly viscosity can iron it flat. That ratio is known as the
 *Reynolds number*:
@@ -327,9 +319,9 @@ order-of-magnitude, for our little grid.
 The Reynolds number is why a bacterium and a jumbo jet inhabit different universes. A
 swimming bacterium lives at $Re$ around $10^{-5}$ — to it, water is thicker than honey
 is to us, and coasting is impossible; stop swimming and you halt within a fraction of
-an atom's width. A 747's wing cruises at $Re$ around $10^8$ — which obliges me to
-confess that the wing at the top of this article, flying at a few hundred, is
-aerodynamically a moth. Your coffee, freshly stirred, swirls at a few thousand —
+an atom's width. A 747's wing cruises at $Re$ around $10^8$ — air's almost-nothing
+viscosity cashing in — which obliges me to confess that the wing at the top of this
+article, flying at a few hundred, is aerodynamically a moth. Your coffee, freshly stirred, swirls at a few thousand —
 comfortably in eddy country, as the spiral off your spoon confirms.
 
 <Waypoint>
@@ -337,7 +329,7 @@ You now hold a velocity field $\mathbf{u}$, a derivative $D/Dt$ that rides it, t
 term that stirs $-(\mathbf{u}\cdot\nabla)\mathbf{u}$, the term that smooths
 $\nu\nabla^2\mathbf{u}$, and one number, $Re$, that referees the fight. What's missing
 is the term that keeps fluid honest — because so far, nothing we've built stops fluid
-from simply piling up.
+from piling up.
 </Waypoint>
 
 ## Pressure
@@ -392,8 +384,8 @@ flat terrain, $\nabla p = 0$ and pressure moves nothing, no matter how large it 
 Deep-sea creatures live their whole lives under crushing pressure that pushes them
 nowhere.
 
-We now have three influences on a parcel. It is time to discover why we can't just
-add them up and declare victory.
+We now have three influences on a parcel, and it is tempting to add them up and
+declare victory.
 
 ## The Broken Fluid
 
@@ -509,7 +501,7 @@ them. There is no term in that line you have not personally dragged a slider thr
 
 And because every term is now a friend, we can do something textbooks can't: perform
 surgery on the equation while it runs. The demonstration below is our channel with
-each term on its own switch — this figure earns its extra controls:
+each term on its own switch:
 
 <TermToggle />
 
@@ -567,8 +559,8 @@ with no waves in it. That was the point: Navier–Stokes is the parent, and the 
 are its children.
 
 Take still water and disturb it *slightly*. With disturbances so small, the
-self-carrying term — small velocity times small variation — becomes negligible
-squared-smallness, and the fearsome nonlinear equation goes docile and linear. Allow
+self-carrying term — small velocity times small variation — is smallness squared,
+negligible, and the fearsome nonlinear equation goes docile and linear. Allow
 the fluid the tiniest bit of compression (our one contract, relaxed for a moment) and
 the leftover physics is pressure pushing on inertia: a disturbance in pressure shoves
 the fluid ahead of it, which compresses the next region, which shoves again. The

@@ -26,7 +26,7 @@ export const lessons: Lesson[] = [
     title: 'Building the Navier–Stokes Equations',
     blurb:
       'Meet each piece of fluid motion on its own, see why it alone falls short, then assemble the equation and run it live.',
-    status: { kind: 'draft' },
+    status: { kind: 'published' },
     Content: Lesson01,
   },
   {
