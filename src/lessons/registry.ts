@@ -44,7 +44,7 @@ export const lessons: Lesson[] = [
     title: 'The History of Navier–Stokes',
     blurb:
       'The partner to lesson 01: the same equation, built again — this time by history. Five discoveries, two strangers in the name, a 152-year paradox, and a million-dollar question still open.',
-    status: { kind: 'planned' },
+    status: { kind: 'draft' },
     Content: Lesson03,
   },
 ]

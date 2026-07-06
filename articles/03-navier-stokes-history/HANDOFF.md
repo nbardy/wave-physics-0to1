@@ -1,117 +1,96 @@
 # HANDOFF — Lesson 03: The History of Navier–Stokes
 
-**State: Stages 1–2 complete (research + plan, `planned`; only a stub MDX exists).
-Mission of this thread: write DENSE_CORE.md, then execute Stage 3 (build) → Stage 4
-(prose) → Stage 5 (polish).** This is the partner to lesson 01: the same equation,
-the same cylinder, the same palette — built again in the order history built it,
-with names and birthdays attached. The heavy lifting is still ahead; it is also the
-cheapest big article in the repo because roughly half its figures reuse lesson 01's
-already-built (and GPU-accelerated) sim family.
+**State: BUILT END-TO-END (2026-07-06). Stages 1–3 complete plus full prose at
+near-final quality; status `draft` in the registry. Mission of the next thread:
+real-browser QA, the Stage-4 voice pass, Stage-5 audits, then publish.**
 
-## Read first, in this order
+What exists: `DENSE_CORE.md` (thesis/hook/payoff/ranked insights — wins conflicts),
+`RESEARCH.md` (verified chronology/network/gaps), `PLAN.md` (13-section skeleton),
+and the article itself — `src/lessons/lesson-03-navier-stokes-history.mdx`:
+~5,800 words, 14 sections, 20 live figure instances (22 counting the two Predict
+reveals), 2 Predicts, 3 Waypoints, past-for-people / present-for-water tense
+regime, no inline citations, ending skeleton deliberately distinct from lessons
+01/02.
 
-1. `AGENTS.md` — repo rules, sim honesty rules, and **"Scale and style: heuristics,
-   not rules"** (the plan's ~72 figures / ~10,500 words are feasibility estimates;
-   the article's real length matches the length of the story — and this story is
-   long because it's good, not because a number says so).
-2. `ESSENCE_OF_VOICE_AND_DESIGN.md`, **`NICKS_VOICE.md`**, and `METHODOLOGY.md`.
-   Stage 4 carries a pastiche guard (2026-07-06): the Essence doc's phrasings are
-   one author's fingerprint, cited as evidence of the moves — never required
-   wording; NICKS_VOICE owns prose temperature. This article writes third, so the
-   **sibling audit** bites hardest here: lessons 01 and 02 have already spent
-   several surface patterns (including the Final Words skeleton) — check against
-   both before writing hooks, waypoints, and the ending.
-3. `articles/03-navier-stokes-history/RESEARCH.md` — the verified content base.
-   §1–11 = chronology (who built what, when); §12 = where the mathematical
-   sub-blocks came from; §13 = the who-met-whom network; §14 = the gaps ledger;
-   §15 = collected story assets; §16 = sources. Dates here were verified against
-   the historical literature (Darrigol, Eckert, Anderson, Bistafa) — treat them as
-   load-bearing; re-verify anything you add.
-4. `articles/03-navier-stokes-history/PLAN.md` — Stage 1–2: concept, 13-section
-   skeleton with per-section figure sketches, the Stage-2 addendum threading the
-   lineage/network/gaps layers into sections, palette contract, production notes,
-   per-lesson deviations.
-5. `articles/01-navier-stokes/PLAN.md` + the built lesson
-   (`src/lessons/lesson-01-navier-stokes.mdx`) — this article mirrors lesson 01
-   deliberately; know what it's mirroring.
+## What was built (2026-07-06, four parallel subagent batches + hand-written core)
 
-## The design in one paragraph
+New shared code:
+- `src/sims/lib/potential.ts` — analytic potential flow (velocity, surface Cp,
+  numerical drag quadrature). Hand-written; the honesty spine of §5.
+- `src/components/TermStack.tsx` — the equation-with-birthdays display
+  (`items: StackItem[]`, term/sep discriminated union), used twice in prose.
 
-Protagonist: the equation itself, staged on lesson 01's gray cylinder; the scene
-never changes, the *theory rendering it* does (corpuscle hail → ideal flow with a
-drag meter stuck at 0.000 → viscous flow → boundary layer → live solver). Hero
-figure: "two centuries in one slider" — a year scrubber that swaps the physics while
-the equation accumulates terms underneath, each stamped with a name and year in its
-lesson-01 color (Navier's nameplate is green *because* viscosity has been green
-since lesson 01 §6). History supplies the failure chain: d'Alembert's zero (§5)
-stands on screen, dated, until Prandtl pays it (§10). Four per-lesson deviations are
-declared in the PLAN (past tense licensed for narrative; ≤6 confessed archival
-images; names aren't jargon; math is re-encountered, not re-earned).
+New sims (all Canvas-2D, fixed-timestep, one knob, seeded PRNG, sepia `#78716c`
+history furniture): `IdealFlow` (drag meter COMPUTES ∮p·n̂ via potential.ts —
+genuine 0.000), `CorpuscleHail` (Newton's model, deliberately wrong, empty shadow
+wedge, sibling drag meter), `BuoyancyCrown`, `Barometer` (tilt-invariant height),
+`PascalMountain`, `SoundRace` (√γ ratio exact), `BernoulliPipe` (observation-only,
+principle untaught), `MolecularSprings` (the "ε (units: ?)" joke slider),
+`StressCube` (4 draggable faces, σxy=σyx enforced+explained), `FallingSphere`
+(exact linear-drag update, v_t ∝ R²), `PoiseuillePipe` (Q ∝ R⁴), `ReynoldsTube`
+(CONFESSED phenomenological instability cartoon, Re_c=2000, seeded, auto-reinject
+guard), `WhorlsCascade` (confessed cartoon), `BoundaryLayerLoupe` (real FluidSolver;
+loupe shows no-slip profile + rear-shoulder reversal EMERGING from the solver; drag
+coefficient integrated from solver.p over mask boundary, EMA-smoothed — the meter
+that finally moves), `TimelineHero` (6-era discrete year scrubber, era sum-type
+dispatch; era→Re mapping: 1822→Re 4, 1883→Re 45, 1904/1999→Re 140 on a 132×80 CPU
+grid; term strip with filling nameplates + permanent blank "smoothness — open").
+
+Reused from lessons 01/02: FlowVis(arrows), DyeCarry(vortex), ShearBlend,
+TermToggle, StringSection(string), SolverXray.
+
+`bun run typecheck` and `bun run build` green. Zero console errors with all 20
+figures mounted.
+
+## Verification state — READ THIS FIRST
+
+Browser QA is INCOMPLETE, for an environmental reason, not a code one: the
+preview tabs went `visibilityState: hidden` with rAF suspended mid-session (0×0
+viewport wedge; sims only draw inside rAF). Verified before the wedge: **hero
+paints correctly** (screenshot: corpuscles, disc, year chrome), **IdealFlow
+paints** (pixel probe: 28% coverage, 48 colors), FlowVis paints, all figures
+mount error-free. Verified by code reading: both marquee drag meters COMPUTE
+(IdealFlow via `pressureDrag()`; Loupe via Σ−p·n̂ₓ over mask faces) — never
+asserted. NOT yet seen running: Barometer, PascalMountain, SoundRace,
+BernoulliPipe, MolecularSprings, StressCube, FallingSphere, PoiseuillePipe,
+ReynoldsTube, WhorlsCascade, BoundaryLayerLoupe, TimelineHero era-switching, the
+Predict reveals, the TermStack rendering. **First task of the next thread: open
+the article in a real browser and play-test every figure top to bottom.**
+Specifically watch: ReynoldsTube transition sharpness around the threshold; the
+Loupe's rear-shoulder reversal and a plausible nonzero drag value; TimelineHero
+era switches (state rebuilds cleanly, term strip fills correctly); hero fps.
 
 ## What is left (in order)
 
-1. **Write `DENSE_CORE.md` first** (house convention: thesis, hook, payoff, ranked
-   insights — it wins conflicts with later drafts). Distill from RESEARCH §15's
-   story assets + the plan's Stage 1. Candidate thesis: *the pedagogical order of
-   lesson 01 and the historical order are nearly the same walk, because both
-   advanced by watching the current theory fail visibly.* Rank the ironies (five
-   discoveries / two strangers in the name; right term from fictional molecules;
-   152-year paradox killed in ten minutes; the equation older than its own
-   notation).
-2. **Stage 3 — build, in the PLAN's order** (see PLAN "Production notes"):
-   - Shared chrome first: **nameplate/term-stack component** + timeline-scrubber
-     wrapper (used by hero and §6–§8).
-   - **The honest drag meter is the critical path** — it gates both Predict
-     moments. §5's 0.000 must be genuine: use the analytic potential-flow solution
-     for the ideal case (exact, cheap) rather than asking the numerical solver to
-     cancel to zero; confess the swap if both ever share a figure.
-   - New Canvas sims (~12, all small): statics toys (crown, barometer, Pascal's
-     mountain), corpuscle hail, sound-race tube, molecular springs, stress cube,
-     falling sphere (Stokes drag), Poiseuille pipe (r⁴ readout), **Reynolds tube**
-     (transition must be genuinely disturbance-sensitive — seeded noise, auto-reseed
-     guard rail, not scripted), boundary-layer loupe, whorls cascade.
-   - Reuse from lesson 01: field kit, two-plate shear, dye advection, pressure
-     landscape, `CylinderFlow`/solver family.
-   - **Archival assets** (≤6): Leonardo water study, Bernoulli title pages, Pont
-     des Invalides etching, Reynolds 1883 plate, forecast-factory illustration —
-     **verify rights** (public domain likely for most; fall back to a drawn homage,
-     confessed, if not).
-   - All sims obey AGENTS.md honesty rules (fixed timestep, stability comment,
-     `create` fresh, `draw` pure).
-3. **Stage 3/4 — prose**, blocked per section as figures land (setup → figure →
-   readout), then the voice pass. Extra audit for this lesson: **tense** — past for
-   people, present for water, never blended in one sentence carelessly.
-4. **Stage 5** — the standard audits (rhythm as smell test, palette, ledger,
-   sibling audit, anti-checklist) plus this lesson's own:
-   - the §5 paradox ledger is *visibly* paid in §10 (the meter moves);
-   - every nameplate filled by §12 except the deliberately blank end of the
-     timeline;
-   - **no inline citations in prose** — this is the highest-risk anti-checklist item
-     for a history article; sources live only in Further Reading;
-   - the anecdotes (bridge collapse, the Bernoulli theft) stay subordinated to the
-     physics thread — if a section reads as trivia-listicle, cut or re-anchor it to
-     the cylinder.
-5. Registry: flip `planned` → `draft` once real sections ship; keep
-   `bun run typecheck && bun run build` green throughout; update AGENTS.md
-   "where things stand" and the README table as status changes.
-
-## Known risks (watch these specifically)
-
-- **Text-heavy drift**: history invites prose droughts. The persistent cylinder is
-  the guard — if three paragraphs pass without the reader's hands doing something,
-  the section needs a figure or a cut.
-- **Scripted-feeling physics**: the two marquee readings (0.000 in §5, first
-  nonzero drag in §10) carry the whole article's honesty. If they're faked, the
-  lesson is hollow.
-- **Date drift**: don't introduce new historical claims from memory; RESEARCH.md's
-  claims were verified — new ones need the same treatment (WebSearch against the
-  sources in RESEARCH §16).
-- Mobile: the timeline scrubber needs coarse snap-points (the ~13 dated events) so
-  touch users land on eras.
+1. **Real-browser QA pass** (above). Fix what play-testing breaks; lesson 01's
+   tilt-to-stall cut is the precedent for letting figures lose to reality.
+2. **Editorial read per section** — "does any moment here need a figure it
+   doesn't have?" Watch the §11 (Open Question) stretch: it is the proseiest
+   section (one figure). Scale rules are heuristics; judge, don't count.
+3. **Stage-4 voice pass** against NICKS_VOICE/SLOP/ESSENCE. Known risk spots:
+   the §9→§10 hinge ends on a genuine fork (ideal-theory-nearly-right vs.
+   drag-hides-in-a-sliver) — check it reads live, not staged (SLOP family 17);
+   fork-hinge drafts go to Nick for taste-testing per standing practice; the
+   sibling audit (hooks/waypoints/ending must not rhyme with lessons 01/02 —
+   the ending was written to a new skeleton: verify).
+4. **Stage-5 audits**: palette (sepia never used for physics; term colors match
+   lesson 01's), ledger (the §5 zero is visibly paid in §10; every nameplate
+   filled by §12 except the blank end; the fluxions plant §3 → Stokes payoff §8;
+   Navier's slip plant §7 → §8 microfluidics payoff), tense audit, anti-checklist
+   (no inline citations — highest-risk item for a history article).
+5. **Decisions deliberately left open**:
+   - Archival figures: built with ZERO of the plan's ≤6 (all-interactive instead).
+     Decide whether Leonardo/Reynolds-plate images earn their place (rights check
+     needed) or the confessed-drawn-homage route, or keep as-is.
+   - Hero wake quality: at Re 140 on the CPU grid the 1904/1999 eras separate and
+     go unsteady but the street is milder than lesson 01's GPU hero (semi-Lagrangian
+     diffusion — same documented limitation). Wiring the GPU backend into
+     TimelineHero is possible but was out of scope. Judgment call.
+   - §6 reuses lesson 01's TermToggle (4 switches — over the one-knob budget;
+     it's a knowing replay of a lesson-01 finale figure; flag or accept).
+6. Registry flip to `published` + README + AGENTS.md updates + deploy — reserved
+   for the user (propose, don't surprise).
 
 ## Judgment calls reserved for the user
 
-- Final section count / cuts if the story wants to be shorter than the 13-section
-  skeleton (per the scale philosophy, that's a fine outcome — but it's an editorial
-  pivot worth surfacing).
-- Archival-image substitutions if rights are unclear.
+- Publishing. Archival images. GPU hero upgrade. Any section cuts.

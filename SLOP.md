@@ -135,6 +135,30 @@ verdict — implement, defer, or kill, with reasons. In articles: the ending pay
 planted debts and calls the winner; it does not gesture at the space of possible
 payments.
 
+**16. The deflationary rebrand ("the X is just the Y").** Flagged 2026-07-06 on a
+fork-hinge draft — "the whole zoo below is just the scoreboard." Nick: "This is
+slop. The X is just the Y." The move: swap in a cuter noun and present the swap as
+a reveal. The "just" claims a reduction that was never performed — no mechanism got
+simpler, only the vocabulary changed. Distinct from family 10: the image may even
+be auditable; the slop is the pretense of insight in the copula. Test: delete
+"just" and ask what the sentence taught. If the answer is "a synonym," cut it. A
+real reduction names what got smaller — degrees of freedom, cases, terms (family
+14 is this same crime committed in the naming direction).
+
+**17. Manufactured cleverness (the contrived journey).** Flagged 2026-07-06 on a
+staged fork — "What law did we break? Two suspects: maybe our forces are wrong, or
+maybe we forgot a force entirely. Neither — we forgot a *constraint*." Nick: "They
+both read like manufactured cleverness which is an anti pattern. The user can tell
+your taking them on an overly contrived journey. If the insights are suprising let
+them be so, don't construct setence narrative to force them that way." The move:
+erect suspects you already know are innocent, stage a beat of suspense, detonate
+the planned punchline — the reader feels the author's hand on their back. The rule:
+**surprise is a property of the physics, not of the sentence order.** This tightens
+the fork license (family 7, NICKS_VOICE §6): a printed fork is legitimate only when
+its candidates are *live* — hypotheses the author or a reasonable reader would hold
+before knowing the answer. Test: did writing the fork require feigning uncertainty?
+Then it's theater, and the plain declarative sentence was already the better one.
+
 ---
 
 ## Where the enforcement lives

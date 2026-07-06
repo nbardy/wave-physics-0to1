@@ -32,11 +32,14 @@ dies the moment the water moves.
 
 **Leonardo da Vinci (c. 1500–1513)** — the great observer of moving water. His
 notebooks (Codex Leicester and the Windsor water studies) contain hundreds of drawings
-of eddies, wakes, and hydraulic jumps; he used and effectively named the phenomenon
-***la turbolenza***. He could *draw* what nobody could write for another three
-centuries — his sketches of vortices behind obstacles are recognizably the wake our
-lesson-01 cylinder sheds. Story asset: turbulence had a name ~340 years before it had
-an equation, and ~400 before it had a number (Reynolds).
+of eddies, wakes, and hydraulic jumps. ✓VERIFIED (2026-07, e.g.
+[Physics of Fluids 33, 115122 (2021)](https://pubs.aip.org/aip/pof/article/33/11/115122/1063774)):
+he listed **68 candidate terms** for the varieties of fluid motion and chose
+***la turbolenza*** (Latin *turbo*, vortex + *turba*, crowd) to cover them all — the
+word's first use in its modern sense. He could *draw* what nobody could write for
+another three centuries — his sketches of vortices behind obstacles are recognizably
+the wake our lesson-01 cylinder sheds. Story asset: turbulence had a name ~340 years
+before it had an equation, and ~400 before it had a number (Reynolds).
 
 **Evangelista Torricelli (1643–44)** — the mercury barometer; "*Noi viviamo sommersi
 nel fondo d'un pelago d'aria*" — we live submerged at the bottom of an ocean of air.
@@ -81,9 +84,12 @@ of friction.
 
 **Johann Bernoulli, *Hydraulica* (dated 1732, actually written c. 1739)** — Daniel's
 father published his own treatise and **backdated it** to before his son's, to claim
-priority. Daniel to Euler: "I am robbed of my entire Hydrodynamics, of which I truly
-did not owe one iota to my father." (The episode is standard in the historical
-literature, e.g. Truesdell's editorial essays and Darrigol.) Story asset: the field's
+priority. Daniel to Euler — ✓VERIFIED wording (2026-07, per the standard biographies,
+e.g. [MacTutor/Britannica](https://www.britannica.com/biography/Daniel-Bernoulli)):
+"I have been robbed of my entire Hydrodynamica, not one part of which I owe to my
+father, and I have been deprived of the fruits of ten years of work." (The episode is
+standard in the historical literature, e.g. Truesdell's editorial essays and
+Darrigol.) Story asset: the field's
 founding book provoked history's worst case of scientific parental theft — and the
 judge in the middle of it was Euler, both men's correspondent, about to supersede both.
 
@@ -136,11 +142,16 @@ beautiful, still predicts zero drag.
 
 **Claude-Louis Navier** (1785–1836): not a professor of mathematics but a *bridge
 engineer* — star of the École des Ponts et Chaussées, editor of the standard
-engineering texts of his day. Biographical asset with a cruel edge: his showcase
-suspension bridge over the Seine, the Pont des Invalides, developed cracks (a burst
-sewer undermined an anchorage) and was abandoned in 1826, to public mockery — the man
-who wrote the law of water couldn't finish his bridge across it. (See the bicentenary
-review [*From Navier to Stokes*, Fluids 9(1):15, 2024](https://www.mdpi.com/2311-5521/9/1/15)
+engineering texts of his day. Biographical asset with a cruel edge — ✓VERIFIED with
+corrections (2026-07, [Wikipedia/Structurae](https://en.wikipedia.org/wiki/Pont_des_Invalides)):
+his showcase suspension bridge over the Seine, the Pont des Invalides, cracked at a
+cable anchorage in July 1826 (settling plus a burst **water main** — not a sewer —
+near a buttress); his design had left no safety margin over his calculations; the
+bridge was dismantled, and a government committee **chastised him for relying too
+much on mathematics**. The man who wrote the law of water couldn't finish his bridge
+across it — because he trusted the mathematics exactly as far as it went and no
+further. (See also the bicentenary review
+[*From Navier to Stokes*, Fluids 9(1):15, 2024](https://www.mdpi.com/2311-5521/9/1/15)
 and [Bistafa, arXiv:2401.13669](https://arxiv.org/abs/2401.13669).)
 
 **"Mémoire sur les lois du mouvement des fluides"** — read to the Académie des
@@ -212,7 +223,9 @@ apparatus-independent (transition near ~2000 in his tubes, though with care he
 delayed it to ~13,000, showing the transition's sensitivity to disturbances).
 
 - The name "**Reynolds number**" is not Reynolds's: **Arnold Sommerfeld** coined it
-  ("Reynolds'sche Zahl") in his 1908 Rome ICM lecture.
+  ("Reynolds'sche Zahl") at the 4th International Congress of Mathematicians, Rome,
+  1908. ✓VERIFIED (2026-07, [Rott, "Note on the History of the Reynolds
+  Number"](http://sites.poli.usp.br/d/pme2330/arquivos%5Cmat_complementar%5CRott_1990.pdf)).
 - **Reynolds 1895**: splitting the velocity into mean + fluctuation, u = ū + u′, and
   averaging the equation — Reynolds averaging, the founding move of practical
   turbulence modeling (RANS), and the confession built into it: above transition we
@@ -247,11 +260,14 @@ lesson 01's no-slip contract.
 ## 10. The equation outruns its authors — turbulence and the open problem
 
 - **Richardson, 1922** — *Weather Prediction by Numerical Process*: attempted a
-  6-hour pressure forecast **by hand** (it failed spectacularly — a predicted rise of
-  ~145 mb, absurd, due to unbalanced initial data); imagined a "forecast factory" of
-  64,000 human computers; and left the cascade in verse: "Big whirls have little
-  whirls that feed on their velocity, and little whirls have lesser whirls and so on
-  to viscosity." The poem is a correct physical theory in rhyme.
+  6-hour pressure forecast **by hand** — six weeks of arithmetic for one point, and
+  it failed spectacularly (a predicted rise of ~145 mb, absurd, due to unbalanced
+  initial data); imagined a "forecast factory" of **64,000 human computers**
+  (✓VERIFIED — his own estimate; modern re-analysis by [Lynch](https://maths.ucd.ie/~plynch/Publications/64000.html)
+  shows even that was optimistic by ~15×: a bonus irony, the dreamer undershot);
+  and left the cascade in verse: "Big whirls have little whirls that feed on their
+  velocity, and little whirls have lesser whirls and so on to viscosity." The poem
+  is a correct physical theory in rhyme.
 - **Leray, 1934** — "Sur le mouvement d'un liquide visqueux emplissant l'espace"
   (Acta Mathematica): global-in-time **weak solutions** in 3D, which he pointedly
   called *solutions turbulentes* — allowing for the possibility that smoothness fails.
@@ -315,10 +331,11 @@ own history, and several arrived *because of* the fluid problem, not before it.
 - **The Laplacian / diffusion operator** — potential theory grew in *celestial*
   mechanics (Laplace's equation, 1780s); the **∇² as smoothing-toward-neighbors**
   reading that lesson 01 §6 teaches is the mathematics of **Fourier's heat
-  conduction (1807/1822)**. The personal link is direct: **Fourier was Navier's
-  mentor and friend** (Navier was his protégé and later his literary executor's
-  circle). Navier's viscous term is formally the heat operator applied to momentum —
-  invented one desk away.
+  conduction (1807/1822)**. The personal link is direct — ✓VERIFIED (2026-07,
+  [MacTutor](https://mathshistory.st-andrews.ac.uk/Biographies/Navier/)): Fourier
+  taught Navier at the École Polytechnique, became a **lifelong friend, and took an
+  active interest in his career** thereafter. Navier's viscous term is formally the
+  heat operator applied to momentum — learned from the man who built the operator.
 - **The stress tensor (1822)** — Cauchy's answer to "what is force *inside* a
   material?", provoked by refereeing **Navier's own 1821 elasticity memoir**. Linear
   algebra of stress before the word "tensor" existed (Voigt coins it in 1898). This
@@ -349,8 +366,8 @@ The story is not a relay of strangers; it is three tight clusters and one hermit
 **Cluster 1 — Basel/St. Petersburg/Berlin (1720s–1760s).** Johann Bernoulli taught
 Euler (Basel). Daniel Bernoulli and Euler were close friends and daily colleagues at
 the St. Petersburg Academy (1727–33) and corresponded for forty years — hydrodynamics
-gestated *inside that correspondence*, and it's to Euler that Daniel mailed the "I am
-robbed of my entire Hydrodynamics" complaint about his own father. Euler and
+gestated *inside that correspondence*, and it's to Euler that Daniel mailed the "I
+have been robbed of my entire Hydrodynamica" complaint about his own father. Euler and
 d'Alembert were wary rivals who read each other closely: Euler's Berlin Academy
 effectively judged (and declined to award) d'Alembert's 1749 resistance essay —
 d'Alembert felt robbed and feuded for years — and Euler's 1757 equations visibly

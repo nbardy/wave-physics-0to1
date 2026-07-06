@@ -1,5 +1,10 @@
 # PLAN — Lesson 01: Building the Navier–Stokes Equations
 
+> **Status: EXECUTED (2026-07).** The article is built and diverges from this plan
+> where play-testing won (hero is now the wing, not the cylinder; 32 figures, not
+> ~80). The article + `HANDOFF.md` are canonical; consult this plan for design
+> *rationale* only — do not "fix" the article back toward it.
+
 The full-length plan, at true corpus scale, produced by METHODOLOGY.md stages 1–2.
 Reference throughout: `ESSENCE_OF_VOICE_AND_DESIGN.md`; the airfoil deep dive in
 `research/reports/REPORT_2_physics_epics.md` is the closest prior art — he taught the

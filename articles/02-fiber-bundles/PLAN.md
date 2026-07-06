@@ -1,5 +1,11 @@
 # PLAN — Lesson 02: Fiber Bundles, the Universal Medium
 
+> **Status: EXECUTED (2026-07).** The article is built (39 figures vs. the plan's
+> 67 — the four gaps still judged worth building are marked `{/* fig gap */}` in
+> the MDX). The article + `HANDOFF.md` are canonical; consult this plan for design
+> *rationale* and the per-figure specs of the gap figures — do not "fix" the
+> article back toward it elsewhere.
+
 The full-length plan, produced by METHODOLOGY.md stages 1–2. Reference throughout:
 `ESSENCE_OF_VOICE_AND_DESIGN.md` for craft, `articles/02-fiber-bundles/RESEARCH.md` for the
 subject-matter grounding (what the tweet technically refers to, the papers, the

@@ -125,7 +125,10 @@ drag meter reads *something*, but the sim shows no wake, no flow-around — matt
 streaming through matter); and the **speed of sound**, computed from mechanics for
 the first time — and 15% low (a tube-of-air sim with predicted vs. measured wavefront
 racing; Laplace's 1816 adiabatic fix as the payoff line). Wave-course ring: the fluid
-story begins with a wave calculation.
+story begins with a wave calculation. One paragraph on the notation schism: Britain
+clings to Newton's fluxions for a century out of loyalty, which is why the next 130
+years of this story are Swiss, French, and German (planted debt — paid in §8, when
+Stokes arrives as the first Cambridge generation retrained in Leibniz's calculus).
 *Savior: motion of a continuum needs mathematics nobody has. Two generations of one
 family start building it — and tear each other apart.*
 
@@ -135,14 +138,18 @@ sim (one slider: constriction; pressure gauge falls as speed rises). We *use* th
 tradeoff as observation, we do not teach it as mechanism (the lesson-01 omission,
 kept, and confessed in a sentence). Then the scandal, told straight: Johann's
 *Hydraulica*, dated 1732, written after his son's book — the backdating; Daniel's
-letter ("I am robbed of my entire Hydrodynamics…"). Archival figure: the two title
+letter ("I have been robbed of my entire Hydrodynamica… deprived of the fruits of
+ten years of work" — verified wording, RESEARCH §3). Archival figure: the two title
 pages side by side, the false date visible.
 *Failure driving out: accounting along a pipe is not a law of motion — it cannot say
 what the water in the open stream* does*. And it ignores friction entirely.*
 
 ### §5 · d'Alembert's Zero (figs 20–26) — the paradox
 First, the course callback: d'Alembert 1747, the vibrating string — the first PDE of
-physics (re-encounter #2; the string sim from the course scaffold, one pluck). The
+physics (re-encounter #2; the string sim from the course scaffold, one pluck) — and
+the fight it started: d'Alembert, Euler, and Daniel Bernoulli publicly warring over
+what even counts as a *solution* (arbitrary functions vs. sums of modes), the wave
+course's founding quarrel, settled only by Fourier two generations later. The
 tools of wave physics, invented, now aimed at the stream. The setup: ideal fluid —
 no friction, nothing but Euler-to-be's pressure — flowing past our cylinder.
 **Prediction #1 (marquee of Act I)**: "The flow below is frictionless. Before you
@@ -151,7 +158,10 @@ gently / not at all.) Reveal: the pressure field, fore-aft **symmetric**; the dr
 meter unrolls to **0.000** (re-encounter #3). Every pressure gain on the nose is
 refunded on the tail. D'Alembert's own verdict, quoted: "a singular paradox which I
 leave to future Geometers to elucidate." Ships need no sails; theory at war with
-every swimmer since the first one.
+every swimmer since the first one. Grievance garnish, one sentence: the Berlin
+Academy that judged (and declined to award) his 1749 essay was Euler's — both
+founding documents of the field arrive wrapped in a priority wound, with Euler as
+judge and beneficiary.
 **Waypoint (Act I ends)**: you now hold what 1752 held — perfect statics, a wave
 equation, an energy ledger, and a proof that the best theory of moving water is
 absurd. The paradox will sit on screen, dated, until §10 pays it.
@@ -163,7 +173,9 @@ display in lesson 01 §2; Euler invented it"); pressure as an internal field (th
 particle-box callback, one sentence, no re-run); Newton's law per parcel. The **Euler
 equations** assemble on the term stack — every lesson-01 color *except green*, each
 nameplate filling in (re-encounter #4). Boundary check as play: kill the pressure
-term → the §9-of-lesson-01 pile-up catastrophe, replayed knowingly. Euler's own
+term → the §9-of-lesson-01 pile-up catastrophe, replayed knowingly. One aside: the
+PDE itself is younger than the reader might think — invented next door, in 1747,
+for a wave; fluids and waves share a birth decade. Euler's own
 confession quoted: if fluid motion escapes us, blame *analysis itself*.
 *Failure driving out: the drag meter still reads zero — Euler's equations inherit
 the paradox untouched. And honey and water obey identical equations here, which the
@@ -171,32 +183,47 @@ reader's hands know is false. One term is missing, and it is the whole story.*
 
 ### §7 · The Bridge Engineer's Term (figs 34–39)
 Navier: engineer first — the Pont des Invalides told straight (archival etching; the
-crack, the burst sewer, the 1826 abandonment, the mockery). Then March 18, 1822: the
+cracked anchorage, the burst water main, the missing safety margin, the 1826
+dismantling — and the committee that chastised him *for relying too much on
+mathematics*; verified details, RESEARCH §6). His teacher and lifelong friend was
+Fourier — so the smoothing operator he is about to write into water is the heat
+operator, learned from the man who built it. Then March 18, 1822: the
 molecular-springs toy — a lattice of molecules with velocity-dependent pulls
 (one slider: neighbor coupling); summed, the smoothing emerges — and the **green
 term** $\nu\nabla^2\mathbf{u}$ joins the stack with its nameplate (re-encounter #5).
 Then the honest beat, the section's spine: **the molecules were fiction and the term
 was right**. Navier's constant ε connected to nothing measurable — a knob labeled ε
 with no units on the sim, confessed ("I cannot tell you what to set it to; neither
-could he").
+could he"). Second irony, one sentence: his boundary condition was *slip*, not
+no-slip — wrong for the century's pipes, quietly rehabilitated in modern
+microfluidics (aside paid in §8, coda footnote).
 *Failure driving out: a term derived from imaginary physics convinces no one. The
 term needs a foundation — and it gets four, from four men who mostly refused to cite
 each other.*
 
 ### §8 · Five Times Discovered (figs 40–48)
-The rediscovery parade, one figure each, kept brisk: **Cauchy 1823** — the stress
-cube (drag a face, watch the nine components; "the container for any material's law"
-— the deepest object in the parade); **Poisson 1829** (compressible route, one
-card); **Saint-Venant 1837** — shear stress ∝ strain rate on the two-plate sim, the
-modern reading, published two years before Stokes, cited nobody's rival, got
-nothing (the eponymy lottery figure: five names in, two names out). **Stokes 1845**:
-the continuum derivation textbooks still teach — and then the equation *earns its
+The rediscovery parade, one figure each, kept brisk — framed as what it actually
+was: not five isolated flashes but **one continuous in-person Paris argument** about
+what a fluid *is* (Cauchy sparked while refereeing Navier's memoir; Navier and
+Poisson in public polemic, 1828–29, molecules vs. continuum): **Cauchy 1823** — the
+stress cube (drag a face, watch the nine components; "the container for any
+material's law" — the deepest object in the parade); **Poisson 1829** (compressible
+route, one card); **Saint-Venant 1837** — shear stress ∝ strain rate on the
+two-plate sim, the modern reading, published two years before Stokes, cited
+everyone honestly, got nothing (the eponymy lottery figure: five names in, two
+names out). **Stokes 1845**: the hermit — derived it alone in Cambridge (§3's
+notation debt paid: first generation retrained in Leibniz's calculus), found the
+French literature afterwards, acknowledged it, and proceeded anyway because his
+continuum route was the one worth keeping — and then the equation *earns its
 keep*: the falling-sphere sim (re-encounter #6, $F = 6\pi\mu RU$; boundary check —
 double the radius, watch terminal velocity) turning ν from fudge factor into a
 **measured property of air and water**; no-slip settled as a by-product (the
-lesson-01 contract, now with a birthday). Verification dessert: **Poiseuille's
-blood-capillary law** — the pipe sim with the r⁴ readout; a physician handed the
-theorists their first exact confirmation.
+lesson-01 contract, now with a birthday; Navier's slip aside paid here).
+Verification dessert: **Poiseuille's blood-capillary law** — the pipe sim with the
+r⁴ readout; a physician handed the theorists their first exact confirmation.
+Notation confession, one sentence: all five wrote three scalar component equations —
+the compact vector face on our term stack is a 20th-century typographical object
+(flagged here, paid in §12).
 **Waypoint (Act II ends)**: the equation is written — five times — trusted, and
 named for the first and last of five men, two of whom never met. But it can only be
 *solved* for creeping flows; real water, pushed harder, goes mad.
@@ -209,7 +236,10 @@ filament survive?" (Commit, then drag.) The eruption: *direct* becomes *sinuous*
 his words, quoted. Then the collapse figure: four tubes — wide/slow, narrow/fast,
 hot/cold water (ν slider) — transition governed by the single combination $UL/\nu$
 (re-encounter #7): the slider the reader dragged through all of lesson 01, met at
-its birthplace; Sommerfeld's 1908 christening as the etymology reward. Close on
+its birthplace; Sommerfeld's 1908 christening as the etymology reward. Network
+beat: the referee who handled the 1883 paper at the Royal Society was Stokes —
+whose own 1851 memoir carries the number in embryo; a thirty-year
+mentorship-at-a-distance closes here. Close on
 Reynolds 1895: $\mathbf{u} = \bar{\mathbf{u}} + \mathbf{u}'$ (re-encounter #8) — the
 averaging confession: above transition, we stop computing the flow and start
 computing its statistics.
@@ -228,7 +258,10 @@ the fore-aft pressure symmetry breaks, and the **drag meter, zero since §5, fin
 moves**. The 152-year ledger entry is paid on screen: d'Alembert wasn't refuted; he
 was right everywhere except a sliver, and the sliver controls everything. Kármán's
 street (1911) named as the pattern the reader has been shedding since lesson 01's
-fig 1; Bénard's photographs as archival garnish.
+fig 1; Bénard's photographs as archival garnish. The listener beat, one sentence:
+in the Heidelberg audience sat Felix Klein, who recognized the ten minutes for what
+they were and pulled Prandtl to Göttingen that same year — Blasius, Kármán, and the
+aerodynamic century flow through one act of listening.
 **Waypoint (Act III ends)**: the equation is written, verified, and — through one
 thin layer — finally agrees with ships, birds, and swimmers. What remains is
 everything above the transition: turbulence, and a question about the equation
@@ -242,9 +275,15 @@ computers (archival illustration, the last of the budget). Kolmogorov 1941: the
 cascade postcard — energy spectrum on log-log, the −5/3 slope drawn on (re-encounter
 #10, **confessed as unearned**: "a postcard from a theory this course has not yet
 climbed to"). Leray 1934: *solutions turbulentes* — the mathematicians' warning that
-smoothness might fail; Ladyzhenskaya's 2D theorem (flat worlds are safe; the third
+smoothness might fail — and a tools note in one sentence: Leray invented his weak
+derivatives *before* Sobolev's spaces existed; at both ends of its life (PDEs at
+birth, weak solutions in old age) the equation generated the mathematics that
+studies it. Ladyzhenskaya's 2D theorem (flat worlds are safe; the third
 dimension is the whole problem); the Millennium card — Fefferman's 2000 problem
 statement, $1M, unclaimed. The lesson-01 confession, upgraded to a dated artifact.
+Garnish, if the rhythm allows: Heisenberg's doctoral thesis (Sommerfeld, 1923) was
+on turbulence — the man who made uncertainty a principle cut his teeth on the
+equation that still keeps one.
 *Savior: an equation nobody can prove well-posed — but Richardson's factory got
 built after all, out of vacuum tubes.*
 
@@ -253,7 +292,9 @@ ENIAC 1950 (Richardson's factory realized); then the solver x-ray from lesson 01
 §12, replayed with **birthdays on each step**: the staggered grid — Harlow & Welch,
 Los Alamos, 1965; the projection — Chorin, 1968; the unconditionally stable
 advection — Stam, 1999. "The four steps you watched in lesson 01 are the 1965, 1968,
-and 1999 sentences of this story." **The hero returns**: the two-centuries scrubber,
+and 1999 sentences of this story." §8's notation debt paid here: even the equation's
+compact vector *face* is machine-age typography — Gibbs–Heaviside notation, younger
+than the equation by sixty years. **The hero returns**: the two-centuries scrubber,
 full range, every regime now readable, every nameplate filled — and the right-hand
 end of the slider left visibly blank, because the story has no ending yet: the
 smoothness question is open, and the newest chapter is running on the reader's GPU.
@@ -263,7 +304,13 @@ The closing move, stated plainly: lay lesson 01's section ladder beside this
 lesson's timeline — field, advection, viscosity, pressure, constraint, solver;
 Euler, Euler, Navier, Euler, Euler, Chorin — the pedagogical order and the
 historical order are nearly the same walk, because both were driven by watching the
-current theory fail in plain sight. Bridge out: the wave equation was born in 1747
+current theory fail in plain sight. Optional fig 74, the **gaps ledger drawn**:
+horizontal bars on the hero timeline showing how long each piece hung open — 135
+years for the viscous term, 152 for the paradox, 204-and-counting for smoothness
+(cheap: static bars on the scrubber chrome; it is the lesson's thesis as one
+picture — adopt if §13 survives the drought audit, else fold the three numbers into
+Final Words). Navier's slip footnote lands here too (microfluidics vindicates him).
+Bridge out: the wave equation was born in 1747
 inside this same story; the rest of the course climbs the children of Navier–Stokes.
 
 ### Further Reading & Final Words
@@ -281,49 +328,6 @@ find it…" skeleton; this ending must not rhyme with theirs. The material to la
 the equation's name is not a label but a two-century argument — a bridge engineer,
 a blind-to-each-other quintet, a physician's capillaries, ten minutes in
 Heidelberg — and it still keeps one secret, priced at a million dollars.
-
-### Stage-2 addendum — the deeper lineage layer (RESEARCH §12–14), mapped to sections
-
-The research doc's toolbox / network / gaps material threads into the ladder above
-rather than adding sections; per-section riders:
-
-- **§3 rider**: the Newton–Leibniz notation schism, one paragraph — Britain clings
-  to fluxions for a century, which is why the next 130 years of the story are
-  Swiss/French/German. Planted debt: paid in §8 (Stokes as the first
-  continental-trained Cambridge generation).
-- **§5 riders**: the vibrating-string controversy (d'Alembert vs. Euler vs. Daniel
-  Bernoulli on what counts as a *solution* — the wave course's own founding quarrel,
-  settled only by Fourier); and Euler's academy judging d'Alembert's 1749 essay —
-  both founding documents arrive wrapped in a grievance, Euler the common judge and
-  beneficiary.
-- **§6 rider**: PDEs did not predate the problem — the tool was invented next door
-  (1747, for a wave) and both stories share a birth decade.
-- **§7 riders**: **Fourier was Navier's mentor** — the viscous term is the heat
-  operator applied to momentum, invented one desk away; and **Navier's own boundary
-  condition was slip, not no-slip** — wrong for 1822's pipes, rehabilitated in
-  modern microfluidics (a debt paid as a §8 aside plus a coda footnote).
-- **§8 riders**: the Paris cluster framing — the five derivations were **one
-  continuous in-person argument** (Cauchy refereeing Navier's memoir; the public
-  Navier–Poisson polemic of 1828–29 over molecules vs. continuum); Stokes the
-  hermit, discovering the French literature only after deriving his own; and the
-  notation confession — every one of the five wrote three scalar component
-  equations; the vector face on our term stack is a 20th-century typographical
-  object (flagged here, paid in §12).
-- **§9 rider**: Stokes was the Royal Society referee of Reynolds's 1883 paper, and
-  the number appears embryonically in Stokes's own 1851 memoir — a thirty-year
-  mentorship-at-a-distance.
-- **§10 rider**: Felix Klein in the Heidelberg audience → Prandtl recruited to
-  Göttingen the same year; the whole aerodynamic century flows through one act of
-  listening.
-- **§11 riders**: Leray invented his weak derivatives *before* Sobolev's spaces
-  existed — the equation generates mathematics at both ends of its life; garnish:
-  Heisenberg's doctoral thesis (Sommerfeld, 1923) was on turbulence.
-- **§13 option (fig 74)**: the **gaps ledger as a figure** — horizontal bars laid on
-  the hero timeline showing how long each piece hung open (135 years for the viscous
-  term, 152 for the paradox, 204-and-counting for smoothness). Cheap (static bars on
-  the existing scrubber chrome), and it is the lesson's thesis drawn as one picture.
-  Adopt if §13 survives the drought audit; otherwise fold the three numbers into
-  Final Words prose.
 
 ---
 

@@ -300,6 +300,21 @@ them it can be." And: "Weird cadence and generic placeholders."
 figures and planted debts (the ESSENCE mechanism), never in promissory sales copy. If
 a sentence's only content is a promise about a later sentence, cut it.
 
+Second incident (2026-07-06), flagged in fork-hinge drafts before they reached the
+article:
+
+- ✗ "the whole zoo below is just the scoreboard." — "This is slop. The X is just
+  the Y"
+- ✗ "Two suspects: maybe our forces are wrong, or maybe we forgot a force entirely.
+  Neither — we forgot a *constraint*." — "They both read like manufactured
+  cleverness which is an anti pattern. The user can tell your taking them on an
+  overly contrived journey. If the insights are suprising let them be so, don't
+  construct setence narrative to force them that way."
+
+**The rule extracted: surprise is a property of the physics, not the sentence
+order.** No rebrand posing as a reveal; no suspects erected to be executed. SLOP.md
+families 16–17 carry the tests.
+
 The full taxonomy — 15 slop families, the four detection tests, and the real
 before/after pairs from this repo's de-slop commits — lives in **`SLOP.md`**.
 
@@ -321,9 +336,12 @@ Never "But what does this really mean?" — that's a question wearing slop's clo
 
 ### Transfers from Nick into print
 
-1. **Fork questions as section hinges** — sparingly, always answered, candidates always
-   physical. ("So which term lets go first when the wave steepens? Two candidates have
-   a claim…")
+1. **Fork questions as section hinges** — sparingly, always answered, candidates
+   always physical, and always *live*: hypotheses someone would actually hold before
+   knowing the answer. ("So which term lets go first when the wave steepens? Two
+   candidates have a claim…" is live because the answer is genuinely contested.) A
+   fork whose suspects exist only to be knocked down is manufactured cleverness —
+   SLOP.md family 17, flagged 2026-07-06.
 2. **Blunter verdicts at failures.** Where Ciechanowski writes "The results are
    completely janky," the blend is allowed one notch hotter: "This is just wrong — the
    water flows *through* the cylinder and never pushes back." Verdicts stay grounded
