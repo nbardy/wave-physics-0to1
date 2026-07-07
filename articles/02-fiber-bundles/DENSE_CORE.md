@@ -13,9 +13,9 @@ this document wins.
 > for all waves, yet didn't tell anyone outside a few theoretical physicists?
 > That would be fiber bundles. Just for openers.
 >
-> — Eric Weinstein ([@EricRWeinstein](https://twitter.com/ericrweinstein);
-> candidate status link, unconfirmed since X blocks anonymous reads:
-> [1077751816400433152](https://x.com/ericrweinstein/status/1077751816400433152))
+> — Eric Weinstein, [July 2, 2026](https://x.com/ericweinstein/status/2072746828731384136)
+> (VERIFIED 2026-07-06: Nick supplied the live tweet; wording matches verbatim,
+> including the paragraph break before "That would be fiber bundles.")
 
 The one prior popular telling — and the proof our thesis is untold:
 [Bernstein & Phillips, "Fiber Bundles and Quantum Theory," *Scientific American*,

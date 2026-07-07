@@ -9,8 +9,9 @@ in this order:
 2. **`NICKS_VOICE.md`** — the other pole: Nick's own voice, measured from ~7,200 of his
    prompts, and the blend rule the articles are written in (Ciechanowski's discipline,
    Nick's blood; prose temperature → NICKS_VOICE wins, structure → ESSENCE wins).
-3. **`SLOP.md`** — the detector: 15 slop families and the four tests (topic-swap,
-   delete, who's-talking, the Nick test). Judgment calls, never grep gates.
+3. **`SLOP.md`** — the detector: the slop families and the four tests (topic-swap,
+   delete, who's-talking, the Nick test). Judgment calls, never grep gates. (Count
+   deliberately not stated here — it grows; the doc is canonical.)
 4. **`METHODOLOGY.md`** — the essence inverted into our five-stage process:
    concept → skeleton → blocked content → final draft → polished post. Includes our
    four standing deviations (we cash out the math; prediction before reveal; waypoints;
@@ -85,7 +86,7 @@ branches.
 
 - **Voice system complete (2026-07-06)**: `NICKS_VOICE.md` (fingerprint measured from
   ~7,200 of Nick's prompts + the world-tubes ChatGPT distillation archived in
-  `research/voice/`) and `SLOP.md` (15 families, 4 tests), wired into the reading
+  `research/voice/`) and `SLOP.md` (families + 4 tests), wired into the reading
   order and METHODOLOGY Stages 4–5. **Open voice items**: (1) the *print register*
   (NICKS_VOICE §6–§7) has exactly one ground-truth sample (Nick's lesson-01 intro
   markup) — ratify it by voice-sweeping ONE lesson-01 section and having Nick mark it
@@ -104,14 +105,14 @@ branches.
     scan ×2, rhythm compression, ledger closed, hero pre-roll, hysteresis measured);
     hero is the two-color wing → `articles/01-navier-stokes/HANDOFF.md`.
   - **Lesson 02** (fiber bundles): Stage 4 complete + audited, `draft`; figure gaps
-    CLOSED + ending rewritten 2026-07-06; epigraph verification (Nick) + mobile
-    pass remain → `articles/02-fiber-bundles/HANDOFF.md`.
+    closed, ending rewritten, epigraph verified 2026-07-06; a mobile/feel pass is
+    all that remains before publish → `articles/02-fiber-bundles/HANDOFF.md`.
   - **Lesson 03** (NS history): BUILT end-to-end 2026-07-06 (`draft`) — ~5,800 words,
     20 figures, 16 new sims, computed drag meters; browser QA incomplete (preview
     env wedged) → `articles/03-navier-stokes-history/HANDOFF.md`.
-- **Cross-thread decision queue**: the lesson-02 epigraph check (needs a logged-in
-  X read — the one item only Nick can do); the remaining publish flips (propose,
-  don't surprise). DECIDED 2026-07-06 (Nick): lesson 01 published keeping its
+- **Cross-thread decision queue**: the remaining publish flips (propose, don't
+  surprise). RESOLVED 2026-07-06: the lesson-02 epigraph is verified against the
+  live tweet (Nick supplied it; wording verbatim, attribution dated). DECIDED 2026-07-06 (Nick): lesson 01 published keeping its
   Final Words shape, so **lesson 02 owes the ending rewrite**; `KelvinHelmholtz.tsx`
   stays benched. DECIDED 2026-07-06 (Claude, revisable): **caption policy** —
   in-canvas figure furniture (knob labels, meter/readout labels, year chrome) is

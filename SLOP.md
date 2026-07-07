@@ -159,6 +159,31 @@ its candidates are *live* — hypotheses the author or a reasonable reader would
 before knowing the answer. Test: did writing the fork require feigning uncertainty?
 Then it's theater, and the plain declarative sentence was already the better one.
 
+**18. The methodology speaking (design rationale as prose).** Flagged 2026-07-06 on
+a lesson-02 line: "One more demonstration belongs on the table before we build
+anything — the strangest experimental fact this subject owns, met here long before
+you could explain it." The build doctrine behind it (demo before theory) is correct —
+and the sentence is that doctrine *reciting itself* instead of being executed. The
+move: article-construction reasoning — why a figure sits here, what the article has
+"earned" or owes, which sentence is the thesis, what house rules require — promoted
+from the planning docs into reader-facing prose. The tell is the subject: the
+sentence is about the article as an artifact, not about the physics ("the sentence
+this article exists to earn," "that rhyme earns one figure," "house rules require
+naming the solver," "the finale has earned them"), often wearing planning-doc
+vocabulary in print (*earn, honesty, dessert, coda, hero, act, contract-with-the-
+reader*). Distinct from family 1 (scheduling the reader's understanding) and family 3
+(generic throat-clearing): these sentences are usually well-made and voice-compliant —
+they fail on content, not craft, which is why they slip past the other families. This
+is the four tests' Nick test given its own family, because it kept recurring in
+dressed-up form. The rule: **the doctrine governs what the article does, never what
+it says.** The reader should meet the demonstration before the theory without being
+told that demonstrations come before theory. Test: delete the sentence and name what
+the reader lost — if the loss is a fact about our construction process rather than
+about the subject, it was a stage direction, and stage directions are delivered by
+the staging. Boundary: the confession device stays. Confessing a lie *in the figure*
+("I've slowed time enormously") is house honesty; narrating the *design* ("this
+figure is here because…", "honesty requires showing you") is this family.
+
 ---
 
 ## Where the enforcement lives

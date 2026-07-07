@@ -51,11 +51,12 @@ settled structure without strong cause.
    figure it doesn't have?" This article is allowed to settle prose-heavy where the
    math wants prose — judge by the story, not by the 67-figure plan estimate or the
    188 w/fig number.
-3. **Verify the epigraph tweet wording** against the live tweet (candidate: X status
-   `1077751816400433152`). X blocks anonymous reads — this likely needs the user
-   logged in, or the claude-in-chrome browser tools with the user's session. If
-   verified, add the year to the attribution; if unverifiable, tell the user and
-   decide together (do NOT silently keep unverified wording in a published article).
+3. ~~Verify the epigraph tweet wording~~ DONE 2026-07-06: Nick supplied the live
+   tweet — `x.com/ericweinstein/status/2072746828731384136` (posted 2026-07-02;
+   the old 2018 candidate ID is superseded). Wording matched verbatim; epigraph
+   updated to the tweet's exact punctuation + paragraph break, attribution dated
+   2026, hyperlink moved out of the quote block into Further Reading per the
+   quoted-artifact device rules.
 4. **Mobile/touch pass** on real device: drags on the holonomy/transport figures,
    control-row wrapping, canvas rotation behavior.
 5. **Caption-policy coordination** ⚠ cross-thread: ESSENCE bans captions; some sims

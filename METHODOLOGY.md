@@ -108,8 +108,8 @@ Now — and only now — the voice pass. Three source documents govern it:
 `ESSENCE_OF_VOICE_AND_DESIGN.md` for the *philosophy of the moves*,
 `NICKS_VOICE.md` for the *prose temperature* (the blend rule lives in AGENTS.md:
 structure → ESSENCE wins, temperature → NICKS_VOICE wins), and `SLOP.md` as the
-detector to read the result against — 15 families, four tests; judge with the
-tests, never grep for the families.
+detector to read the result against — the slop families and the four tests; judge
+with the tests, never grep for the families.
 
 **The pastiche guard, first.** The Essence doc is a measurement of one author's
 converged fingerprint. A phrasing is a *signature* when one author converges on it
@@ -194,7 +194,7 @@ arrived while writing; if none arrived, the article ships drier and that's fine.
   Debts are planted as flat declaratives that carry the content of the promise, not
   its schedule ("that single number is the oldest debt in this article; it gets
   paid, but not soon"). This anti-checklist is the corpus-measured subset; the full
-  15-family slop taxonomy with its detection tests lives in `SLOP.md`.
+  slop taxonomy with its detection tests lives in `SLOP.md`.
 
 **On audits themselves**: an audit may return zero findings — "this is fine" is a
 legitimate, complete result. Finding-counts are not a quality metric, and "all
