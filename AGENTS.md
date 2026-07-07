@@ -110,6 +110,11 @@ branches.
   - **Lesson 03** (NS history): BUILT end-to-end 2026-07-06 (`draft`) — ~5,800 words,
     20 figures, 16 new sims, computed drag meters; browser QA incomplete (preview
     env wedged) → `articles/03-navier-stokes-history/HANDOFF.md`.
+  - **Lesson 04** (drag & turbulence, ordering unclaimed): CONCEPT banked
+    2026-07-06 — 3D wind-tunnel hero (car + offset colored streamtubes; where
+    lesson 01's "flows here are two dimensional" confession flips into the
+    thesis). Week-scale solver+renderer work, scoped honestly in
+    `articles/04-drag-and-turbulence/DENSE_CORE.md`. Not in the registry.
 - **Cross-thread decision queue**: the remaining publish flips (propose, don't
   surprise). RESOLVED 2026-07-06: the lesson-02 epigraph is verified against the
   live tweet (Nick supplied it; wording verbatim, attribution dated). DECIDED 2026-07-06 (Nick): lesson 01 published keeping its
