@@ -38,7 +38,7 @@ property of the stream, and that single number is the oldest debt in this articl
 it gets paid, but not soon.
 
 The mathematics of fluids has a reputation, and some unfamiliar words will come up
-along the way. You shouldn't feel pressured to memorize any of them — every quantity in
+along the way. Every quantity in
 this article is color-coded, so <C k="vel">velocity</C> is always this blue,
 <C k="dye">dye and drifting parcels</C> are always amber — the wing's lower current
 wears <C k="dye2">rose</C> — and when something goes physically wrong you will see it
@@ -84,7 +84,7 @@ the flow around them, each dragging a ghostly trail of where it has been:
 Notice that the two instruments genuinely disagree about what to report. An
 <C k="vel">arrow</C> watches one place and sees many different parcels of water pass
 through it. A <C k="dye">marker</C> watches one parcel of water and carries it through
-many different places. Keep that distinction close; it is the heart of our first
+many different places. That distinction is the heart of our first
 equation.
 
 Sometimes we don't care about direction at all — only about how fast things are moving
@@ -182,9 +182,8 @@ $(\mathbf{u}\cdot\nabla)\,q$ with your own eyes.
 
 Newton's law — force equals mass times acceleration — applies to *stuff*, and in a
 fluid, the stuff is the parcels. Whatever equation we build will be a statement about
-$D\mathbf{u}/Dt$, the acceleration a parcel actually feels. We have the left-hand side
-of Navier–Stokes already; the rest of this article is a hunt for what belongs on the
-right.
+$D\mathbf{u}/Dt$, the acceleration a parcel actually feels. That is the left-hand
+side of Navier–Stokes. The right-hand side is still empty.
 
 ## Advection
 
@@ -217,7 +216,7 @@ the field**. The equation feeds on its own output. This self-reference is
 *nonlinearity*, and it is the single reason fluids can braid, swirl, and surprise —
 and the reason no one has fully tamed the equation we're building.
 
-Since we're computing all of this on a grid, honesty requires showing you how. The
+We compute all of this on a grid, so let's watch the computation itself. The
 demonstration below moves dye through a vortex with two different schemes. The first
 is the obvious one: estimate the local slopes, nudge each cell accordingly. Watch what
 it does — and notice the violet, which marks *negative dye*, a thing that cannot
@@ -443,7 +442,7 @@ where fluid begins to pile, pressure rises and pushes it apart; where fluid begi
 thin, pressure falls and draws it back. Any imbalance corrects itself before it can
 grow.
 
-There's a beautiful piece of mathematics underneath your slider-work. Any smooth flow
+There's a piece of mathematics underneath your slider-work. Any smooth flow
 field can be split into two ingredients — a part that only swirls (zero divergence)
 and a part that only piles (all of the divergence, and it is the gradient of
 something). The demonstration below is built from exactly those two ingredients, and
@@ -476,8 +475,7 @@ neighbourly negotiation later, the <C k="pHi">hill</C> has risen and the crime i
 gone. These sweeps are *Jacobi iterations*, and our simulations run dozens of them
 at every cell of the grid, every frame.
 
-One last thing deserves saying plainly, because it is the strangest fact in this
-article. Pressure has no equation of its own — no $\partial p/\partial t$ anywhere.
+Pressure has no equation of its own — no $\partial p/\partial t$ anywhere.
 It is not a substance with momentum and history. It is whatever field, at each
 instant, keeps $\nabla\cdot\mathbf{u} = 0$ true. Ask a fluid "why this pressure?" and
 the only answer is: *because that is what it took*.
@@ -512,7 +510,6 @@ to blur (in principle forever; in practice our backward-tracing scheme sneaks in
 little blur of its own, as confessed earlier). Switch off pressure and you recognize
 the violet catastrophe of the broken fluid — now as a diagnosis rather than a mystery.
 
-One confession completes the ceremony, because this article opened with a debt.
 Whether solutions of these equations, in three dimensions, always remain smooth — or
 can spontaneously concentrate infinite velocity into a point — is not known. Not
 "hard": *unknown*. That is the million dollars from the first paragraph — one of the
@@ -555,8 +552,7 @@ honest, and every one of them is yours now.
 ## Where Waves Live
 
 This is a wave-physics course, and we've spent the whole first lesson on an equation
-with no waves in it. That was the point: Navier–Stokes is the parent, and the waves
-are its children.
+with no waves in it. Navier–Stokes is the parent, and the waves are its children.
 
 Take still water and disturb it *slightly*. With disturbances so small, the
 self-carrying term — small velocity times small variation — is smallness squared,
