@@ -16,23 +16,42 @@ const FIELDS: Record<string, FlowField> = {
   vortex: vortexField(0.13),
 }
 
+// The blob is carried away and the figure would then sit empty — a reader who
+// glances up a few seconds late sees a blank box and no advection at all. So
+// each figure loops: it re-seeds once the blob has mostly left the domain
+// (uniform, shear) or once the vortex has wound it past the point of being
+// readable (the vortex keeps every gram of dye forever, so mass alone would
+// never trigger). Re-seeding is a restart of the demonstration, not physics.
+const LOOP_SECONDS: Record<string, number> = { uniform: 9, shear: 9, vortex: 15 }
+const MASS_FLOOR = 0.4 // fraction of the initial blob still in the domain
+
 function createDyeCarry(fieldName: keyof typeof FIELDS, speedRef: { current: number }): Stepper {
   const field = FIELDS[fieldName]
   let dye = new Float32Array(NX * NY)
   let next = new Float32Array(NX * NY)
-  // initial blob, left-center
-  for (let j = 0; j < NY; j++) {
-    for (let i = 0; i < NX; i++) {
-      const x = i / NX
-      const y = j / NY
-      dye[i + j * NX] = Math.exp(-(((x - 0.3) / 0.09) ** 2 + ((y - 0.5) / 0.13) ** 2))
+  const loopAfter = LOOP_SECONDS[fieldName] ?? 9
+  const seed = () => {
+    for (let j = 0; j < NY; j++) {
+      for (let i = 0; i < NX; i++) {
+        const x = i / NX
+        const y = j / NY
+        dye[i + j * NX] = Math.exp(-(((x - 0.3) / 0.09) ** 2 + ((y - 0.5) / 0.13) ** 2))
+      }
     }
   }
+  const massOf = (f: Float32Array) => {
+    let m = 0
+    for (let k = 0; k < f.length; k++) m += f[k]
+    return m
+  }
+  seed()
+  const mass0 = massOf(dye)
   const off = document.createElement('canvas')
   off.width = NX
   off.height = NY
   const img = new ImageData(NX, NY)
   let t = 0
+  let checkIn = 20
   const FIXED_DT = 1 / 60
 
   const sample = (f: Float32Array, x: number, y: number) => {
@@ -68,6 +87,12 @@ function createDyeCarry(fieldName: keyof typeof FIELDS, speedRef: { current: num
         const swap = dye
         dye = next
         next = swap
+        // mass check is O(N); once every ~0.3 s of sim time is plenty
+        if (t > loopAfter || (checkIn-- <= 0 && massOf(dye) < MASS_FLOOR * mass0)) {
+          seed()
+          t = 0
+        }
+        if (checkIn < 0) checkIn = 20
         acc -= FIXED_DT
         guard++
       }

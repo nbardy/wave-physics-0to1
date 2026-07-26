@@ -50,7 +50,22 @@ export interface GpuSolverConfig {
   toggles: SolverToggles
 }
 
-const DIFFUSE_ITERS = 12
+// Implicit diffusion solves (I − a∇²)u = uⁿ by Jacobi, with a = ν·dt. Jacobi's
+// convergence factor for that operator is 4a/(1+4a): harmless at small a, but
+// 0.98 at the honey end of the wing slider (a ≈ 12.5), where a fixed 12 sweeps
+// removed only ~20% of the error — the solver then delivered about a FIFTH of
+// the requested viscosity (measured: a velocity top-hat spread to σ 14.6 cells
+// in 1 s where theory says 31.6). The dial said Re 20 while the fluid behaved
+// like Re ~100, so the slider's entire lower half produced no visible change.
+// Sweeps therefore scale with a — n ≈ 12a holds the error reduction roughly
+// constant across the range — and the extra cost is only paid when a reader
+// actually drags into honey. Verify with the pure-diffusion test: σ_measured
+// must track sqrt(2·ν·t) at BOTH ends of the slider, not just the fast end.
+const DIFFUSE_ITERS_MIN = 12
+const DIFFUSE_ITERS_MAX = 192
+function diffuseIters(a: number): number {
+  return Math.min(DIFFUSE_ITERS_MAX, Math.max(DIFFUSE_ITERS_MIN, Math.ceil(12 * a)))
+}
 // V-cycles per projection. 2 cycles reach CPU-reference residual with full
 // long-wavelength convergence; see the header on why flat Jacobi cannot.
 const V_CYCLES = 2
@@ -217,7 +232,8 @@ export class FluidSolverGPU {
     const pass = enc.beginComputePass()
 
     if (this.toggles.diffuse) {
-      for (let it = 0; it < DIFFUSE_ITERS; it++) {
+      const iters = diffuseIters(this.visc * dt)
+      for (let it = 0; it < iters; it++) {
         this.k.diffuse.run(
           pass,
           [P, this.uScratch, this.vScratch, this.u.cur, this.v.cur, this.u.alt, this.v.alt],

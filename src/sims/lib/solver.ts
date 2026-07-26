@@ -22,7 +22,18 @@ export interface SolverToggles {
   project: boolean // -∇p/ρ with ∇·u = 0 — pressure keeps it incompressible
 }
 
-const DIFFUSE_ITERS = 12
+// See the long note in gpu/solver_gpu.ts: a FIXED sweep count silently caps the
+// viscosity the solver can actually deliver, because the implicit-diffusion
+// solve converges like 4a/(1+4a) with a = ν·dt. These sweeps are Gauss–Seidel
+// (in-place, reading fresh neighbours), which converges about twice as fast as
+// the GPU's true Jacobi — hence ~6a rather than 12a. The cap is lower than the
+// GPU's because each sweep here costs a full JS pass over the grid, and this is
+// already the degraded fallback path.
+const DIFFUSE_ITERS_MIN = 12
+const DIFFUSE_ITERS_MAX = 64
+function diffuseIters(a: number): number {
+  return Math.min(DIFFUSE_ITERS_MAX, Math.max(DIFFUSE_ITERS_MIN, Math.ceil(6 * a)))
+}
 const PRESSURE_ITERS = 40 // Jacobi sweeps per step; §10 exposes this as a knob
 
 export class FluidSolver {
@@ -142,7 +153,8 @@ export class FluidSolver {
   /** Implicit diffusion via Jacobi: stable for any a = ν·dt (unlike explicit FTCS). */
   private diffuseField(dst: Float32Array, src: Float32Array, a: number) {
     dst.set(src)
-    for (let iter = 0; iter < DIFFUSE_ITERS; iter++) {
+    const iters = diffuseIters(a)
+    for (let iter = 0; iter < iters; iter++) {
       for (let j = 1; j < this.ny - 1; j++) {
         for (let i = 1; i < this.nx - 1; i++) {
           const k = this.idx(i, j)

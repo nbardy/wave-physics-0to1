@@ -70,9 +70,8 @@ the flow right there — the longer the arrow, the faster the water:
 
 <FlowVis mode="arrows" />
 
-I'm drawing the <C k="vel">arrows</C> on a comfortable grid so they don't overlap, but
-the spacing is a courtesy, not a fact about the water — between any two arrows the
-flow has a velocity too, and we could draw an arrow at any point we liked.
+The grid is not a fact about the water. Between any two <C k="vel">arrows</C> the flow
+has a velocity too, and we could draw one at any point we liked.
 
 A petal is the opposite kind of witness. It is anchored to nothing; it goes where the
 water goes, and its path traces out a history of the current that carried it. We can
@@ -106,12 +105,10 @@ the slider:
 
 <ParticleBox mode="still" />
 
-One disclosure about the staging: the big <C k="vel">blue arrow</C> is drawn several
-times larger than any single particle's motion would justify, precisely so that you can
-see how small the average is. And these particles bounce off the walls but pass through
-each other — real molecules collide constantly, so I stand in for those collisions by
-occasionally re-randomizing a particle's direction. The statistics are honest; the
-choreography is simplified.
+Two things here are staged: the <C k="vel">blue arrow</C> is drawn several times longer
+than the average it reports, and the particles pass through each other instead of
+colliding — a particle's direction is re-randomized now and then to stand in for the
+collisions real molecules are having constantly.
 
 With a small averaging box the readout is jittery — a handful of particles is a noisy
 committee. Make the box bigger and the average settles to almost exactly zero. All
@@ -216,22 +213,21 @@ the field**. The equation feeds on its own output. This self-reference is
 *nonlinearity*, and it is the single reason fluids can braid, swirl, and surprise —
 and the reason no one has fully tamed the equation we're building.
 
-We compute all of this on a grid, so let's watch the computation itself. The
-demonstration below moves dye through a vortex with two different schemes. The first
-is the obvious one: estimate the local slopes, nudge each cell accordingly. Watch what
-it does — and notice the violet, which marks *negative dye*, a thing that cannot
-exist:
+We compute all of this on a grid, so let's watch the computation itself. Below, the
+same blob of dye enters the same vortex twice, moved by two different schemes. On the
+left is the obvious one: estimate the local slopes, nudge each cell accordingly. On
+the right, every cell instead asks *whose fluid arrives here?* — trace the velocity
+backward one step and take the answer waiting there, the question the dashed
+<C k="vel">blue arrow</C> is asking:
 
 <AdvectionSchemes />
 
-The obvious update tears itself apart — not because our timestep is sloppy, but
-because this scheme is unstable for transport no matter how small the step. The fix,
-due to Jos Stam, is to ask the question backward: instead of pushing dye forward,
-every cell asks *whose fluid arrives here?* — trace the velocity backward one step,
-and take the answer waiting there (the dashed <C k="vel">blue arrow</C> in the second
-mode asks exactly that question for one highlighted cell). Tracing backward is stable
-at any timestep. Unfortunately, nothing is free: the price is a gentle blurring, and
-you'll notice our simulations are slightly softer than reality on that account.
+The obvious update tears itself apart. The <C k="div">violet</C> is *negative dye*, a
+thing that cannot exist, and it appears within seconds — not because our timestep is
+sloppy, but because that scheme is unstable for transport no matter how small the step
+gets. Tracing backward, the fix due to Jos Stam, is stable at any timestep. Nothing is
+free, though: the price is a gentle blurring, and you'll notice our simulations are
+slightly softer than reality on that account.
 
 So the flow carries everything, including itself. But a real drop of dye in real water
 does something none of our prescribed currents did — even in perfectly still water, a
@@ -251,7 +247,7 @@ and drag the slider to change how strongly the layers grip each other:
 
 <ViscosityDemo />
 
-Two things are worth noticing. The sharp corners go first — friction attacks
+The sharp corners go first — friction attacks
 *differences* between neighbours, and nowhere do neighbours disagree more than at an
 edge. And the fluid never slips along the walls: real fluid sticks to solid
 surfaces — the *no-slip condition* — and the walls quietly bleed momentum out of the

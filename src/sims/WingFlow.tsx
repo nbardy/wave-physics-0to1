@@ -33,6 +33,27 @@ const PIVOT_X = Math.round(NX * 0.3)
 const PIVOT_Y = Math.round(NY * 0.5)
 const FIXED_DT = 1 / 40
 const HERO_RE = 500 // chord-based Re = U·c/ν; the braided street is fully alive here
+// The honey end of the slider, measured rather than guessed. At Re 40 the wake
+// is steady AND visibly laminar — streamlines part at the nose and rejoin flat,
+// which is what "honey" has to look like to earn the word. Re 100 is also
+// steady (wake σ = 0) but keeps a standing undulation downstream that reads as
+// leftover eddies, so it is too high a floor. The diffusion solve still
+// converges here (75 sweeps, ~95%) and costs 3.9 ms/step, so the printed Re is
+// the Re the fluid actually feels. Before the adaptive-sweep fix in
+// gpu/solver_gpu.ts this whole end of the dial was a lie — a fixed 12 sweeps
+// delivered a fifth of the requested viscosity, so the flow stayed braided and
+// the slider looked broken. Don't lower the floor without re-running the
+// pure-diffusion check (σ_measured must track sqrt(2·ν·t)).
+const HONEY_RE = 40
+
+// Streakline memory. The solver's default (0.9995/step) is a ~35 s half-life,
+// which is longer than anything a reader will wait: after dragging to honey the
+// velocity field goes steady in ~6 s but the CHANNEL IS STILL FULL of the wavy
+// dye laid down before the drag, so the figure reads "nothing happened" for
+// half a minute. At 0.997 the half-life is ~6 s — the old pattern fades on the
+// same timescale the flow itself changes, and streaklines still reach the
+// outflow at ~half strength, which reads as depth rather than loss.
+const DYE_DECAY = 0.997
 const DYE_ROWS = [12, 20, 28, 36, 42] // amber, upper half
 const DYE2_ROWS = [46, 52, 60, 68, 76] // rose, lower half
 
@@ -88,6 +109,7 @@ function createCpuWing(
   stirRef: { current: Stir | null },
 ): Stepper {
   const solver = new FluidSolver(NX, NY, INFLOW, viscOf(INFLOW, CHORD, reRef.current))
+  solver.dyeDecay = DYE_DECAY
   solver.setAirfoil(PIVOT_X, PIVOT_Y, CHORD, 0)
   const renderer = new SolverRenderer(solver)
 
@@ -151,6 +173,7 @@ function createGpuWing(
     dye2Rows: GDYE2_ROWS,
     toggles: { advect: true, diffuse: true, project: true },
   })
+  solver.dyeDecay = DYE_DECAY
   solver.setAirfoil(GPIVOT_X, GPIVOT_Y, GCHORD, 0)
   for (let s = 0; s < WARMUP_STEPS; s++) solver.step(FIXED_DT)
   const dpr = window.devicePixelRatio || 1
@@ -264,7 +287,7 @@ export function WingFlow({
           <span>{variant === 'finale' ? 'honey' : ''}</span>
           <input
             type="range"
-            min={20}
+            min={HONEY_RE}
             max={600}
             step={5}
             value={re}

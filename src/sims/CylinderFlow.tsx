@@ -30,6 +30,12 @@ const INFLOW = 26 // cells/s
 const DISC_R = 7 // cells → D = 14
 const FIXED_DT = 1 / 40
 const DYE_ROWS = [10, 18, 26, 34, 44, 54, 62, 70, 78]
+// Honey end of the regime slider, measured like WingFlow's: the wake is fully
+// steady and symmetric here (wake σ = 0) and the diffusion solve converges
+// (~88 sweeps, 95%). The old floor of Re 2 asked for 6× more viscosity than
+// the sweep budget could deliver, so it looked no different from Re 20 while
+// costing far more — the dial moved and the fluid didn't.
+const HONEY_RE = 20
 
 // GPU grid: same domain, 4× denser. U and D are 4× in cell units (same in
 // domain units); ν in cells²/s picks up 16× through viscOf, so Re is unchanged.
@@ -207,7 +213,7 @@ export function CylinderFlow({
             <span>honey</span>
             <input
               type="range"
-              min={2}
+              min={HONEY_RE}
               max={400}
               step={1}
               value={re}
