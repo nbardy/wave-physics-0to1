@@ -76,7 +76,6 @@ export function PressureFix({ height = 260 }: { height?: number }) {
     <Sim
       height={height}
       create={() => createPressureFix(sRef)}
-      caption="A source pumps fluid in (violet). You are the pressure field: raise the hill until the crime stops."
     >
       <label className="sim-slider">
         <span>no hill</span>

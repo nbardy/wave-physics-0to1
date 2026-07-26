@@ -112,7 +112,6 @@ export function ViscosityDemo() {
     <Sim
       height={260}
       create={() => createJet(rRef)}
-      caption="A jet smoothed by viscosity — u_t = ν u_yy. The fluid sticks to the stationary walls, which slowly drain the momentum away."
     >
       <label className="sim-slider">
         <span>water</span>

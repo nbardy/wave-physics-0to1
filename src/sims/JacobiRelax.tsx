@@ -71,7 +71,6 @@ export function JacobiRelax({ height = 220 }: { height?: number }) {
     <Sim
       height={height}
       create={() => createJacobi(itersRef)}
-      caption="Scrub the sweeps: each Jacobi pass lets every cell renegotiate with its neighbours; the crime dies as the hill rises."
     >
       <label className="sim-slider">
         <span>0</span>

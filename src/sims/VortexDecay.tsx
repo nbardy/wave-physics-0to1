@@ -89,7 +89,6 @@ export function VortexDecay({ height = 280 }: { height?: number }) {
     <Sim
       height={height}
       create={() => createVortexDecay(sRef)}
-      caption="A vortex decaying by momentum diffusion. Honey erases it in moments; water lets it live."
     >
       <label className="sim-slider">
         <span>water</span>

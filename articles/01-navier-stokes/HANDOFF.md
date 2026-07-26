@@ -10,6 +10,48 @@ rewrite (01 keeps the shape); KelvinHelmholtz stays benched; shipped with the
 known device-rotation stretch limitation and the CPU-fallback waver (confessed in
 §12's fair warnings).
 
+## Post-publish fixes, 2026-07-06 (play-test found two figures lying)
+
+Nick play-tested the live article and found the hero slider "doesn't really do
+anything" and the advection figure "doesn't teach much". Both were real defects,
+not taste — and both had been shipped:
+
+1. **Implicit diffusion was ~80% unconverged at high viscosity.** The solve
+   (I − a∇²)u = uⁿ is Jacobi with convergence factor 4a/(1+4a); a fixed 12
+   sweeps delivered about a FIFTH of the requested ν at the honey end (measured:
+   velocity top-hat spread to σ 14.6 cells in 1 s where theory says 31.6). The
+   dial printed Re 20 while the fluid behaved like Re ≈ 100, so the slider's
+   whole lower half was inert. Sweeps now scale with a (σ 30.8 vs 31.6). The
+   **pure-diffusion check is the regression test**: seed a velocity top-hat,
+   run 1 s, σ_measured must track sqrt(2νt) at BOTH ends of every viscosity
+   slider. Slider floors moved to the lowest Re each solver honestly serves
+   (wing 40, cylinder 20 — measured glassy, ~4 ms/step). Dye decay 0.9995 →
+   0.997 because a 35 s streakline half-life outlived any reader's patience.
+2. **AdvectionSchemes' unstable scheme never blew up.** Measured on the
+   published build: |dye| ≤ 1.01 for ten seconds, zero negative cells, while the
+   prose promised a scheme tearing itself apart — a smooth Gaussian carries no
+   grid-scale energy for centered differences to amplify, and the |dye| > 8
+   reset could never fire. Now seeded with a sharp disc (violet at 0.08 s,
+   8% of the grid ruined by 7.7 s, which is the loop trigger) and both schemes
+   run side by side from one seed instead of behind a mode toggle that hid the
+   comparison. DyeCarry now loops instead of emptying and sitting blank.
+3. **Prose**: design-rationale narration cut (arrow-spacing "courtesy", the
+   staging paragraph's self-justification, "Two things are worth noticing").
+4. **Captions**: all 7 lesson-01 `caption=` props removed, per the caption
+   policy recorded in AGENTS.md — each only restated adjacent prose. Lesson
+   02/03 still pass 5 (`ConnectionWave`, `ConnectionTuner`, `GlobeTransport`,
+   `HopfMonopole`, `StringWaveDemo`) — sibling thread's call; the `caption` prop
+   itself is still on `<Sim>` for them.
+
+**Verification gap to close:** the Browser pane reported `visibilityState:
+hidden` and 0 RAF ticks all session, so nothing could be watched in motion —
+every claim above is from stepping solvers explicitly plus typecheck/build.
+The two rebuilt figures (AdvectionSchemes, DyeCarry) still want one human look
+in a real window. Note for future sessions: **if a sim looks frozen or a
+screenshot comes back blank, check `document.visibilityState` before believing
+any of it** — several intermediate readings this session were photographs of
+stale frames.
+
 Everything below is the pre-publish state, kept for archaeology.
 
 ---

@@ -116,7 +116,6 @@ export function DivergenceLoop({ withSource, height = 260 }: { withSource: boole
       <Sim
         height={height}
         create={() => createLoop(srcRef, loopRef)}
-        caption="Drag to move the loop; the ticks show flow crossing it, in or out."
       >
         <label className="sim-slider">
           <span>loop size</span>

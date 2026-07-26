@@ -175,7 +175,6 @@ export function PressureLandscape({ mode, height = 260 }: { mode: LandscapeMode;
       <Sim
         height={height}
         create={() => createLandscape(mode, blobsRef)}
-        caption="Drag the + and − regions. Red pushes, cyan yields."
       />
     </div>
   )

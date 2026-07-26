@@ -86,7 +86,6 @@ export function ShearBlend({ height = 240 }: { height?: number }) {
     <Sim
       height={height}
       create={() => createShearBlend(rRef)}
-      caption="Fast water over slow water. Viscosity diffuses momentum across the seam — u_t = ν u_yy."
     >
       <label className="sim-slider">
         <span>water</span>
