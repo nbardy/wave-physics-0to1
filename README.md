@@ -12,7 +12,7 @@ just a static site.
 - **Vite + React + TypeScript**
 - **MDX** for lessons — prose + LaTeX + embedded interactive sims in one file
 - **KaTeX** for math (`$…$` inline, `$$…$$` display)
-- **Cloudflare Pages** for hosting (static, `*.pages.dev` subdomain)
+- **GitHub Pages** for hosting (static, served from `/wave-physics-0to1/`)
 
 ## Run locally
 
@@ -55,7 +55,19 @@ House style docs (read in the order AGENTS.md gives): `ESSENCE_OF_VOICE_AND_DESI
 (the studied pole) → `NICKS_VOICE.md` (Nick's pole + the blend) → `SLOP.md` (the
 detector) → `METHODOLOGY.md` (the five-stage process).
 
-## Deploy (Cloudflare Pages)
+## Deploy (GitHub Pages)
+
+Live at **https://nbardy.github.io/wave-physics-0to1/**.
+
+```bash
+bun run deploy   # build + publish to the gh-pages branch
+```
+
+The build output is committed to `gh-pages`; `main` stays free of bundles. There is no CI —
+deploys are a local command, so whatever you have built is what ships. Push `main` too, or the
+source and the live site drift apart.
+
+### Cloudflare Pages (alternative, not currently used)
 
 ```bash
 bun run build

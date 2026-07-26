@@ -6,7 +6,7 @@ import rehypeKatex from 'rehype-katex'
 import { copyFileSync } from 'node:fs'
 
 // GitHub Pages serves project sites from a subpath (/<repo>/); Cloudflare
-// Pages serves from root. GITHUB_PAGES (set by the deploy workflow) switches
+// Pages serves from root. GITHUB_PAGES (set by scripts/deploy-pages.sh) switches
 // the base so the same build works on both hosts. The router reads this back
 // via import.meta.env.BASE_URL, so links stay correct on either.
 const onGitHubPages = process.env.GITHUB_PAGES === 'true'
