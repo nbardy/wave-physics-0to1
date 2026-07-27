@@ -59,8 +59,17 @@ function Term({ item }: { item: Extract<StackItem, { kind: 'term' }> }) {
         gap: '0.28rem',
       }}
     >
-      {/* KaTeX inherits currentColor, so coloring the wrapper colors the math */}
-      <span style={{ color: PALETTE[item.k], fontSize: '1.15rem', lineHeight: 1.1 }}>
+      {/* KaTeX inherits currentColor, so coloring the wrapper colors the math.
+          An unborn term renders muted, not in its palette color: the prose says
+          "the green slot is empty" while Euler's stack is on screen, and a fully
+          saturated green term would contradict that sentence. */}
+      <span
+        style={{
+          color: item.filled ? PALETTE[item.k] : '#c9c5be',
+          fontSize: '1.15rem',
+          lineHeight: 1.1,
+        }}
+      >
         <TeX>{item.tex}</TeX>
       </span>
       {/* hairline sepia rule between the math and its nameplate */}

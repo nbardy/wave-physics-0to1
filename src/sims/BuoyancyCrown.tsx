@@ -12,7 +12,17 @@ import { PALETTE } from './lib/palette'
 //
 // Boundary check: at equilibrium −m·g + ρ_w·g·V_sub = 0 ⇒ V_sub/V = ρ_block/ρ_w.
 // So the submerged FRACTION equals the density ratio (for ratio < 1). The readout
-// prints that fraction; drag the slider and watch it match the ratio.
+// prints BOTH numbers, stacked, so the match is something the reader can read off
+// rather than take on faith.
+//
+// The force arrows are drawn ALWAYS, not only while the block is moving. At rest
+// they are equal and opposite, and that balance IS the claim the figure exists to
+// make — hiding the arrows the instant it becomes true (the previous behaviour)
+// deleted the evidence at exactly the moment it mattered. Both share one origin at
+// the block's centre so equal magnitude reads as equal length. When the block is
+// denser than water and lands on the floor the pair no longer balances, so the
+// floor's normal force is drawn too: N = mg − ρ_w·g·V_sub, zero (and invisible)
+// whenever the block floats.
 //
 // Sepia '#78716c' is this lesson's history-furniture color (readout box, labels) —
 // added for lesson 03; not part of the shared PALETTE contract.
@@ -37,6 +47,7 @@ function createTank(ratioRef: { current: number }): Stepper {
   let yc = WATER_LEVEL + 0.25 // start dropped from just above the surface
   let v = 0
   let acc = 0
+  let onFloor = false // in contact with the tank bottom ⇒ a normal force acts
 
   // Submerged fraction of the block given its center height (0..1).
   const submergedFraction = (center: number): number => {
@@ -66,6 +77,7 @@ function createTank(ratioRef: { current: number }): Stepper {
       yc = restFloor
       if (v < 0) v = 0 // kill downward velocity on contact (inelastic floor)
     }
+    onFloor = yc <= restFloor + 1e-9
   }
 
   return {
@@ -131,64 +143,100 @@ function createTank(ratioRef: { current: number }): Stepper {
       ctx.lineWidth = 1.5
       ctx.strokeRect(bx, blockTopPx, blockW, blockHpx)
 
-      // force arrows while the block is moving (or not yet at rest)
+      // FORCE ARROWS — always drawn. Weight and buoyancy share one origin at the
+      // block's centre and point opposite ways, so at rest they are two segments
+      // of equal length about a common point: the balance is the picture.
+      const ratio = ratioRef.current
       const frac = submergedFraction(yc)
       const cx = bx + blockW / 2
       const cyPx = py(yc)
-      const moving = Math.abs(v) > 0.001
-      if (moving) {
-        const arrowScale = 42 // px per unit force
-        const weight = 1.0 // normalized weight (down)
-        const buoy = frac / ratioRef.current // normalized buoyant force (up)
-        drawArrow(ctx, cx - 14, cyPx, cx - 14, cyPx + weight * arrowScale, PALETTE.wall, 'weight')
-        drawArrow(ctx, cx + 14, cyPx, cx + 14, cyPx - buoy * arrowScale, PALETTE.pLo, 'buoyancy')
-      }
+      const arrowScale = 30 // px per unit force (weight = 1 by normalization)
+      const weight = 1.0
+      const buoy = frac / ratio // normalized buoyant force (up)
+      const normal = onFloor ? Math.max(0, weight - buoy) : 0 // floor reaction
 
-      // sepia readout box
-      const pct = Math.round(frac * 100)
+      // faint sepia guides at the two tips: when they sit symmetrically about the
+      // block centre, the two forces are equal
+      ctx.strokeStyle = 'rgba(120,113,110,0.45)'
+      ctx.lineWidth = 1
+      ctx.setLineDash([3, 3])
+      for (const tip of [cyPx + weight * arrowScale, cyPx - buoy * arrowScale]) {
+        ctx.beginPath()
+        ctx.moveTo(cx - 26, tip)
+        ctx.lineTo(cx + 26, tip)
+        ctx.stroke()
+      }
+      ctx.setLineDash([])
+
+      drawArrow(ctx, cx, cyPx, cyPx + weight * arrowScale, PALETTE.wall, -1, `weight ${weight.toFixed(2)}`)
+      drawArrow(ctx, cx, cyPx, cyPx - buoy * arrowScale, PALETTE.pLo, 1, `buoyancy ${buoy.toFixed(2)}`)
+      // the floor's push, drawn from the contact point; zero-length when floating
+      drawArrow(
+        ctx,
+        cx + 30,
+        py(yc - halfH),
+        py(yc - halfH) - normal * arrowScale,
+        PALETTE.wall,
+        1,
+        `floor ${normal.toFixed(2)}`,
+      )
+
+      // sepia readout box — density above submerged fraction, so the two numbers
+      // stack and the reader can see them match
       ctx.font = '12px ui-monospace, monospace'
-      const label = `submerged: ${pct}%`
-      const tw = ctx.measureText(label).width
+      const l1 = `density:   ${ratio.toFixed(2)} × water`
+      const l2 = `submerged: ${Math.round(frac * 100)}%`
+      const tw = Math.max(ctx.measureText(l1).width, ctx.measureText(l2).width)
+      const boxX = tankRight - tw - 20
       ctx.fillStyle = 'rgba(120,113,110,0.12)'
-      ctx.fillRect(tankRight - tw - 20, pad, tw + 12, 22)
+      ctx.fillRect(boxX, pad, tw + 12, 38)
       ctx.strokeStyle = SEPIA
       ctx.lineWidth = 1
-      ctx.strokeRect(tankRight - tw - 20, pad, tw + 12, 22)
+      ctx.strokeRect(boxX, pad, tw + 12, 38)
       ctx.fillStyle = SEPIA
-      ctx.fillText(label, tankRight - tw - 14, pad + 15)
+      ctx.fillText(l1, boxX + 6, pad + 15)
+      ctx.fillText(l2, boxX + 6, pad + 31)
     },
   }
 }
 
+// A vertical force arrow with its magnitude on the label. `side` is +1 to hang the
+// label off the right, −1 off the left, so an opposed pair never overprints.
+// A force of (almost) zero draws nothing — otherwise a bare arrowhead would sit on
+// the canvas claiming a force that isn't there.
 function drawArrow(
   ctx: CanvasRenderingContext2D,
-  x0: number,
+  x: number,
   y0: number,
-  x1: number,
   y1: number,
   color: string,
+  side: 1 | -1,
   label: string,
 ) {
+  if (Math.abs(y1 - y0) < 1.5) return
   ctx.strokeStyle = color
   ctx.fillStyle = color
   ctx.lineWidth = 2
   ctx.beginPath()
-  ctx.moveTo(x0, y0)
-  ctx.lineTo(x1, y1)
+  ctx.moveTo(x, y0)
+  ctx.lineTo(x, y1)
   ctx.stroke()
-  const dir = Math.sign(y1 - y0) || -1
+  const dir = Math.sign(y1 - y0)
   ctx.beginPath()
-  ctx.moveTo(x1, y1)
-  ctx.lineTo(x1 - 4, y1 - dir * 6)
-  ctx.lineTo(x1 + 4, y1 - dir * 6)
+  ctx.moveTo(x, y1)
+  ctx.lineTo(x - 4, y1 - dir * 6)
+  ctx.lineTo(x + 4, y1 - dir * 6)
   ctx.closePath()
   ctx.fill()
   ctx.font = '10px ui-sans-serif, sans-serif'
-  ctx.fillText(label, x1 + 6, (y0 + y1) / 2)
+  ctx.textAlign = side === 1 ? 'left' : 'right'
+  ctx.fillText(label, x + side * 8, (y0 + y1) / 2)
+  ctx.textAlign = 'left'
 }
 
 export function BuoyancyCrown() {
-  const [ratio, setRatio] = useState(0.6)
+  // opens at the case the prose names: half the water's density, half submerged
+  const [ratio, setRatio] = useState(0.5)
   const ratioRef = useRef(ratio)
   ratioRef.current = ratio
 

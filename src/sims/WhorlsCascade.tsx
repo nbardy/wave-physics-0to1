@@ -7,23 +7,38 @@ import { PALETTE } from './lib/palette'
 // cascade — "Big whorls have little whorls that feed on their velocity, and
 // little whorls have lesser whorls and so on to viscosity." It is NOT turbulence
 // and NOT a fluid solve. Eddies here are purely kinematic rings of orbiting
-// tracer dots; a big parent spawns children at half its radius carrying reduced
-// energy, they spawn grandchildren, and the smallest generation dies with a
-// green (viscosity) tint. Nothing conserves energy or momentum — it's a moving
-// picture of the poem, and the article says so.
+// tracer dots; nothing conserves energy or momentum — it's a moving picture of
+// the poem, and the article says so.
+//
+// What the cartoon does take literally, because the poem does:
+//  · CARRIED. A child eddy's centre is not a fixed point. It sits ON its parent's
+//    ring and is swept around it at the parent's angular rate, every step:
+//      centre_child = centre_parent + RIDE · r_parent · (cos θ, sin θ),
+//      θ̇ = ω_parent            (the rate of the parent parcel it rides on)
+//    so the whole sub-tree of a big whorl travels with the big whorl.
+//  · FED ON ITS VELOCITY. A child's spin is derived from its parent's
+//    instantaneous ring speed, not from an independent constant:
+//      v_child = SPEED_FALLOFF · v_parent,   ω_child = v_child / r_child
+//    Because r halves each generation, ω grows down the cascade (small eddies
+//    turn over faster) while the ring SPEED decays — energy thinning out on the
+//    way down, which is the line the poem is making.
 // ─────────────────────────────────────────────────────────────────────────────
 
 const GENERATIONS = 4 // parent → children → grandchildren → great-grandchildren
 const CHILDREN_PER = 2 // each eddy spawns this many at the next scale
 const PARENT_DOTS = 40 // ring size of the top eddy; children carry fewer
 const FIXED_DT = 1 / 120 // fixed physics step
+const ROOT_R = 0.27 // top eddy radius as a fraction of min(w,h)
+const ROOT_OMEGA = 0.7 // top eddy angular rate (rad/s)
 const RADIUS_FALLOFF = 0.5 // child radius = parent radius × this
-const ENERGY_FALLOFF = 0.62 // child angular speed drops (reduced energy)
+const SPEED_FALLOFF = 0.62 // child RING SPEED = parent ring speed × this
+const RIDE = 0.9 // a child sits at this fraction of its parent's radius
 const LIFETIME = 5.0 // seconds a leaf (smallest) eddy lives before dying + respawn
 const FADE_S = 1.2 // seconds a dying leaf spends fading with the green tint
 
-// Orbits are kinematic: each dot's angle advances by ω·dt with ω fixed per eddy,
-// so the motion is unconditionally stable — no CFL-type condition to satisfy.
+// Orbits are kinematic: every angle advances by ω·dt with ω fixed per eddy, and the
+// centres are resolved by composing those angles down the tree. No state feeds back
+// into ω, so the motion is unconditionally stable — no CFL-type condition to satisfy.
 
 function mulberry32(seed: number) {
   let a = seed >>> 0
@@ -38,14 +53,17 @@ function mulberry32(seed: number) {
 
 interface Eddy {
   gen: number // 0 = parent … GENERATIONS-1 = leaf
-  cx: number // orbit-center offset from PARENT center (as a fraction of parent R)
-  cy: number
-  r: number // orbit radius (fraction of the canvas min-dimension)
-  omega: number // angular speed (rad/s)
-  phase0: number // seeded phase offset
+  children: Eddy[] // empty for a leaf
+  rideAngle: number // where this eddy sits on its parent's ring (rad)
+  rideOmega: number // rate that angle advances at = the PARENT's ω (0 for the root)
+  r: number // own orbit radius (fraction of the canvas min-dimension)
+  omega: number // own angular speed (rad/s, signed)
+  phase: number // rotation phase of this eddy's own dot ring
   dots: number // number of tracer dots on the ring
   born: number // sim time this eddy was (re)spawned
   isLeaf: boolean
+  cx: number // resolved centre, recomputed every step (fraction of min-dimension)
+  cy: number
 }
 
 function createCascade(speedRef: { current: number }): Stepper {
@@ -55,63 +73,71 @@ function createCascade(speedRef: { current: number }): Stepper {
   let t = 0
   let acc = 0
 
-  // Build the whole hierarchy once. Leaves periodically die + respawn on a
-  // seeded cycle so the cascade runs continuously with everything alive at once.
-  const eddies: Eddy[] = []
+  const all: Eddy[] = [] // flat list for stepping/drawing; `root` owns the tree shape
 
-  const spawn = (
-    gen: number,
-    cx: number,
-    cy: number,
-    r: number,
-    omega: number,
-    born: number,
-  ) => {
+  const spawn = (gen: number, r: number, omega: number, rideOmega: number): Eddy => {
     const isLeaf = gen === GENERATIONS - 1
-    const dots = Math.max(6, Math.round(PARENT_DOTS * RADIUS_FALLOFF ** gen))
     const e: Eddy = {
       gen,
-      cx,
-      cy,
+      children: [],
+      rideAngle: rand() * Math.PI * 2,
+      rideOmega,
       r,
       omega,
-      phase0: rand() * Math.PI * 2,
-      dots,
-      born,
+      phase: rand() * Math.PI * 2,
+      dots: Math.max(6, Math.round(PARENT_DOTS * RADIUS_FALLOFF ** gen)),
+      born: 0,
       isLeaf,
+      cx: 0,
+      cy: 0,
     }
-    eddies.push(e)
-    if (!isLeaf) {
-      // spawn children on opposite sides of this eddy's ring
-      for (let c = 0; c < CHILDREN_PER; c++) {
-        const ang = e.phase0 + (c / CHILDREN_PER) * Math.PI * 2
-        const childR = r * RADIUS_FALLOFF
-        spawn(
-          gen + 1,
-          cx + Math.cos(ang) * r * 0.9,
-          cy + Math.sin(ang) * r * 0.9,
-          childR,
-          omega * ENERGY_FALLOFF * (rand() < 0.5 ? 1 : -1), // reduced energy, seeded spin sense
-          born,
-        )
-      }
+    all.push(e)
+    // recursion depth bound: the leaf generation spawns nothing, so this terminates
+    if (isLeaf) return e
+    // children ride this eddy's ring, so their spin comes from ITS ring speed
+    const ringSpeed = Math.abs(omega) * r
+    const childR = r * RADIUS_FALLOFF
+    const childOmegaMag = (SPEED_FALLOFF * ringSpeed) / childR
+    for (let c = 0; c < CHILDREN_PER; c++) {
+      const child = spawn(gen + 1, childR, childOmegaMag * (rand() < 0.5 ? 1 : -1), omega)
+      // spread the siblings around the parent ring, then let it carry them
+      child.rideAngle = e.rideAngle + (c / CHILDREN_PER) * Math.PI * 2
+      e.children.push(child)
     }
+    return e
   }
 
-  spawn(0, 0, 0, 0.34, 0.7, 0)
+  const root = spawn(0, ROOT_R, ROOT_OMEGA, 0)
+
+  // Resolve every centre from the root outward: a child's centre is a point ON the
+  // parent's ring, at the angle the parent has carried it to.
+  const resolve = (e: Eddy, cx: number, cy: number) => {
+    e.cx = cx
+    e.cy = cy
+    for (const c of e.children) {
+      resolve(
+        c,
+        cx + Math.cos(c.rideAngle) * e.r * RIDE,
+        cy + Math.sin(c.rideAngle) * e.r * RIDE,
+      )
+    }
+  }
 
   const advance = () => {
     t += FIXED_DT
-    // respawn dead leaves so the cascade never runs dry
-    for (const e of eddies) {
-      if (!e.isLeaf) continue
-      const age = t - e.born
-      if (age > LIFETIME + FADE_S) {
-        e.born = t // reincarnate this leaf in place
-        e.phase0 = rand() * Math.PI * 2
+    for (const e of all) {
+      e.phase += e.omega * FIXED_DT // this eddy's own dots go round
+      e.rideAngle += e.rideOmega * FIXED_DT // …while the parent carries the whole eddy
+      // respawn dead leaves so the cascade never runs dry
+      if (e.isLeaf && t - e.born > LIFETIME + FADE_S) {
+        e.born = t
+        e.phase = rand() * Math.PI * 2
       }
     }
+    resolve(root, 0, 0)
   }
+
+  resolve(root, 0, 0) // centres are valid before the first step
 
   return {
     step(dt) {
@@ -130,7 +156,7 @@ function createCascade(speedRef: { current: number }): Stepper {
       const cyPx = h * 0.5
       const scale = Math.min(w, h)
 
-      for (const e of eddies) {
+      for (const e of all) {
         const ox = cxPx + e.cx * scale
         const oy = cyPx + e.cy * scale
         const rr = e.r * scale
@@ -153,11 +179,9 @@ function createCascade(speedRef: { current: number }): Stepper {
         ctx.globalAlpha = alpha * (e.gen === 0 ? 0.9 : 0.75)
         const dotR = Math.max(1.2, 3.2 * RADIUS_FALLOFF ** e.gen)
         for (let d = 0; d < e.dots; d++) {
-          const ang = e.phase0 + (d / e.dots) * Math.PI * 2 + e.omega * t
-          const px = ox + Math.cos(ang) * rr
-          const py = oy + Math.sin(ang) * rr
+          const ang = e.phase + (d / e.dots) * Math.PI * 2
           ctx.beginPath()
-          ctx.arc(px, py, dotR, 0, Math.PI * 2)
+          ctx.arc(ox + Math.cos(ang) * rr, oy + Math.sin(ang) * rr, dotR, 0, Math.PI * 2)
           ctx.fill()
         }
       }

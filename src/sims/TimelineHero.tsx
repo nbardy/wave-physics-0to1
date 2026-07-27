@@ -63,11 +63,13 @@ const DYE_ROWS = [10, 18, 26, 34, 44, 54, 62, 70]
 // same reasoning CylinderFlow inherits.
 const viscForRe = (re: number) => (INFLOW * DISC_R * 2) / re
 
-// Per-era Reynolds numbers (solver eras only):
+// Per-era Reynolds numbers (solver eras only). Every solver era injects dye —
+// the renderer paints nothing but dye and solids, so an era without dye is a
+// blank rectangle with a gray blob in it. (It shipped that way once. Don't.)
 //   Navier   — honey world, creeping flow: very low Re, no eddies.
 //   Reynolds — moderate Re: steady attached recirculation / mild waver.
 //   Prandtl  — highest stable CPU Re: separated wake, unsteady street-ish.
-//   yours    — same as Prandtl, but with dye injection on (lesson-01 look).
+//   yours    — same Re as Prandtl; the difference is what the dye is asked to show.
 const RE_NAVIER = 4
 const RE_REYNOLDS = 45
 const RE_PRANDTL = 140
@@ -126,16 +128,40 @@ function createNewton(): Stepper {
     for (const p of parts) {
       const nx = p.x + p.vx * FIXED_DT
       const ny = p.y + p.vy * FIXED_DT
-      // collide with the disc front face: specular bounce off the circle
+      // Collide with the disc: specular bounce off the circle.
+      //
+      // BUG (fixed 2026-07): this scale factor was (NX / NY) = 1.65 instead of
+      // (NY / NX) = 0.606, which made the COLLISION ellipse 2.7× shorter than the
+      // DRAWN one — half-extent R·NY/NX² = 0.032 against a drawn R/NY = 0.0875 —
+      // so corpuscles streamed straight through the visible gray disc in the one
+      // era whose entire point is that nothing goes around it. Reasoning, so it
+      // stays fixed: positions here are normalized (x/w, y/h). One y-unit spans
+      // NY cells, one x-unit spans NX cells, so converting a y-offset into
+      // x-normalized units multiplies by NY/NX. In that isotropic space the disc
+      // is a circle of radius rNorm = R/NX, and dy_norm at the boundary is
+      // rNorm·(NX/NY) = R/NY — exactly the ellipse radius used by draw() below.
       const dx = nx - cx
-      const dy = (ny - cy) * (NX / NY) // correct for pixel aspect so the disc is round
+      const dy = (ny - cy) * (NY / NX)
       const dist = Math.hypot(dx, dy)
       if (dist < rNorm && p.vx > 0) {
         const nnx = dx / dist
         const nny = dy / dist
-        const dot = p.vx * nnx + p.vy * nny
+        // Reflect in that same isotropic space: carry vy in, carry it back out.
+        // (The old code applied only the outbound half of this transform, which
+        // was the other half of the same aspect-ratio confusion.)
+        const vy = p.vy * (NY / NX)
+        const dot = p.vx * nnx + vy * nny
         p.vx -= 2 * dot * nnx
-        p.vy -= 2 * dot * nny * (NY / NX)
+        p.vy = (vy - 2 * dot * nny) * (NX / NY)
+        // Land the corpuscle ON the surface instead of leaving it where it was.
+        // Reflection is an involution, so a particle left INSIDE with vx still
+        // positive reflects, reflects back, and never moves again — it parks on
+        // the disc forever. (Visible once the collision ellipse was widened to
+        // match the drawn one: two dots sat on the gray disc.) Placing it at the
+        // contact point makes the next dist test read exactly rNorm, so there is
+        // no second collision and no fixed point to get caught in.
+        p.x = cx + nnx * rNorm
+        p.y = cy + nny * rNorm * (NX / NY)
       } else {
         p.x = nx
         p.y = ny
@@ -249,9 +275,11 @@ function createEuler(): Stepper {
   }
 }
 
-// The three solver eras (Navier / Reynolds / Prandtl / yours) share one builder:
-// a FluidSolver at the era's Re, with dye either off (markers ooze) or on.
-function createSolverEra(re: number, dyeOn: boolean): Stepper {
+// The full-channel solver eras (Navier / Reynolds / yours) share one builder: a
+// FluidSolver at the era's Re, fed by the eight-row lesson-01 dye stripe. The Re
+// is the whole difference — honey ooze at 4, attached recirculation at 45, a
+// shedding street at 140 — and the stripe is what makes that difference visible.
+function createStripeEra(re: number): Stepper {
   const solver = new FluidSolver(NX, NY, INFLOW, viscForRe(re))
   solver.addDisc(DISC_CX, DISC_CY, DISC_R)
   const renderer = new SolverRenderer(solver)
@@ -261,7 +289,7 @@ function createSolverEra(re: number, dyeOn: boolean): Stepper {
       acc += dt
       let guard = 0
       while (acc >= FIXED_DT && guard < 3) {
-        if (dyeOn) solver.injectDyeStripe(DYE_ROWS, 1)
+        solver.injectDyeStripe(DYE_ROWS, 1)
         solver.step(FIXED_DT)
         acc -= FIXED_DT
         guard++
@@ -269,6 +297,73 @@ function createSolverEra(re: number, dyeOn: boolean): Stepper {
     },
     draw(ctx, w, h) {
       renderer.draw(ctx, w, h, 'none')
+    },
+  }
+}
+
+// 1904 · Prandtl — the sliver, and the meter it unstuck. Same Re as `yours`, so
+// the physics is identical; the READING is what differs. Two tight dye bands
+// straddle the disc's shoulders instead of the eight-row full-channel stripe, so
+// what you watch is the thin layer pinned against the wall and the station where
+// it lets go — not the whole channel. Underneath it runs the instrument
+// d'Alembert's paradox was missing: a wake-survey drag coefficient, which reads
+// clearly nonzero where the 1757 pane's would read zero.
+const PRANDTL_WALL_ROWS = [
+  DISC_CY - DISC_R - 1,
+  DISC_CY - DISC_R + 1,
+  DISC_CY - 3,
+  DISC_CY + 3,
+  DISC_CY + DISC_R - 1,
+  DISC_CY + DISC_R + 1,
+]
+
+// Prandtl's own instrument: ∫u(U−u)dy across a station downstream is the momentum
+// the body stole from the stream. Divide by ½U²D for a drag coefficient. This is
+// measured off THIS 132×80 grid with a staircased disc in a 17%-blocked channel,
+// so it is a reading of the pane, not a wind-tunnel number — the label says so.
+const WAKE_STATION = Math.min(NX - 3, DISC_CX + 6 * DISC_R)
+function wakeDrag(solver: FluidSolver): number {
+  let deficit = 0
+  for (let j = 1; j < NY - 1; j++) {
+    const u = solver.u[solver.idx(WAKE_STATION, j)]
+    deficit += u * (INFLOW - u)
+  }
+  return deficit / (0.5 * INFLOW * INFLOW * DISC_R * 2)
+}
+
+function createPrandtl(): Stepper {
+  const solver = new FluidSolver(NX, NY, INFLOW, viscForRe(RE_PRANDTL))
+  solver.addDisc(DISC_CX, DISC_CY, DISC_R)
+  const renderer = new SolverRenderer(solver)
+  let acc = 0
+  let cd = 0 // EMA — the wake sheds, so the raw reading jitters
+  return {
+    step(dt) {
+      acc += dt
+      let guard = 0
+      while (acc >= FIXED_DT && guard < 3) {
+        solver.injectDyeStripe(PRANDTL_WALL_ROWS, 1)
+        solver.step(FIXED_DT)
+        cd += (wakeDrag(solver) - cd) * 0.05
+        acc -= FIXED_DT
+        guard++
+      }
+    },
+    draw(ctx, w, h) {
+      renderer.draw(ctx, w, h, 'none')
+      const sx = (WAKE_STATION / NX) * w
+      ctx.save()
+      ctx.strokeStyle = 'rgba(120,113,108,0.5)'
+      ctx.setLineDash([4, 5])
+      ctx.lineWidth = 1
+      ctx.beginPath()
+      ctx.moveTo(sx, 0)
+      ctx.lineTo(sx, h)
+      ctx.stroke()
+      ctx.restore()
+      ctx.fillStyle = SEPIA
+      ctx.font = '12px ui-monospace, monospace'
+      ctx.fillText(`wake survey · C_d ≈ ${cd.toFixed(2)}`, 10, h - 10)
     },
   }
 }
@@ -281,13 +376,13 @@ function createEra(kind: EraKind): Stepper {
     case 'euler':
       return createEuler()
     case 'navier':
-      return createSolverEra(RE_NAVIER, false) // honey world: markers/dye ooze, no eddies
+      return createStripeEra(RE_NAVIER) // honey world: dye oozes, no eddies
     case 'reynolds':
-      return createSolverEra(RE_REYNOLDS, false) // moderate Re: attached pair / mild waver
+      return createStripeEra(RE_REYNOLDS) // moderate Re: attached pair / mild waver
     case 'prandtl':
-      return createSolverEra(RE_PRANDTL, false) // highest stable Re: separated wake
+      return createPrandtl() // the sliver at the wall + the drag meter
     case 'yours':
-      return createSolverEra(RE_YOURS, true) // same as Prandtl + dye on (lesson-01 look)
+      return createStripeEra(RE_YOURS) // same Re, the lesson-01 eight-row street
   }
 }
 

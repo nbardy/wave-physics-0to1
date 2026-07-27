@@ -13,6 +13,21 @@ import { PALETTE } from './lib/palette'
 // with A(x) the local bore cross-section. Bernoulli (displayed, relative):
 //   p(x) = p0 + ½ρ(U0² − u(x)²)
 //
+// THE PIPE HAS TWO FEATURES, not one: a throat at x=0.32 pinched to `ratio`, and a
+// bulge at x=0.74 swollen to 1/ratio. The inlet (x < 0.14) stays at full bore and
+// is the pressure reference p₀. One knob moves both, so the reader sees a two-sided
+// see-saw — the throat gauge swings below p₀ while the bulge gauge swings above it.
+// (An earlier version mounted its second gauge on the inlet itself, where the bore
+// is fixed by construction: that needle could never move, and the prose's "where it
+// widens the gauge climbs" had nothing on screen behind it.)
+//
+// DIAL SCALE: the needle angle is a signed SQUARE ROOT of pressure. Bernoulli is
+// violently asymmetric — narrowing drops the pressure without bound (p → −∞ as
+// A → 0) while widening can only ever raise it by the dynamic head ½ρU0². On a
+// linear face the bulge's whole physical range is a few degrees of needle beside
+// the throat's ninety. The compressed face keeps both legible; the dial carries no
+// numeric ticks, so it promises direction and relative size, not a reading.
+//
 // Stability: markers are advected by an analytic velocity field (no integrator
 // feedback), position clamped/respawned at the ends. Nothing to blow up.
 
@@ -22,14 +37,28 @@ const U0 = 0.18 // inlet speed (fraction of pipe length / sec) at the full bore
 const RHO = 1 // display density
 const SEPIA = '#78716c' // history-furniture color (lesson-03 palette addition)
 
-// throat profile: full bore at the ends, cosine-smoothed narrowing to `ratio` in
-// the middle. Returns the half-height fraction of the pipe at normalized x∈[0,1].
+const THROAT_X = 0.32
+const BULGE_X = 0.74
+const FEATURE_W = 0.36 // cosine window width for both features (they don't overlap)
+const P_FULL = 2.0 * U0 * U0 // pressure at full-scale needle deflection
+
+// A cosine bump: 0 outside the window, 1 at its center, smooth at the seams.
+function bump(x: number, center: number, width: number): number {
+  const t = (x - (center - width / 2)) / width
+  const inside = t > 0 && t < 1
+  return inside ? 0.5 - 0.5 * Math.cos(2 * Math.PI * t) : 0
+}
+
+// Bore profile: full bore at the inlet and outlet, pinched to `ratio` at the
+// throat, swollen to 1/ratio at the bulge. Returns the half-height fraction at
+// normalized x∈[0,1] (0.5 = full bore).
 function boreHalf(x: number, ratio: number): number {
-  // smooth bump centered at x=0.5, width covers the central ~50% of the pipe
-  const t = Math.min(1, Math.max(0, (x - 0.25) / 0.5)) // 0..1 across the neck
-  const bump = 0.5 - 0.5 * Math.cos(2 * Math.PI * t) // 0 at edges, 1 at center
-  const inNeck = x > 0.25 && x < 0.75 ? bump : 0
-  return 0.5 * (1 - (1 - ratio) * inNeck) // 0.5 (full) → 0.5·ratio (throat)
+  const swell = 1 / ratio
+  const f =
+    1 +
+    (ratio - 1) * bump(x, THROAT_X, FEATURE_W) +
+    (swell - 1) * bump(x, BULGE_X, FEATURE_W)
+  return 0.5 * f
 }
 
 function speedAt(x: number, ratio: number): number {
@@ -63,7 +92,16 @@ function createPipe(ratioRef: { current: number }): Stepper {
     }
   }
 
-  // draw one dial gauge; needle sweeps a semicircle, red above ambient, cyan below
+  // Signed square-root dial mapping (see header): direction is exact, magnitude is
+  // compressed so both sides of the see-saw fit one face.
+  const needleFrac = (p: number): number => {
+    const mag = Math.min(1, Math.sqrt(Math.abs(p) / P_FULL))
+    return Math.sign(p) * mag
+  }
+
+  // draw one dial gauge; needle sweeps a semicircle, red above ambient, cyan below.
+  // A sepia tick at 12 o'clock is the inlet reference p₀, and a colored arc runs
+  // from that tick to the needle so small deflections are still readable.
   const drawGauge = (
     ctx: CanvasRenderingContext2D,
     cx: number,
@@ -77,20 +115,42 @@ function createPipe(ratioRef: { current: number }): Stepper {
     ctx.beginPath()
     ctx.arc(cx, cy, radius, Math.PI, 2 * Math.PI) // top-half dial
     ctx.stroke()
-    // needle: map p∈[-pMax,pMax] to angle across the top half
-    const pMax = 0.5 * RHO * U0 * U0 * 4 // headroom
-    const frac = Math.max(-1, Math.min(1, p / pMax))
-    const ang = Math.PI + (0.5 - 0.5 * frac) * Math.PI // left=low, right=high
-    ctx.strokeStyle = p >= 0 ? PALETTE.pHi : PALETTE.pLo
+
+    const frac = needleFrac(p)
+    const zeroAng = -Math.PI / 2 // 12 o'clock = p₀
+    const ang = zeroAng + (frac * Math.PI) / 2 // left = below p₀, right = above
+
+    // the p₀ tick
+    ctx.strokeStyle = SEPIA
+    ctx.lineWidth = 1.5
+    ctx.beginPath()
+    ctx.moveTo(cx, cy - radius)
+    ctx.lineTo(cx, cy - radius * 0.78)
+    ctx.stroke()
+
+    const color = p >= 0 ? PALETTE.pHi : PALETTE.pLo
+    // deflection arc from p₀ to the needle
+    ctx.strokeStyle = color
+    ctx.lineWidth = 4
+    ctx.beginPath()
+    ctx.arc(cx, cy, radius * 0.72, Math.min(zeroAng, ang), Math.max(zeroAng, ang))
+    ctx.stroke()
+
+    ctx.strokeStyle = color
     ctx.lineWidth = 2.5
     ctx.beginPath()
     ctx.moveTo(cx, cy)
-    ctx.lineTo(cx + radius * 0.85 * Math.cos(ang), cy + radius * 0.85 * Math.sin(ang))
+    ctx.lineTo(cx + radius * 0.9 * Math.cos(ang), cy + radius * 0.9 * Math.sin(ang))
     ctx.stroke()
+
     ctx.fillStyle = SEPIA
     ctx.font = '600 10px ui-sans-serif, system-ui'
     ctx.textAlign = 'center'
-    ctx.fillText(label, cx, cy + 12)
+    ctx.fillText(label, cx, cy - radius - 6)
+    ctx.font = '600 11px ui-monospace, SFMono-Regular, monospace'
+    ctx.fillStyle = color
+    const rel = p / (0.5 * RHO * U0 * U0) // in units of the inlet dynamic head
+    ctx.fillText(`${rel >= 0 ? '+' : ''}${rel.toFixed(2)}`, cx, cy - 6)
     ctx.textAlign = 'left'
   }
 
@@ -108,8 +168,11 @@ function createPipe(ratioRef: { current: number }): Stepper {
       const ratio = ratioRef.current
       ctx.clearRect(0, 0, w, h)
       const padX = 24
-      const midY = h * 0.55
-      const halfPix = h * 0.3 // pixels for the full-bore half-height
+      const midY = h * 0.56
+      // Pixels per unit of `boreHalf` (full bore = 0.5, so the inlet half-height is
+      // `halfPix`). Sized so the widest bulge — 1/0.45 = 2.22× full bore at the
+      // slider's narrow end — still fits between the canvas edges.
+      const halfPix = h * 0.15
       const X = (x: number) => padX + x * (w - 2 * padX)
 
       // pipe walls (cosine-smoothed constriction)
@@ -143,48 +206,63 @@ function createPipe(ratioRef: { current: number }): Stepper {
         ctx.fill()
       }
 
-      // two dial gauges mounted on the top wall — wide section and the throat
-      const gr = h * 0.16
-      const xWide = 0.13
-      const xThroat = 0.5
+      // the inlet reference: full bore by construction, so p₀ = 0 lives here and
+      // both gauges swing about it. Marked, not gauged — a needle mounted on a
+      // section that cannot change is a needle that cannot move.
+      ctx.strokeStyle = SEPIA
+      ctx.lineWidth = 1
+      ctx.setLineDash([3, 3])
+      ctx.beginPath()
+      ctx.moveTo(X(0.02), midY - halfPix - 10)
+      ctx.lineTo(X(0.14), midY - halfPix - 10)
+      ctx.stroke()
+      ctx.setLineDash([])
+      ctx.fillStyle = SEPIA
+      ctx.font = '600 10px ui-sans-serif, system-ui'
+      ctx.fillText('p₀ inlet', X(0.02), midY - halfPix - 15)
+
+      // two dial gauges mounted on the top wall — the throat and the bulge
+      const gr = h * 0.13
       drawGauge(
         ctx,
-        X(xWide),
-        midY - boreHalf(xWide, ratio) * 2 * halfPix - 4,
+        X(THROAT_X),
+        midY - boreHalf(THROAT_X, ratio) * 2 * halfPix - 4,
         gr,
-        pressureAt(xWide, ratio),
-        'wide',
+        pressureAt(THROAT_X, ratio),
+        'throat',
       )
       drawGauge(
         ctx,
-        X(xThroat),
-        midY - boreHalf(xThroat, ratio) * 2 * halfPix - 4,
+        X(BULGE_X),
+        midY - boreHalf(BULGE_X, ratio) * 2 * halfPix - 4,
         gr,
-        pressureAt(xThroat, ratio),
-        'throat',
+        pressureAt(BULGE_X, ratio),
+        'bulge',
       )
     },
   }
 }
 
 export function BernoulliPipe() {
-  const [ratio, setRatio] = useState(0.55)
+  // ONE knob: how much the pipe varies. It pinches the throat to `ratio` and swells
+  // the bulge to 1/ratio together, so both gauges move off p₀ at once.
+  const [ratio, setRatio] = useState(0.6)
   const ratioRef = useRef(ratio)
   ratioRef.current = ratio
 
   return (
-    <Sim height={260} create={() => createPipe(ratioRef)}>
+    <Sim height={280} create={() => createPipe(ratioRef)}>
       <label className="sim-slider">
-        <span>narrow</span>
+        <span>pinched</span>
         <input
           type="range"
-          min={0.35}
-          max={0.9}
+          min={0.45}
+          max={0.95}
           step={0.01}
           value={ratio}
           onChange={(e) => setRatio(Number(e.target.value))}
         />
-        <span>wide throat</span>
+        <span>even bore</span>
       </label>
     </Sim>
   )

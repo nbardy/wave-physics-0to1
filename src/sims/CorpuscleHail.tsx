@@ -16,6 +16,18 @@ import { PALETTE } from './lib/palette'
 // fluid is dense and continuous and flows around obstacles. The article says so
 // in prose. We render it as-is: no fluid coupling, particles never see each
 // other, and momentum-per-time on the front face is the drag.
+//
+// THE GHOST: underneath the hail we stroke a faint gray set of ideal-flow
+// streamlines around the same disc — what a continuous fluid would do with the
+// same obstacle. It is decoration in the sense that nothing in the corpuscle
+// simulation reads it, but it is the measurement the prose asks for: "nothing goes
+// around it" is an absence, and an absence needs a presence to be seen against.
+// The ghost is the classical potential solution for a cylinder, traced here from
+// its own closed-form velocity field rather than borrowed from sims/lib/potential:
+// this figure stays self-contained so the two can never drift into disagreeing
+// about the same disc.
+//   u = U(1 − R²(x²−y²)/r⁴),   v = −U·2R²xy/r⁴   (r² = x²+y², origin at the disc)
+// Traced once in create() and stored as immutable polylines, so draw() stays pure.
 
 // Same scene geometry as IdealFlow so the two figures line up as siblings.
 const CX_FRAC = 0.32
@@ -52,6 +64,47 @@ function sceneOf(w: number, h: number): Scene {
   return { cx: CX_FRAC * w, cy: CY_FRAC * h, R: R_FRAC * h }
 }
 
+// Ideal (potential) flow past a cylinder, traced from the left edge. Unit free
+// stream: only the DIRECTION of the field matters for a streamline, so we step a
+// fixed arc-length along the normalized velocity. Returns screen-space polylines.
+const GHOST_OFFSETS = [0.5, 1.0, 1.7, 2.6, 3.7] // seed |y−cy| in units of R
+const GHOST_DS = 3 // arc-length step, px
+
+function traceGhostStreamlines(scene: Scene, w: number, h: number): number[][] {
+  const lines: number[][] = []
+  const seeds: number[] = []
+  for (const off of GHOST_OFFSETS) {
+    seeds.push(scene.cy - off * scene.R, scene.cy + off * scene.R)
+  }
+  for (const y0 of seeds) {
+    if (y0 < 4 || y0 > h - 4) continue
+    const pts: number[] = []
+    let x = 0
+    let y = y0
+    for (let s = 0; s < 4000 && x < w; s++) {
+      pts.push(x, y)
+      const dx = x - scene.cx
+      const dy = y - scene.cy
+      const r2 = dx * dx + dy * dy
+      const rr = scene.R * scene.R
+      const u = 1 - (rr * (dx * dx - dy * dy)) / (r2 * r2)
+      const v = (-2 * rr * dx * dy) / (r2 * r2)
+      const sp = Math.hypot(u, v) || 1
+      x += (u / sp) * GHOST_DS
+      y += (v / sp) * GHOST_DS
+      // the surface is a streamline; numerical drift must not tunnel through it
+      const nr = Math.hypot(x - scene.cx, y - scene.cy)
+      if (nr < scene.R * 1.005) {
+        const k = (scene.R * 1.005) / nr
+        x = scene.cx + (x - scene.cx) * k
+        y = scene.cy + (y - scene.cy) * k
+      }
+    }
+    lines.push(pts)
+  }
+  return lines
+}
+
 // mulberry32 — deterministic scatter so Reset reproduces the figure.
 function makeRand(seed: number) {
   let s = seed
@@ -67,6 +120,7 @@ function makeRand(seed: number) {
 function createCorpuscleHail(uRef: { current: number }, width: number, height: number): Stepper {
   const scene = sceneOf(width, height)
   const rand = makeRand(0x517a)
+  const ghost = traceGhostStreamlines(scene, width, height)
 
   const xs = new Float32Array(N_PARTICLES)
   const ys = new Float32Array(N_PARTICLES)
@@ -77,9 +131,13 @@ function createCorpuscleHail(uRef: { current: number }, width: number, height: n
   const impacts: { t: number; p: number }[] = []
   let simTime = 0
 
+  // `atLeft` re-enters a spent corpuscle just outside the left edge — inside the
+  // −8 recycle cutoff below, or it would be culled again on the next step and
+  // never make it into frame. The inflow staggers itself: particles come back at
+  // whatever moment they left.
   const spawn = (i: number, atLeft: boolean) => {
     const U = uRef.current
-    xs[i] = atLeft ? -rand() * width * 0.5 : rand() * width
+    xs[i] = atLeft ? -rand() * 7 : rand() * width
     ys[i] = rand() * height
     vx[i] = U
     vy[i] = 0
@@ -127,8 +185,12 @@ function createCorpuscleHail(uRef: { current: number }, width: number, height: n
         ys[i] = ny
       }
 
-      // respawn on exit (any edge) from the left inflow, fresh stream velocity
-      if (xs[i] > width + 4 || xs[i] < -width || ys[i] > height + 4 || ys[i] < -4) {
+      // Respawn on exit (any edge) from the left inflow, fresh stream velocity.
+      // The left cutoff is −8, not −width: a bounced corpuscle leaves the frame
+      // travelling upstream, and letting it coast a full canvas-width before
+      // recycling littered the incoming region with wrong-way dots drifting
+      // against the hail.
+      if (xs[i] > width + 4 || xs[i] < -8 || ys[i] > height + 4 || ys[i] < -4) {
         spawn(i, true)
         // keep U current on respawn
         vx[i] = U
@@ -162,6 +224,26 @@ function createCorpuscleHail(uRef: { current: number }, width: number, height: n
     },
     draw(ctx, w, h) {
       ctx.clearRect(0, 0, w, h)
+
+      // THE GHOST: what a continuous fluid would do with this disc, under the hail
+      // that does nothing of the kind. Faint, gray, and behind everything.
+      ctx.strokeStyle = 'rgba(156,163,175,0.55)'
+      ctx.lineWidth = 1
+      for (const pts of ghost) {
+        ctx.beginPath()
+        ctx.moveTo(pts[0], pts[1])
+        for (let k = 2; k < pts.length; k += 2) ctx.lineTo(pts[k], pts[k + 1])
+        ctx.stroke()
+      }
+      // legend key, so the gray is identified rather than mysterious
+      ctx.strokeStyle = 'rgba(156,163,175,0.9)'
+      ctx.beginPath()
+      ctx.moveTo(12, h - 14)
+      ctx.lineTo(32, h - 14)
+      ctx.stroke()
+      ctx.fillStyle = SEPIA
+      ctx.font = '10px ui-sans-serif, system-ui'
+      ctx.fillText('ideal flow', 38, h - 11)
 
       // the solid disc
       ctx.fillStyle = PALETTE.wall
@@ -199,9 +281,11 @@ function createCorpuscleHail(uRef: { current: number }, width: number, height: n
   }
 }
 
-// Shared drag-meter visual format with IdealFlow.tsx: rounded rect, sepia
-// border/label, monospace value. Kept identical so the two figures read as
-// siblings — same box, opposite reading.
+// Shared drag-meter idiom with IdealFlow.tsx: rounded rect, sepia border/label,
+// monospace value, same corner of the canvas — so the two figures read as
+// siblings and the opposite readings are directly comparable. Not the identical
+// box any more: IdealFlow's grew rows to show the two signed halves of its
+// surface integral cancelling. Here there is nothing to cancel, so one row.
 function drawDragMeter(ctx: CanvasRenderingContext2D, w: number, value: number) {
   const bw = 116
   const bh = 40

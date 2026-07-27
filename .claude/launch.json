@@ -7,6 +7,17 @@
       "runtimeArgs": ["run", "dev"],
       "port": 5173,
       "autoPort": true
+    },
+    {
+      "name": "business-docs",
+      "runtimeExecutable": "bunx",
+      "runtimeArgs": [
+        "serve",
+        "/Users/nicholasbardy/git/wave_sim/business/site/dist",
+        "-p",
+        "4500"
+      ],
+      "port": 4500
     }
   ]
 }

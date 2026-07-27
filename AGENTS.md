@@ -66,6 +66,22 @@ Cloudflare Pages. `<Sim>` and `<TeX>` are available in MDX without imports.
   (a slider is an `<input type="range">` writing to a ref the stepper reads). Extract
   shared control components only after a pattern repeats across three figures.
 
+## Subagent model tiers (cost policy)
+
+Subagents inherit the top-level model (Fable) unless overridden — so override, by tier:
+
+- **haiku** — mechanical retrieval: file/grep sweeps, fact lookups, single-source
+  fetches, list-building. Anything where the answer is *what/where*, not *why*.
+  (`.claude/agents/scout.md` is pre-wired to haiku — prefer `subagent_type: "scout"`.)
+- **opus** — judgment research: multi-source web research, source-quality calls,
+  exploration docs, synthesizing scout results into structured reports.
+  (`.claude/agents/researcher.md` is pre-wired to opus.)
+- **fable** (inherit, no override) — reasoning-heavy math, article prose, anything in
+  the voice system's register. **All prose Nick reads — final messages, lesson text,
+  deck copy — is written by the Fable main loop, never delegated to a subagent.**
+
+Workflows: pass `model:`/`agentType:` per `agent()` call by the same tiers.
+
 ## Honesty rules for sims (non-negotiable)
 
 - **Fixed physics timestep, decoupled from frame rate** (the `acc`/`FIXED_DT` loop in
@@ -77,6 +93,20 @@ Cloudflare Pages. `<Sim>` and `<TeX>` are available in MDX without imports.
 - `create` builds fresh state; Reset re-runs `create`; `draw` is pure.
 - Never a pre-rendered clip standing in for a sim. If we can't simulate it honestly,
   we say so in prose (his move) — we don't fake it.
+- **A figure must show the contrast its prose claims, in one frame.** If the sentence
+  says *X causes Y*, *X differs from Z*, or *Y scales as Rⁿ*, the reader has to see
+  both sides at once — a live counterfactual, a second specimen, or a frozen "before"
+  ghost — never a single state plus a printed number. And every knob must change
+  something the claim depends on across its whole range, or it is furniture pretending
+  to be an instrument. (Earned the hard way, 2026-07-06: a reader asked "why isn't the
+  disc getting pushed downstream?" of a meter reading 0.000, and the same disease was
+  then found in a dozen sibling figures — a power law shown with one specimen, a
+  toggle that mutated an already-ruined state, a cascade whose eddies never moved.)
+- **Verify figures by what they teach, not by whether they painted.** Counting
+  non-transparent pixels is worthless: a background wash makes an empty pane read as
+  100% painted. That false negative shipped three blank hero eras. Sample for the
+  specific thing the figure must show (dye color, arrow row-span, column height,
+  meter text) and exercise every knob to both ends.
 
 House code style (one clean path, types as control flow) applies to sim code; see the
 global CLAUDE.md. Registry dispatches on `status.kind` exhaustively — no default

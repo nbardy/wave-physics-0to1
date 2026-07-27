@@ -156,6 +156,31 @@ arrived while writing; if none arrived, the article ships drier and that's fine.
 
 **Output: published lesson. Gate: the audits below, then `status: published`.**
 
+- **THE READER PASS — run this first, and never skip it.** Open the built article and
+  go figure by figure *as a reader who did not build it*. For each one, look at it —
+  with your eyes, at a rendered screenshot; a pixel-count health check is not
+  looking, and it will happily certify an empty pane as "100% painted." Then answer
+  three questions in writing:
+  1. **What am I looking at?** If you can't say in one sentence without consulting the
+     source, the figure is not legible.
+  2. **Why is it doing that?** If the answer is only in the prose and never on the
+     canvas, the figure is asserting, not demonstrating (AGENTS.md: show the contrast).
+  3. **How would I know if it were lying?** Name the visible thing that would change
+     if the physics were wrong. If nothing would, the figure is decoration.
+
+  Then bind prose to evidence: for every sentence adjacent to a figure that makes a
+  checkable claim ("read the drag between them", "halve it and flux drops to a
+  sixteenth", "the dates are right on its four steps"), point at the pixels that
+  deliver it. A claim with no evidence on screen is a defect of the same severity as
+  a crash, and it is the single most common one we ship. Finally, drive every knob to
+  both ends: a range that changes nothing is furniture pretending to be an instrument.
+
+  *Provenance (2026-07-06): a reader glanced at two screenshots and found, in
+  seconds, defects that a full automated pass had certified as clean — three blank
+  hero eras, a power law with one specimen, a toggle that mutated an already-ruined
+  state, and prose promising readouts that did not exist. The automation asked "did
+  it render?"; the reader asked "does this teach me anything?" Only the second
+  question has ever mattered.*
 - **Rhythm audit** (mechanical, scriptable): words-per-figure in band; no >3-paragraph
   droughts; knob count ≤1 except flagged finales; adjacency (figure-figure without
   prose) ≈ never. The band and plan-stage figure counts are *diagnostics, not

@@ -8,13 +8,29 @@ import { PALETTE } from './lib/palette'
 //   PHENOMENOLOGICAL CARTOON, *not* a Navier–Stokes solve. The base flow is the
 //   exact laminar Poiseuille profile, but the transition to turbulence is faked
 //   by a linear-instability toy: a handful of seeded travelling sine modes whose
-//   amplitudes grow or decay according to an empirical growth rate σ ∝ (Re−Re_c)
-//   with a hand-picked critical number Re_c = 2000. That threshold, the mode
-//   shapes, and the saturation cap are all invented to LOOK right — straight and
-//   glassy below Re_c, wavering near it, erupting into folds above it. The real
-//   instability is a genuine eigenvalue problem of the linearised NS operator;
-//   this is a stand-in. The article confesses this in the surrounding text; the
-//   figure must not pretend otherwise.
+//   amplitudes grow or decay at an invented rate σ. The mode shapes, the
+//   saturation cap and the critical number Re_c = 2000 are all chosen to LOOK
+//   right — straight and glassy below Re_c, erupting into folds above it.
+//
+//   THE GROWTH LAW IS DELIBERATELY DISCONTINUOUS AT Re_c:
+//       σ(Re) = +(SIGMA_FLOOR + SIGMA_GAIN·(Re−Re_c)/Re_c)   for Re ≥ Re_c
+//       σ(Re) = −(SIGMA_FLOOR + SIGMA_GAIN·(Re_c−Re)/Re_c)   for Re <  Re_c
+//   The FLOOR is the whole point. A smooth σ ∝ (Re−Re_c) — what this figure used
+//   to have — means the eruption takes ~35 s at Re = 2100 and ~18 s at Re = 2200,
+//   so a reader easing the slider just past the threshold sees nothing happen and
+//   concludes the threshold is somewhere near 4000. The sharpness Reynolds
+//   actually reported was then invisible, which inverted the sentence the figure
+//   exists to support. With the floor, crossing Re_c saturates the filament in
+//   under two seconds at any supercritical Re, and dropping back below it flushes
+//   the tube just as fast.
+//
+//   What is being faked, precisely: the real instability is an eigenvalue problem
+//   of the linearised NS operator, whose growth rate vanishes CONTINUOUSLY at
+//   criticality; pipe flow's transition is famously subcritical and finite-
+//   amplitude besides. A jump discontinuity in σ is not that. It is a cartoon of
+//   the OBSERVED sharpness, drawn at the timescale of a reader's hand on a
+//   slider. The article confesses this in the surrounding text; the figure must
+//   not pretend otherwise.
 // ─────────────────────────────────────────────────────────────────────────────
 
 const N_PARTICLES = 400 // chain length of the dye filament
@@ -24,14 +40,37 @@ const RE_C = 2000 // empirical critical Reynolds number (the invented threshold)
 const N_MODES = 4 // seeded travelling sinusoidal perturbation modes
 const FIXED_DT = 1 / 120 // fixed physics step, decoupled from RAF cadence
 
-// The perturbation amplitude A obeys dA/dt = σ·A, σ = SIGMA_GAIN·(Re−Re_c)/Re_c.
-// A is capped at A_SAT by construction, and σ is bounded by the finite Re range,
-// so A·dt can never exceed a fraction of the tube half-height in one step — the
-// advection stays well-behaved without a runtime stability guard on the modes.
-const SIGMA_GAIN = 2.2 // growth-rate scale (per second, at Re = 2·Re_c)
+// The perturbation amplitude A obeys dA/dt = σ·A with σ from `regimeOf` below.
+// A is capped at A_SAT by construction and floored at A_NOISE, and |σ| is bounded
+// by the finite Re range, so A·dt can never exceed a fraction of the tube
+// half-height in one step — the advection stays well-behaved without a runtime
+// stability guard on the modes.
+const SIGMA_FLOOR = 2.3 // |σ| the instant the threshold is crossed (per second)
+const SIGMA_GAIN = 2.2 // extra growth rate per Re_c of overshoot
 const A_SAT = 1.0 // saturation amplitude in units of tube half-height
+const A_NOISE = 0.02 // background noise floor, so a re-crossing can re-excite
 const JITTER_THRESHOLD = 0.7 // fraction of A_SAT above which curls get random-walk jitter
 const MIXED_REINJECT_S = 6 // guard rail: re-inject after this long fully mixed
+
+// Reynolds's two regimes, as a sum type — the figure's readout, its color, and the
+// sign of the growth rate all follow from which side of Re_c we are on. This is
+// the ONE place the threshold is decided.
+type Regime = { kind: 'direct'; sigma: number } | { kind: 'sinuous'; sigma: number }
+
+const regimeOf = (re: number): Regime =>
+  re < RE_C
+    ? { kind: 'direct', sigma: -(SIGMA_FLOOR + (SIGMA_GAIN * (RE_C - re)) / RE_C) }
+    : { kind: 'sinuous', sigma: SIGMA_FLOOR + (SIGMA_GAIN * (re - RE_C)) / RE_C }
+
+// Reynolds's own words for the two states. Amber is the dye in motion; sepia is
+// this lesson's history furniture, and a filament running straight is the quiet one.
+const REGIME_STYLE: Record<Regime['kind'], { label: string; color: string }> = {
+  direct: { label: 'direct', color: '#78716c' },
+  sinuous: { label: 'sinuous', color: PALETTE.dye },
+}
+
+// where Re_c sits along the slider track, as a fraction of its span
+const RE_C_FRAC = (RE_C - RE_MIN) / (RE_MAX - RE_MIN)
 
 // A deterministic PRNG so Reset genuinely reseeds (mulberry32).
 function mulberry32(seed: number) {
@@ -73,7 +112,7 @@ function createReynolds(reRef: { current: number }): Stepper {
     })
   }
 
-  let amp = 0.02 // current perturbation amplitude A (starts tiny)
+  let amp = A_NOISE // current perturbation amplitude A (starts tiny)
   let t = 0
   let mixedFor = 0 // seconds the filament has been continuously "fully mixed"
   let acc = 0 // fixed-DT accumulator (persists across step calls via closure)
@@ -84,7 +123,7 @@ function createReynolds(reRef: { current: number }): Stepper {
     for (let i = 0; i < N_PARTICLES; i++) {
       particles.push({ x: i / (N_PARTICLES - 1), y: 0, jitter: 0 })
     }
-    amp = 0.02
+    amp = A_NOISE
     mixedFor = 0
   }
   seedFilament()
@@ -107,11 +146,11 @@ function createReynolds(reRef: { current: number }): Stepper {
     const re = reRef.current
     t += FIXED_DT
 
-    // amplitude ODE: dA/dt = σ A, σ ∝ (Re − Re_c). Grows above Re_c, decays below.
-    const sigma = (SIGMA_GAIN * (re - RE_C)) / RE_C
-    amp = Math.min(A_SAT, Math.max(0.0, amp * Math.exp(sigma * FIXED_DT)))
+    // amplitude ODE: dA/dt = σ A. Sign and size of σ come from the regime.
+    const { sigma } = regimeOf(re)
+    amp = Math.min(A_SAT, amp * Math.exp(sigma * FIXED_DT))
     // keep a floor of noise alive so a super-critical run can re-excite after decay
-    if (amp < 0.02) amp = 0.02
+    if (amp < A_NOISE) amp = A_NOISE
 
     const jittering = amp > JITTER_THRESHOLD * A_SAT
     const uScale = 0.9 // filament march speed along x (normalized tube-length/s)
@@ -214,14 +253,62 @@ function createReynolds(reRef: { current: number }): Stepper {
       ctx.fill()
 
       // sepia Re readout — lesson-03 palette contract: history furniture is
-      // sepia '#78716c' (year labels, nameplates, meters).
+      // sepia '#78716c' (year labels, nameplates, meters) — with the regime name
+      // beside it, so the threshold is a thing that VISIBLY flips rather than a
+      // constant buried in the source.
       const re = reRef.current
-      ctx.fillStyle = '#78716c'
+      const style = REGIME_STYLE[regimeOf(re).kind]
       ctx.font = '600 14px ui-monospace, SFMono-Regular, monospace'
-      ctx.fillText(`Re ≈ ${Math.round(re)}`, 12, h - 14)
+      const reText = `Re ≈ ${Math.round(re)}`
+      ctx.fillStyle = '#78716c'
+      ctx.fillText(reText, 12, h - 14)
+
+      const pillX = 12 + ctx.measureText(reText).width + 12
+      ctx.font = '600 12px ui-sans-serif, system-ui'
+      const pillW = ctx.measureText(style.label).width + 16
+      ctx.fillStyle = style.color
+      ctx.globalAlpha = 0.14
+      roundRect(ctx, pillX, h - 28, pillW, 19, 9)
+      ctx.fill()
+      ctx.globalAlpha = 1
+      ctx.strokeStyle = style.color
+      ctx.lineWidth = 1
+      roundRect(ctx, pillX, h - 28, pillW, 19, 9)
+      ctx.stroke()
+      ctx.fillStyle = style.color
+      ctx.fillText(style.label, pillX + 8, h - 14)
+
+      // the threshold itself, named on the canvas
+      ctx.fillStyle = '#78716c'
+      ctx.font = '11px ui-sans-serif, system-ui'
+      ctx.fillText(`Re_c ≈ ${RE_C}`, pillX + pillW + 12, h - 14)
     },
   }
 }
+
+function roundRect(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number,
+) {
+  ctx.beginPath()
+  ctx.moveTo(x + r, y)
+  ctx.arcTo(x + w, y, x + w, y + h, r)
+  ctx.arcTo(x + w, y + h, x, y + h, r)
+  ctx.arcTo(x, y + h, x, y, r)
+  ctx.arcTo(x, y, x + w, y, r)
+  ctx.closePath()
+}
+
+const SEPIA = '#78716c'
+// A range input's thumb centre travels between half-a-thumb from each end, so a
+// tick at a plain `left: f%` drifts from the value it marks. This is the standard
+// correction; THUMB is the browser default width we style against.
+const THUMB_PX = 16
+const tickLeft = (f: number) => `calc(${f * 100}% + ${(0.5 - f) * THUMB_PX}px)`
 
 export function ReynoldsTube({ height = 260 }: { height?: number }) {
   // ONE knob: flow speed, displayed as Reynolds number.
@@ -233,14 +320,47 @@ export function ReynoldsTube({ height = 260 }: { height?: number }) {
     <Sim height={height} create={() => createReynolds(reRef)}>
       <label className="sim-slider">
         <span>slow</span>
-        <input
-          type="range"
-          min={RE_MIN}
-          max={RE_MAX}
-          step={10}
-          value={re}
-          onChange={(e) => setRe(Number(e.target.value))}
-        />
+        <span style={{ position: 'relative', display: 'inline-flex', flex: 1 }}>
+          <input
+            type="range"
+            min={RE_MIN}
+            max={RE_MAX}
+            step={10}
+            value={re}
+            onChange={(e) => setRe(Number(e.target.value))}
+            style={{ width: '100%' }}
+          />
+          {/* the threshold, marked on the track the reader is dragging */}
+          <span
+            aria-hidden
+            style={{
+              position: 'absolute',
+              left: tickLeft(RE_C_FRAC),
+              top: -3,
+              height: 20,
+              width: 2,
+              marginLeft: -1,
+              background: SEPIA,
+              opacity: 0.75,
+              pointerEvents: 'none',
+            }}
+          />
+          <span
+            aria-hidden
+            style={{
+              position: 'absolute',
+              left: tickLeft(RE_C_FRAC),
+              top: 18,
+              transform: 'translateX(-50%)',
+              font: '10px ui-sans-serif, system-ui',
+              color: SEPIA,
+              whiteSpace: 'nowrap',
+              pointerEvents: 'none',
+            }}
+          >
+            Re_c ≈ {RE_C}
+          </span>
+        </span>
         <span>fast</span>
       </label>
     </Sim>

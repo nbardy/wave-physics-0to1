@@ -11,7 +11,7 @@ import { StringSection } from '../sims/StringSection'
 import { IdealFlow } from '../sims/IdealFlow'
 import { FlowVis } from '../sims/FlowVis'
 import { TermStack } from '../components/TermStack'
-import { TermToggle } from '../sims/TermToggle'
+import { PressureOff } from '../sims/PressureOff'
 import { MolecularSprings } from '../sims/MolecularSprings'
 import { StressCube } from '../sims/StressCube'
 import { FallingSphere } from '../sims/FallingSphere'
@@ -102,8 +102,9 @@ through resisting fluids — is the least read and the most wrong. It is also wh
 this story properly starts, because buried in it is a one-sentence guess that turned
 out to be exactly right. Newton proposed that the resistance arising from the *want
 of lubricity* between parts of a fluid is proportional to the velocity with which
-those parts are separated from one another. Slide the two layers below and read the
-drag between them:
+those parts are separated from one another. Below, two layers of water slide past
+each other and the quick one hauls the slow one along; the slider thickens the
+fluid from water toward honey:
 
 <ShearBlend />
 
@@ -182,16 +183,27 @@ curves in space:
 <StringSection stage="string" />
 
 This is the founding object of the entire wave-physics course, and the date
-matters: the PDE was invented *for a wave*, a decade before
-fluids got theirs. (It immediately started a fight — d'Alembert, Euler, and Daniel
-Bernoulli spent years arguing in public about what even counts as a "solution,"
-a quarrel not fully settled until Fourier, two generations later. The instrument
-was contentious from the day it was made.)
+matters: the PDE was invented *for a wave*, a decade before fluids got theirs.
 
-D'Alembert then aimed the new instrument at the stream. Take the best fluid the age
-could imagine — no friction, no stickiness, nothing but inertia and pressure — and
-send it past a body. He submitted the calculation to the Berlin Academy's prize
-competition in 1749. Before you look at the result, commit to a guess.
+It also started a thirty-year fight, and the fight was over what a *solution* even
+is. D'Alembert held that the string's starting shape had to be expressible as a
+single formula — pluck it into a corner, two straight segments meeting at a point,
+and his mathematics refused the shape. Euler thought that absurd: a real string can
+be pulled into any shape a hand can draw, so the mathematics must accept any curve
+you can draw. Daniel Bernoulli said both were making it hard — every motion a
+string can perform is a sum of its pure modes, the fundamental plus its harmonics,
+and nothing else. Each of the three was partly right, none could finish the
+argument, and it outlived all of them; Fourier settled it two generations later by
+showing that Bernoulli's sums of modes can build Euler's hand-drawn curves. The
+instrument was contentious from the day it was made.
+
+Then the Berlin Academy asked a question that looked much easier. Its 1749 prize
+called for the resistance of a body moving through a fluid — the practical problem
+of the age, the number that decides hull shapes and cannon ranges — worked out for
+the simplest fluid imaginable: no friction, no stickiness, nothing but inertia and
+pressure. That fluid is the one d'Alembert's instrument could actually handle, so
+he took the question and computed. Before you look at what came out, commit to a
+guess.
 
 <Predict
   question="The stream below is frictionless — the ideal fluid of 1749. How hard does it push the disc downstream?"
@@ -201,20 +213,47 @@ competition in 1749. Before you look at the result, commit to a guess.
   <IdealFlow />
 </Predict>
 
-The meter is not broken, and it is not asserting anything — it is integrating the
-pressure over the disc's surface, every frame. The answer is zero. Look at the
-colors to see why: the stream piles up red against the nose, exactly as your hands
-expect — and then piles up red against the *tail* by precisely the same amount.
-Every push on the front is refunded on the back. Fore and aft are perfect mirror
-images, so the disc feels squeeze but no drag, and a ship in this water would need
-no sails.
+The meter is not broken and it is not asserting anything. It integrates the
+pressure over the disc's surface every frame, sorted by which way each patch of
+rim actually shoves: part of the surface is pushed downstream, part of it is
+pulled back upstream, and the two totals match to every decimal the meter can
+print.
 
-D'Alembert knew perfectly well this was absurd; the whole point of the prize essay
-was to predict the resistance every sailor and swimmer feels. "A singular paradox,"
-he finally called it, "which I leave to future Geometers to elucidate." The Academy,
-for its part, declined to award him the prize, in part because theory and experiment
-disagreed so badly — and the judge was Euler. Both founding documents of fluid
-mechanics arrived wrapped in a priority wound.
+Follow one parcel of water through the trip and the cancellation stops being a
+coincidence. The parcel arrives at the nose and is brought to a stop; the crowding
+there is the high pressure you can see in <C k="pHi">red</C>, and the arrows show
+it shoving the disc squarely downstream. Squeezed from behind by that high
+pressure, the parcel then accelerates away around the shoulder, into the
+<C k="pLo">cyan</C> — it has run downhill, spending pressure to buy speed. And now
+it has to get around the back. From the shoulder to the tail the pressure climbs
+again, so the parcel is running uphill, paying its speed back out. Here is the
+part that decides everything: **nothing in this fluid takes a cut.** No friction,
+no stickiness, no stirring, no heat. Every scrap of speed the parcel bought coming
+down the front hill it spends climbing the back one, so it arrives at the tail with
+exactly the speed it had at the nose — and therefore crowds against the tail at
+exactly the pressure it crowded against the nose. The red lobe behind the disc is
+not a coincidence of the geometry. It is the front lobe, rebuilt out of the
+parcel's own returned momentum.
+
+Now look at what that does to the arrows around the rim. The nose is shoved
+downstream and the tail is shoved upstream by patches of water crowding at
+identical pressure. Where the flow runs fastest, over the shoulders, the pressure
+drops below ambient and the water *pulls* instead — and it pulls at the front
+shoulders and the rear shoulders equally hard, in opposite directions. Every patch
+of that surface has a twin on the far side of the disc doing the opposite job with
+the same strength. The whole rim is a mirror, and the disc goes nowhere. A ship in
+this water needs no sails.
+
+D'Alembert knew the verdict was absurd — the prize question was precisely the
+resistance that every sailor and swimmer feels. Twenty years on he was still
+turning it over: the theory, developed in all possible rigor, gives in several
+cases a strictly vanishing resistance — "a singular paradox," he wrote, "which I
+leave to future Geometers to elucidate." The Academy never awarded the 1749 prize
+to anyone, on the grounds that no entrant had backed the theory with experiment;
+Euler sat among the judges.
+
+Keep your eye on that back hill. Everything in the next hundred and fifty years
+happens on it.
 
 <Waypoint>
 This is everything the year 1752 held: exact statics, an energy ledger for pipes, a
@@ -257,10 +296,20 @@ lesson snapped together for the first time in history:
 
 Four of the five nameplates fill in at once, all with the same name and year. The
 local change, the self-carrying, the pressure push, the incompressibility
-constraint: all Euler, 1757 — one man's decade. Knock the pressure term out and the
-fluid piles up into a catastrophe you have watched before:
+constraint: all Euler, 1757 — one man's decade. Delete the pressure term and the
+equation forgets the one thing that told the water a disc was there. Below, the
+same channel runs twice from the same still start, with the pressure push kept on
+top and cut underneath:
 
-<TermToggle />
+<PressureOff />
+
+On top the water feels the disc long before it arrives and bows around it —
+pressure is the only term in that line able to send news upstream. Underneath, the
+stream drives in as though nothing were in its way, banks up against the gray, and
+the <C k="div">violet</C> counts off the cells where water is being conjured out of
+nothing or quietly destroyed. Both channels carry the same faint stickiness, which
+Euler's equations do not have at all; it is identical on both sides, so the only
+difference between them is the term.
 
 Euler saw the power and the wall with equal clarity. If we cannot fully grasp the
 motion of fluids, he wrote, it is not mechanics we should blame, nor any hidden
@@ -366,15 +415,20 @@ requirement that internal friction depend linearly on the rate of deformation.
 That derivation is the one in every textbook since. And then Stokes did the thing
 that separates a formula from a law: he made it *earn money*. His analysis of a
 sphere sinking through viscous fluid gave a clean, checkable prediction —
-$F = 6\pi\mu R U$ — and the pendulum data of the age matched it. Drop the sphere
-below, then double its radius:
+$F = 6\pi\mu R U$ — and the pendulum data of the age matched it. Two steel balls,
+each in its own column of honey, are released together below; the slider shrinks
+the second one:
 
 <FallingSphere />
 
-Double the radius and the terminal speed quadruples — the $R^2$ law, readable off
-the meter. Suddenly Navier's unmeasurable $\varepsilon$ had become $\mu$, the
-viscosity, a number you could extract from a falling ball and tabulate for honey,
-water, and air. The same analysis settled a decades-old argument about the wall:
+Halve the radius and the small ball is a quarter of the way down when the big one
+lands — terminal speed goes as $R^2$, and the pair of bars over each column says
+why. Weight is a volume, so it falls away as $R^3$. Stokes' resistance is
+$6\pi\mu R$: a length, falling away only as $R$. Surrender seven-eighths of your
+weight to keep half your drag and you crawl. Run that backwards — time a ball
+whose size and weight you know — and $\mu$ is the only unknown left in the
+sentence. Navier's $\varepsilon$, which had connected to nothing anyone could
+measure, became a number you could look up for honey, water, and air. The same analysis settled a decades-old argument about the wall:
 the fluid *sticks* — no slip — which is why the previous lesson could state that
 contract with a straight face. (Navier's slip survives in one place: channels a
 few molecules wide, where microfluidics has quietly rehabilitated him.)
@@ -459,11 +513,22 @@ nearly frictionless. Slide the loupe to the surface and the story changes inside
 sliver: the speed plunges from full stream to exactly zero across a skin that
 thins as $1/\sqrt{Re}$ (a scaling stated with a wave of the hand; deriving it
 is a lesson of its own). Inside that skin, friction rules absolutely, no matter how
-large $Re$ grows. And the skin does not stay attached. Park the loupe on the rear
-shoulder: the near-wall arrows *reverse*. The layer peels off, dumps its rotation
-into the wake, and wrecks the fore-aft mirror symmetry that made d'Alembert's
-integral cancel — and the meter, zero since 1752 in this article and zero since
-1752 in history, finally moves.
+large $Re$ grows. And that is enough to break the refund.
+
+Recall the parcel that had to climb the back hill on its own returned momentum,
+and how the exactness of the cancellation depended on nothing taking a cut. Inside
+the sliver, something takes a cut. The water there has been rubbing against the
+wall the whole way around, and it arrives at the shoulder already short of speed —
+too short to climb back up to the tail's high pressure. It makes it partway up the
+hill, stalls, and is shoved backwards by the pressure it failed to climb. Park the
+loupe on the rear shoulder and watch the near-wall arrows *reverse*. With the flow
+behind it now running the wrong way, the layer lifts clean off the surface and
+peels into the wake.
+
+Once the layer has left the wall, the tail never gets its red lobe. The nose is
+still shoved downstream at full pressure and there is nothing on the back pushing
+the other way — so the books do not balance, and the meter, zero since 1752 in this
+article and zero since 1752 in history, finally moves.
 
 Read the resolution precisely, because it is stranger than "d'Alembert was wrong."
 He wasn't. His theory is *correct* almost everywhere — everywhere but a sliver —
@@ -539,8 +604,8 @@ Richardson's hall of sixty-four thousand computers, though — that part got bui
 It got built out of vacuum tubes. In 1950, on ENIAC, a team around Jule Charney and
 John von Neumann ran the first computer weather forecast, and the numerical assault
 on the equation began. The solver you played with in the previous lesson is not an
-illustration of that history; it is a late chapter of it, and you can read the
-chapter's dates right off its four steps:
+illustration of that history; it is a late chapter of it, and its four steps carry
+three different birthdays:
 
 <SolverXray />
 

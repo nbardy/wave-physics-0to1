@@ -134,11 +134,17 @@ function createLoupe(loupeRef: { current: LoupeState }): Stepper {
       }
 
       // ── THE LOUPE: circular magnifier over the wall ────────────────────────
+      // Layout is the textbook boundary-layer profile: the WALL sits at the
+      // bottom, each sample one row higher, each drawn as a horizontal arrow
+      // whose length and sign are the local TANGENTIAL velocity. So the reader
+      // reads bottom-to-top: zero at the wall (no-slip), growing upward, full
+      // stream at the top — and at the rear shoulder the bottom rows point the
+      // wrong way. None of that is scripted; every arrow is solver.u,v.
       const L = loupeRef.current
       const lcx = L.x * w
       const lcy = L.y * h
       const lr = Math.min(w, h) * 0.22 // loupe radius in px
-      const MAG = 4 // magnification
+      const MAG = 4 // magnification: one grid cell reads MAG× its on-canvas size
 
       ctx.save()
       ctx.beginPath()
@@ -148,54 +154,86 @@ function createLoupe(loupeRef: { current: LoupeState }): Stepper {
       ctx.fillStyle = 'rgba(248,250,252,0.96)'
       ctx.fillRect(lcx - lr, lcy - lr, 2 * lr, 2 * lr)
 
-      // The loupe center maps to a grid location; we sample a magnified row of
-      // velocity arrows along the radial direction from the disc center THROUGH
-      // the loupe point, so "far from wall" → "at the wall" reads left-to-right
-      // as the near-wall profile. The reversal at the rear shoulder is not
-      // scripted — it comes straight out of solver.u,v.
+      // Where the loupe sits, in grid coordinates, and the radial through it.
       const gx = (lcx / w) * NX
       const gy = (lcy / h) * NY
-      // radial unit vector pointing from disc center outward through the loupe
       let rdx = gx - DISC_CX
       let rdy = gy - DISC_CY
-      const rlen = Math.hypot(rdx, rdy) || 1
+      const rlen = Math.hypot(rdx, rdy) || 1 // loupe distance from disc CENTER, in cells
       rdx /= rlen
       rdy /= rlen
-      // tangential (for laying out the sample row across the loupe)
-      const tdx = -rdy
-      const tdy = rdx
+      // Tangential = radial rotated a quarter turn, then oriented so DOWNSTREAM
+      // is always +x on screen. Without the flip the disc's lower half would
+      // read mirrored and "reversed" would point rightward down there.
+      let tdx = -rdy
+      let tdy = rdx
+      if (tdx < 0 || (tdx === 0 && tdy < 0)) {
+        tdx = -tdx
+        tdy = -tdy
+      }
+
+      // Units, carefully — this is where the old code lied. `lr`, `sx`, `sy` are
+      // PIXELS; the sampled window has to be in CELLS. One step of one cell along
+      // the radial covers `cellPx` pixels on the unmagnified canvas (sx ≠ sy, so
+      // it depends on the radial's direction), and the loupe magnifies by MAG.
+      const cellPx = Math.hypot(rdx * sx, rdy * sy) || sx
+      const STACK_H = lr * 1.2 // pixel height of the stacked profile
+      const spanCells = STACK_H / (MAG * cellPx)
+      // The loupe reads the radial where it ACTUALLY SITS: a window centred on
+      // its own distance from the disc, clipped so it never starts inside the
+      // solid. Park it on the surface → the window starts at the wall and you
+      // get the plunge. Lift it into the stream → the wall slides out the bottom
+      // and the profile goes uniform, which is Euler's story, honestly drawn.
+      const rStart = Math.max(DISC_R, rlen - spanCells * 0.5)
+      const yOf = (rCells: number) =>
+        lcy + lr * 0.6 - ((rCells - rStart) / spanCells) * STACK_H
+
+      // the wall itself, so "at the wall" is locatable
+      const yWall = yOf(DISC_R)
+      const wallVisible = yWall < lcy + lr
+      if (wallVisible) {
+        ctx.fillStyle = PALETTE.wall
+        ctx.fillRect(lcx - lr, yWall, 2 * lr, lcy + lr - yWall)
+      }
+
+      // the zero line every arrow grows from — makes a reversed arrow unmistakable
+      const baseX = lcx - lr * 0.42
+      ctx.strokeStyle = 'rgba(120,113,108,0.45)'
+      ctx.lineWidth = 1
+      ctx.beginPath()
+      ctx.moveTo(baseX, lcy - lr)
+      ctx.lineTo(baseX, Math.min(lcy + lr, yWall))
+      ctx.stroke()
 
       const N_ARROWS = 22
-      const ARROW_SPAN = lr / MAG // grid-space half-span sampled inside the loupe (in cells, before MAG)
+      const VEL_REF = INFLOW * 1.35 // arrow scale: full stream ≈ ¾ of the max length
+      const LEN_MAX = lr * 1.05
+      const tips: Array<[number, number]> = []
       ctx.lineWidth = 1.4
       ctx.strokeStyle = PALETTE.vel
       ctx.fillStyle = PALETTE.vel
       for (let a = 0; a < N_ARROWS; a++) {
-        // distance out along the radial: 0 = at the wall (r = DISC_R), increasing outward
         const frac = a / (N_ARROWS - 1)
-        const radialCells = DISC_R + frac * (ARROW_SPAN * 2)
-        const sampleX = DISC_CX + rdx * radialCells
-        const sampleY = DISC_CY + rdy * radialCells
-        if (sampleX < 1 || sampleX > NX - 2 || sampleY < 1 || sampleY > NY - 2) continue
-        const si = Math.round(sampleX)
-        const sj = Math.round(sampleY)
-        const sk = si + sj * NX
-        if (solver.solid[sk]) continue
-        const uu = solver.u[sk]
-        const vv = solver.v[sk]
-        // project velocity onto the TANGENTIAL direction — the along-wall speed
-        // that plunges to zero at the wall (no-slip) and can reverse in the wake
+        const rCells = rStart + frac * spanCells
+        const sampleX = DISC_CX + rdx * rCells
+        const sampleY = DISC_CY + rdy * rCells
+        if (sampleX < 0.5 || sampleX > NX - 1.5 || sampleY < 0.5 || sampleY > NY - 1.5) continue
+        // Straight out of the solver, bilinearly. Solid cells hold u = v = 0
+        // (solver.boundaries() enforces no-slip), so the wall row reads EXACTLY
+        // zero without this figure ever asserting it.
+        const uu = bilerp(solver.u, sampleX, sampleY)
+        const vv = bilerp(solver.v, sampleX, sampleY)
         const tang = uu * tdx + vv * tdy
-        // arrow base position inside the loupe: radial axis vertical, tangential horizontal
-        const baseX = lcx + (frac - 0.5) * 2 * lr * 0.85
-        const baseY = lcy + lr * 0.5 // draw arrows growing upward from a baseline
-        const len = (tang / INFLOW) * lr * 0.9
+        const baseY = yOf(rCells)
+        const raw = (tang / VEL_REF) * LEN_MAX
+        const len = Math.max(-LEN_MAX, Math.min(LEN_MAX, raw))
+        tips.push([baseX + len, baseY])
         ctx.beginPath()
         ctx.moveTo(baseX, baseY)
         ctx.lineTo(baseX + len, baseY)
         ctx.stroke()
-        // arrowhead
-        const dir = Math.sign(len) || 1
+        if (Math.abs(len) < 3) continue // no head on a ~zero arrow: don't fake speed at the wall
+        const dir = Math.sign(len)
         ctx.beginPath()
         ctx.moveTo(baseX + len + dir * 3, baseY)
         ctx.lineTo(baseX + len - dir * 2, baseY - 2.5)
@@ -204,13 +242,21 @@ function createLoupe(loupeRef: { current: LoupeState }): Stepper {
         ctx.fill()
       }
 
-      // the wall line inside the loupe (a = 0 edge)
-      ctx.strokeStyle = PALETTE.wall
-      ctx.lineWidth = 3
-      ctx.beginPath()
-      ctx.moveTo(lcx - lr * 0.85, lcy + lr * 0.5)
-      ctx.lineTo(lcx - lr * 0.85, lcy - lr * 0.85)
-      ctx.stroke()
+      // the envelope through the arrow tips — the profile shape itself
+      if (tips.length > 1) {
+        ctx.strokeStyle = 'rgba(37,99,235,0.45)'
+        ctx.lineWidth = 1.5
+        ctx.beginPath()
+        ctx.moveTo(tips[0][0], tips[0][1])
+        for (let t = 1; t < tips.length; t++) ctx.lineTo(tips[t][0], tips[t][1])
+        ctx.stroke()
+      }
+
+      if (wallVisible) {
+        ctx.fillStyle = '#57534e'
+        ctx.font = '10px ui-sans-serif, system-ui'
+        ctx.fillText('no-slip', lcx - lr * 0.86, yWall - 4)
+      }
       ctx.restore()
 
       // loupe rim
@@ -219,9 +265,6 @@ function createLoupe(loupeRef: { current: LoupeState }): Stepper {
       ctx.beginPath()
       ctx.arc(lcx, lcy, lr, 0, Math.PI * 2)
       ctx.stroke()
-      ctx.fillStyle = '#78716c'
-      ctx.font = '11px ui-sans-serif, system-ui'
-      ctx.fillText('no-slip', lcx - lr * 0.8, lcy + lr - 6)
 
       // ── THE DRAG METER (rounded rect, top-right, sepia border) ─────────────
       const mw = 96
@@ -239,8 +282,25 @@ function createLoupe(loupeRef: { current: LoupeState }): Stepper {
       ctx.fillText('drag', mx + 10, my + 15)
       ctx.font = '600 18px ui-monospace, SFMono-Regular, monospace'
       ctx.fillText(cdEma.toFixed(3), mx + 10, my + 32)
+
     },
   }
+}
+
+/** Bilinear read of a solver field at fractional grid coords (clamped to the grid). */
+function bilerp(f: Float32Array, x: number, y: number): number {
+  const cx = Math.min(Math.max(x, 0), NX - 1.001)
+  const cy = Math.min(Math.max(y, 0), NY - 1.001)
+  const i0 = Math.floor(cx)
+  const j0 = Math.floor(cy)
+  const tx = cx - i0
+  const ty = cy - j0
+  const k = i0 + j0 * NX
+  const a = f[k]
+  const b = f[k + 1]
+  const c = f[k + NX]
+  const d = f[k + NX + 1]
+  return a + (b - a) * tx + (c - a) * ty + (a - b - c + d) * tx * ty
 }
 
 function roundRect(
