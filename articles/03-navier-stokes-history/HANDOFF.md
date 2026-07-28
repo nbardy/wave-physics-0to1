@@ -42,24 +42,50 @@ TermToggle, StringSection(string), SolverXray.
 `bun run typecheck` and `bun run build` green. Zero console errors with all 20
 figures mounted.
 
-## Verification state (updated 2026-07-06, second pass)
+## Verification state (updated 2026-07-29 — READER PASS, screenshots + eyes)
 
-Headless QA completed via a shimmed harness (the preview tabs run hidden with
-rAF suspended; requestAnimationFrame + IntersectionObserver were shimmed in-page
-so the real sim code ran): **all 22 figure canvases paint** (both Predict
-reveals included), **all six TimelineHero eras render cleanly** through a full
-era sweep, IdealFlow renders its field + meter, zero console errors throughout.
-Both marquee drag meters verified by code reading: computed, never asserted
-(IdealFlow via `pressureDrag()`; Loupe via Σ−p·n̂ₓ over mask faces). Stage-4/5
-prose audit ran clean — zero fix-before-publish findings; its five judgment-call
-trims are APPLIED (fork detonation defused, one aphorism cut, narrator
-self-ranking removed ×3, "theory changes its mind").
+Run per `.claude/skills/figure-audit` with a deterministic pump harness
+(rAF callbacks queued and driven with synthetic timestamps; IO stub fires via
+queueMicrotask — setTimeout is useless in a >5-min-hidden tab, Chrome coalesces
+its timers to ~1/min; figure under audit pinned `position:fixed` because JS
+scrolling desyncs the hidden compositor; queue purged around every remount or
+zombie loops multiply the step cost ~30× and fake blank canvases — TWO false
+blanks were chased to this harness artifact before any real verdicts).
 
-Still owed a REAL browser (throttled timers make time-dependent behavior
-untestable headlessly): the ReynoldsTube eruption above threshold (model wiring
-verified in code — σ ≈ 4.2/s at the slider's top, erupts in ~2 s live), the
-Loupe's rear-shoulder reversal (emerges from the solver; needs eyes), hero fps,
-and the general feel pass. One human read-through before the publish flip.
+VERIFIED WITH EYES (fd14a83 fixes confirmed on screen):
+- **TimelineHero, all six eras, distinct signatures**: 1687 corpuscles + disc;
+  1757 markers parting around the disc; 1822 honey ooze (dye diffusing, no
+  eddies); 1883 persistent stripes, mild wake; 1904 hard separation, wake never
+  closes, `wake survey · C_d ≈ 0.43` + dashed survey line; 1999 the eight-row
+  street look. WEAK (recorded, not blocking): 1822 vs 1883 read as "more/less
+  ooze" — qualitatively distinct regimes only to a careful eye.
+- **IdealFlow (the §5 marquee)**: mirrored red lobes nose AND tail, cyan
+  shoulders, red press-arrows + cyan suction-fans on the rim, and the ledger —
+  `downstream +1.000 / upstream −1.000 / net 0.000` with mirrored balance bars.
+  The cancellation is now on screen, not asserted.
+- **FallingSphere race**: at ×2 the small ball lands EXACTLY on the drawn ¼
+  gridline as the big one touches the floor trailing 7 even strobe rungs;
+  weight-∝R³ vs drag-∝R bars carry the why; `size ×2.0 → speed ×4.0` computed.
+
+- **PressureOff panes**: contrast VERIFIED — upper stripes bow around the disc,
+  lower stripes drive straight through into a huge violet plume. But reading
+  the meters caught a REAL INVERSION: the honest pane reported 6.5% of cells
+  vs the broken pane's 3.3% — the fraction-over-floor statistic measures
+  SPREAD (diffuse Jacobi residual trips it in more cells than the concentrated
+  plume). FIXED same day: meter now reports mean |∇·u| per fluid cell ("% of a
+  cell's volume each second"), which orders correctly by magnitude; wreck
+  threshold re-based (WRECK_MEAN 0.06). Ordering re-verify owed on screen.
+
+NOT YET EYEBALLED (classifier outage interrupted the pass — resume here):
+PressureOff meter ordering after the metric fix, BoundaryLayerLoupe (profile +
+rear-shoulder reversal + nonzero drag), PoiseuillePipe (two pipes, 16:1
+columns), ReynoldsTube (Re_c tick + direct/sinuous lamp + eruption within ~2 s),
+PascalMountain (air column aligned to mercury; ~85 mm at 1465 m), BuoyancyCrown
+(arrows persist at rest), BernoulliPipe (bulge gauge rises), CorpuscleHail (no
+upstream strays; 1687 shadow-wedge emptiness also still unconfirmed),
+WhorlsCascade (children RIDE the parent ring), MolecularSprings (kick cycle +
+bond strokes), SoundRace, TermStack muted-unborn state, and knob-to-both-ends
+on everything listed. Then the editorial read, then publish.
 
 ## What is left (in order)
 

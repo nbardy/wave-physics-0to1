@@ -91,37 +91,26 @@ function gridFor(paneW: number, paneH: number): Grid {
   }
 }
 
-// THE METER's floor. `div` here is ∂u/∂x + ∂v/∂y on a unit cell, so its units
-// are 1/s: a cell reading 0.22 is gaining or losing 22% of its own volume every
-// second. That floor is 1% of the inflow speed, and it sits just ABOVE the
-// point where SolverRenderer's divergence overlay saturates (|div| = 1/6 ≈
-// 0.167), so every cell the meter counts is unambiguously violet on screen. The
-// meter therefore under-reports what the eye sees; it never over-reports.
-const DIV_FLOOR = 0.01 * INFLOW
-
-// "Wrecked" = this fraction of fluid cells over the floor in the lower pane.
-// Reasoned, not measured: without projection the stream cannot get out of the
-// disc's way, so the compression front spreads from the face over roughly the
-// disc's frontal band and its wake — of order a tenth of the channel by the
-// time the pile-up is obvious. 18% is comfortably past "a few violet pixels"
-// and comfortably short of "the whole pane is violet", which would mean the
-// reader missed the interesting part.
-const WRECK_FRAC = 0.18
+// THE METER — mean |∇·u| per fluid cell, displayed as "% of its volume per
+// second" (div is 1/s on a unit cell, so ×100 is exactly that).
+//
+// MEASURED LESSON (reader pass, 2026-07-29): the first version reported the
+// FRACTION OF CELLS whose |div| cleared a floor — a spread statistic — and it
+// read BACKWARDS: the projected pane's 40-sweep Jacobi residual is diffuse
+// low-grade noise that tripped the floor in 6.5% of cells, while the broken
+// pane's violation, though enormous, is CONCENTRATED in the plume around the
+// disc (3.3% of cells). The honest pane out-scored the broken one and the
+// number argued against the figure. Magnitude, not spread, is what differs
+// between the panes, so the meter now averages |div| itself: the concentrated
+// plume dominates the mean, the diffuse residual stays small, and the ordering
+// matches what the violet shows.
+const WRECK_MEAN = 0.06 // lower-pane mean |div| (1/s) that counts as wrecked —
+// ~6% of cell volume/s averaged over the WHOLE pane is a huge concentrated
+// crime; retune to just under the observed plateau if the cap keeps firing.
 // A hard cap on one demonstration cycle, so the birth of the catastrophe is on
-// screen for a reader arriving mid-scroll even if WRECK_FRAC is mistuned. A
+// screen for a reader arriving mid-scroll even if WRECK_MEAN is mistuned. A
 // parcel crosses the channel in nx/INFLOW ≈ 9 s, so 12 s is ~1.4 crossings.
 const MAX_RUN = 12
-
-// TODO(browser): DIV_FLOOR, WRECK_FRAC and RE above were all chosen from the
-// physics and the overlay's saturation point, NOT from measurement — there is
-// no dev server in the environment this was written in. Open the figure, read
-// the two live meters, and retune these numbers TO the measurement rather than
-// the other way round. Specifically: (1) if the upper pane's residual reads
-// above ~1% of cells, the meter floor is below the Jacobi noise and should
-// rise; (2) if the lower pane plateaus below 18% the cap fires instead of the
-// threshold and WRECK_FRAC should come down to just under the plateau; (3) if
-// the UPPER wake sheds instead of sitting steady, drop RE toward 30 —
-// CylinderFlow measured a fully steady, symmetric wake at Re 20.
 
 const INK = 'rgba(26,31,43,0.75)'
 const LABEL_FONT = '600 12px ui-sans-serif, system-ui'
@@ -166,27 +155,27 @@ function makePane(spec: PaneSpec, g: Grid): Pane {
   return { spec, solver, renderer: new SolverRenderer(solver), frac: 0 }
 }
 
-/** Fraction of FLUID cells whose |div| clears the floor. */
-function wreckedFraction(s: FluidSolver): number {
+/** Mean |∇·u| over the FLUID cells — magnitude, not spread (see METER note). */
+function meanAbsDiv(s: FluidSolver): number {
   let fluid = 0
-  let bad = 0
+  let sum = 0
   for (let j = 1; j < s.ny - 1; j++) {
     for (let i = 1; i < s.nx - 1; i++) {
       const k = s.idx(i, j)
       if (s.solid[k]) continue
       fluid++
-      if (Math.abs(s.div[k]) > DIV_FLOOR) bad++
+      sum += Math.abs(s.div[k])
     }
   }
-  return bad / fluid
+  return sum / fluid
 }
 
 /**
- * The projected pane will NOT read 0%. Forty Jacobi sweeps leave a residual,
+ * The projected pane will NOT read 0. Forty Jacobi sweeps leave a residual,
  * and the figure reports it instead of rounding it away to a comforting zero.
  */
-function pct(frac: number): string {
-  const p = frac * 100
+function pct(meanDiv: number): string {
+  const p = meanDiv * 100
   if (p >= 10) return p.toFixed(0)
   if (p >= 1) return p.toFixed(1)
   if (p > 0 && p < 0.01) return '<0.01'
@@ -221,7 +210,7 @@ function createPressureOff(width: number, height: number): Stepper {
       // pane never projects at all, so its `div` is stale for the opposite
       // reason — same fix. CylinderFlow.tsx does this too.)
       pane.solver.computeDivergence()
-      pane.frac = wreckedFraction(pane.solver)
+      pane.frac = meanAbsDiv(pane.solver)
     }
   }
 
@@ -229,7 +218,7 @@ function createPressureOff(width: number, height: number): Stepper {
   const runRunning = (): Phase => {
     advanceBoth()
     elapsed += FIXED_DT
-    const wrecked = panes[1].frac >= WRECK_FRAC || elapsed >= MAX_RUN
+    const wrecked = panes[1].frac >= WRECK_MEAN || elapsed >= MAX_RUN
     return wrecked ? { kind: 'wrecked', since: 0 } : { kind: 'running' }
   }
 
@@ -275,7 +264,7 @@ function createPressureOff(width: number, height: number): Stepper {
     ctx.fillStyle = INK
     ctx.fillText(pane.spec.label, 10, 18)
     ctx.fillStyle = pane.spec.meterColor
-    ctx.fillText(`fluid created or destroyed: ${pct(pane.frac)}% of cells`, 10, paneH - 10)
+    ctx.fillText(`fluid created or destroyed: ${pct(pane.frac)}% of a cell's volume each second`, 10, paneH - 10)
     ctx.restore()
   }
 

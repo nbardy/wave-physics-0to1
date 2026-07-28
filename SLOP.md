@@ -180,9 +180,30 @@ it says.** The reader should meet the demonstration before the theory without be
 told that demonstrations come before theory. Test: delete the sentence and name what
 the reader lost — if the loss is a fact about our construction process rather than
 about the subject, it was a stage direction, and stage directions are delivered by
-the staging. Boundary: the confession device stays. Confessing a lie *in the figure*
-("I've slowed time enormously") is house honesty; narrating the *design* ("this
-figure is here because…", "honesty requires showing you") is this family.
+the staging. Boundary: the confession device stays — as an act, and rationed by family 19.
+Confessing a lie *in the figure* ("I've slowed time enormously") is house honesty;
+narrating the *design* ("this figure is here because…", "honesty requires showing
+you") is this family.
+
+**19. The canned device (self-pastiche, "canned cornism").** Flagged 2026-07-29 on
+the lesson-02 surprise audit: "confess/confession" ran roughly ten times ("a
+confession at the dial," "one wink from the dial," "one representation upgrade,
+confessed"), and lesson 01's "crime" conceit ran seven. The move: a device invented
+once for genuine effect — a confession, a crime scene, a wink — gets redeployed as a
+refrain until the article is performing its own greatest hit. Family 11 is wearing
+*another* author's tics; this is wearing your own. The damage is specific: the reader
+starts predicting the device, and a predictable honesty-move reads as shtick — the
+exact opposite of the honesty it was coined to carry. The tell is templating: when
+the device has hardened into a caption *format* ("A confession at the dial", "One
+wink from the dial"), content is being poured into the device instead of the device
+arising from the content. The rule: **a coined device gets one deployment at full
+strength, one echo if the echo is a payoff, and then it retires.** A long-range
+callback that cashes a planted debt ("nothing takes a cut" → "something takes a
+cut") is engineering, not recurrence — a payoff *completes* something; a refrain
+merely repeats it. Test: if a reader who finished the article could parody the
+device, it went canned. Count is evidence, not verdict — two identical caption
+frames can already be a template, and seven crime-scene beats might survive if each
+advances the case; judge whether instance N still surprises anyone.
 
 ---
 

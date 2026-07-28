@@ -315,7 +315,13 @@ article:
 order.** No rebrand posing as a reveal; no suspects erected to be executed. SLOP.md
 families 16–17 carry the tests.
 
-The full taxonomy — 15 slop families, the four detection tests, and the real
+Third incident (2026-07-29), flagged on the lesson-02 surprise audit: the confession
+device — invented honestly, then run ~10 times ("a confession at the dial," "one wink
+from the dial") until it hardened into a caption format. Nick: kill the "canned
+cornism." A coined device gets one full-strength deployment, one echo if the echo is
+a payoff, then it retires. SLOP.md family 19 carries the test.
+
+The full taxonomy — 19 slop families, the four detection tests, and the real
 before/after pairs from this repo's de-slop commits — lives in **`SLOP.md`**.
 
 ---
