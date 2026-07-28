@@ -52,6 +52,20 @@ screenshot comes back blank, check `document.visibilityState` before believing
 any of it** — several intermediate readings this session were photographs of
 stale frames.
 
+**Hanging work, in priority order (thread closed 2026-07-06):**
+1. Run `/figure-audit` on lesson 01 in a session with a visible Browser pane —
+   it operationalizes exactly what this session's play-test caught (reader
+   questions, prose↔figure binding, every knob to both ends). Priority
+   figures: AdvectionSchemes and DyeCarry (rebuilt blind), WingFlow hero
+   (drag down AND back up), CylinderFlow regime.
+2. Automate the pure-diffusion check as a /stack-check invariant
+   (GpuParityCheck check D): velocity top-hat, 1 s, σ vs sqrt(2νt) at both
+   ends of each slider's ν range. It would have caught the diffusion bug
+   before publish, and guards every future viscosity slider.
+3. Real-device mobile pass (shipped limitation: rotation stretches canvases).
+4. Sibling-thread items unchanged: lesson 02/03 captions call, lesson 02
+   Final Words rewrite, lesson 03 browser QA.
+
 Everything below is the pre-publish state, kept for archaeology.
 
 ---
