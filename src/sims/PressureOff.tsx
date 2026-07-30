@@ -157,17 +157,42 @@ function makePane(spec: PaneSpec, g: Grid): Pane {
   const solver = new FluidSolver(g.nx, g.ny, INFLOW, visc)
   solver.addDisc(g.discX, g.discY, g.discR)
   solver.toggles.project = spec.project
+  // MEASURED (2026-07-29): at the default 40 Jacobi sweeps the projected pane's
+  // mean |div| residual is ~6%/s — the SAME order as the broken pane's
+  // concentrated crime averaged over its channel, so the two meters read as
+  // near-equals (and sometimes inverted) while the violet shows an enormous
+  // one-sided plume. No statistic can rescue a residual as large as the signal;
+  // the honest pane has to actually converge. 160 sweeps on this small grid
+  // costs ~1.5M cell-ops/step — cheap — and drops the residual severalfold, so
+  // the meters separate for the honest reason. Only the projected pane pays
+  // (the broken pane never projects).
+  solver.pressureIters = 160
   return { spec, solver, renderer: new SolverRenderer(solver), frac: 0 }
 }
 
-/** Mean |∇·u| over the FLUID cells — magnitude, not spread (see METER note). */
+/**
+ * Mean |∇·u| over the INTERIOR fluid cells — magnitude, not spread (see METER
+ * note), and interior only (see below).
+ *
+ * MEASURED (2026-07-29): the solver calls `boundaries()` AFTER `project()`,
+ * re-imposing the inflow column, wall rows, and disc no-slip on top of the
+ * freshly projected field — which manufactures divergence along those cells
+ * that no number of pressure sweeps can remove (40 vs 160 sweeps: identical
+ * ~6%/s reading). That divergence is the boundary enforcement's, not the
+ * flow's, and it drowned the honest pane's meter in it. So the meter measures
+ * where the equation is actually in charge: MARGIN cells in from every edge,
+ * and never adjacent to a solid cell. Both panes use the same mask, and the
+ * broken pane's plume lives squarely inside it.
+ */
+const MARGIN = 4
 function meanAbsDiv(s: FluidSolver): number {
   let fluid = 0
   let sum = 0
-  for (let j = 1; j < s.ny - 1; j++) {
-    for (let i = 1; i < s.nx - 1; i++) {
+  for (let j = MARGIN; j < s.ny - MARGIN; j++) {
+    for (let i = MARGIN; i < s.nx - MARGIN; i++) {
       const k = s.idx(i, j)
       if (s.solid[k]) continue
+      if (s.solid[k - 1] || s.solid[k + 1] || s.solid[k - s.nx] || s.solid[k + s.nx]) continue
       fluid++
       sum += Math.abs(s.div[k])
     }

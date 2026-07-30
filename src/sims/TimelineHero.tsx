@@ -279,10 +279,23 @@ function createEuler(): Stepper {
 // FluidSolver at the era's Re, fed by the eight-row lesson-01 dye stripe. The Re
 // is the whole difference — honey ooze at 4, attached recirculation at 45, a
 // shedding street at 140 — and the stripe is what makes that difference visible.
+// PRE-ROLL (reader pass, 2026-07-29): a solver era starts from still, empty
+// water, and dye needs NX/INFLOW ≈ 6.5 s to cross the channel — so without a
+// warmup, every slider move showed a gray blob in an empty pane for seconds and
+// a reader reasonably concluded the era was broken. Same cure as the lesson-01
+// hero (WingFlow's 480-step pre-roll): run the era to a developed state inside
+// create(), so the FIRST painted frame is already flowing. ~300 steps ≈ 7.5 s
+// of sim time, a one-off ~100–200 ms cost on era switch.
+const PREROLL_STEPS = 300
+
 function createStripeEra(re: number): Stepper {
   const solver = new FluidSolver(NX, NY, INFLOW, viscForRe(re))
   solver.addDisc(DISC_CX, DISC_CY, DISC_R)
   const renderer = new SolverRenderer(solver)
+  for (let n = 0; n < PREROLL_STEPS; n++) {
+    solver.injectDyeStripe(DYE_ROWS, 1)
+    solver.step(FIXED_DT)
+  }
   let acc = 0
   return {
     step(dt) {
@@ -335,8 +348,13 @@ function createPrandtl(): Stepper {
   const solver = new FluidSolver(NX, NY, INFLOW, viscForRe(RE_PRANDTL))
   solver.addDisc(DISC_CX, DISC_CY, DISC_R)
   const renderer = new SolverRenderer(solver)
-  let acc = 0
   let cd = 0 // EMA — the wake sheds, so the raw reading jitters
+  for (let n = 0; n < PREROLL_STEPS; n++) {
+    solver.injectDyeStripe(PRANDTL_WALL_ROWS, 1)
+    solver.step(FIXED_DT)
+    cd += (wakeDrag(solver) - cd) * 0.05
+  }
+  let acc = 0
   return {
     step(dt) {
       acc += dt

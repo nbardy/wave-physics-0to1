@@ -76,13 +76,25 @@ function createLoupe(loupeRef: { current: LoupeState }): Stepper {
   let emaPrimed = false
 
   const computeDrag = () => {
-    // Drag = ∮ p n̂·x̂ ds over the obstacle surface. Sign convention: the fluid's
-    // pressure pushes on the solid in the −n̂ direction, so the streamwise force
-    // on the body is −Σ p·n̂ₓ·(face length). Face length = 1 cell (h = 1).
-    // Downstream (+x) push is positive.
+    // Drag = ∮ p n̂·x̂ ds over the obstacle surface, downstream (+x) positive.
+    //
+    // TWO BUGS FIXED HERE (reader pass, 2026-07-29 — the meter read −0.029,
+    // i.e. "still zero, and backwards", under the very paragraph whose payoff
+    // is that the meter finally moves):
+    // 1. SIGN. `f.nx` as constructed above points from FLUID INTO SOLID
+    //    (fluid cell with solid at k+1 gets nx=+1). The body's outward normal
+    //    is the negation, so the streamwise force on the body is
+    //    +Σ p·f.nx — the old code carried the −Σ of the textbook formula on
+    //    top of the already-negated normal and computed the force on the
+    //    fluid instead.
+    // 2. UNITS. `solver.p` is the projection potential of a Stable Fluids
+    //    step: the update is u −= ∇p with no dt, so p carries a factor of dt
+    //    inside it — physical pressure is p/FIXED_DT. Without it the meter
+    //    under-read by 40× and printed 0.029 where the flow's true
+    //    coefficient is order 1.
     let fx = 0
     for (const f of faces) {
-      fx += -solver.p[f.k] * f.nx
+      fx += (solver.p[f.k] / FIXED_DT) * f.nx
     }
     // normalize by ½ρU²·(2R) → an order-1 drag coefficient
     const norm = 0.5 * RHO * INFLOW * INFLOW * (2 * DISC_R)
@@ -226,7 +238,19 @@ function createLoupe(loupeRef: { current: LoupeState }): Stepper {
         const tang = uu * tdx + vv * tdy
         const baseY = yOf(rCells)
         const raw = (tang / VEL_REF) * LEN_MAX
-        const len = Math.max(-LEN_MAX, Math.min(LEN_MAX, raw))
+        let len = Math.max(-LEN_MAX, Math.min(LEN_MAX, raw))
+        // REVERSED flow is drawn in pressure-red and given a legible minimum
+        // length. Direction is a SIGN, not a magnitude: in the separated region
+        // behind the disc the backflow is real but slow, and at an honest
+        // linear scale its arrows were sub-pixel — the reversal the prose
+        // points at was invisible. The color flip and the length floor amplify
+        // the sign only; magnitude is still the (clamped) linear scale, and
+        // truly-zero flow (|tang| below the wall threshold) still draws
+        // nothing. Confessed display choice, same spirit as exaggerated shear.
+        const reversed = tang < -0.02 * VEL_REF
+        if (reversed && len > -6) len = -6
+        ctx.strokeStyle = reversed ? PALETTE.pHi : PALETTE.vel
+        ctx.fillStyle = reversed ? PALETTE.pHi : PALETTE.vel
         tips.push([baseX + len, baseY])
         ctx.beginPath()
         ctx.moveTo(baseX, baseY)

@@ -397,8 +397,11 @@ answer is the stress tensor. Drag a face of the fluid element below:
 
 Drag one face and all four answer. The sideways drag you apply to the top must be
 matched by sideways drags on the *vertical* faces — the matrix stays symmetric —
-because an element with unbalanced twists would spin itself up infinitely fast as
-it shrank. That object — nine numbers at every point, describing every possible
+and the two ghosts beside it show what the symmetry is protecting you from. Their
+$\sigma_{yx}$ is pinned at zero, so the couple on them is unbalanced, and they
+spin — the smaller one faster, because torque shrinks with a parcel's volume while
+its resistance to turning shrinks faster still. Follow that to an infinitesimal
+parcel and the spin rate diverges. That object — nine numbers at every point, describing every possible
 internal push — is the container into which you can drop *any* material's law:
 steel, honey, water, air. Cauchy built the container; the fluid law is one thing
 you can put in it.
@@ -536,10 +539,12 @@ and how the exactness of the cancellation depended on nothing taking a cut. Insi
 the sliver, something takes a cut. The water there has been rubbing against the
 wall the whole way around, and it arrives at the shoulder already short of speed —
 too short to climb back up to the tail's high pressure. It makes it partway up the
-hill, stalls, and is shoved backwards by the pressure it failed to climb. Park the
-loupe on the rear shoulder and watch the near-wall arrows *reverse*. With the flow
-behind it now running the wrong way, the layer lifts clean off the surface and
-peels into the wake.
+hill, stalls, and is shoved backwards by the pressure it failed to climb. Hunt
+with the loupe along the back of the disc: wherever the near-wall flow is running
+the wrong way, its arrow flips and turns red. The backflow lives in a thin,
+shifting strip — that is the whole point of it having gone unfound for a century
+and a half — but where it holds, the layer lifts clean off the surface and peels
+into the wake.
 
 Once the layer has left the wall, the tail never gets its red lobe. The nose is
 still shoved downstream at full pressure and there is nothing on the back pushing

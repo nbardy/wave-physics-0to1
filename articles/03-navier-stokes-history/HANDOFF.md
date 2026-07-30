@@ -76,16 +76,42 @@ VERIFIED WITH EYES (fd14a83 fixes confirmed on screen):
   cell's volume each second"), which orders correctly by magnitude; wreck
   threshold re-based (WRECK_MEAN 0.06). Ordering re-verify owed on screen.
 
-NOT YET EYEBALLED (classifier outage interrupted the pass — resume here):
-PressureOff meter ordering after the metric fix, BoundaryLayerLoupe (profile +
-rear-shoulder reversal + nonzero drag), PoiseuillePipe (two pipes, 16:1
-columns), ReynoldsTube (Re_c tick + direct/sinuous lamp + eruption within ~2 s),
-PascalMountain (air column aligned to mercury; ~85 mm at 1465 m), BuoyancyCrown
-(arrows persist at rest), BernoulliPipe (bulge gauge rises), CorpuscleHail (no
-upstream strays; 1687 shadow-wedge emptiness also still unconfirmed),
-WhorlsCascade (children RIDE the parent ring), MolecularSprings (kick cycle +
-bond strokes), SoundRace, TermStack muted-unborn state, and knob-to-both-ends
-on everything listed. Then the editorial read, then publish.
+READER PASS COMPLETED 2026-07-30 (agent-browser headless — classifier-free;
+sims run live there, no pump harness needed). Every figure eyeballed; verdicts:
+PascalMountain (675 mm / 85 mm drop at 1465 m, air bar aligned to mercury) ·
+BuoyancyCrown (0.50×water stacked over 50% submerged, arrows at rest) ·
+Barometer · SoundRace (both fronts labeled, Laplace footnote) · CorpuscleHail
+(ideal-flow ghost underlay, clean shadow) · BernoulliPipe (see-saw: throat
+−3.94 / bulge +0.60) · MolecularSprings (bonds + straight-line equilibrium) ·
+PoiseuillePipe (counted 121:7 ≈ 17.3:1 → the R⁴ law as column heights) ·
+ReynoldsTube (direct/sinuous lamp flips at the marked Re_c tick; eruption
+within ~4 s) · WhorlsCascade · hero term strip (all plates correct at 1883,
+smoothness permanently blank) — ALL PASS.
+
+FIXED DURING THE PASS (each verified on screen after fixing):
+- PressureOff: meter contrast was throttled by its own wreck threshold, then
+  still inverted — root cause found in solver.step (boundaries() re-imposed
+  AFTER project() manufactures edge divergence no sweep count removes). Meter
+  now measures interior-only mean |div| at 160 sweeps: honest 1.8% vs broken
+  4.3%-and-climbing.
+- BoundaryLayerLoupe: drag meter had the sign INVERTED (face normal built
+  fluid→solid, formula assumed solid→fluid — it reported the force on the
+  fluid) and was 40× too small (solver p is the dt-scaled projection
+  potential). Read −0.029 under the "meter finally moves" paragraph; now reads
+  ≈ +1.13 steady. Reversal made legible: backflow arrows flip RED with a
+  length floor (sign amplified, magnitude honest); prose retuned to "hunt…
+  thin, shifting strip".
+- StressCube: the audit's unfixed breaks-the-teaching item — built the ghost
+  pair (σyx pinned at 0, they spin, smaller faster) so Cauchy's argument is
+  demonstrated, not asserted; prose points at it.
+- TimelineHero: solver eras started from empty water (dye takes ~6.5 s to
+  cross), so every era switch showed a gray blob — Nick hit exactly this.
+  Added the WingFlow-style 300-step pre-roll; era switch now paints developed
+  flow within ~0.7 s (verified).
+
+REMAINING before publish: the editorial read per section, a real-device
+mobile/touch pass, and Nick's publish call. The deployed site predates ALL
+figure fixes — redeploy whenever publish flips.
 
 ## What is left (in order)
 
