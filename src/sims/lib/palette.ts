@@ -21,6 +21,16 @@ export const PALETTE = {
   curv: '#7c3aed', // curvature / holonomy F
   efield: '#dc2626', // electric field (dictionary panes only, §8–9)
   bfield: '#0891b2', // magnetic field (dictionary panes only, §8–9)
+
+  // Maths 01 (articles/maths/01-jacobian-hessian/PLAN.md §Palette) — same role-rhyme:
+  // amber "the thing we watch", blue "the thing that acts", violet "the derived meter".
+  stamp: '#d97706', // the stamp — the amber square we watch, and its image
+  ex: '#2563eb', // the east unit arrow ê₁ and its landing (J's first column)
+  ey: '#059669', // the north unit arrow ê₂ and its landing (J's second column)
+  area: '#7c3aed', // determinant / area receipt / eigen readouts
+  grad: '#db2777', // the gradient arrow(s) on the landscape
+  hi: '#dc2626', // high ground on the landscape
+  lo: '#0891b2', // low ground on the landscape
 } as const
 
 export type PaletteKey = keyof typeof PALETTE
