@@ -71,15 +71,18 @@ The mercury's *vertical* height stays put while the length of the column grows t
 accommodate the tilt. Something is holding the column up, and it doesn't care about
 the tube — Torricelli named it: we live submerged at the bottom of an ocean of air,
 and the column is a scale weighing that ocean. In 1648 Blaise Pascal sent his
-brother-in-law up a mountain with two barometers to check, and the ocean got
-shallower on the way up:
+brother-in-law up a mountain with two barometers to check — one carried to the
+summit, one left at the base with a friar assigned to stare at it all day, so that
+nobody could say the weather had done it — and the ocean got shallower on the way
+up:
 
 <PascalMountain />
 
 The column stands about eight centimeters lower at the summit of the Puy-de-Dôme
-than in the town below, because there is simply less air overhead. Pressure is the
-weight of the fluid above you. So far it is a *static* weight — its second career,
-as the instant enforcer inside moving water, is a century away.
+than in the town below, because there is simply less air overhead; the barometer at
+the base never moved. Pressure is the weight of the fluid above you. So far it is a
+*static* weight — its second career, as the instant enforcer inside moving water, is
+a century away.
 
 And moving water? The best the age could do was look at it very, very carefully.
 Around 1510 Leonardo da Vinci filled notebook pages with the wakes of obstacles in
@@ -138,11 +141,12 @@ against the measured one:
 He came in about fifteen percent low, and knew it, and padded the gap with fudge
 factors about the "crassitude" of air particles. The real error was thermodynamic —
 sound compresses air too fast for the heat to leak away, which stiffens the spring —
-and Laplace corrected it in 1816. The very first act of the fluid story is a wave
-calculation, wrong for a subtle reason — waves and fluids are the same subject
-wearing two hats.
+and Laplace corrected it in 1816. Newton's number stayed wrong for a hundred and
+twenty-nine years.
 
 One more thing happened in 1687 that shaped the next century: the calculus wars.
+When the priority fight came to trial at the Royal Society, the committee's report
+was drafted, anonymously, by its president — Newton, ruling on his own case.
 Britain sided with Newton's notation out of loyalty and clung to it for a hundred
 years, while the Continent ran ahead with Leibniz's. Nearly everything in the next
 four sections is therefore Swiss and French. Britain rejoins the story late.
@@ -182,8 +186,8 @@ curves in space:
 
 <StringSection stage="string" />
 
-This is the founding object of the entire wave-physics course, and the date
-matters: the PDE was invented *for a wave*, a decade before fluids got theirs.
+The instrument was built *for a wave*: the string got its equation a decade before
+fluids got theirs.
 
 It also started a thirty-year fight, and the fight was over what a *solution* even
 is. D'Alembert held that the string's starting shape had to be expressible as a
@@ -194,8 +198,7 @@ you can draw. Daniel Bernoulli said both were making it hard — every motion a
 string can perform is a sum of its pure modes, the fundamental plus its harmonics,
 and nothing else. Each of the three was partly right, none could finish the
 argument, and it outlived all of them; Fourier settled it two generations later by
-showing that Bernoulli's sums of modes can build Euler's hand-drawn curves. The
-instrument was contentious from the day it was made.
+showing that Bernoulli's sums of modes can build Euler's hand-drawn curves.
 
 Then the Berlin Academy asked a question that looked much easier. Its 1749 prize
 called for the resistance of a body moving through a fluid — the practical problem
@@ -330,8 +333,9 @@ bridges — star engineer of the École des Ponts et Chaussées, editor of the s
 construction manuals of France — and his career carried an engineer's scars. His
 showcase project, a radical suspension bridge over the Seine at the Invalides,
 cracked at an anchorage when a water main burst in 1826, and was dismantled to
-public mockery, and a review committee reproached him for having relied *too much
-on mathematics*. His closest teacher and lifelong friend
+public mockery — the papers called him "that eminent man of science whose
+calculations fail in Paris" — and a review committee reproached him for having
+relied *too much on mathematics*. His closest teacher and lifelong friend
 was Fourier, the man who wrote the mathematics of heat.
 
 On the 18th of March, 1822, Navier read a memoir to the Académie des Sciences in
@@ -400,12 +404,23 @@ steel, honey, water, air. Cauchy built the container; the fluid law is one thing
 you can put in it.
 
 Poisson re-derived the equation in 1829 by his own molecular route, compressibility
-included, satisfied with nobody else's foundations. Saint-Venant derived it in 1837
+included, satisfied with nobody else's foundations — and said so in print. In the
+polemic that ran through the Annales de Chimie, his sharpest shot went at the
+foundations: Navier's own assumptions, taken seriously, give a solid with zero
+elasticity — a material that could not hold a shape. Navier answered that
+it was he who had "conceived the idea of a new question," and that all this new
+talk of rigor was a way of belittling the man who asked it.
+
+Saint-Venant derived it in 1837
 the modern way — internal stress proportional to the local rate of shearing
 strain, the reading you'd give it today — published in 1843, two years ahead of
 Stokes, and was the only man in the parade who carefully credited everyone else.
-For this he received nothing: the equation is named for the first and the last of
-its five discoverers. Eponymy is a lottery, and citing your rivals buys no tickets.
+He was also the one who defended Navier's bridge in print — the failure, he wrote,
+was one misjudged force on one stone, the kind of oversight fixed on site, and the
+dismantling was the work of a "spirit of denigration... of science, disparaged
+under the name of theory opposed to practice." For all of it he received nothing:
+the equation is named for the first and the last of its five discoverers. Eponymy
+is a lottery, and citing your rivals buys no tickets.
 
 Last, 1845: George Gabriel Stokes, in Cambridge — the first generation of
 Cambridge mathematicians retrained in the Continental calculus, a century of
@@ -414,8 +429,8 @@ conclusions but distrusting every molecular story in it, he re-derived the equat
 from continuum assumptions alone: no molecules, just smoothness, symmetry, and the
 requirement that internal friction depend linearly on the rate of deformation.
 That derivation is the one in every textbook since. And then Stokes did the thing
-that separates a formula from a law: he made it *earn money*. His analysis of a
-sphere sinking through viscous fluid gave a clean, checkable prediction —
+that separates a formula from a law: he staked it on a measurement. His analysis of
+a sphere sinking through viscous fluid gave a clean, checkable prediction —
 $F = 6\pi\mu R U$ — and the pendulum data of the age matched it. Two steel balls,
 each in its own column of honey, are released together below; the slider shrinks
 the second one:
@@ -482,14 +497,14 @@ $$Re = \frac{UL}{\nu}$$
 
 The slider under the tube is showing you its own value; the christening came later,
 when Sommerfeld called it the *Reynolds number* in a 1908 lecture, and the name
-stuck. There is a quiet passing of torches in this scene: the referee who handled
-Reynolds's paper at the Royal Society was Stokes — sixty-four years old, the man
-whose own pendulum memoir had carried the number in embryo three decades earlier.
+stuck. The referee who handled Reynolds's paper at the Royal Society was Stokes —
+sixty-four years old, the man whose own pendulum memoir had carried the number in
+embryo three decades earlier.
 
 Reynolds also saw what the eruption meant for the mathematics, and in 1895 he made
 the move the field still leans on: split the velocity into a mean and a
 fluctuation, $\mathbf{u} = \bar{\mathbf{u}} + \mathbf{u}'$, and average the
-equation. Read that split honestly: above the threshold, we stop computing the
+equation. The split is a concession: above the threshold, we stop computing the
 flow and start computing its *statistics*.
 
 So by 1900 the ledger stood like this: the equation verified, the referee number
@@ -531,7 +546,7 @@ still shoved downstream at full pressure and there is nothing on the back pushin
 the other way — so the books do not balance, and the meter, zero since 1752 in this
 article and zero since 1752 in history, finally moves.
 
-Read the resolution precisely, because it is stranger than "d'Alembert was wrong."
+The resolution is stranger than "d'Alembert was wrong."
 He wasn't. His theory is *correct* almost everywhere — everywhere but a sliver —
 and the sliver sets the drag for the whole flow. The paradox was never an error to
 be refuted; it was an error of *where to look*.
@@ -567,18 +582,33 @@ whirls, and so on to viscosity.*
 
 Energy enters at the largest eddies, cascades down through generations of smaller
 ones, and dies in the smallest, where the green term finally eats it. That picture
-became quantitative in 1941, when Kolmogorov proved that deep in the cascade the
-statistics forget everything about how the stirring started — cup of coffee or
-interstellar gas cloud, the middle of the cascade runs on one universal exponent.
-The result is a postcard here — admired, not derived. (Turbulence attracted that kind of
-admirer: Werner Heisenberg's doctoral thesis, under Sommerfeld in 1923, was on
+became quantitative on the eve of the war. Kolmogorov's three short papers reached
+the Doklady between the 28th of December, 1940 and the last day of April, 1941;
+eight weeks after the third, the Wehrmacht crossed the border and the Academy was
+evacuated east. The claim inside them: deep in the cascade, the statistics forget
+how the stirring started. Coffee spoon or storm front, by the middle generations
+the energy is shared out among eddy sizes by one rule — the −5/3 power law,
+written against the eddies' wavenumber (the spectrum form cast that same year, in
+the same Moscow school, by his student Obukhov).
+
+For twenty years that exponent lived on paper. Then a Canadian team towed a
+hot-film probe through Discovery Passage, a tidal channel in British Columbia
+where the sea runs at up to fifteen knots and the Reynolds number reaches
+280,000,000 — three orders of magnitude past any laboratory.
+The eddies were larger than the 217-foot ship, which spent the runs being carried
+about by the thing it was measuring. The 1962 spectra track −5/3 across decades of
+wavenumber. A rule written at a Moscow desk from a dimensional argument, holding
+in a tidal channel on the far side of the world. (Turbulence attracted that kind
+of mind: Werner Heisenberg's doctoral thesis, under Sommerfeld in 1923, was on
 exactly this problem — the man who made uncertainty a principle warmed up on the
 equation that still keeps one.)
 
 While the physicists climbed into the cascade, a French mathematician quietly asked
-the question underneath all of it. The equation predicts; laboratories confirm;
+the question underneath all of it. Jean Leray worked on it, the story goes, leaning
+over the parapet of the Pont Neuf, watching the Seine shear past the piers. The
+question he brought back to his desk: the equation predicts; laboratories confirm;
 but does it actually *promise* an answer — does a smooth flow, evolved by
-Navier–Stokes, stay smooth? In 1934 Jean Leray proved the guarantee that could be
+Navier–Stokes, stay smooth? In 1934 he proved the guarantee that could be
 proven: solutions exist forever if you let them be rough. He named his objects
 *turbulent solutions* — a mathematician's warning shot, aimed at the possibility
 that the equation's own solutions might tear. (His tools were as prophetic as his
@@ -586,17 +616,18 @@ theorem: he built his weak derivatives years before the function spaces that now
 hold them existed. At its birth this equation forced the invention of PDEs; in its
 old age it forced the invention of the analysis used to study it.)
 
-Olga Ladyzhenskaya later fenced off the flat world: in two dimensions — the world
-of every figure in this article — smoothness holds, uniqueness holds, the theory is
-clean. Every difficulty lives in the third dimension, where vortex lines can
-stretch. Whether three-dimensional solutions always stay smooth is, as of this
-sentence, unknown. In May 2000 the Clay Mathematics Institute named it one of
-seven Millennium Prize Problems — the confession you first met at the end of the
-previous lesson, now with a date, a bounty, and a problem statement four pages
-long. The strongest recent evidence cuts the wrong way for optimists: in 2016
-Terence Tao showed that a slightly averaged cousin of the equation *does* blow up
-in finite time. Whatever protects the real equation — if anything does — is
-something subtler than anything yet written down.
+Olga Ladyzhenskaya — taught mathematics by her father, a schoolteacher the NKVD
+shot in 1937, and barred for his sake from Leningrad University — later fenced off
+the flat world: in two dimensions, the world of every figure in this article,
+smoothness holds, uniqueness holds, the theory is clean. Every difficulty lives in
+the third dimension, where vortex lines can stretch. Whether three-dimensional
+solutions always stay smooth is, as of this sentence, unknown. In May 2000 the
+Clay Mathematics Institute named it one of seven Millennium Prize Problems — the
+same open question the previous lesson ended on, now with a date, a bounty, and a
+problem statement four pages long. The strongest recent evidence cuts the wrong
+way for optimists: in 2016 Terence Tao showed that a slightly averaged cousin of
+the equation *does* blow up in finite time. Whatever protects the real equation —
+if anything does — is something subtler than anything yet written down.
 
 Richardson's hall of sixty-four thousand computers, though — that part got built.
 
@@ -634,23 +665,17 @@ waiting on us to finish the article. It is waiting on mathematics.
 
 ## One Skeleton, Twice Built
 
-Set this article's timeline next to the previous article's table of contents and
-an odd thing appears: they are almost the same list. The previous lesson taught you
-the field, then advection, then viscosity, then pressure, then the constraint, then
-the solver — because at each stage the naive version failed in front of your eyes
-and the fix became the next section. History ran the same ladder — field and
-pressure and constraint in 1757, viscosity in 1822, the solver in 1965–1999 —
-because history had no other engine either. Euler answered d'Alembert's absurdity;
-Navier answered Euler's honey-equals-water; Prandtl answered the meter stuck at
-zero; the projection method answered a fluid that computers kept letting pile up.
-Nobody was following a curriculum. The current theory failed in plain sight, and
-the next term was whatever it took to stop lying.
+History never had a syllabus, but it kept a rhythm. Each theory ran until it
+failed in plain sight, and the next term was whatever it took to stop lying.
+Euler answered d'Alembert's absurdity; Navier answered Euler's honey-equals-water;
+Prandtl answered the meter stuck at zero; the projection method answered a fluid
+that computers kept letting pile up. Field, pressure, and constraint in 1757;
+viscosity in 1822; the solver in 1965–1999 — the ladder assembled itself, rung by
+visible failure.
 
-That is also why this wave course was born in this story rather
-than merely near it: the first PDE in physics was d'Alembert's string, invented
-inside the argument this article just told. Navier–Stokes is the parent equation;
-sound, ripples, and every wave in the lessons ahead are its children, small enough
-to be gentle.
+The first PDE in physics was d'Alembert's string, invented inside the argument
+this article just told. Navier–Stokes is the parent equation; sound, ripples, and
+every wave in the lessons ahead are its children, small enough to be gentle.
 
 ## Further Reading
 
@@ -663,10 +688,13 @@ Anderson's *Physics Today* article "Ludwig Prandtl's Boundary Layer" reconstruct
 the Heidelberg ten minutes and their consequences in a dozen readable pages.
 Reynolds's 1883 paper is open access at the Royal Society, and worth the visit: the
 engravings of the dye filament are the figure you just played with, drawn by the
-man who built it. Charles Fefferman's official Clay problem statement says
-precisely what "existence and smoothness" demands, in four careful pages. And Jos
-Stam's *Stable Fluids* — already in the previous lesson's reading list as the paper
-behind the solver — re-enters here under a different aspect: as a primary source.
+man who built it. Grant, Stewart and Moilliet's "Turbulence spectra from a tidal
+channel" (*Journal of Fluid Mechanics*, 1962) reports the Discovery Passage
+measurement in full, spectra and ship-handling both. Charles Fefferman's official
+Clay problem statement says precisely what "existence and smoothness" demands, in
+four careful pages. And Jos Stam's *Stable Fluids* — already in the previous
+lesson's reading list as the paper behind the solver — re-enters here under a
+different aspect: as a primary source.
 
 ## Final Words
 
