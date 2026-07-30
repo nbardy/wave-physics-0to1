@@ -52,19 +52,27 @@ screenshot comes back blank, check `document.visibilityState` before believing
 any of it** — several intermediate readings this session were photographs of
 stale frames.
 
-**Hanging work, in priority order (thread closed 2026-07-06):**
-1. Run `/figure-audit` on lesson 01 in a session with a visible Browser pane —
-   it operationalizes exactly what this session's play-test caught (reader
-   questions, prose↔figure binding, every knob to both ends). Priority
-   figures: AdvectionSchemes and DyeCarry (rebuilt blind), WingFlow hero
-   (drag down AND back up), CylinderFlow regime.
-2. Automate the pure-diffusion check as a /stack-check invariant
-   (GpuParityCheck check D): velocity top-hat, 1 s, σ vs sqrt(2νt) at both
-   ends of each slider's ν range. It would have caught the diffusion bug
-   before publish, and guards every future viscosity slider.
-3. Real-device mobile pass (shipped limitation: rotation stretches canvases).
-4. Sibling-thread items unchanged: lesson 02/03 captions call, lesson 02
-   Final Words rewrite, lesson 03 browser QA.
+**Hanging work — CLOSED OUT 2026-07-20 except the device pass:**
+1. ~~/figure-audit on lesson 01~~ DONE (hidden-tab pump harness; every priority
+   figure screenshot-verified): hero PASSES (nose split, braid, both slider
+   ends, return-trip reseeds in ~5 s after kick 18→30 and decay 0.997→0.9985 —
+   the first responsiveness fix had over-corrected and washed out the braid);
+   AdvectionSchemes PASSES (violet at ~0.1 s in the left pane only, ruin →
+   both panes reseed); DyeCarry PASSES (vortex loop shortened 15→8 s — the
+   spiral fogs out past ~10 s); CylinderFlow regime PASSES (Re 90 steady →
+   Re 400 waver, live label); finale PASSES (on-canvas Re label pays the debt;
+   stir verified with synthetic pointer events). Weak notes, optional: the
+   vortex "spiral" is a winding arc (field speed 0.13 could rise to ~0.2 with
+   re-verification); CylinderFlow regime has no kick-seed parity with the
+   hero, so a fast upward drag answers in waver, not eddies, for ~15 s.
+2. ~~stack-check automation~~ DONE (GpuParityCheck check D, c15cb80) and
+   VERIFIED LIVE 4/4 — plus found and fixed: /stack-check had been left as a
+   temporary gap-figure harness (df8405a), so the invariant checks were
+   mounted nowhere (restored in 2dbe05b).
+3. Real-device mobile pass (shipped limitation: rotation stretches canvases) —
+   still needs Nick's phone; the one item this thread cannot do.
+4. Sibling-thread items now theirs alone: lesson 02/03 captions call,
+   lesson 03 browser QA. (Lesson 02's ending rewrite: done, df8405a.)
 
 Everything below is the pre-publish state, kept for archaeology.
 
