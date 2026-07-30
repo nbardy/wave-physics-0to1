@@ -26,7 +26,9 @@ in this order:
 Article docs live in per-article subfolders: `articles/NN-slug/{DENSE_CORE,PLAN,RESEARCH}.md`
 (DENSE_CORE = the compressed inspiration — thesis, hook, payoff, ranked insights —
 written first; it wins conflicts with later drafts). Per-article handoff state lives
-in `articles/NN-slug/HANDOFF.md`.
+in `articles/NN-slug/HANDOFF.md`. Fully-designed ideas that lost to a better
+candidate go to `articles/CONCEPT_BANK.md` — check it before inventing a hook or
+hero from scratch.
 
 **Each doc owns one thing; principles live in exactly one home.** AGENTS = repo
 mechanics, doc map, cross-thread state. METHODOLOGY = the process and its audits.
