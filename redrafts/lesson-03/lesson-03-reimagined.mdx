@@ -1,0 +1,709 @@
+import { TimelineHero } from '../sims/TimelineHero'
+import { BuoyancyCrown } from '../sims/BuoyancyCrown'
+import { Barometer } from '../sims/Barometer'
+import { PascalMountain } from '../sims/PascalMountain'
+import { DyeCarry } from '../sims/DyeCarry'
+import { ShearBlend } from '../sims/ShearBlend'
+import { CorpuscleHail } from '../sims/CorpuscleHail'
+import { SoundRace } from '../sims/SoundRace'
+import { BernoulliPipe } from '../sims/BernoulliPipe'
+import { StringSection } from '../sims/StringSection'
+import { IdealFlow } from '../sims/IdealFlow'
+import { FlowVis } from '../sims/FlowVis'
+import { TermStack } from '../components/TermStack'
+import { PressureOff } from '../sims/PressureOff'
+import { MolecularSprings } from '../sims/MolecularSprings'
+import { StressCube } from '../sims/StressCube'
+import { FallingSphere } from '../sims/FallingSphere'
+import { PoiseuillePipe } from '../sims/PoiseuillePipe'
+import { ReynoldsTube } from '../sims/ReynoldsTube'
+import { BoundaryLayerLoupe } from '../sims/BoundaryLayerLoupe'
+import { WhorlsCascade } from '../sims/WhorlsCascade'
+import { SolverXray } from '../sims/SolverXray'
+
+# The History of Navier–Stokes
+
+The name reads like a partnership. It wasn't one. Claude-Louis Navier and George
+Gabriel Stokes never met and never corresponded; they worked twenty-three years and
+one Channel apart, and Navier had been dead for nine years when Stokes published.
+The hyphen between them was installed by posterity — and it skips over three other
+men who derived the same equation in between, each convinced the others had done it
+wrong.
+
+If you built the equation in the previous lesson, you own it the way its authors
+never did: you watched each term fail into existence. What you don't yet own is the
+argument — a hundred and sixty years of it — that put those terms on paper. This
+lesson is that argument, staged on the same gray disc in the same stream. The scene
+never changes. The theory drawing it does.
+
+<TimelineHero />
+
+Drag the year and the theory changes its mind: a hail of particles, then a
+frictionless glide, then honey, then eddies, then the trail you know from the
+previous lesson. Under the canvas, the equation assembles as the years pass, each
+term wearing a nameplate. The nameplates travel with us, filling in one at a
+time. The right-hand end of the
+slider is blank. That is not an oversight, and it stays blank to the end.
+
+## Still Water
+
+For its first two thousand years, the mathematics of water only worked when the
+water didn't move. Archimedes settled floating around 250 BC: a body immersed in
+fluid is pushed up by the weight of the fluid it displaces. That single sentence
+still runs shipyards. In the tank below, the slider sets the block's density
+relative to the water's:
+
+<BuoyancyCrown />
+
+The block sinks exactly deep enough for the displaced water to pay for its weight —
+at half the water's density it rides half-submerged, and past the water's density no
+depth is deep enough, so it goes down. Statics gives crisp, exact answers like this,
+and it gives them about *rest* only.
+
+Pressure, too, was born in still fluid. In 1643 Evangelista Torricelli stood a
+closed tube of
+mercury upside down in a dish and watched the column fall to a fixed height,
+leaving a vacuum above it. Tilt the tube below and watch what refuses to change:
+
+<Barometer />
+
+The mercury's *vertical* height stays put while the length of the column grows to
+accommodate the tilt. Something is holding the column up, and it doesn't care about
+the tube — Torricelli named it: we live submerged at the bottom of an ocean of air,
+and the column is a scale weighing that ocean. In 1648 Blaise Pascal sent his
+brother-in-law up a mountain with two barometers to check — one carried to the
+summit, one left at the base with a friar assigned to stare at it all day, so that
+nobody could say the weather had done it — and the ocean got shallower on the way
+up:
+
+<PascalMountain />
+
+The column stands about eight centimeters lower at the summit of the Puy-de-Dôme
+than in the town below, because there is simply less air overhead; the barometer at
+the base never moved. Pressure is the weight of the fluid above you. So far it is a
+*static* weight — its second career, as the instant enforcer inside moving water, is
+a century away.
+
+And moving water? The best the age could do was look at it very, very carefully.
+Around 1510 Leonardo da Vinci filled notebook pages with the wakes of obstacles in
+streams — braided eddies, drawn with an accuracy instruments wouldn't match for
+centuries — and gave the phenomenon its name: *la turbolenza*. Below is the kind of
+motion he was drawing; he could render it, catalogue it, name it — and neither he
+nor anyone else could write one line of mathematics about it:
+
+<DyeCarry field="vortex" />
+
+That is where dynamics stood for two hundred years after Archimedes' heirs perfected
+statics: turbulence had a name three centuries before it had an equation, and four
+before it had a number. A drawing is not a law. The first person to attempt a law
+was also the person who invented what "a law of motion" means.
+
+## Newton's Guess
+
+The *Principia* of 1687 comes in three books, and the second — the one about motion
+through resisting fluids — is the least read and the most wrong. It is also where
+this story properly starts, because buried in it is a one-sentence guess that turned
+out to be exactly right. Newton proposed that the resistance arising from the *want
+of lubricity* between parts of a fluid is proportional to the velocity with which
+those parts are separated from one another. Below, two layers of water slide past
+each other and the quick one hauls the slow one along; the slider thickens the
+fluid from water toward honey:
+
+<ShearBlend />
+
+Stress proportional to the rate of sliding — that is the working definition of an
+ordinary fluid to this day, and it is the physical content of the green term you
+built in the previous lesson. Newton stated it in passing, as a hypothesis, and
+made no attempt to put it inside an equation of motion. It waited a hundred and
+thirty-five years for one.
+
+His actual theory of fluid resistance went differently, and it is worth watching
+fail. Newton computed drag by treating a fluid as a hail of independent particles
+striking the front of the body:
+
+<CorpuscleHail />
+
+The meter reads a perfectly definite drag — Newton could calculate with this model,
+which is why it survived — but look at what the "fluid" is doing. Nothing goes
+*around* the disc. There is no wake, just an empty shadow; the particles never feel
+each other at all. Water is not like this: every parcel leans on its neighbors, and
+pushing one somewhere means the whole neighborhood rearranges. (The corpuscle
+model did eventually come back to life — two and a half centuries later, for
+spacecraft skimming the thin upper atmosphere, where the molecules really don't
+feel each other.)
+
+Newton also made the first prediction in history about a *wave* in a fluid: the
+speed of sound, derived from mechanics alone. The race below runs his number
+against the measured one:
+
+<SoundRace />
+
+He came in about fifteen percent low, and knew it, and padded the gap with fudge
+factors about the "crassitude" of air particles. The real error was thermodynamic —
+sound compresses air too fast for the heat to leak away, which stiffens the spring —
+and Laplace corrected it in 1816. Newton's number stayed wrong for a hundred and
+twenty-nine years.
+
+One more thing happened in 1687 that shaped the next century: the calculus wars.
+When the priority fight came to trial at the Royal Society, the committee's report
+was drafted, anonymously, by its president — Newton, ruling on his own case.
+Britain sided with Newton's notation out of loyalty and clung to it for a hundred
+years, while the Continent ran ahead with Leibniz's. Nearly everything in the next
+four sections is therefore Swiss and French. Britain rejoins the story late.
+
+## The Family Business
+
+The first book with the field's name on it was *Hydrodynamica*, published in 1738
+by Daniel Bernoulli — he coined the word. Its method was bookkeeping: track the
+energy of water flowing through pipes and orifices, and trade speed against
+pressure along the way. Narrow the pipe below and watch the gauges:
+
+<BernoulliPipe />
+
+Where the pipe narrows the markers rush and the gauge drops; where it widens they
+laze and the gauge climbs. Read that as an *observation*, not an explanation — a
+ledger that balances, with no mechanism on offer; the balance is all we need from
+it.
+
+What the book could not do is as important as what it could. An energy ledger along
+a pipe says nothing about water in the open — it cannot tell you what the stream
+around our gray disc *does*, point by point — and it carries no friction at all.
+It also nearly didn't survive its own family. Daniel's father Johann, one of the
+great mathematicians of Europe, published his own treatise, *Hydraulica*, dated it
+1732 — six years before it was actually written — and claimed the subject as his.
+"I am robbed of my entire Hydrodynamica," Daniel wrote to a friend in Saint
+Petersburg, "of which I truly did not owe one iota to my father." The friend was
+Leonhard Euler, who admired them both, and who was about to make the quarrel
+obsolete.
+
+## The Zero
+
+Before anyone could write the law of the open stream, someone had to invent the
+kind of mathematics a law like that would be written in. In 1747 Jean le Rond
+d'Alembert, studying a plucked string, produced the first partial differential
+equation in physics — an equation relating how a shape changes in time to how it
+curves in space:
+
+<StringSection stage="string" />
+
+The instrument was built *for a wave*: the string got its equation a decade before
+fluids got theirs.
+
+It also started a thirty-year fight, and the fight was over what a *solution* even
+is. D'Alembert held that the string's starting shape had to be expressible as a
+single formula — pluck it into a corner, two straight segments meeting at a point,
+and his mathematics refused the shape. Euler thought that absurd: a real string can
+be pulled into any shape a hand can draw, so the mathematics must accept any curve
+you can draw. Daniel Bernoulli said both were making it hard — every motion a
+string can perform is a sum of its pure modes, the fundamental plus its harmonics,
+and nothing else. Each of the three was partly right, none could finish the
+argument, and it outlived all of them; Fourier settled it two generations later by
+showing that Bernoulli's sums of modes can build Euler's hand-drawn curves.
+
+Then the Berlin Academy asked a question that looked much easier. Its 1749 prize
+called for the resistance of a body moving through a fluid — the practical problem
+of the age, the number that decides hull shapes and cannon ranges — worked out for
+the simplest fluid imaginable: no friction, no stickiness, nothing but inertia and
+pressure. That fluid is the one d'Alembert's instrument could actually handle, so
+he took the question and computed. Before you look at what came out, commit to a
+guess.
+
+<Predict
+  question="The stream below is frictionless — the ideal fluid of 1749. How hard does it push the disc downstream?"
+  a="Hard — it's a solid disc in a current"
+  b="Not at all"
+>
+  <IdealFlow />
+</Predict>
+
+The meter is not broken and it is not asserting anything. It integrates the
+pressure over the disc's surface every frame, sorted by which way each patch of
+rim actually shoves: part of the surface is pushed downstream, part of it is
+pulled back upstream, and the two totals match to every decimal the meter can
+print.
+
+Follow one parcel of water through the trip and the cancellation stops being a
+coincidence. The parcel arrives at the nose and is brought to a stop; the crowding
+there is the high pressure you can see in <C k="pHi">red</C>, and the arrows show
+it shoving the disc squarely downstream. Squeezed from behind by that high
+pressure, the parcel then accelerates away around the shoulder, into the
+<C k="pLo">cyan</C> — it has run downhill, spending pressure to buy speed. And now
+it has to get around the back. From the shoulder to the tail the pressure climbs
+again, so the parcel is running uphill, paying its speed back out. Here is the
+part that decides everything: **nothing in this fluid takes a cut.** No friction,
+no stickiness, no stirring, no heat. Every scrap of speed the parcel bought coming
+down the front hill it spends climbing the back one, so it arrives at the tail with
+exactly the speed it had at the nose — and therefore crowds against the tail at
+exactly the pressure it crowded against the nose. The red lobe behind the disc is
+not a coincidence of the geometry. It is the front lobe, rebuilt out of the
+parcel's own returned momentum.
+
+Now look at what that does to the arrows around the rim. The nose is shoved
+downstream and the tail is shoved upstream by patches of water crowding at
+identical pressure. Where the flow runs fastest, over the shoulders, the pressure
+drops below ambient and the water *pulls* instead — and it pulls at the front
+shoulders and the rear shoulders equally hard, in opposite directions. Every patch
+of that surface has a twin on the far side of the disc doing the opposite job with
+the same strength. The whole rim is a mirror, and the disc goes nowhere. A ship in
+this water needs no sails.
+
+D'Alembert knew the verdict was absurd — the prize question was precisely the
+resistance that every sailor and swimmer feels. Twenty years on he was still
+turning it over: the theory, developed in all possible rigor, gives in several
+cases a strictly vanishing resistance — "a singular paradox," he wrote, "which I
+leave to future Geometers to elucidate." The Academy never awarded the 1749 prize
+to anyone, on the grounds that no entrant had backed the theory with experiment;
+Euler sat among the judges.
+
+Keep your eye on that back hill. Everything in the next hundred and fifty years
+happens on it.
+
+<Waypoint>
+This is everything the year 1752 held: exact statics, an energy ledger for pipes, a
+brand-new mathematics of change invented for a vibrating string — and a proof, by
+the best theory available, that water cannot push back on anything moving through
+it. The zero on that meter is a debt, and this article does not pay it for another
+hundred and fifty-two years.
+</Waypoint>
+
+## Euler's Field
+
+Euler's answer came in a burst of memoirs around 1757, and its deepest move is one
+your hands already know.
+Stop following individual bits of water. Stand still, and ask instead: at *this*
+point, at *this* instant, how fast is the water moving?
+
+<FlowVis mode="arrows" />
+
+This picture — a velocity attached to every point of space, $\mathbf{u}(x, y, t)$ —
+is Euler's invention. So is the second field standing behind it: he took pressure,
+Torricelli's static weight, and set it free to vary from point to point *inside*
+moving water, pushing every parcel from its high side toward its low side. Then he
+wrote Newton's law, force equals mass times acceleration, for an infinitesimal
+parcel carried by the flow — and the pieces you earned one by one in the previous
+lesson snapped together for the first time in history:
+
+<TermStack
+  items={[
+    { kind: 'term', tex: '\\dfrac{\\partial \\mathbf{u}}{\\partial t}', k: 'vel', name: 'Euler', year: '1757', filled: true },
+    { kind: 'sep', tex: '+' },
+    { kind: 'term', tex: '(\\mathbf{u}\\cdot\\nabla)\\,\\mathbf{u}', k: 'dye', name: 'Euler', year: '1757', filled: true },
+    { kind: 'sep', tex: '=' },
+    { kind: 'term', tex: '-\\tfrac{1}{\\rho}\\nabla p', k: 'pHi', name: 'Euler', year: '1757', filled: true },
+    { kind: 'sep', tex: '+' },
+    { kind: 'term', tex: '\\nu\\nabla^{2}\\mathbf{u}', k: 'visc', name: '', year: '', filled: false },
+    { kind: 'sep', tex: '\\quad\\text{with}\\quad' },
+    { kind: 'term', tex: '\\nabla\\cdot\\mathbf{u}=0', k: 'div', name: 'Euler', year: '1757', filled: true },
+  ]}
+/>
+
+Four of the five nameplates fill in at once, all with the same name and year. The
+local change, the self-carrying, the pressure push, the incompressibility
+constraint: all Euler, 1757 — one man's decade. Delete the pressure term and the
+equation forgets the one thing that told the water a disc was there. Below, the
+same channel runs twice from the same still start, with the pressure push kept on
+top and cut underneath:
+
+<PressureOff />
+
+On top the water feels the disc long before it arrives and bows around it —
+pressure is the only term in that line able to send news upstream. Underneath, the
+stream drives in as though nothing were in its way, banks up against the gray, and
+the <C k="div">violet</C> counts off the cells where water is being conjured out of
+nothing or quietly destroyed. Both channels carry the same faint stickiness, which
+Euler's equations do not have at all; it is identical on both sides, so the only
+difference between them is the term.
+
+Euler saw the power and the wall with equal clarity. If we cannot fully grasp the
+motion of fluids, he wrote, it is not mechanics we should blame, nor any hidden
+principle of nature still missing — it is analysis itself that fails us. He was
+right about the wall for two centuries and counting.
+
+But run your eye back over that term stack. The green slot is empty, and the drag
+meter from the last section still reads zero — Euler's equations inherit
+d'Alembert's paradox whole. Worse, in this world honey and water obey the *same*
+equation, and your hands know from the previous lesson how false that is. One term
+is missing, and the missing term is the whole story.
+
+## The Missing Term
+
+The man who found it was not a professor of mathematics. Claude-Louis Navier built
+bridges — star engineer of the École des Ponts et Chaussées, editor of the standard
+construction manuals of France — and his career carried an engineer's scars. His
+showcase project, a radical suspension bridge over the Seine at the Invalides,
+cracked at an anchorage when a water main burst in 1826, and was dismantled to
+public mockery — the papers called him "that eminent man of science whose
+calculations fail in Paris" — and a review committee reproached him for having
+relied *too much on mathematics*. His closest teacher and lifelong friend
+was Fourier, the man who wrote the mathematics of heat.
+
+On the 18th of March, 1822, Navier read a memoir to the Académie des Sciences in
+which he did what Euler could not. His route was strange: he imagined water as a
+lattice of molecules pulling on their neighbors, with a pull that depends on how
+fast they slide past one another. Drive the top row of the lattice below and watch
+what the neighbor-coupling does to the rows beneath:
+
+<MolecularSprings />
+
+Each molecule drags its neighbors toward its own motion, and the jerky shear
+smooths itself into an orderly gradient — the profile on the right relaxes toward a
+straight line, and once it's straight, every molecule agrees with its neighborhood
+average and the smoothing stops. Summed over the lattice, Navier's molecular pulls
+became a new term in Euler's equation: the Laplacian of velocity — *disagreement
+with the neighborhood* — times a constant. It is the heat operator, learned from
+Fourier and written into water. The stack is complete:
+
+<TermStack
+  items={[
+    { kind: 'term', tex: '\\dfrac{\\partial \\mathbf{u}}{\\partial t}', k: 'vel', name: 'Euler', year: '1757', filled: true },
+    { kind: 'sep', tex: '+' },
+    { kind: 'term', tex: '(\\mathbf{u}\\cdot\\nabla)\\,\\mathbf{u}', k: 'dye', name: 'Euler', year: '1757', filled: true },
+    { kind: 'sep', tex: '=' },
+    { kind: 'term', tex: '-\\tfrac{1}{\\rho}\\nabla p', k: 'pHi', name: 'Euler', year: '1757', filled: true },
+    { kind: 'sep', tex: '+' },
+    { kind: 'term', tex: '\\nu\\nabla^{2}\\mathbf{u}', k: 'visc', name: 'Navier', year: '1822', filled: true },
+    { kind: 'sep', tex: '\\quad\\text{with}\\quad' },
+    { kind: 'term', tex: '\\nabla\\cdot\\mathbf{u}=0', k: 'div', name: 'Euler', year: '1757', filled: true },
+  ]}
+/>
+
+Now the uncomfortable part: **the molecules were fiction, and the term was
+right.** Navier's intermolecular model was
+wrong in its details, and his constant — he called it $\varepsilon$ — was a
+molecular quantity he could not connect to anything measurable. You met that slider
+on the lattice above, labeled with its honest units: none. I cannot tell you what
+to set it to. Neither could he. A term derived from imaginary physics, arriving at
+the correct equation, convinced almost no one — and so the equation had to be
+discovered again. And again. And again, and again.
+
+(One more of Navier's headaches: at the wall, he assumed the fluid *slides*. The
+century's pipe experiments would say otherwise — but keep a little sympathy for the
+slip condition; it has a modern afterlife.)
+
+## Five Times
+
+What followed was not five isolated flashes of genius. It was one long, in-person
+Paris argument about what a fluid actually *is* — molecules or continuum — carried
+out in memoirs, referee reports, and open polemic, with the same equation falling
+out the end every time.
+
+Cauchy, 1823 — who got pulled in while refereeing Navier's memoir. His contribution
+is the deepest object in the parade: forget fluids for a moment and ask what "the
+material pushes on itself" even means, at a point, in any material at all. His
+answer is the stress tensor. Drag a face of the fluid element below:
+
+<StressCube />
+
+Drag one face and all four answer. The sideways drag you apply to the top must be
+matched by sideways drags on the *vertical* faces — the matrix stays symmetric —
+because an element with unbalanced twists would spin itself up infinitely fast as
+it shrank. That object — nine numbers at every point, describing every possible
+internal push — is the container into which you can drop *any* material's law:
+steel, honey, water, air. Cauchy built the container; the fluid law is one thing
+you can put in it.
+
+Poisson re-derived the equation in 1829 by his own molecular route, compressibility
+included, satisfied with nobody else's foundations — and said so in print. In the
+polemic that ran through the Annales de Chimie, he cited Navier just once: to
+declare that Navier's own assumptions, taken seriously, give a solid with zero
+elasticity — a material that could not hold itself together. Navier answered that
+it was he who had "conceived the idea of a new question," and that all this new
+talk of rigor was a way of belittling the man who asked it.
+
+Saint-Venant derived it in 1837
+the modern way — internal stress proportional to the local rate of shearing
+strain, the reading you'd give it today — published in 1843, two years ahead of
+Stokes, and was the only man in the parade who carefully credited everyone else.
+He was also the one who defended Navier's bridge in print — the failure, he wrote,
+was one misjudged force on one stone, the kind of oversight fixed on site, and the
+dismantling was the work of a "spirit of denigration... of science, disparaged
+under the name of theory opposed to practice." For all of it he received nothing:
+the equation is named for the first and the last of its five discoverers. Eponymy
+is a lottery, and citing your rivals buys no tickets.
+
+Last, 1845: George Gabriel Stokes, in Cambridge — the first generation of
+Cambridge mathematicians retrained in the Continental calculus, a century of
+notational loyalty finally paid off. Working from the French literature's
+conclusions but distrusting every molecular story in it, he re-derived the equation
+from continuum assumptions alone: no molecules, just smoothness, symmetry, and the
+requirement that internal friction depend linearly on the rate of deformation.
+That derivation is the one in every textbook since. And then Stokes did the thing
+that separates a formula from a law: he staked it on a measurement. His analysis of
+a sphere sinking through viscous fluid gave a clean, checkable prediction —
+$F = 6\pi\mu R U$ — and the pendulum data of the age matched it. Two steel balls,
+each in its own column of honey, are released together below; the slider shrinks
+the second one:
+
+<FallingSphere />
+
+Halve the radius and the small ball is a quarter of the way down when the big one
+lands — terminal speed goes as $R^2$, and the pair of bars over each column says
+why. Weight is a volume, so it falls away as $R^3$. Stokes' resistance is
+$6\pi\mu R$: a length, falling away only as $R$. Surrender seven-eighths of your
+weight to keep half your drag and you crawl. Run that backwards — time a ball
+whose size and weight you know — and $\mu$ is the only unknown left in the
+sentence. Navier's $\varepsilon$, which had connected to nothing anyone could
+measure, became a number you could look up for honey, water, and air. The same analysis settled a decades-old argument about the wall:
+the fluid *sticks* — no slip — which is why the previous lesson could state that
+contract with a straight face. (Navier's slip survives in one place: channels a
+few molecules wide, where microfluidics has quietly rehabilitated him.)
+
+The equation's first exact laboratory triumph had, fittingly, nothing to do with
+any of the five. Jean Poiseuille was a physician measuring blood flow through fine
+glass capillaries in the 1840s; Gotthilf Hagen, a German engineer, found the same
+law in brass pipes independently. Squeeze the pipe below and watch the flux:
+
+<PoiseuillePipe />
+
+Halve the radius and the flow doesn't halve — it collapses to a sixteenth. Flux
+runs as the *fourth power* of the radius, a law strange enough that nobody would
+guess it and exact enough that nobody could fudge it. Derived from the new
+equation, it matched the physician's capillaries to the decimal. A doctor handed
+the theorists their first proof that the strange new term was real.
+
+<Waypoint>
+The equation now exists — written five times over, by a bridge engineer's fictional
+molecules, a referee's tensor, and a Cambridge hermit's continuum, verified in
+blood and brass, its constant promoted from fiction to tabulated fact. What nobody
+can do is solve it, except when the flow is slow as honey. Pushed harder, real
+water does something the century's mathematics cannot follow.
+</Waypoint>
+
+## Direct and Sinuous
+
+What it does was made visible in 1883, in Manchester, by Osborne Reynolds and a
+piece of glassware: a long transparent tube drawing water from a tank, with a
+thread of dye released on its axis. At low speed the thread runs the length of the
+tube like a stretched wire. Commit to a guess before you touch the speed.
+
+<Predict
+  question="The dye filament below runs straight down the tube. Double the flow speed — does the filament survive?"
+  a="It stays a filament, just faster"
+  b="It tears itself apart"
+>
+  <ReynoldsTube />
+</Predict>
+
+Past a threshold the filament wavers, folds, and erupts — filling the tube with
+what Reynolds, by flash-light, resolved into "a mass of more or less distinct
+curls." He named the two regimes *direct* and *sinuous*; we say laminar and
+turbulent. And the threshold was the real discovery. It doesn't sit at a
+particular speed, or width, or temperature — Reynolds found that one combination
+alone decides, speed times size over viscosity, the dimensionless number you spent
+the whole previous lesson dragging:
+
+$$Re = \frac{UL}{\nu}$$
+
+The slider under the tube is showing you its own value; the christening came later,
+when Sommerfeld called it the *Reynolds number* in a 1908 lecture, and the name
+stuck. The referee who handled Reynolds's paper at the Royal Society was Stokes —
+sixty-four years old, the man whose own pendulum memoir had carried the number in
+embryo three decades earlier.
+
+Reynolds also saw what the eruption meant for the mathematics, and in 1895 he made
+the move the field still leans on: split the velocity into a mean and a
+fluctuation, $\mathbf{u} = \bar{\mathbf{u}} + \mathbf{u}'$, and average the
+equation. The split is a concession: above the threshold, we stop computing the
+flow and start computing its *statistics*.
+
+So by 1900 the ledger stood like this: the equation verified, the referee number
+known — and d'Alembert's zero, planted a hundred and fifty years back, still
+unpaid. At high $Re$ friction is tiny and the water is nearly ideal, so the ideal
+theory should be nearly right about drag — and it is spectacularly wrong. Nothing
+written by 1900 says why.
+
+## Ten Minutes in Heidelberg
+
+On the 12th of August, 1904, at the Third International Congress of Mathematicians
+in Heidelberg, a twenty-nine-year-old engineering professor named Ludwig Prandtl
+was allotted ten minutes. The paper he summarized ran about eight pages, and it
+contained the resolution. Friction at high Reynolds number does not disappear.
+It *concentrates* — into a layer against the surface so thin that a century and a
+half of theorists had reasoned right past it. Drag the loupe around the disc:
+
+<BoundaryLayerLoupe />
+
+Away from the wall, the arrows tell Euler's story — the ideal flow, honest and
+nearly frictionless. Slide the loupe to the surface and the story changes inside a
+sliver: the speed plunges from full stream to exactly zero across a skin that
+thins as $1/\sqrt{Re}$ (a scaling stated with a wave of the hand; deriving it
+is a lesson of its own). Inside that skin, friction rules absolutely, no matter how
+large $Re$ grows. And that is enough to break the refund.
+
+Recall the parcel that had to climb the back hill on its own returned momentum,
+and how the exactness of the cancellation depended on nothing taking a cut. Inside
+the sliver, something takes a cut. The water there has been rubbing against the
+wall the whole way around, and it arrives at the shoulder already short of speed —
+too short to climb back up to the tail's high pressure. It makes it partway up the
+hill, stalls, and is shoved backwards by the pressure it failed to climb. Park the
+loupe on the rear shoulder and watch the near-wall arrows *reverse*. With the flow
+behind it now running the wrong way, the layer lifts clean off the surface and
+peels into the wake.
+
+Once the layer has left the wall, the tail never gets its red lobe. The nose is
+still shoved downstream at full pressure and there is nothing on the back pushing
+the other way — so the books do not balance, and the meter, zero since 1752 in this
+article and zero since 1752 in history, finally moves.
+
+The resolution is stranger than "d'Alembert was wrong."
+He wasn't. His theory is *correct* almost everywhere — everywhere but a sliver —
+and the sliver sets the drag for the whole flow. The paradox was never an error to
+be refuted; it was an error of *where to look*.
+
+In the Heidelberg audience sat Felix Klein, who recognized ten minutes of talk for
+what it was and pulled Prandtl to Göttingen within the year. Out of that one act of
+listening came Blasius, then a doctoral student named Theodore von Kármán — whose
+1911 analysis of the staggered vortex wake gave the previous lesson's hero its
+name — and, in a straight line, the aerodynamic century.
+
+<Waypoint>
+The equation is written, measured, and — through one thin layer — finally at peace
+with ships, birds, and swimmers. Two hundred and seventeen years separate the want
+of lubricity from the boundary layer. What's left is everything above Reynolds's
+threshold, where the water goes sinuous — and a question about the equation itself
+that nobody had thought to ask yet.
+</Waypoint>
+
+## The Open Question
+
+Lewis Fry Richardson spent the First World War as an ambulance driver, and between
+runs to the front he computed, by hand, the world's first numerical weather
+forecast. It took him six weeks and it was catastrophically wrong — a predicted
+pressure rise about a hundred times too large, wrecked by unbalanced starting data.
+Undeterred, he published the method in 1922, along with a fantasy he costed out
+seriously: sixty-four thousand human computers in a great hall, conducted like an
+orchestra, calculating the weather faster than the weather. In the same book he
+compressed everything this section is about into four lines of verse: *big whirls
+have little whirls that feed on their velocity, and little whirls have lesser
+whirls, and so on to viscosity.*
+
+<WhorlsCascade />
+
+Energy enters at the largest eddies, cascades down through generations of smaller
+ones, and dies in the smallest, where the green term finally eats it. That picture
+became quantitative on the eve of the war. Kolmogorov's three short papers reached
+the Doklady between the 28th of December, 1940 and the last day of April, 1941;
+eight weeks after the third, the Wehrmacht crossed the border and the Academy was
+evacuated east. The claim inside them: deep in the cascade, the statistics forget
+how the stirring started. Coffee spoon or storm front, by the middle generations
+the energy is shared out among eddy sizes by one rule — the −5/3 power law,
+written against the eddies' wavenumber (the spectrum form cast that same year, in
+the same Moscow school, by his student Obukhov).
+
+For twenty years that exponent lived on paper. Then a Canadian team towed a
+hot-film probe through Discovery Passage, a tidal channel in British Columbia
+where the sea runs at up to fifteen knots, and measured the turbulence at a
+Reynolds number of 280,000,000 — three orders of magnitude past any laboratory.
+The eddies were larger than the 217-foot ship, which spent the runs being carried
+about by the thing it was measuring. The 1962 spectra track −5/3 across decades of
+wavenumber. A rule written at a Moscow desk from a dimensional argument, holding
+in a tidal channel on the far side of the world. (Turbulence attracted that kind
+of mind: Werner Heisenberg's doctoral thesis, under Sommerfeld in 1923, was on
+exactly this problem — the man who made uncertainty a principle warmed up on the
+equation that still keeps one.)
+
+While the physicists climbed into the cascade, a French mathematician quietly asked
+the question underneath all of it. Jean Leray worked on it, the story goes, leaning
+over the parapet of the Pont Neuf, watching the Seine shear past the piers. The
+question he brought back to his desk: the equation predicts; laboratories confirm;
+but does it actually *promise* an answer — does a smooth flow, evolved by
+Navier–Stokes, stay smooth? In 1934 he proved the guarantee that could be
+proven: solutions exist forever if you let them be rough. He named his objects
+*turbulent solutions* — a mathematician's warning shot, aimed at the possibility
+that the equation's own solutions might tear. (His tools were as prophetic as his
+theorem: he built his weak derivatives years before the function spaces that now
+hold them existed. At its birth this equation forced the invention of PDEs; in its
+old age it forced the invention of the analysis used to study it.)
+
+Olga Ladyzhenskaya — taught mathematics by her father, a schoolteacher the NKVD
+shot in 1937, and barred for his sake from Leningrad University — later fenced off
+the flat world: in two dimensions, the world of every figure in this article,
+smoothness holds, uniqueness holds, the theory is clean. Every difficulty lives in
+the third dimension, where vortex lines can stretch. Whether three-dimensional
+solutions always stay smooth is, as of this sentence, unknown. In May 2000 the
+Clay Mathematics Institute named it one of seven Millennium Prize Problems — the
+same open question the previous lesson ended on, now with a date, a bounty, and a
+problem statement four pages long. The strongest recent evidence cuts the wrong
+way for optimists: in 2016 Terence Tao showed that a slightly averaged cousin of
+the equation *does* blow up in finite time. Whatever protects the real equation —
+if anything does — is something subtler than anything yet written down.
+
+Richardson's hall of sixty-four thousand computers, though — that part got built.
+
+## The Machine Age
+
+It got built out of vacuum tubes. In 1950, on ENIAC, a team around Jule Charney and
+John von Neumann ran the first computer weather forecast, and the numerical assault
+on the equation began. The solver you played with in the previous lesson is not an
+illustration of that history; it is a late chapter of it, and its four steps carry
+three different birthdays:
+
+<SolverXray />
+
+The staggered grid those steps live on came from Francis Harlow's group at Los
+Alamos in 1965. The projection step — advance the velocity freely, then solve for
+the one pressure field that restores incompressibility — is Alexandre Chorin's,
+1968. The unconditionally stable advection that lets the whole thing run in your
+browser without exploding is Jos Stam's, 1999, published not in a physics journal
+but at a computer-graphics conference. Even the equation's compact *face* is
+machine-age typography: all five of its discoverers wrote it as three separate
+scalar equations, and the vector coat it wears on our term stack — the ∇s and the
+boldface — is Gibbs–Heaviside notation, sixty years younger than the equation it
+dresses.
+
+Which brings the slider home:
+
+<TimelineHero />
+
+Run it end to end once more. The hail of corpuscles that feels no neighbors. The
+frictionless glide whose meter reads zero. The honey world where the green term
+was born. The threshold where the filament tears. The sliver that pays a
+century-and-a-half-old debt. The dye street running on three dates — 1965, 1968,
+1999. Every nameplate is filled now except the last one, and the last one is not
+waiting on us to finish the article. It is waiting on mathematics.
+
+## One Skeleton, Twice Built
+
+History never had a syllabus, but it kept a rhythm. Each theory ran until it
+failed in plain sight, and the next term was whatever it took to stop lying.
+Euler answered d'Alembert's absurdity; Navier answered Euler's honey-equals-water;
+Prandtl answered the meter stuck at zero; the projection method answered a fluid
+that computers kept letting pile up. Field, pressure, and constraint in 1757;
+viscosity in 1822; the solver in 1965–1999 — the ladder assembled itself, rung by
+visible failure.
+
+The first PDE in physics was d'Alembert's string, invented inside the argument
+this article just told. Navier–Stokes is the parent equation; sound, ripples, and
+every wave in the lessons ahead are its children, small enough to be gentle.
+
+## Further Reading
+
+Olivier Darrigol's *Worlds of Flow* is the definitive scholarly history of
+everything above — the five derivations, memoir by memoir, with the mathematics
+kept intact rather than paraphrased away; it is where the "discovered five times"
+framing is documented in full. Michael Eckert's *The Dawn of Fluid Dynamics*
+carries the story Darrigol ends, through Prandtl and the Göttingen school. John D.
+Anderson's *Physics Today* article "Ludwig Prandtl's Boundary Layer" reconstructs
+the Heidelberg ten minutes and their consequences in a dozen readable pages.
+Reynolds's 1883 paper is open access at the Royal Society, and worth the visit: the
+engravings of the dye filament are the figure you just played with, drawn by the
+man who built it. Grant, Stewart and Moilliet's "Turbulence spectra from a tidal
+channel" (*Journal of Fluid Mechanics*, 1962) reports the Discovery Passage
+measurement in full, spectra and ship-handling both. Charles Fefferman's official
+Clay problem statement says precisely what "existence and smoothness" demands, in
+four careful pages. And Jos Stam's *Stable Fluids* — already in the previous
+lesson's reading list as the paper behind the solver — re-enters here under a
+different aspect: as a primary source.
+
+## Final Words
+
+Two hundred years of people are compressed into six letters and a hyphen. Say the
+name slowly now and it unpacks: a bridge engineer whose molecules were fiction and
+whose term was true; a referee who invented the tensor while grading the memoir; a
+courteous engineer the lottery skipped; a Cambridge hermit who made the constant
+measurable; a physician's capillaries; a glass tube in Manchester; ten minutes in
+Heidelberg. The equation was never discovered. It is a two-century argument with a
+naming accident on the cover — and the argument is still open, at any price you
+like, because the right-hand end of the slider is still blank.
+
+It is not waiting for a monument. It is waiting for a name.

@@ -60,6 +60,22 @@ Real examples caught this way:
 - "Halve the radius and it collapses to a sixteenth" — 1/16 appeared only as a
   printed decimal; nothing on screen was sixteen times anything.
 
+### 2b. Check every on-screen number's ORDERING, not just its computation
+
+A meter can be honest — genuinely computed from live state, never asserted — and
+still measure the wrong quantity. The test: across the states the figure shows,
+does the number's ordering match the story the figure tells?
+
+The incident that earned this rule: a two-pane pressure-on/pressure-off figure
+whose per-pane meters counted the *fraction of cells* violating a divergence
+floor. The honest pane's diffuse solver residual tripped the floor in 6.5% of
+cells; the broken pane's violation — enormous but concentrated in one plume —
+tripped it in 3.3%. The honest pane out-scored the broken one, and the computed
+number argued against the figure. Spread and magnitude are different statistics;
+pick the one that discriminates between the states on screen. (This is the same
+mistake as pixel-count QA, one level up: choosing what's easy to compute over
+what distinguishes.)
+
 ### 3. Exercise every knob to both ends
 
 A range that changes nothing across part of its span is furniture pretending to be
@@ -90,3 +106,27 @@ Concurrent edits to sim files hot-reload the page and invalidate a verification 
 in progress. Do not audit while other agents are writing to the same files — the
 audit will be measuring a moving target, and its conclusions will be worthless.
 Serialize: finish the edits, then audit.
+
+### Auditing in a hidden browser tab (the preview pane's normal state)
+
+Hidden tabs suspend requestAnimationFrame entirely, and after ~5 minutes hidden,
+Chrome coalesces their timers to roughly one per minute — so sims never step, and
+any harness built on `setTimeout` silently stalls. The working recipe (proven
+2026-07-29, lesson 03):
+
+- **Deterministic pump**: replace `requestAnimationFrame` with a shim that queues
+  callbacks; drive them from your own eval calls with synthetic timestamps
+  advancing 16.7 ms per frame. `__pump(600)` = 10 sim-seconds, synchronously.
+- **IntersectionObserver stub must fire via `queueMicrotask`**, not `setTimeout`
+  (throttled to uselessness), and not synchronously (TDZ crash in Sim.tsx).
+- **Purge the callback queue around every remount** (Reset clicks, era/key
+  changes): stale loops survive in the queue, multiply the per-pump cost ~30×,
+  and can make a freshly-mounted canvas look permanently blank. Two false
+  "blank figure" verdicts came from exactly this before it was understood.
+- **Never scroll with JS** — the hidden compositor keeps a stale scroll offset
+  and screenshots stop matching the DOM. Pin the figure under audit instead:
+  `position:fixed; top:0` with an opaque backdrop, revert after the shot.
+  Native scroll input times out (hidden tabs don't process it).
+- Screenshots DO render for hidden tabs; trust them over any DOM-side probe.
+- Keep every eval under a few seconds of work — an eval that times out kills its
+  pending awaits, leaving half-executed page state you then misdiagnose.
