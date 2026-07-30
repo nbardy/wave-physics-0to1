@@ -104,9 +104,14 @@ function gridFor(paneW: number, paneH: number): Grid {
 // between the panes, so the meter now averages |div| itself: the concentrated
 // plume dominates the mean, the diffuse residual stays small, and the ordering
 // matches what the violet shows.
-const WRECK_MEAN = 0.06 // lower-pane mean |div| (1/s) that counts as wrecked —
-// ~6% of cell volume/s averaged over the WHOLE pane is a huge concentrated
-// crime; retune to just under the observed plateau if the cap keeps firing.
+// MEASURED (2026-07-29, headless audit): the honest pane's steady mean reads
+// ~5.5% of a cell's volume per second — that is the 40-sweep Jacobi residual's
+// true size, reported rather than rounded away. The first threshold here was
+// 0.06, which restarted the broken pane the instant it crossed 6.0% — capping
+// the on-screen contrast at 6.0-vs-5.5, two nearly equal numbers. The wreck
+// threshold must sit far above the honest baseline or the meter contrast is
+// throttled by the restart logic itself.
+const WRECK_MEAN = 0.3 // broken pane restarts near ~30% vs the honest ~5.5%
 // A hard cap on one demonstration cycle, so the birth of the catastrophe is on
 // screen for a reader arriving mid-scroll even if WRECK_MEAN is mistuned. A
 // parcel crosses the channel in nx/INFLOW ≈ 9 s, so 12 s is ~1.4 crossings.

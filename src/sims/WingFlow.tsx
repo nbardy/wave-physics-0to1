@@ -48,12 +48,14 @@ const HONEY_RE = 40
 
 // Streakline memory. The solver's default (0.9995/step) is a ~35 s half-life,
 // which is longer than anything a reader will wait: after dragging to honey the
-// velocity field goes steady in ~6 s but the CHANNEL IS STILL FULL of the wavy
+// velocity field goes steady in ~6 s but the channel is still full of the wavy
 // dye laid down before the drag, so the figure reads "nothing happened" for
-// half a minute. At 0.997 the half-life is ~6 s — the old pattern fades on the
-// same timescale the flow itself changes, and streaklines still reach the
-// outflow at ~half strength, which reads as depth rather than loss.
-const DYE_DECAY = 0.997
+// half a minute. The first fix over-corrected: at 0.997 (~6 s half-life) the
+// figure-audit found the steady braid itself washed out by mid-channel — the
+// money shot went anemic. 0.9985 (~12 s) is the audited middle: old patterns
+// clear in ~2 slider-response times, and the downstream braid keeps enough
+// dye to stay the hero's centerpiece.
+const DYE_DECAY = 0.9985
 const DYE_ROWS = [12, 20, 28, 36, 42] // amber, upper half
 const DYE2_ROWS = [46, 52, 60, 68, 76] // rose, lower half
 
@@ -74,7 +76,7 @@ const WARMUP_STEPS = 480
 // the phase; the equation still decides whether eddies grow or die.
 const KICK_RE_DELTA = 40 // upward Re change that triggers a seed
 const KICK_COOLDOWN = 0.75 // s between seeds while dragging
-const KICK_VY = 18 // cells/s, ~0.7·U — rings visibly, well under the kick test's 60
+const KICK_VY = 30 // cells/s, ~1.15·U — audited up from 18: at 18 the reborn street took >10 s to show in DYE (velocity recovers in 2-4 s but the visible braid lags it); still half the kick test's 60
 const KICK_X = PIVOT_X + Math.round(CHORD * 0.9)
 const KICK_R = 4
 
