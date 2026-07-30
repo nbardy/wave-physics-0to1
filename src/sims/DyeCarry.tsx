@@ -22,7 +22,10 @@ const FIELDS: Record<string, FlowField> = {
 // (uniform, shear) or once the vortex has wound it past the point of being
 // readable (the vortex keeps every gram of dye forever, so mass alone would
 // never trigger). Re-seeding is a restart of the demonstration, not physics.
-const LOOP_SECONDS: Record<string, number> = { uniform: 9, shear: 9, vortex: 15 }
+// vortex loops at 8 s, not longer: the spiral is legible from ~4–8 sim-s, and
+// past ~10 s grid diffusion smears it into an amber fog (figure-audit finding —
+// the reader would stare at fog for half of a longer cycle)
+const LOOP_SECONDS: Record<string, number> = { uniform: 9, shear: 9, vortex: 8 }
 const MASS_FLOOR = 0.4 // fraction of the initial blob still in the domain
 
 function createDyeCarry(fieldName: keyof typeof FIELDS, speedRef: { current: number }): Stepper {
