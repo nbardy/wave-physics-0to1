@@ -23,6 +23,15 @@ import { FluidSolver } from '../sims/lib/solver'
 //     are also not bit-identical by design: the CPU's in-place loops are
 //     effectively Gauss–Seidel, the GPU runs true Jacobi — same fixed point,
 //     different path, hence a tolerance, not equality.
+//  D. Diffusion delivers the viscosity the dial requests — a velocity top-hat
+//     diffused for 1 s must spread to σ ≈ sqrt(2νt (+ σ₀²)), at BOTH ends of
+//     the published slider ranges. Regression guard for the 2026-07-06
+//     incident: the implicit solve is Jacobi with convergence factor
+//     4a/(1+4a), a = ν·dt, and a FIXED sweep count silently delivered ~1/5 of
+//     the requested ν at the honey end — the Re dial lied across its whole
+//     lower half while every other check stayed green. Catches: any future
+//     fixed-iteration "cleanup" of diffuseIters, sweep budgets that don't
+//     scale with a, dt mishandling in the diffusion coefficient.
 
 const NX = 144
 const NY = 88
@@ -210,6 +219,59 @@ async function runChecks(device: GPUDevice): Promise<CheckResult[]> {
       detail: `relative L2 of velocity fields: ${(diff * 100).toFixed(1)}% (tolerance 10%)`,
     })
     gpu.destroy()
+  }
+
+  // D — diffusion convergence across the slider range
+  {
+    // GPU grid scale ×4 like the lesson figures; ν values are the wing hero's
+    // published slider extremes (Re 600 fast end, Re 40 honey end, chord 96).
+    const S = 4
+    const gnx = NX * S
+    const gny = NY * S
+    const spread = async (nu: number): Promise<{ measured: number; expected: number }> => {
+      const s = new FluidSolverGPU(device, {
+        nx: gnx,
+        ny: gny,
+        inflow: 0,
+        inflowLower: 0,
+        visc: nu,
+        dyeRows: [],
+        dye2Rows: [],
+        toggles: { advect: false, diffuse: true, project: false },
+      })
+      const jc = gny >> 1
+      const seed = new Float32Array(gnx * gny)
+      for (let j = jc - 2; j <= jc + 2; j++) seed.fill(1, j * gnx, (j + 1) * gnx)
+      device.queue.writeBuffer(s.u.cur, 0, seed as BufferSource)
+      const steps = 40
+      for (let i = 0; i < steps; i++) s.step(dt)
+      const u = await readBack(device, s.u.cur, gnx * gny)
+      s.destroy()
+      const ic = gnx >> 1
+      let m0 = 0
+      let m2 = 0
+      for (let j = 0; j < gny; j++) {
+        const v = Math.max(0, u[ic + j * gnx])
+        m0 += v
+        m2 += v * (j - jc) ** 2
+      }
+      // σ₀² ≈ 25/12 + smoothing ≈ 2 for the 5-row top-hat (measured at ν→0)
+      return { measured: Math.sqrt(m2 / m0), expected: Math.sqrt(2 * nu * steps * dt + 2) }
+    }
+    const U = 26 * S
+    const chord = 24 * S
+    const fast = await spread((U * chord) / 600)
+    const honey = await spread((U * chord) / 40)
+    const err = (r: { measured: number; expected: number }) =>
+      Math.abs(r.measured - r.expected) / r.expected
+    const ok = err(fast) < 0.08 && err(honey) < 0.08
+    results.push({
+      name: 'diffusion delivers the dialed viscosity (both slider ends)',
+      pass: ok,
+      detail:
+        `σ fast-end ${fast.measured.toFixed(1)} vs ${fast.expected.toFixed(1)}, ` +
+        `honey-end ${honey.measured.toFixed(1)} vs ${honey.expected.toFixed(1)} cells (tolerance 8%)`,
+    })
   }
 
   return results
