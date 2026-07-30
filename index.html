@@ -5,6 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Wave Physics 0→1</title>
     <meta name="description" content="A from-scratch self-study in wave physics, from fundamentals to PhD-level simulation." />
+
+    <!-- Social preview. Crawlers do not run the SPA's JS, so these must be static
+         here — the router cannot set them per lesson. Every shared link therefore
+         previews as the site, not the individual lesson; per-lesson cards would
+         need prerendering. summary (not summary_large_image) because the repo
+         ships no image: a large card with no og:image renders blank. -->
+    <link rel="canonical" href="https://nbardy.github.io/wave-physics-0to1/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Wave Physics 0→1" />
+    <meta property="og:title" content="Wave Physics, 0 → PhD" />
+    <meta property="og:description" content="A from-scratch self-study that starts at the fundamentals and builds toward the PhD-level mathematics of fluid and wave simulation. Every lesson pairs derivation with a simulation you can poke at." />
+    <meta property="og:url" content="https://nbardy.github.io/wave-physics-0to1/" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Wave Physics, 0 → PhD" />
+    <meta name="twitter:description" content="A from-scratch self-study in fluid & wave simulation — derivation plus an interactive sim in every lesson." />
   </head>
   <body>
     <div id="root"></div>
