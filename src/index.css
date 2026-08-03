@@ -269,6 +269,107 @@ a:hover {
   color: var(--green);
 }
 
+/* the field blurb under a section eyebrow — the one line that says why this
+   cluster exists, set quieter than any lesson blurb so it reads as chrome.
+   The rule that used to sit under the eyebrow moves to the block, so it lands
+   below the blurb when there is one and below the eyebrow when there isn't. */
+.toc-eyebrow {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.toc-head-block {
+  border-bottom: 1px solid var(--rule-strong);
+  padding-bottom: 0.85rem;
+}
+.toc-eyebrow-blurb {
+  font-family: var(--font-prose);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  max-width: 62ch;
+  margin: 0.5rem 0 0;
+}
+
+/* tags — lowercase, unboxed, the same weight as a caption. They are metadata,
+   never the loudest thing in a row. */
+.toc-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 0.5rem;
+}
+.tag {
+  font-family: var(--font-ui);
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 0.12rem 0.5rem;
+  white-space: nowrap;
+}
+
+/* the /all filter bar — the same chips, now pressable */
+.tagbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0 0 1.75rem;
+}
+.tag--button {
+  cursor: pointer;
+  background: none;
+  padding: 0.28rem 0.7rem;
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.tag--button:hover {
+  color: var(--ink);
+  border-color: var(--rule-strong);
+}
+.tag--active {
+  color: var(--bg);
+  background: var(--ink);
+  border-color: var(--ink);
+}
+.tag-count {
+  margin-left: 0.4rem;
+  opacity: 0.55;
+  font-variant-numeric: tabular-nums;
+}
+.tag--button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* a numeric readout beside a slider — the knob's current value in words */
+.sim-readout {
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+.masthead--compact {
+  padding-top: clamp(1.5rem, 6vw, 3.5rem);
+  padding-bottom: 1.75rem;
+}
+.masthead-links {
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  margin: 1.4rem 0 0;
+}
+.all-empty,
+.all-fields {
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  padding: 1.5rem 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .site-header,
   .site-header.is-revealed {
@@ -371,6 +472,21 @@ a:hover {
    touch-dragging on the canvas scrolls the page instead of reaching the sim. */
 .sim-stir {
   touch-action: none;
+}
+.sim-select {
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+}
+.sim-select:hover {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 .sim-seg {
   display: flex;

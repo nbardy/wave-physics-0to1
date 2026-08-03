@@ -8,6 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
+    "check:figures": "bun run scripts/check-physics-figures.ts",
     "deploy": "bash scripts/deploy-pages.sh"
   },
   "dependencies": {
@@ -19,6 +20,7 @@
   },
   "devDependencies": {
     "@mdx-js/rollup": "^3.1.0",
+    "@napi-rs/canvas": "^1.0.3",
     "@types/katex": "^0.16.7",
     "@types/node": "^26.1.0",
     "@types/react": "^18.3.12",

@@ -13,3 +13,5 @@ dist/
 vite.config.js
 vite.config.d.ts
 *.tsbuildinfo
+
+_figure_check/

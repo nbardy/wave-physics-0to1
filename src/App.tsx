@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import { MDXProvider } from '@mdx-js/react'
 import Layout from './components/Layout'
 import Home from './pages/Home'
+import All from './pages/All'
 import LessonView from './pages/LessonView'
 import StackCheck from './pages/StackCheck'
 import { Sim } from './components/Sim'
@@ -17,6 +18,7 @@ export default function App() {
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/all" element={<All />} />
           <Route path="/lesson/:id" element={<LessonView />} />
           <Route path="/stack-check" element={<StackCheck />} />
           <Route path="*" element={<Home />} />

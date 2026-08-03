@@ -1,8 +1,14 @@
 # AGENTS.md
 
-A self-study in wave physics, written as Ciechanowski-grade explorable explanations —
-his pedagogy, plus the equations he deliberately omits. Before writing anything, read
-in this order:
+**Nick's Visual Math Lessons** — explorable explanations at Ciechanowski grade: his
+pedagogy, plus the equations he deliberately omits. It began as a wave-physics
+self-study and that spine is still here, now as one **field** among several. A
+lesson belongs to exactly one field (`physics` · `waves` · `maths`, ordered per
+field) and carries **tags** that cut across all of them; both are closed unions in
+`src/lessons/registry.ts`, so a typo is a compile error rather than an orphan chip.
+Add a tag only when a second lesson would carry it.
+
+Before writing anything, read in this order:
 
 1. **`ESSENCE_OF_VOICE_AND_DESIGN.md`** — what the master actually does (measured from
    all 22 posts; corpus in `research/`). The rules of voice, design, and pedagogy.
@@ -58,10 +64,11 @@ forward from our own intuition and taste with guiding principles.
 
 Vite + React + TS · MDX lessons with KaTeX (`$…$`, `$$…$$`) · Canvas-2D sims ·
 Cloudflare Pages. `<Sim>` and `<TeX>` are available in MDX without imports.
-`bun run dev` / `bun run typecheck` / `bun run build`.
+`bun run dev` / `bun run typecheck` / `bun run build` / `bun run check:figures`.
 
-- A lesson is `src/lessons/lesson-NN-slug.mdx`, registered in `src/lessons/registry.ts`
-  (status is a sum type: `planned → draft → published`).
+- A lesson is `src/lessons/<field>-NN-slug.mdx`, registered in `src/lessons/registry.ts`
+  (status is a sum type: `planned → draft → published`; `field` and `tags` are closed
+  unions). `/` groups by field, `/all` filters by tag.
 - A figure is a `Stepper` — `step(dt)` / `draw(ctx, w, h)` — handed to
   `<Sim create={…}>`. The stepper owns its state; the shell owns the RAF loop and
   Play/Pause/Reset. Figure-specific controls are bespoke JSX passed as `<Sim>` children
@@ -109,6 +116,18 @@ Workflows: pass `model:`/`agentType:` per `agent()` call by the same tiers.
   100% painted. That false negative shipped three blank hero eras. Sample for the
   specific thing the figure must show (dye color, arrow row-span, column height,
   meter text) and exercise every knob to both ends.
+- **Sample one quantity's own colour, not "any ink".** Extension of the rule above,
+  earned 2026-07-31: the first three measurements written for the physics-01 harness
+  each read a decoy that shared the column — a dashed reference line, a ghost
+  outline, a fixed guide circle. Each produced a *passing-looking* number that was
+  independent of the knob. Match the palette hex of the thing being measured, and
+  distrust any check whose answer does not move when the slider does.
+- **The check can run headlessly.** `scripts/check-physics-figures.ts` renders a
+  stepper into `@napi-rs/canvas` and asserts against the pixels — no browser, no
+  rAF, deterministic. Export the `create*` factory next to the component to make a
+  figure checkable. This matters beyond convenience: a preview pane whose
+  `document.visibilityState` is `hidden` suspends rAF, so every `<Sim>` freezes and
+  browser-side pixel probes silently measure a blank canvas.
 
 House code style (one clean path, types as control flow) applies to sim code; see the
 global CLAUDE.md. Registry dispatches on `status.kind` exhaustively — no default
@@ -132,7 +151,16 @@ branches.
   voice sources expected — fold into NICKS_VOICE provenance on arrival, and re-weigh
   its §4 (old blog voice is disavowed; probated devices: escalate-then-deflate,
   aphorism budget).
+- **Fields and tags landed 2026-07-31**: the site is now Nick's Visual Math Lessons,
+  `Track` became `Field` with `physics` added, every lesson carries tags, `/all`
+  filters by them, and `sims/maths/lib.ts`'s pane vocabulary moved to
+  `sims/lib/chrome.ts` (re-exported, so maths figures are untouched).
 - **Per-lesson state lives in the HANDOFFs, not here** — one line each:
+  - **Physics P1** (wave–particle duality, first of the broad-physics field): BUILT
+    end-to-end 2026-07-31 (`draft`) — ~3,100 words, 6 figures, exact Fresnel optics
+    plus Monte-Carlo photon arrivals in `src/sims/physics/`; 20 headless figure
+    checks green, which found two real figure bugs; awaits Nick's read and a mobile
+    pass → `articles/physics/01-wave-particle/HANDOFF.md`.
   - **Lesson 01** (Navier–Stokes): **PUBLISHED 2026-07-06** (Stage 5 complete: slop
     scan ×2, rhythm compression, ledger closed, hero pre-roll, hysteresis measured);
     hero is the two-color wing → `articles/01-navier-stokes/HANDOFF.md`.
@@ -142,6 +170,10 @@ branches.
   - **Lesson 03** (NS history): BUILT end-to-end 2026-07-06 (`draft`) — ~5,800 words,
     20 figures, 16 new sims, computed drag meters; browser QA incomplete (preview
     env wedged) → `articles/03-navier-stokes-history/HANDOFF.md`.
+  - **Maths M1** (Jacobian & Hessian, first of the new maths track): BUILT
+    end-to-end 2026-07-30 (`draft`) — ~3,300 words, 9 figures, 7 closed-form sims
+    in `src/sims/maths/`; reader pass done with the hidden-tab harness, findings
+    fixed same session; awaits Nick's read → `articles/maths/01-jacobian-hessian/HANDOFF.md`.
   - **Lesson 04** (drag & turbulence, ordering unclaimed): CONCEPT banked
     2026-07-06 — 3D wind-tunnel hero (car + offset colored streamtubes; where
     lesson 01's "flows here are two dimensional" confession flips into the

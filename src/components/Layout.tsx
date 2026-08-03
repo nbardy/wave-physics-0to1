@@ -18,17 +18,18 @@ export default function Layout({ children }: { children: ReactNode }) {
     <div className="app">
       <header className={`site-header${revealed ? ' is-revealed' : ''}`} aria-hidden={!revealed}>
         <Link to="/" className="brand">
-          Wave&nbsp;Physics <span className="brand-mark">0&nbsp;→&nbsp;PhD</span>
+          Nick&rsquo;s <span className="brand-mark">Visual&nbsp;Math&nbsp;Lessons</span>
         </Link>
         <nav className="site-nav">
-          <Link to="/">Curriculum</Link>
+          <Link to="/">Fields</Link>
+          <Link to="/all">All</Link>
           <Link to="/stack-check">Stack&nbsp;check</Link>
         </nav>
       </header>
       <main className="content">{children}</main>
       <footer className="site-colophon">
-        <span>Wave Physics 0&nbsp;→&nbsp;PhD</span>
-        <span>A self-study in fluid &amp; wave simulation.</span>
+        <span>Nick&rsquo;s Visual Math Lessons</span>
+        <span>Explorable physics and mathematics.</span>
       </footer>
     </div>
   )

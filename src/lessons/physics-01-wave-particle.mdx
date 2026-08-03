@@ -1,0 +1,327 @@
+import { PhotonRain } from '../sims/physics/PhotonRain'
+import { SlitSpread } from '../sims/physics/SlitSpread'
+import { PhasorSum } from '../sims/physics/PhasorSum'
+import { Photoelectric } from '../sims/physics/Photoelectric'
+import { WhichPath } from '../sims/physics/WhichPath'
+import { DeBroglieRuler } from '../sims/physics/DeBroglieRuler'
+
+# Is Light a Wave or a Particle?
+
+> *Is light made of particles, or of waves?*
+> — Quantum mechanics says: both.
+> *How can it be both?*
+> — It can't. But it is.
+
+That last line is a report, not a shrug, and it comes from a bench any
+undergraduate lab can build.
+
+Below: a lamp, a card with two narrow slits cut in it, a screen two metres
+behind. The lamp is turned down until photons leave it separately — the slider
+raises the rate from a trickle to a beam. The upper card has both slits open. The
+lower card is the same bench with the right slit covered over. Nothing else about
+the two differs.
+
+<PhotonRain />
+
+Each <C k="hit">dot</C> is one photon arriving. The
+<C k="pdf">profile under each screen</C> is a tally of the dots above it — bins
+counted from the arrivals, not a curve drawn over them. That colour scheme holds
+for the whole article: amber is always a single arrival, violet is always a
+measured count, and <C k="amp">blue</C> is always the wave-like quantity that
+does the deciding.
+
+Turn the rate to the bottom and watch. The arrivals are separate events. Each one
+is the whole of a photon landing at one place and nowhere else; nothing lands
+half here and half there, and no dot is fainter than any other dot. Detectors do
+not report fractions of a photon, ever, at any brightness. That is as
+particle-like as behaviour gets.
+
+Now let it run. The dots do not spread evenly. They pile into bars about six
+millimetres apart, with stripes between the bars where almost nothing ever lands.
+A single photon has no way to know where the bars are — it is one event, and the
+bars are a property of the collection — yet every photon avoids the stripes
+anyway. That is as wave-like as behaviour gets.
+
+Neither of those observations is the problem. The problem is the red column.
+
+It sits 3.2 mm off centre, and it is drawn at the same place on both screens. On
+the lower screen, with one slit open, it is one of the brightest places on the
+card — 97% of peak. On the upper screen, with two slits open, it is one of the
+darkest. Cutting a second hole in the card made that spot dimmer. Not
+proportionally dimmer, not dimmer as a share of a larger total: **fewer photons
+per second land there with two openings than with one.**
+
+Nothing that travels as a lump can do that. A lump that goes through the left
+slit and a lump that goes through the right slit are two disjoint groups of
+events, and the rate at the red column is the sum of the two group rates. Sums of
+non-negative things do not go down when you add another one. You cannot subtract
+by opening a door.
+
+There is a second number in the same figure, and it is the same effect with its
+sign reversed. The bright bars stand four times the height of the one-slit
+profile, while the total light through the card only doubled. The bars borrowed
+their excess from the stripes; integrate the two profiles across the whole screen
+and the ratio is exactly 2, which is the honest accounting of a card with twice
+as many holes. Interference does not create light. It relocates it, and the
+relocation is what no collection of independent lumps can perform.
+
+## Light Where No Ray Could Go
+
+For two centuries "light is a wave" was not a philosophical position but a
+working prediction. Here is the prediction.
+
+One slit now, and one knob: how wide it is. The <C k="amp">filled curve</C> is
+what arrives on the screen. The dashed top hat is what ray optics predicts —
+light exactly where the slit is, dark everywhere else, edges sharp. The vertical
+scale is the pattern's own brightest point rather than the unobstructed level,
+because a narrow slit passes so little light that on an absolute scale its
+pattern would be a flat line along the floor; what it gave up is the third meter,
+and it is worth watching too.
+
+<SlitSpread />
+
+Wide open, the two agree over the middle, and disagree at the edges in a specific
+way: the actual intensity rings, overshooting about 40% above the unobstructed
+level in the first fringe inside each edge before settling. Squeeze the slit and
+the agreement dies altogether. Below about a millimetre the light stops
+respecting the geometry that produced it — the lit patch stops shrinking with the
+slit and starts *growing* — and at 0.05 mm a patch 22 mm wide comes out of an
+opening a twentieth of a millimetre across, with measurable light everywhere
+else on the card as well.
+
+Straight lines cannot do this. Every photon that got through passed within
+0.025 mm of the axis, and they land as far as 30 mm away — more than a thousand
+times the width of the hole they came through, with nothing in the apparatus to
+deflect them.
+
+The number that governs the crossover is printed in the figure: $a^2/\lambda L$,
+the slit width squared over the wavelength times the distance. It compares the
+aperture to the size of the region a wave can reach out of it, and it is the only
+thing that matters — not the slit's absolute size, not the brightness, not the
+detector. Above about 1 the ray picture is accurate; below about 1 it is not
+approximately right, it is qualitatively wrong. The single curve in the figure is
+the exact Fresnel diffraction integral and holds across the whole slider; ray
+optics and the far-field $\mathrm{sinc}^2$ pattern are its two limits, not two
+rival theories.
+
+## Tip to Tail
+
+So light has a wavelength, and things with wavelengths interfere. Here is the
+mechanism, exactly.
+
+Give each route to a point on the screen a two-dimensional arrow — an
+<C k="amp">amplitude</C>. Its length is set by how much light that route
+delivers. Its direction is set by how long the route is, turning through a full
+circle for every wavelength travelled. Then: **lay the arrows tip to tail, and
+the arrival rate is the square of the length of the closing arrow.**
+
+<PhasorSum />
+
+The <C k="slitA">first arrow</C> is the left slit's contribution and the
+<C k="slitB">second</C> is the right slit's; the angle between them is the phase
+the extra path costs. Only that angle is physical — turning both arrows together
+changes nothing anyone can measure — so I have split the turn evenly between
+them, which keeps the <C k="pdf">closing arrow</C> lying flat and makes its
+length the only thing moving.
+
+Drag along the screen. At the centre both routes are the same length, the arrows
+line up, and the closing arrow is twice either one — so the arrival rate is
+*four* times what one slit delivers. That is the factor of four from the hero
+figure, arriving here as the square of a doubled length.
+
+Keep dragging. The path difference climbs, the arrows swing apart, and half a
+wavelength out they are opposed: the chain walks out and straight back to where
+it started, and the closing arrow has no length at all. Zero arrivals. Both
+routes are open, both are delivering light, and nothing arrives. The dashed line
+is what the rate would be if the two contributions were combined as amounts
+rather than as arrows — flat, featureless, and never zero. It is what the hero's
+lower screen measures, doubled.
+
+Written out, with $I_A$ and $I_B$ the rates each slit delivers alone and $\delta$
+the phase the extra path costs:
+
+$$
+I \;=\; |\psi_A + \psi_B|^2 \;=\; I_A + I_B + 2\sqrt{I_A I_B}\,\cos\delta .
+$$
+
+The first two terms are the arithmetic a particle picture allows. The third is
+the entire disagreement, it has no sign, and its average over a screen is zero —
+which is why interference never adds or destroys light, only moves it.
+
+<Waypoint>
+  Two facts are now on the table and they do not fit together. Light arrives in
+  indivisible units at single points; and the rate at which those units arrive is
+  the square of a sum of arrows, which can cancel. Nothing yet forces the second
+  fact to be about the individual unit rather than about crowds of them, and
+  until something does, the contradiction is escapable.
+</Waypoint>
+
+The loophole is real and worth naming, because it is the answer everyone reaches
+for first: perhaps the arrows describe a *beam*, some collective property of many
+photons jostling, and a lone photon knows nothing of them. The hero figure has
+already answered it. Turn the rate to the bottom and there is one photon in the
+apparatus at a time — the next leaves the lamp long after the previous one has
+landed, so there is no crowd to be a property of. The stripes still come. Whatever
+carries the phase, it accompanies each photon separately.
+
+## The Fact That Broke the Wave
+
+The experiment that ends the wave account has no slits in it at all.
+
+Shine light on a metal and electrons come off. The classical account is
+unambiguous: light is an oscillating electric field, the field pushes on
+electrons, a stronger field pushes harder, and an electron that is pushed harder
+leaves faster. Brightness should therefore control the energy of the ejected
+electrons. And a dim light should still work, just slowly — the electron sits in
+the field absorbing until it has enough to escape.
+
+<Predict
+  question="Turn the lamp brighter, keeping the colour fixed. What happens to the fastest electron that comes off?"
+  a="It comes off faster — a stronger field shakes it harder"
+  b="Its speed does not change at all"
+>
+  <Photoelectric />
+</Predict>
+
+The <C k="pdf">left bar</C> counts electrons per second; the
+<C k="ejecta">right bar</C> is the energy of the fastest one. The dashed outline
+drawn over that bar is the classical prediction — energy per electron rising with
+the field strength. Crank brightness. The outline climbs to the top of the frame,
+the count bar climbs with it, and the energy bar stays exactly where it was
+through a twentyfold change in how hard the field is shaking.
+
+Now move the colour instead. The energy bar climbs, and it climbs as a straight
+line in *frequency* — the left panel plots it. Follow the line down to the left
+and it meets zero at a definite frequency, and below that frequency nothing
+happens at all. Switch to platinum, whose electrons are held more tightly, and the
+whole line slides right without changing slope. At any brightness, at any
+duration, red light frees nothing from platinum. There is no dim-but-patient
+regime; the delay never arrives.
+
+Einstein's 1905 reading of this is one line:
+
+$$
+K_{\max} = h\nu - \varphi .
+$$
+
+Light of frequency $\nu$ delivers its energy in indivisible packets of size
+$h\nu$. One packet goes to one electron. The electron spends $\varphi$ — the
+work function, a property of the metal — buying its way out of the surface, and
+keeps the rest. Brightness sets how many packets arrive per second and has no
+say in what any one of them contains. A packet too small to pay $\varphi$ frees
+nothing, and a billion of them per second still free nothing, because they cannot
+pool.
+
+The slope of that line is $h$, the same $h$ that sets the size of the packet. It
+is a number about light that has nothing to do with the metal, and it does not
+appear anywhere in the wave account. Millikan spent the better part of a decade
+trying to break the equation, and in 1916 published a measurement of $h$ from its
+slope, agreeing with the modern value to about one percent.
+
+<Waypoint>
+  Both halves are now nailed down by measurement. The arrows are real: interference
+  survives one photon at a time, so each photon carries the phase. The packets are
+  real: energy arrives in lumps of $h\nu$ that cannot be subdivided or accumulated.
+  The contradiction is no longer avoidable by picking the better of two pictures,
+  because each picture is now the unique explanation of an experiment the other
+  cannot touch.
+</Waypoint>
+
+## The Exchange Rate
+
+Put a detector at the slits. Each photon is indivisible, so it went through one
+or the other; find out which, and keep watching the stripes. That would put the
+contradiction on the table in a single run — a definite path *and* an
+interference pattern — and it is the obvious thing to try.
+
+The measurement has been done, in many forms. It never yields both. What it
+yields is a rate of exchange.
+
+<WhichPath />
+
+The slider is how much the apparatus knows — <C k="cutoff">$D$</C>, path
+distinguishability, from nothing to certainty. The screen answers immediately.
+Learn a little and the stripes shallow out; learn everything and they are gone,
+leaving the flat doubled profile of two independent slits. The marker on the left
+is the pair the relation below forces; the <C k="pdf">contrast meter</C> under
+the screen is measured off the plotted pattern instead, so the two can be read
+against each other. The marker traces a quarter circle and cannot leave it:
+
+$$
+V^2 + D^2 \le 1 ,
+$$
+
+with equality whenever nothing else has disturbed the light. Perfect stripes cost
+total ignorance of the path. Certainty about the path costs every stripe. And
+crucially, the intermediate settings are not a mixture of two runs — they are one
+pattern with partial contrast, and every point on that quarter circle is
+realisable.
+
+The demand that light be a wave *or* a particle is a demand that it fit
+one of two categories abstracted from things at our own scale: swell on water,
+stones in flight. Nothing obliges it to fit either. What it does is definite and
+has been stated twice already — an amplitude that adds like an arrow, and a
+squared length that counts arrivals. "Wave" is the correct name for the adding.
+"Particle" is the correct name for the counting. Each is right about its half and
+wrong about the whole.
+
+And the reason the two halves never collide is arithmetic, not diplomacy. To
+catch a contradiction you would need sharp stripes and a known path in the same
+run. $V^2 + D^2 \le 1$ says the apparatus that sharpens one blurs the other, by
+exactly enough. It is paradoxical in the strict sense — it violates our
+expectation — and it has never once produced an inconsistent measurement, because
+the inconsistent measurement is the one the relation forbids.
+
+## Not a Fact About Light
+
+None of this was about light.
+
+De Broglie's 1924 proposal was that the relation between wavelength and momentum
+runs both ways. Light was known to carry momentum $p = h/\lambda$; he read it
+backwards. Anything with momentum has a wavelength $\lambda = h/p$. Davisson and
+Germer put electrons through a nickel crystal in 1927 and found the diffraction
+pattern the formula demands.
+
+The ruler below is metres, logarithmic, twenty-nine decades wide. Each specimen
+sits at its own $\lambda$, computed from its own momentum. The readout says what
+fringe spacing that wavelength would produce on the bench this whole article has
+been using — the same $\lambda L / d$, the same two slits 0.20 mm apart, the same
+two metres.
+
+<DeBroglieRuler />
+
+The red photon lands at 633 nm and reproduces the 6.33 mm fringes from the hero
+figure, which is the arithmetic closing on itself. The 100-volt electron lands at
+123 picometres — four thousand times shorter than visible light, which is why
+electron microscopes resolve what optical ones cannot. The C₆₀ molecule, sixty
+carbon atoms in a ball, lands at 2.8 picometres; Arndt and colleagues sent those
+through a grating in 1999 and got fringes.
+
+Then select the baseball. Its wavelength is $1.1 \times 10^{-34}$ m, and its
+fringes on this bench would stand $1.1 \times 10^{-30}$ m apart — less than
+$10^{-15}$ of the width of a proton. The baseball is not exempt from the arrows.
+Its arrows turn so fast that no aperture anyone could build would spread them far
+enough apart to notice, and every question about it that can actually be posed
+has the same answer under both accounts. Classical mechanics is what this
+arithmetic looks like from the far left of that ruler.
+
+## And Yet It Works
+
+The rule assembled here — attach an arrow to every route, lay them tip to tail,
+square the closing length — is not a heuristic for slits. Extended to fields, it
+is quantum electrodynamics, and the arithmetic is the same arithmetic. Its
+sharpest test is the magnetic moment of the electron, measured to thirteen
+digits. Compute it from these amplitudes and it agrees — to about a part in ten
+billion, which is not where the theory runs out but where the independently
+measured fine-structure constant the calculation needs does.
+
+What was refuted along the way is an assumption, not an experiment: that a thing
+must be one of the two kinds of thing we already had names for. That assumption
+was never physics. It was inherited vocabulary, and the bench declined to honour
+it. What survived is exact — amplitudes add, arrivals are counted by the square,
+and the two descriptions we find intuitive are the two ends of a relation that
+will not let both be sharp at once.
+
+It cannot be both, in the only sense of "both" our language offered. It is both,
+in the sense the arithmetic requires. And that arithmetic has so far survived
+being checked to one part in ten billion.

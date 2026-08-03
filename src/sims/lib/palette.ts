@@ -31,6 +31,18 @@ export const PALETTE = {
   grad: '#db2777', // the gradient arrow(s) on the landscape
   hi: '#dc2626', // high ground on the landscape
   lo: '#0891b2', // low ground on the landscape
+
+  // Physics 01 (articles/physics/01-wave-particle/PLAN.md §Palette) — the same
+  // role-rhyme once more: amber "the thing we watch" (here, one detector click),
+  // blue "the thing that acts" (the amplitude), violet "the derived meter"
+  // (|ψ|², measured histograms, visibility).
+  hit: '#d97706', // a single photon's arrival — one dot on the screen
+  amp: '#2563eb', // the amplitude ψ — the phasor, the wave that acts
+  pdf: '#7c3aed', // the derived meter: |ψ|², measured histograms, visibility
+  slitA: '#2563eb', // the amplitude that came through the left slit
+  slitB: '#db2777', // the amplitude that came through the right slit
+  ejecta: '#dc2626', // ejected-electron energy (the photoelectric bench)
+  cutoff: '#0891b2', // threshold frequency / the line a quantity cannot cross
 } as const
 
 export type PaletteKey = keyof typeof PALETTE
