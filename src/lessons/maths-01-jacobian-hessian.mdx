@@ -213,12 +213,16 @@ is steeper. Drag the ring and the right pane isolates your point's arrow:
 <GradField />
 
 *Point in, arrow out* is a map from the plane to the plane — exactly the kind of
-object the loupe reads. So it has a Jacobian: a landing report describing
-how the arrow turns and stretches per step <C k="ex">east</C> and per step
-<C k="ey">north</C>. In the right pane, the blue and green vectors perched on the
-arrowhead show precisely that — step east and the arrowhead moves along blue,
-step north and it moves along green. Four numbers, filed in the same columns as
-ever.
+object the loupe reads. So it has a Jacobian, and the right pane shows what that
+means here. Your point's <C k="grad">arrow</C> is drawn in pink. Behind it, two
+dashed ghosts: the arrow as it is one lattice step <C k="ex">east</C> of you, and
+one step <C k="ey">north</C> — the two sample points are dotted next to the ring
+in the left pane. The ghosts are not copies; stepping changed the arrow. The
+solid <C k="ex">blue</C> segment joins your arrowhead to the east ghost's — that
+segment *is* what stepping east did — and the <C k="ey">green</C> segment is the
+same for north. Drag through the basin and along the ridge: the ghosts track you,
+and the two segments swing and stretch. Those two changes, filed as columns at
+per-step rate, are four numbers — the same filing as ever.
 
 That box — the Jacobian of the gradient — is the Hessian of the landscape:
 
