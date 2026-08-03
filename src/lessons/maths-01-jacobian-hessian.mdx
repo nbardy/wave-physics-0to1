@@ -19,26 +19,17 @@ Push the slider all the way toward *close*, then drag the ring around. The swerv
 drains out of the picture, and what stands at the bottom of every zoom is the same
 kind of thing: a lattice of identical parallelograms — tilted one way here, sheared
 another way there, but always a lattice, always perfect. The stirring never manages
-to be complicated up close. The amber patch riding the loupe is a small square
-inked onto the plane before the stirring; I re-ink it to match each magnification,
-since a real square would shrink out of sight. It lands as one parallelogram of
-the same lattice.
+to be complicated up close. The <C k="stamp">amber patch</C> riding the loupe is a
+small square inked onto the plane before the stirring; I re-ink it to match each
+magnification, since a real square would shrink out of sight. It lands as one
+parallelogram of the same lattice.
 
 A parallelogram lattice is a plain thing. Four numbers pin it down completely, and
 those four numbers are different at every point of the plane. That little box of
-four is the Jacobian. Inside it hide two more things: the area of the
-parallelogram, and — much later — an entire second matrix wearing the first one's
-structure. The Hessian never needs its own theory; it is this same picture, aimed
-at a different target.
-
-Every quantity here keeps one color throughout: the
-<C k="stamp">stamp we watch</C> is always amber, the
-<C k="ex">east arrow</C> is always blue, the
-<C k="ey">north arrow</C> is always green, every
-<C k="area">measured meter</C> — areas, curvatures — is violet, and on the
-landscapes of the second half, <C k="hi">high ground</C> is red,
-<C k="lo">low ground</C> cyan, and the <C k="grad">downhill arrows</C> pink. None
-of the names need memorizing; the colors do the remembering.
+four is the Jacobian. Two debts hide inside it: the area of the parallelogram, and
+an entire second matrix wearing the first one's structure — the Hessian, which
+never needs a theory of its own because it is this same picture, aimed at a
+different target.
 
 ## One Number Was Enough
 
@@ -62,10 +53,9 @@ good for small $h$ and better for smaller. One number suffices because the thing
 the bottom of the zoom is a line through a point, and a line through a point has
 one degree of freedom: its slope.
 
-The hero figure already showed us the same convergence with a different ending.
-Zoom into the stirred plane and the picture also commits — but it commits to a
-*lattice*, and a lattice through a point does not have one degree of freedom. The
-next two sections earn its four.
+The first figure showed the same convergence with a different ending. Zoom into
+the stirred plane and the picture also commits — but to a *lattice*, and a lattice
+through a point has four degrees of freedom, not one.
 
 ## Maps, Not Graphs
 
@@ -80,17 +70,17 @@ $$
 two inputs, two outputs. Its graph lives in four dimensions, and no amount of
 cleverness fits four dimensions on a screen. So we stop graphing and watch the
 plane itself: draw a grid, apply $F$ to every point, and look at what the grid
-becomes. That is the picture the hero has been showing all along — not a graph
+becomes. That is what the opening figure has been showing all along — not a graph
 *of* the stirring but the stirred plane itself.
 
-To measure a stirring, we need a probe. Ours is the amber square the hero's loupe
-has been carrying, and it finally gets its name: the <C k="stamp">stamp</C> — inked
+To measure a stirring, we need a probe. Ours is the amber square the loupe has
+been carrying, and it finally gets its name: the <C k="stamp">stamp</C> — inked
 onto the plane before the map acts, with a dot on one corner so we can tell
 whether it lands right-side out. Where the map is gentle the
 stamp lands almost square; where the map is violent it lands as a bent little rag.
 One stamp is draggable below; two more are pinned for comparison, and each landed
-stamp carries a violet meter reading the one number a first instinct asks for —
-how much the map *scaled* it:
+stamp carries a <C k="area">violet meter</C> reading the one number a first
+instinct asks for — how much the map *scaled* it:
 
 <WarpStamp />
 
@@ -99,14 +89,14 @@ to two decimal places: ×1.00. This particular stirring happens to preserve ever
 area exactly — and yet the three landed shapes could hardly look more different:
 one nearly square, one sheared into a lozenge, one bent around the vortex. The
 scale-factor meter is not wrong; it is blind. Whatever "the local behavior of the
-map" is, it is not one number. A number cannot say *which way*.
+map" is, it is not one number. A number cannot say *which way*. We want the
+which-way.
 
 ## The Landing Report
 
 Arrows can. Plant two of them on the stamp — <C k="ex">east</C> and
-<C k="ey">north</C>, each one grid-cell long — and ask the only question that
-survives the previous figure: where does each arrow *land*? Below, the loupe from
-the hero returns with the arrows riding it. Dashed ghosts mark where each arrow
+<C k="ey">north</C>, each one grid-cell long — and ask where each arrow *lands*.
+Below, the loupe returns with the arrows riding it. Dashed ghosts mark where each arrow
 would land if the map did nothing, so the map's opinion is visible as the gap
 between ghost and arrow. The selector switches between four maps; the fourth is
 our stirring:
@@ -121,8 +111,8 @@ maps. *Do nothing* files ones and zeros — each arrow lands on its own ghost.
 files a report that changes as you drag, because a stirring treats every
 neighborhood differently.
 
-That box is the Jacobian of the map at that point. The symbols, now that the thing
-itself has been seen: writing $\partial f_1/\partial x$ for "how fast the first
+That box is the Jacobian of the map at that point. In symbols: writing
+$\partial f_1/\partial x$ for "how fast the first
 output coordinate changes per step east," the landing of the east arrow is
 $(\partial f_1/\partial x,\; \partial f_2/\partial x)$, the landing of the north
 arrow is the $y$-partials, and the report reads
@@ -155,8 +145,8 @@ off and the lattice picks its curvature back up.
 
 ## The Area Receipt
 
-Two of the four numbers were promised early: the parallelogram's area, hiding in
-the report. The stamp's landed copy *is* the parallelogram with
+The first debt from the top of the article comes due: the parallelogram's area,
+hiding in the report. The stamp's landed copy *is* the parallelogram with
 <C k="ex">east's landing</C> and <C k="ey">north's landing</C> as its sides, and
 the area of that parallelogram is the cross-product combination
 
@@ -187,10 +177,9 @@ passes, the stamp thins to a needle — that is the instant of $\det J = 0$, the
 whole square crushed onto a line, two dimensions of ink surviving as one — and
 what unfolds on the far side is the stamp *mirrored*, dot on the wrong side. The
 negative sign is not bookkeeping; it is the picture of the plane locally turned
-over. And the needle instant explains a fact usually delivered as a decree: a map
-can be undone only where $\det J \neq 0$. At the needle, two different points of
-the stamp got sent to one landing point, and no formula recovers information that
-was never delivered.
+over. And the needle instant explains why a map can be undone only where
+$\det J \neq 0$: at the needle, two different points of the stamp got sent to one
+landing point, and no formula recovers information that was never delivered.
 
 The determinant is also the resolution of a small scandal from integration. Every
 change of variables drags a mysterious factor into the integral — the $r$ in
@@ -210,7 +199,7 @@ whether the stamp came out mirrored.
 You can now read any smooth map of the plane the way the loupe does: at each
 point, a lattice; the lattice, four numbers filed as two landings; the landings'
 parallelogram area, one signed number that prices integrals and prophesies where
-the map can be undone. All of it earned by zooming.
+the map can be undone. All of it read off one zoom.
 </Waypoint>
 
 ## A Field of Arrows
@@ -223,8 +212,8 @@ is steeper. Drag the ring and the right pane isolates your point's arrow:
 
 <GradField />
 
-*Point in, arrow out* is a map from the plane to the plane — the gradient of a
-landscape is exactly the kind of object we spent four sections learning to read. So it has a Jacobian: a landing report describing
+*Point in, arrow out* is a map from the plane to the plane — exactly the kind of
+object the loupe reads. So it has a Jacobian: a landing report describing
 how the arrow turns and stretches per step <C k="ex">east</C> and per step
 <C k="ey">north</C>. In the right pane, the blue and green vectors perched on the
 arrowhead show precisely that — step east and the arrowhead moves along blue,
@@ -245,18 +234,17 @@ second derivatives because the gradient was already made of first ones. One gift
 comes free and is visible in the meter: the two off-diagonal entries are always
 equal. For any twice-continuously-differentiable landscape the mixed partials
 agree — east-then-north measures the same tilt as north-then-east — so the
-Hessian is symmetric, always. Hold that; it pays for the geometry of the next
-section.
+Hessian is symmetric, always.
 
 ## The Shape Left Behind
 
 The landscape has three special points — the bottom of the cyan basin, the top of
 the red hill, and between them a mountain pass. At each one the
 <C k="grad">arrow</C> dies: $\nabla f = 0$. There the linear story has nothing to
-say — "to first order, the ground is flat" is true at all three points and
-distinguishes none of them, though a hiker standing at a summit and a hiker
-standing at a pass are in very different situations. When the first-order term
-goes silent, zoom again and listen to the second:
+say: "to first order, the ground is flat" is true at all three points and
+distinguishes none of them. A hiker at a summit and a hiker at a pass would
+object. When the first-order term goes silent, zoom again and listen to the
+second:
 
 $$
 f(c + h) \;\approx\; f(c) \;+\; \tfrac{1}{2}\, h^{\!\top} H\, h ,
@@ -358,12 +346,11 @@ whose inverse is the lens that makes crooked valleys round.
 
 ## The Flow Map
 
-One confession was left standing at the top of the article: where the stirring
-came from. It is not an arbitrary warp. The hero's swirl is a *flow map* — take
-the vortex from the first lesson's fluid, let every point of the plane ride it
-for $t$ seconds, and call the start-to-finish assignment $F_t$. Below, the hero
-returns with the loupe intact and its meters finally unlocked, and the flow time
-now actually flows:
+The stirring at the top of this article came from somewhere specific. It is not
+an arbitrary warp; it is a *flow map* — take the vortex from the first lesson's
+fluid, let every point of the plane ride it for $t$ seconds, and call the
+start-to-finish assignment $F_t$. Below, the stirred plane returns with its
+meters unlocked, and the flow time actually flows:
 
 <WarpLoupe mode="return" />
 
@@ -404,19 +391,15 @@ condition-number bounds explain quantitatively what the pink walker suffers.
 
 ## Final Words
 
-The two boxes at the top of this article spent years, for me and for most people
-who use them, as filing cabinets — grids of partials, memorized, differentiated
-by which exam they appeared on. The whole distance between that and understanding
-turned out to be one instrument. Zoom into a curve: a line, one number. Zoom into
-a map of the plane: a lattice, four numbers, filed as two landings. Zoom into a
-landscape where its arrow has died: a quadric, and the four numbers are curvature
-now, because the map you zoomed was the gradient itself. The Hessian was never a
+The instrument was the same every time. Zoom into a curve: a line — one number.
+Zoom into a stirred plane: a lattice — four numbers, filed as two landings. Zoom
+into a landscape where the arrow has died: the same four numbers, curvatures now,
+because the thing under the loupe is the gradient itself. The Hessian was never a
 second idea. It is the Jacobian, pointed inward.
 
-What stays with you is the lattice. Smoothness is a strong word — it promises
-that under enough magnification *every* map alive, however violently it stirs,
-must flatten into the same parallelogram monotony — and every use of these
-matrices anywhere is a way of cashing that promise: an integral repriced patch by
-patch, a fold located by a vanishing area, a saddle called by disagreeing
-curvatures, a crooked valley made round. The mathematics of change runs on the
-fact that up close, change runs out of imagination.
+Everything these boxes are trusted with is collected on one promise — that the
+zoom always bottoms out. However hard a smooth map stirs, close enough it is
+parallelograms, and so an integral can be repriced patch by patch, a fold caught
+by its dying area, a saddle called by curvatures that disagree, a crooked valley
+made round. Smoothness is the promise that up close, the world is linear. The
+rest is filing.
