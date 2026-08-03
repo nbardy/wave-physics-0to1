@@ -15,6 +15,7 @@ import {
   clipPane,
   toPx,
   fromPx,
+  niceStep,
   fmt,
   FONT_METER,
   FONT_LABEL,
@@ -167,10 +168,30 @@ function createLoupe(mode: LoupeMode, sharedRef: { current: Shared }): Stepper {
       const rv: View = { cx: fx, cy: fy, half }
       ctx.save()
       clipPane(ctx, right)
-      drawGridImage(ctx, right, rv, mc.map, p.x, p.y, half * 1.7, 'rgba(37,99,235,0.55)')
-      // the stamp, re-inked at loupe scale so it never vanishes (confessed in prose)
+      // baseStep ties the loupe to the SAME grid family the left pane draws —
+      // a probe on a line at left must sit on that line here (see lib.ts note)
+      drawGridImage(
+        ctx, right, rv, mc.map, p.x, p.y, half * 1.7,
+        'rgba(37,99,235,0.55)', true, niceStep(HALF0),
+      )
+      // the stamp, re-inked at loupe scale so it never vanishes (confessed in
+      // prose). Its corner marker is off here: one orange dot per figure, and
+      // it is the probe — two identical dots meaning different things is how
+      // the loupe read as mis-centered.
       const side = half * 0.62
-      drawStampImage(ctx, right, rv, mc.map, p.x, p.y, side)
+      drawStampImage(ctx, right, rv, mc.map, p.x, p.y, side, { dot: false })
+      // the probe itself, ringed exactly like the left pane so the two panes
+      // visibly share one object; it sits at the loupe's centre by definition
+      const [rcx, rcy] = toPx(rv, right, fx, fy)
+      ctx.beginPath()
+      ctx.arc(rcx, rcy, 11, 0, Math.PI * 2)
+      ctx.strokeStyle = PALETTE.stamp
+      ctx.lineWidth = 2
+      ctx.stroke()
+      ctx.beginPath()
+      ctx.arc(rcx, rcy, 3, 0, Math.PI * 2)
+      ctx.fillStyle = PALETTE.stamp
+      ctx.fill()
       if (mode !== 'plant') {
         // landings of the unit arrows, drawn at one stamp-side long
         const [e1x, e1y] = [J[0], J[2]]
@@ -239,7 +260,17 @@ export function WarpLoupe({ mode }: { mode: LoupeMode }) {
 
   return (
     <div className="sim-stir" onPointerDown={onPointer} onPointerMove={onPointer}>
-      <Sim height={300} create={() => createLoupe(mode, sharedRef)}>
+      <Sim
+        height={300}
+        // plant/arrows are interactive but timeless — no Pause button for them
+        // (dead chrome reads as a broken figure); Reset restores probe and zoom
+        animated={mode === 'return'}
+        create={() => {
+          sharedRef.current.probe = { x: 0.45, y: 0.3 }
+          setZoom(mode === 'plant' ? 0 : 0.55)
+          return createLoupe(mode, sharedRef)
+        }}
+      >
         <label className="sim-slider">
           <span>far</span>
           <input

@@ -141,7 +141,7 @@ export function CriticalZoom() {
   sharedRef.current.zoom = zoom
 
   return (
-    <Sim height={320} create={() => createCriticalZoom(sharedRef)}>
+    <Sim height={320} animated={false} create={() => createCriticalZoom(sharedRef)}>
       <select className="sim-select" value={kind} onChange={(e) => setKind(e.target.value as CriticalKind)}>
         {KINDS.map((k) => (
           <option key={k.key} value={k.key}>

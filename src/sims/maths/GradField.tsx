@@ -203,7 +203,7 @@ export function GradField() {
 
   return (
     <div className="sim-stir" onPointerDown={onPointer} onPointerMove={onPointer}>
-      <Sim height={300} create={() => createGradField(sharedRef)} />
+      <Sim height={300} animated={false} create={() => createGradField(sharedRef)} />
     </div>
   )
 }

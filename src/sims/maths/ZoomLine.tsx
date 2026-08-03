@@ -112,7 +112,7 @@ export function ZoomLine() {
 
   return (
     <div className="sim-stir" onPointerDown={onPointer} onPointerMove={onPointer}>
-      <Sim height={260} create={() => createZoomLine(sharedRef)}>
+      <Sim height={260} animated={false} create={() => createZoomLine(sharedRef)}>
         <label className="sim-slider">
           <span>far</span>
           <input

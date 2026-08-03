@@ -72,7 +72,7 @@ export function DetFold() {
   sRef.current = s
 
   return (
-    <Sim height={300} create={() => createDetFold(sRef)}>
+    <Sim height={300} animated={false} create={() => createDetFold(sRef)}>
       <label className="sim-slider">
         <span>flat</span>
         <input

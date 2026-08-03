@@ -184,6 +184,15 @@ export type { Rect, View } from '../lib/chrome'
  * Draw the image under `map` of the domain grid lines covering the window
  * centered at (cx0, cy0) — each line sampled finely so curvature shows.
  * With map = identity this draws a plain square grid.
+ *
+ * `baseStep` is how a loupe pane stays honest with its overview pane: pass the
+ * OVERVIEW's grid step and this pane draws that same family (same absolute
+ * lines, heavier weight) plus power-of-two subdivisions of it down to the
+ * zoom-appropriate density (lighter weight). Without it, each pane picks its
+ * own niceStep and the two panes draw DIFFERENT line families — a probe
+ * sitting on a grid line in the overview then sits between lines in the
+ * loupe, which reads as the loupe looking at some other place entirely
+ * (found by Nick, 2026-08-03, on the WarpLoupe hero).
  */
 export function drawGridImage(
   ctx: CanvasRenderingContext2D,
@@ -195,33 +204,46 @@ export function drawGridImage(
   domHalf: number,
   color = 'rgba(37,99,235,0.5)',
   emphasizeAxes = false,
+  baseStep?: number,
 ) {
-  const h = niceStep(domHalf)
+  const fine = niceStep(domHalf)
+  let h = fine
+  if (baseStep !== undefined) {
+    const k = Math.max(0, Math.ceil(Math.log2(baseStep / fine)))
+    h = baseStep / Math.pow(2, k)
+  }
   const lo = -Math.ceil((domHalf * 1.6) / h)
   const hiN = -lo
   const S = 48
   ctx.strokeStyle = color
-  ctx.lineWidth = 1
   const x0 = Math.round(domCx / h) * h
   const y0 = Math.round(domCy / h) * h
+  const isBase = (v: number) =>
+    baseStep === undefined || Math.abs(v / baseStep - Math.round(v / baseStep)) < 1e-6
+  const weight = (v: number) => {
+    if (emphasizeAxes && Math.abs(v) < h / 2) return 1.8
+    return isBase(v) ? 1 : 0.55
+  }
   for (let i = lo; i <= hiN; i++) {
     // vertical domain line x = x0 + i·h
+    const xv = x0 + i * h
     ctx.beginPath()
-    ctx.lineWidth = emphasizeAxes && Math.abs(x0 + i * h) < h / 2 ? 1.8 : 1
+    ctx.lineWidth = weight(xv)
     for (let j = 0; j <= S; j++) {
       const t = domCy - domHalf * 1.6 + ((j / S) * domHalf * 3.2)
-      const [X, Y] = map.f(x0 + i * h, t)
+      const [X, Y] = map.f(xv, t)
       const [px, py] = toPx(view, r, X, Y)
       if (j === 0) ctx.moveTo(px, py)
       else ctx.lineTo(px, py)
     }
     ctx.stroke()
     // horizontal domain line y = y0 + i·h
+    const yv = y0 + i * h
     ctx.beginPath()
-    ctx.lineWidth = emphasizeAxes && Math.abs(y0 + i * h) < h / 2 ? 1.8 : 1
+    ctx.lineWidth = weight(yv)
     for (let j = 0; j <= S; j++) {
       const t = domCx - domHalf * 1.6 + ((j / S) * domHalf * 3.2)
-      const [X, Y] = map.f(t, y0 + i * h)
+      const [X, Y] = map.f(t, yv)
       const [px, py] = toPx(view, r, X, Y)
       if (j === 0) ctx.moveTo(px, py)
       else ctx.lineTo(px, py)

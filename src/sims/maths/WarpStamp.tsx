@@ -100,7 +100,7 @@ export function WarpStamp() {
 
   return (
     <div className="sim-stir" onPointerDown={onPointer} onPointerMove={onPointer}>
-      <Sim height={300} create={() => createWarpStamp(sharedRef)} />
+      <Sim height={300} animated={false} create={() => createWarpStamp(sharedRef)} />
     </div>
   )
 }

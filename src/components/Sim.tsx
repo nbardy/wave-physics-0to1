@@ -16,11 +16,17 @@ export interface SimProps {
   /** Build a fresh stepper (with its own state). Called on mount and on Reset. */
   create: (width: number, height: number) => Stepper
   caption?: string
+  /**
+   * Whether time passes in this figure. Interactive-but-static figures (drag a
+   * probe, nothing animates) set false so the shell doesn't render a Pause
+   * button that visibly does nothing — dead chrome reads as a broken figure.
+   */
+  animated?: boolean
   /** Figure-specific controls (bespoke per sim — see AGENTS.md). Rendered beside Play/Reset. */
   children?: ReactNode
 }
 
-export function Sim({ height = 240, create, caption, children }: SimProps) {
+export function Sim({ height = 240, create, caption, animated = true, children }: SimProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const [running, setRunning] = useState(true)
   const runningRef = useRef(running)
@@ -77,9 +83,11 @@ export function Sim({ height = 240, create, caption, children }: SimProps) {
     <figure className="sim">
       <canvas ref={canvasRef} className="sim-canvas" style={{ width: '100%', height }} />
       <div className="sim-controls">
-        <button type="button" onClick={() => setRunning((r) => !r)}>
-          {running ? 'Pause' : 'Play'}
-        </button>
+        {animated && (
+          <button type="button" onClick={() => setRunning((r) => !r)}>
+            {running ? 'Pause' : 'Play'}
+          </button>
+        )}
         <button type="button" onClick={() => setResetKey((k) => k + 1)}>
           Reset
         </button>
