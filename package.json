@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "check:figures": "bun run scripts/check-physics-figures.ts",
+    "check:pbits": "bun run scripts/check-pbit-figures.ts",
     "deploy": "bash scripts/deploy-pages.sh"
   },
   "dependencies": {

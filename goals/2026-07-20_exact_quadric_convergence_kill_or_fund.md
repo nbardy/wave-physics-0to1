@@ -34,3 +34,15 @@ Full evidence: `wave_sim` at
 `prototypes/surf_core_v11/docs/v11_connected_grid_r4f_generic_placement_certificate_red_adjudication.md`,
 `goals/results/2026-07-20_convergence_decision/STATUS.md`, and the
 KEY_LEARNINGS graveyard row of 2026-07-27.
+
+## Final resolution (2026-07-29) — the question is now ANSWERED
+
+A successor contract produced the decision number without the carrier: the
+funded pipeline's work orders `[16, 32, 64]` never reach the order-128
+aborts, and the all-75 measurement at the certified generic placement gave
+`d5 + 10*eta_A = 3.204e-3` vs the frozen `1e-3` target — **RED by 3.2x with
+exact geometry**. Geometry error was never the cause; the exact-quadric
+curved-cut family is retired (`wave_sim` commit `ed84d021`), and the
+slack-preserving-carrier goal was retired as moot (`200bb774`). Nothing
+under this goal or its successors remains open; the next funded direction
+is v12+ sliver-cell material-Gram conditioning.

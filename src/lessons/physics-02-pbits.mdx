@@ -1,0 +1,280 @@
+import { BitFlicker } from '../sims/pbits/BitFlicker'
+import { DisplayTeach } from '../sims/pbits/DisplayTeach'
+import { PairCoupler } from '../sims/pbits/PairCoupler'
+import { Landscape } from '../sims/pbits/Landscape'
+import { StateGraph } from '../sims/pbits/StateGraph'
+import { MeterForge } from '../sims/pbits/MeterForge'
+import { GridSchedules } from '../sims/pbits/GridSchedules'
+
+# A Computer Made of Noise
+
+{/* STAGE 3 SCAFFOLD — blocked prose; the voice pass is Stage 4.
+    F1 HERO lands here, built last per PLAN (needs the §8 trainer). */}
+
+Every computer you own is at war with noise. Billions of transistors are margined,
+clocked, and error-corrected so that not one of them ever flips a bit by accident;
+most of the watts your laptop burns are spent winning that war. A chip exists now
+that surrenders it instead. Its bits flip at random on purpose, millions of times
+a second, driven by the same thermal jitter every other chip suppresses — and it
+computes *with* the flipping, on less power than a nightlight.
+
+This lesson builds that machine's whole idea from one noisy coin — and builds,
+alongside it, the instrument that can tell when such a machine is lying. Both
+halves matter. Randomness is the one output your eye cannot audit, and by the end
+you will have caught a fast, plausible-looking sampler producing an entirely wrong
+answer that no energy readout would ever have revealed.
+
+One amnesty up front: there is no quantum mechanics anywhere in this article.
+These are classical coins.
+
+## A bit that leans
+
+A fair coin flipped forever computes nothing — its histogram is flat and stays
+flat no matter what you wish it said. The smallest useful move is to give the
+coin an opinion. The cell below flickers between its two states, <C k="sUp">up</C>
+and <C k="sDn">down</C>, forty times a second. The knob is its *bias*. Drag it and
+watch the histogram lean:
+
+<BitFlicker />
+
+The coin still never obeys — at any bias short of the ends it sometimes lands
+against its preference. What the knob sets is not the outcome but the *lean*, and
+the histogram measures it. This flickering, opinionated coin is called a p-bit, a
+probabilistic bit, and it is the only component the machine in this lesson is
+made of.
+
+Now sweep the knob slowly from one end to the other and let it rest a moment at
+each stop. Every bias you visit leaves a dot behind — its measured mean — and the
+dots trace a curve:
+
+<BitFlicker trace />
+
+That S-shape is yours; the figure only recorded it. Written down, the rule you
+just drew is
+
+$$P(s = +1) = \sigma(2h), \qquad \sigma(x) = \frac{1}{1 + e^{-x}}$$
+
+where $s$ is the coin's state, $h$ is the bias knob, and $\sigma$ is the S-curve
+itself. Check it at the edges: push $h$ hard positive and $\sigma(2h)$ saturates
+at 1 — the coin pins <C k="sUp">up</C> and the flicker dies. At $h = 0$ it gives
+exactly ½, the fair coin we started with — uselessness recovered as a special
+case.
+
+## Reading the display
+
+Before anything else happens, the display itself. A cell filled <C k="sUp">amber</C>
+points up; filled <C k="sDn">blue</C>, down. A wire between two cells means their
+leans are linked: a <C k="ferro">warm wire</C> wants its ends to agree, a
+<C k="anti">cool wire</C> wants them to disagree, and thickness is how much. A
+cell wearing the <C k="held">green ring</C> is *held* — pinned by hand, deaf to
+persuasion. The thin <C k="meter">violet arc</C> around each cell is a gauge: its
+probability of pointing up, given what its neighbors are doing right now.
+
+<DisplayTeach />
+
+Tap cells and watch the arcs. Flipping a cell moves the gauges of exactly the
+cells it is wired to and no others — persuasion here is strictly local, along
+wires. The held cell's own gauge still moves when you flip its neighbor, but its
+state never will. Every figure from here to the end of the lesson speaks this
+vocabulary and no other.
+
+## Two coins that gossip
+
+Here are two of those coins side by side, and a two-part target: make them
+*agree* nine times out of ten, while each coin *stays fair* — its lean needle
+resting near center. You have a bias knob for each. Try to hit both marks:
+
+<PairCoupler mode="biases" />
+
+There is a cheat, and you should take it: crank both knobs to the rail. The
+agreement meter sails past the <C k="ghost">gray mark</C> — and both lean
+needles slam red. You didn't make two coins agree; you made two constants equal.
+The moment you back either knob toward fair, the agreement collapses toward
+zero. That trade is exact — under separate knobs, agreement is the *product* of
+the two leans — and it is the failure worth feeling: each knob talks to its own
+coin only, so the only agreement biases can buy is the kind you get by
+destroying the coins. Agreement between coins that still flicker is a fact about
+the *pair*, and nothing that addresses coins one at a time can touch it.
+
+What's missing is a wire.
+
+<Predict
+  question="The wire below is set to disagree. Which two of the four bars will grow?"
+  a="the two outer bars — both-up and both-down"
+  b="the two inner bars — the mismatched states"
+>
+  <PairCoupler mode="wire" />
+</Predict>
+
+With the knob toward *agree*, the outer bars — both-up, both-down — swell
+together and the meter climbs to the mark, while both lean needles rest exactly
+where the biases could never leave them: at fair. The wire buys agreement
+without pinning anything — it shapes the pair and leaves each coin alone.
+Toward *disagree*, the inner bars take over instead. The <C k="ghost">gray outlines</C>
+behind the sampled bars are new: they are the *exact* answer, computed by brute
+force, and this is the first time in the lesson the flicker can be checked
+against truth. Keep an eye on that gray; it is about to become the whole story.
+
+How does a wire persuade? Watch the second coin's arithmetic:
+
+<PairCoupler mode="wire" fieldGauge />
+
+The right coin no longer consults only its own bias. It consults a running total —
+its bias plus the wire's weight times whatever its neighbor shows *right now* —
+and feeds that total to the same S-curve as before:
+
+$$P(s_i = +1) = \sigma\!\left(2\Big(h_i + \sum_j J_{ij}\, s_j\Big)\right)$$
+
+The sum is over wired neighbors; $J_{ij}$ is the wire's weight, positive for
+<C k="ferro">agree</C>, negative for <C k="anti">disagree</C>. This one line is
+the entire update rule of everything in this lesson, the 270-thousand-bit chip
+included. Nothing more will be added to it — only more neighbors.
+
+## The mountain range
+
+Four coins now, wired in a ring: three <C k="ferro">agree-wires</C> and one
+<C k="anti">disagree-wire</C>. Go around the loop and count — no assignment of
+ups and downs can satisfy all four wires at once. The system is *frustrated*, and
+frustration keeps it interesting: instead of freezing into one happy state it
+must forever compromise.
+
+Sixteen states are possible. Give each one a column, and make the column's height
+the state's probability — computed exactly, by adding up all sixteen cases. The
+dot is the four-coin sampler itself, hopping columns live:
+
+<Landscape />
+
+The landscape is a law, not a schedule: it says where the sampler *dwells*, not
+where it goes next. Drag toward *cold* and the range sharpens — the token gets
+trapped in the deep columns and the shallow ones starve. Toward *hot*, the range
+flattens toward sixteen equal stubs and the fair coin returns once more. The
+heights follow one formula,
+
+$$p(s) \propto e^{-\beta E(s)}, \qquad E(s) = -\sum_{(i,j)} J_{ij}\, s_i s_j - \sum_i h_i\, s_i$$
+
+— the energy $E$ totals every wire's satisfaction, and $\beta$ is the coldness
+knob you are holding. This is the Boltzmann distribution, and here is the fact
+the whole field rests on: the humble local rule from the last section — each coin
+consulting its neighbors and flicking its S-curve — *dwells in exactly this
+global law*. One is the rule, the other is the consequence; the machine only ever
+runs the rule, and the law is what it earns.
+
+There is a second way to see the same dwelling, and it repays a minute of
+staring. Lay out all sixteen states as a map — states that differ by one coin's
+flip joined by an edge — and let the walker walk:
+
+<StateGraph />
+
+The <C k="ghost">ring</C> around each node is its exact share; the
+<C k="meter">fill</C> is how often the walker has actually been there. Watch the
+fills catch up to the rings. That convergence has a name — stationarity — and it
+is the entire promise a sampler makes: visit every room of the state space in
+proportion to its law.
+
+Promises want auditors. For four coins the truth is sixteen additions, so the
+audit can be exact: gray bars for truth, violet bars for the sampler's record,
+and their mismatch folded into a single number — the *total variation distance*,
+half the sum of the bar-by-bar gaps. Zero means indistinguishable; one means
+never right.
+
+<MeterForge />
+
+Watch the number fall as evidence accumulates — and note how it falls: to push it
+down twice as far takes four times the samples, the stubborn square-root
+arithmetic of all measurement. Now move the temperature knob. The
+<C k="ghost">ghost itself reshapes</C> — the target has moved — and the meter
+briefly jumps, then re-earns the floor on fresh evidence. Hold on to that
+distinction: *the target moving* and *the sampler missing* are different events,
+and this pane can tell them apart. Nothing else in this lesson can.
+
+<Waypoint>
+  You hold one rule — each coin flicks an S-curve fed by its wired neighbors —
+  and one law, the Boltzmann distribution the rule dwells in. And you hold an
+  instrument: exact truth in gray, evidence in violet, their distance as one
+  number. Everything that follows is an attack on that number's floor.
+</Waypoint>
+
+## Everyone talks at once
+
+Sixteen coins were a toy. Here are 256, wired <C k="ferro">agree</C> to their
+grid neighbors — and a problem that was invisible until now. *One at a time* is
+how we've updated coins so far, each consulting the freshest state of its
+neighbors. It is correct, and it is serial: a quarter of a million cells means a
+quarter of a million turns per sweep. Every coin's update is just its own little
+S-curve — surely we can run them all at once?
+
+The grid below offers both schedules. In its center, four cells are fenced by
+eight <C k="held">held</C> neighbors — held in a deliberate split, up on the
+west, down on the east, so a domain wall runs straight through the fence and the
+patch inside stays honestly undecided. Because the fence never moves, the patch's
+exact distribution is computable, and the meter audits it live:
+
+<GridSchedules />
+
+*One at a time* idles at the floor. Now press *all at once*. The lattice starts
+to shimmer with a strange crosshatch — and the meter climbs an order of
+magnitude and pins there. It does not descend with more evidence. This is not
+noise; it is a different, wrong answer, delivered confidently at enormous speed.
+
+The walker's map catches the same crime from a second angle:
+
+<StateGraph schedules />
+
+Under *all at once*, the walker starts jumping along chords that are not edges —
+several coins flipping in one move, transitions a one-at-a-time walker can never
+make, each flashing red as it happens. The state space is being traversed by a
+different process entirely.
+
+Why. When every coin updates simultaneously, each consults its neighbors'
+*old* values — two wired coins persuade each other's ghosts. Two coins that
+want to agree, both currently down: each sees a down neighbor an instant before
+both flip up; next tick each sees up, and both may crash down again. The lattice
+crosshatches with exactly this oscillation. The rule ran; what it dwelled in was
+no longer the law.
+
+Here is the part that should worry you. The wrongness never announces itself.
+The all-at-once lattice still finds low-energy states — happily aligned domains
+everywhere you look — and its flicker is as random-looking as the honest one's.
+Watch the two numbers under the meter: evidence keeps accumulating by the
+thousands, and the distance stops falling anyway. A correct sampler's error
+starves with evidence; a broken one's error is a fact about the process, and no
+amount of watching dilutes it. Optimization success is not sampling
+correctness, and nothing on this screen except the violet number can tell the
+difference.
+
+## The two-coloring rescue
+
+The failure was never parallelism. It was *wired neighbors updating together*.
+So: color the grid like a checkerboard. Every wire joins a red cell to a black
+cell — no red touches red, no black touches black. Freeze black and update all
+128 red cells at once: each consults only frozen black neighbors, so nothing it
+reads is stale, so the 128 simultaneous updates are exactly 128 legal
+one-at-a-time updates that happen to share a clock tick. Then freeze red, flash
+black. Two half-sweeps, and every coin has taken a fully honest turn.
+
+<Predict
+  question="Red/black updates half the lattice at once — nearly the speed of all-at-once. Where does the meter land?"
+  a="near the one-at-a-time floor"
+  b="somewhere between the floor and all-at-once"
+>
+  <GridSchedules chromatic />
+</Predict>
+
+The floor — not a compromise between speed and truth but both at once. The only
+thing the coloring costs is generality: it works because the grid happens to
+admit a two-coloring, which is to say the graph is *bipartite*. That small
+observation is worth more than it looks, because it is the entire design secret
+of the actual chip.
+
+Extropic's Z1 is 269,568 p-bits, wired in a fixed sparse graph — sixteen
+neighbors each — that was *designed bipartite*. The chip's native act is the
+figure you are looking at: program the biases and the wire weights, then sweep
+red, sweep black, at millions of sweeps per second, on under one watt, with
+thermal noise itself playing the dice. The schedule you just rescued is not a
+simulation trick; it is the machine. A p-bit chip is a Gibbs machine — that is
+the name this one-at-a-time-in-parallel sampling carries — and everything it
+will ever compute must arrive dressed as biases and wire weights on that fixed
+two-colored graph.
+
+{/* §7 (the machine's manual, triangle embedding, nonideality, hand-compile)
+    and §8 (the finale: training) land next — steppers first, per PLAN. */}
