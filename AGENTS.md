@@ -65,6 +65,9 @@ forward from our own intuition and taste with guiding principles.
 Vite + React + TS · MDX lessons with KaTeX (`$…$`, `$$…$$`) · Canvas-2D sims ·
 Cloudflare Pages. `<Sim>` and `<TeX>` are available in MDX without imports.
 `bun run dev` / `bun run typecheck` / `bun run build` / `bun run check:figures`.
+**Display math stays on one line** — remark-math needs the closing `$$` at a
+line start, so a two-line `$$eq … eq$$` silently swallows the rest of the
+document (measured: it truncated two sections of physics-02, 2026-08-05).
 
 - A lesson is `src/lessons/<field>-NN-slug.mdx`, registered in `src/lessons/registry.ts`
   (status is a sum type: `planned → draft → published`; `field` and `tags` are closed
@@ -161,12 +164,18 @@ branches.
     plus Monte-Carlo photon arrivals in `src/sims/physics/`; 20 headless figure
     checks green, which found two real figure bugs; awaits Nick's read and a mobile
     pass → `articles/physics/01-wave-particle/HANDOFF.md`.
-  - **Physics P2** (p-bits / thermodynamic sampling): Acts I–II BUILT 2026-08-05
-    (`draft`) — ~2,900 words scaffold, 10 figures, CPU sampler + exact oracle in
-    `src/sims/pbits/`; 30 headless checks green (`bun run check:pbits`), which
-    found one real staging bug (the two-coins target was cheatable). §7–§8,
-    WGPU backend, hero, and the voice pass remain
-    → `articles/05-pbits/HANDOFF.md` (design: DENSE_CORE/PLAN/OUTLINES/CRITIQUE).
+  - **Physics P2 + the p-bit SERIES** (thermodynamic computing, three parts):
+    Part 1 "A Computer Made of Noise" BUILT end-to-end 2026-08-05 (`draft`,
+    ~8,500 words, 28 figures, ~180 checks green via `bun run check:pbits`);
+    Part 2 "Compiling Into Heat" (Extropic stack) skeleton + core infra built
+    (`bun run check:z1`); Part 3 (EBM diffusion on the chip's economics)
+    seeded. **Thread-restart entry point: `articles/PBITS_SERIES_HANDOFF.md`**
+    — reading order, state, remaining work, and the thread's insights ledger.
+    Per-article state: `articles/05-pbits/HANDOFF.md`; Part 2 prose is GATED
+    on `articles/06-z1-compiler/RESEARCH.md` closing against the primary
+    papers. Process note for future big builds: four parallel Fable agents
+    with disjoint file ownership + frozen shared lib + main-thread assembly
+    shipped four acts in one session, zero conflicts.
   - **Lesson 01** (Navier–Stokes): **PUBLISHED 2026-07-06** (Stage 5 complete: slop
     scan ×2, rhythm compression, ledger closed, hero pre-roll, hysteresis measured);
     hero is the two-color wing → `articles/01-navier-stokes/HANDOFF.md`.
@@ -176,12 +185,12 @@ branches.
   - **Lesson 03** (NS history): BUILT end-to-end 2026-07-06 (`draft`) — ~5,800 words,
     20 figures, 16 new sims, computed drag meters; browser QA incomplete (preview
     env wedged) → `articles/03-navier-stokes-history/HANDOFF.md`.
-  - **Maths M1** ("Every Map Lies: the Jacobian and the Hessian"): REBUILT
-    2026-07-31 (`draft`) around the cartography story after Nick rejected the v1
-    zoom thesis — ten candidates branched in its STORY_CANDIDATES.md, GEM chosen,
-    11 figures (Tissot machinery + terrain surveyor; real Natural Earth
-    coastline), reader pass done, findings fixed same session; awaits Nick's
-    read → `articles/maths/01-jacobian-hessian/HANDOFF.md`.
+  - **Maths M1** (Jacobian & Hessian): v1 zoom-lattice article RESTORED and live
+    (`draft`) after the 2026-07-31 map rewrite was built and retired on Nick's
+    verdict (familiar hero = anti-hook; postmortem in its STORY_CANDIDATES.md,
+    map build banked in CONCEPT_BANK.md). Next version agreed in direction —
+    "Newton's One Idea" spine, fluid-freight opening — with a MANDATORY hook
+    checkpoint before any build → `articles/maths/01-jacobian-hessian/HANDOFF.md`.
   - **Lesson 04** (drag & turbulence, ordering unclaimed): CONCEPT banked
     2026-07-06 — 3D wind-tunnel hero (car + offset colored streamtubes; where
     lesson 01's "flows here are two dimensional" confession flips into the

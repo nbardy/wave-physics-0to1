@@ -1,49 +1,93 @@
 # HANDOFF — maths/01: The Jacobian and the Hessian
 
-Canonical per-article state. Updated 2026-07-31 (evening).
+Canonical per-article state. Updated 2026-07-31 (thread closing). This file is
+the guide for the NEXT VERSION; read it with DENSE_CORE.md (v1, restored) and
+the postmortem at the bottom of STORY_CANDIDATES.md before touching prose.
 
-## Status: v1 RESTORED, `draft` — the map rewrite is retired
+## Where things stand right now
 
-Timeline, because this article now has one:
+- **Live article = v1 (zoom-lattice) at its best state**, restored from
+  `3a38766` and deployed (`e230b2b` on main; gh-pages current). It carries ALL
+  fixes: the 2026-07-30 reader-pass repairs (anisotropic landscape → real
+  eigen-axes/tilt, crossing contour at the pass, Newton meter ordering,
+  DetFold/WarpStamp label fixes) plus the concurrent session's upgrades
+  (GradField loupe with H-columns as visible motions + measured
+  centered-difference meters, loupe grid alignment, voice pass, `animated`
+  Sim prop). Status `draft`.
+- **The map rewrite ("Every Map Lies") is retired.** Built end-to-end, then
+  killed by Nick on sight: "everyone has done a scaling map visual… more about
+  flattening spheres than jacobians and hessians." Its prose lives at
+  `f51c552`; its sims stay on disk unregistered (`carto.ts`, `geo.ts`,
+  `MapLies/TissotLoupe/TissotTrio/ProjectionDuel/CurvatureMap/TerrainField`,
+  `terrain.ts`); salvage inventory in `articles/CONCEPT_BANK.md`. Do not
+  resurrect it as this article's spine.
+- Benched v1-era files also on disk: nothing — v1's sims ARE the registered
+  set (WarpLoupe, ZoomLine, WarpStamp, DetFold, GradField, CriticalZoom,
+  NewtonRace).
 
-1. **v1 (zoom-lattice)** built 2026-07-30, reader-passed, then improved by a
-   second session (measured-H ghost-arrow loupe, voice pass) → commit `3a38766`.
-2. Nick questioned the thesis; ten candidates branched (STORY_CANDIDATES.md);
-   the map story (#2) was recommended and, on a quick "sounds good," **built
-   end-to-end as v2** ("Every Map Lies") and deployed → commit `d66b796`.
-3. Nick, seeing it live: wrong call — "everyone has done a scaling map visual,"
-   the article had become about flattening spheres, and the brief had been
-   *refine*, not replace. **v1 restored from `3a38766`** (MDX, DENSE_CORE,
-   PLAN, registry entry). The postmortem with the re-weighted ranking lives at
-   the bottom of STORY_CANDIDATES.md; the map build is banked in
-   CONCEPT_BANK.md (sims still on disk, unregistered; v2 prose in git at
-   `f51c552`).
+## The brief for the next version (direction agreed 2026-07-31)
 
-## Current article = v1 at its best state
+Nick's standing complaint about v1: thesis/presentation not strong — the
+article reads as a definition unfolded; the swirl is anonymous; the matrices
+do nothing until §8. The scope is **refine, not replace**: keep the figure
+set and the math budget; swap the narrative engine.
 
-The `3a38766` version: swirl hero + loupe, ZoomLine, WarpStamp, arrows/matrix
-loupe, DetFold, GradField (with the post-feedback measured-H design),
-CriticalZoom, NewtonRace, flow-map coda. Reader pass done 2026-07-30; voice
-pass done by the concurrent session.
+**Chosen direction — "Newton's One Idea" spine with the site-native opening:**
 
-## The open brief: REFINE v1, don't replace it
+1. **Hook (fluid freight)**: open by confessing the swirl immediately as
+   lesson 01's fluid mid-stir. Plant two claims on page one: the solver drags
+   four numbers along every particle path, and one ancient algorithm — guess,
+   linearize, invert, repeat — needs exactly those four numbers to do
+   anything. The article assembles that machine.
+2. **Act 1 = grinding the lens**: ZoomLine and the loupe sections become
+   "building the linearizer" (zoom is an act with a purpose, not a
+   definition). Landing report as before. **DetFold becomes the place Newton
+   dies** — det J = 0 is where "invert" fails; the needle moment carries the
+   algorithm's life-or-death stakes, not a curiosity.
+3. **Hinge**: descending a landscape IS solving ∇f = 0 — so H = J of ∇f
+   arrives as the plot twist the structure was waiting for, not a remark.
+4. **Act 2 unchanged in figures** (GradField, CriticalZoom, NewtonRace), with
+   NewtonRace as the machine finally switched on. Flow-map coda survives.
+5. **One possible new figure**: a small root-hunt / blind-descent pane in the
+   opening so the tension exists before the first zoom (or a NewtonRace
+   pre-echo). Everything else is re-hinging prose — roughly a quarter of the
+   words move.
 
-Nick's standing complaint about v1 ("not sure it's a great thesis, or great
-presentation") is still live, but the licensed scope is the opening and pacing,
-not the spine. Directions consistent with the postmortem weights (novel-first,
-object-over-specimen):
+**Process rule (non-negotiable, from the postmortem): the hook paragraphs +
+re-hinged section ladder go to Nick for a considered read BEFORE any build.**
+A "sounds good" buried in a longer exchange does not count; label the
+checkpoint "this re-hinges the article — confirm." Memory file
+`novel-hero-over-familiar` carries the same rule.
 
-- Give the hero stakes without changing the subject: open with the swirl
-  *confessed up front* as lesson 01's flow map (the site's own fluid, not an
-  anonymous warp), or open at the Newton/optimizer end (#5/#3 energy) and let
-  the zoom earn its keep against a problem.
-- Pull one payoff forward so the matrices *do* something before §8.
-- Keep every equation; the math density was never the complaint.
+## Taste constraints learned the hard way (apply to all future story work)
 
-Propose the refined opening (hook paragraph + hero spec) to Nick BEFORE
-building — thesis-level pivots get a checkpoint now (postmortem process rule).
+- Familiarity of a hero is a COST, not a wonder-gap asset — "everyone has
+  seen X" kills a candidate on this site.
+- The specimen serves the operator: if most words go to the specimen's own
+  physics, it's a host, not a lens.
+- Scope fixes to the complaint: thesis doubts license opening/pacing work,
+  not spine transplants.
 
-## What remains before `published`
+## Verification tooling (for the next reader pass)
 
-Unchanged from the 2026-07-30 list: Nick's read; mobile/touch pass; second
-slop scan + sibling audit; Predict copy check.
+- Hidden-tab harness recipe: figure-audit skill. Hard-won addendum from this
+  thread: **never call `scrollTo` in the hidden tab, even once during harness
+  install** — it froze the compositor and produced convincing stale
+  screenshots that misdiagnosed a healthy figure; a `getImageData` probe
+  settled it. Pin figures `position:fixed; top:0` instead; reset and pump in
+  SEPARATE evals (React commits land between evals, not within one).
+- `bun run typecheck` currently fails only in the concurrent session's
+  `src/sims/pbits/denoise.ts` (Int8Array/SharedArrayBuffer nit) — not this
+  article's problem, but don't let it mask new errors: filter with
+  `| rg -v pbits`.
+- Deploy: `bun run deploy` (local build → gh-pages, no Actions). Deliberate
+  act — do not automate on commit.
+
+## Pre-publish gates (unchanged, still open)
+
+1. Nick's read of the refined version — the commission is that HE finally
+   feels the two objects; nothing else closes it.
+2. Mobile/touch pass (all drag figures).
+3. Second slop scan + sibling audit (lessons 01–03 open side by side).
+4. Predict copy check; fact-check any historical claims that survive.
+5. Then propose the `published` flip — never flip it unprompted.
