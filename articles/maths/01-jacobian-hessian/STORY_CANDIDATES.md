@@ -148,3 +148,38 @@ maths track's audience is "Nick and people like him" rather than "anyone."
 
 One spine only — the losers may each donate at most a figure (family-15: no
 "combine everything").
+
+---
+
+## POSTMORTEM (2026-07-31, after building #2): the verdict was wrong
+
+Nick, after seeing the built map version: "everyone has done a scaling map
+visual and that was so weak for a jacobian and hessian explanation... the old
+article was better," and: "we just wanted to refine the story a bit, not
+rewrite to a weird map based version that was more about flattening spheres
+than jacobians and hessians." v1 restored; the map build is banked in
+CONCEPT_BANK.md.
+
+What the ranking mis-weighted, recorded so the next branch doesn't repeat it:
+
+1. **Novelty is a hard criterion here, not a tiebreaker.** "Everyone has
+   stared at that wall map" was scored as a wonder-gap asset; for this site's
+   audience it is a kill ("everyone has done a scaling map visual"). The
+   familiar-hero test should run in the DIRECTION OPPOSITE to Ciechanowski's:
+   his readers need the familiar; Nick's articles need the never-seen.
+2. **The specimen must stay subordinate to the object.** #2 let the specimen
+   (projections) become the subject — the article drifted to "flattening
+   spheres." A candidate whose story cannot be told without spending most of
+   its words on the specimen's own physics is a host, not a lens.
+3. **"Refine" was the brief.** The v1 diagnosis (stakes late, hook abstract)
+   licensed reworking the OPENING and pacing — not the spine. Scope of the
+   fix should have matched scope of the complaint.
+4. Under those weights the honest re-ranking of the ten: refine #1 in place
+   (keep the zoom spine; give the hero stakes — e.g., open with the fluid
+   flow-map/optimizer energy of #9/#3 instead of an anonymous swirl), with
+   #5 (Newton's one idea) the strongest true alternative spine. #2 belongs
+   to a different, shorter article of its own.
+
+Process rule extracted: **a thesis-level pivot gets a checkpoint** — hook
+paragraph + hero spec for approval before any build, stated as "this replaces
+the entire spine," not bundled into a list verdict.

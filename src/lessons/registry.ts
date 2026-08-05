@@ -164,9 +164,9 @@ export const lessons: Lesson[] = [
     id: 'jacobian-hessian',
     field: 'maths',
     order: 1,
-    title: 'Every Map Lies: the Jacobian and the Hessian',
+    title: 'The Jacobian and the Hessian',
     blurb:
-      'Greenland is not the size of Africa. Drag it south and read the receipt: the Jacobian is the instrument atlases print to confess a map’s lie, and the Hessian is the same box aimed at terrain — summits, basins, and passes by eigenvalue.',
+      'Zoom into any smooth map and a parallelogram lattice appears — four numbers per point. The Jacobian is that lattice; the Hessian is the same zoom aimed at the gradient.',
     tags: ['calculus', 'linear-algebra', 'geometry'],
     status: { kind: 'draft' },
     Content: Maths01,

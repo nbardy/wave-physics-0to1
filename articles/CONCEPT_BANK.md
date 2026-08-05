@@ -49,3 +49,27 @@ wind-tunnel car is NOT here — it has its own DENSE_CORE.)
   from orbit — making the true claim that these are literally the same
   simulation. Cheap reframe (art direction only) whenever a Re slider needs to
   carry the scale-invariance point without prose.
+
+## Every Map Lies — the full cartography build (maths-01 v2, built & retired 2026-07-31)
+
+A complete, working alternative telling of the Jacobian/Hessian article:
+Greenland-drag Mercator hero (true sphere rotation, measured area receipts),
+Tissot loupe with geodesic circles sampled on the sphere and ground Jacobians,
+same-size circle trio, Mercator-vs-sinusoidal duel, hypsometric terrain with a
+levelness-gated curvature surveyor. Nick's verdict after seeing it live:
+"everyone has done a scaling map visual... so weak for a Jacobian and Hessian
+explanation" — the familiar hero failed the novelty bar, and the projection
+frame made it an article about flattening spheres rather than about the two
+operators. Retired whole; the zoom-lattice v1 restored.
+
+Salvage inventory (all still on disk, unregistered): `src/sims/maths/carto.ts`
+(projections + exact inverses + ground Jacobians, Rodrigues rotation,
+spherical shoelace), `geo.ts` (Natural Earth 110m coastline, 71 KB, public
+domain), `MapLies/TissotLoupe/TissotTrio/ProjectionDuel/CurvatureMap/
+TerrainField.tsx`, `terrain.ts` (hypsometric tints). The v2 prose lives in git
+at f51c552. Honest future uses: a *short* standalone "Every Map Lies" article
+in the maths field (the material is good; it was the wrong host for J/H), or
+the CurvatureMap surveyor as a cameo figure wherever eigenvalue signs earn a
+payoff. The reusable lesson is in the retirement itself: a hero everyone has
+seen is anti-hook for this site — novelty of the *presentation* is part of the
+commission (recorded in memory + STORY_CANDIDATES postmortem).

@@ -1,236 +1,230 @@
-import { MapLies } from '../sims/maths/MapLies'
-import { TissotLoupe } from '../sims/maths/TissotLoupe'
-import { TissotTrio } from '../sims/maths/TissotTrio'
-import { ProjectionDuel } from '../sims/maths/ProjectionDuel'
+import { WarpLoupe } from '../sims/maths/WarpLoupe'
+import { ZoomLine } from '../sims/maths/ZoomLine'
+import { WarpStamp } from '../sims/maths/WarpStamp'
 import { DetFold } from '../sims/maths/DetFold'
-import { TerrainField } from '../sims/maths/TerrainField'
+import { GradField } from '../sims/maths/GradField'
 import { CriticalZoom } from '../sims/maths/CriticalZoom'
-import { CurvatureMap } from '../sims/maths/CurvatureMap'
 import { NewtonRace } from '../sims/maths/NewtonRace'
 
-# Every Map Lies: the Jacobian and the Hessian
+# The Jacobian and the Hessian
 
-On the wall map of every classroom, Greenland and Africa are roughly the same
-size. Africa is fourteen times larger. The map below is that map — Mercator's,
-the one the wall and half the internet still use — and its Greenland comes
-loose. Drag it south:
+Below, a plane has been stirred. Every line of the grid was straight before the
+stirring; none of them is straight now. The ring is a loupe — you can drag it
+anywhere on the warped plane, and the right pane shows what the loupe sees. The
+slider is its magnification:
 
-<MapLies mode="plant" />
+<WarpLoupe mode="plant" />
 
-By the equator the giant has shrunk to a modest island, and the violet receipt
-riding it has fallen from fifteen to one. Nothing about Greenland changed on
-the way down — the copy you dragged is moved by a rigid rotation of the globe
-itself, the same everywhere-honest motion a ship would make. What changed is
-how much the *map* inflates whatever stands at that latitude. The receipt is
-measuring the map, not the island.
+Push the slider all the way toward *close*, then drag the ring around. The swerving
+drains out of the picture, and what stands at the bottom of every zoom is the same
+kind of thing: a lattice of identical parallelograms — tilted one way here, sheared
+another way there, but always a lattice, always perfect. The stirring never manages
+to be complicated up close. The <C k="stamp">amber patch</C> riding the loupe is a
+small square inked onto the plane before the stirring; I re-ink it to match each
+magnification, since a real square would shrink out of sight. It lands as one
+parallelogram of the same lattice.
 
-This is not a defect of one lazy mapmaker. A sphere and a flat sheet disagree
-about distances — peel an orange and try to flatten the peel without tearing
-or stretching it — and Gauss proved in 1827 that no cleverness ever closes the
-gap: flattening the earth *must* distort it. He called it the Theorema
-Egregium, "the remarkable theorem." So the honest question about any flat map
-is never *whether* it lies, but *which lie it chose, and by how much, where* —
-and it turns out cartographers answer that question with an instrument they
-print right on the map. That instrument, and the box of four numbers behind
-it, is this article's subject. Its sibling — the same box, aimed at mountains
-instead of oceans — is the second half.
+A parallelogram lattice is a plain thing. Four numbers pin it down completely, and
+those four numbers are different at every point of the plane. That little box of
+four is the Jacobian. Two debts hide inside it: the area of the parallelogram, and
+an entire second matrix wearing the first one's structure — the Hessian, which
+never needs a theory of its own because it is this same picture, aimed at a
+different target.
 
-Every quantity keeps one color throughout: the <C k="stamp">probe we watch</C>
-is always amber, the <C k="ex">east arrow</C> blue, the
-<C k="ey">north arrow</C> green, every <C k="area">measured meter</C> —
-areas, curvatures — violet, and on the terrain of the second half the
-<C k="grad">uphill arrows</C> are pink. None of the names need memorizing;
-the colors do the remembering.
+## One Number Was Enough
 
-## The Circle That Confesses
+The zoom is not a new instrument. It is the whole of first-year calculus, run
+backwards. Below is an ordinary curve; drag left or right to move the marked point,
+and push the magnification:
 
-To measure a lie you need a witness of known shape. Ours is a circle drawn on
-the ground itself — on the actual globe, a ring of points all the same true
-distance from a center, the shape a surveyor would stake out with a rope. The
-map then prints that circle however it must. Below, the left pane is the
-world under the naive grid — longitude straight across, latitude straight up,
-the projection every spreadsheet of coordinates secretly assumes — with the
-circle drawn on it; the right pane shows the printed shape magnified to a
-standard size, next to a dashed ring marking what the ground knows it to be.
-The slider sets how much ground the circle spans:
+<ZoomLine />
 
-<TissotLoupe mode="blob" />
+Notice the meter. It reports the slope of whatever is actually in the window —
+rise over run between the two visible ends of the curve — and as the window
+shrinks, that measured slope stops changing. The curve has committed to a line.
+*Differentiable at a point* means exactly this and nothing more: zoom in far enough
+and the wiggling gives up. The derivative is the number the meter converges to,
 
-At continent scale the printed shape is a lopsided egg, visibly fatter at
-its northern edge than its southern, because the top of the circle sits at a
-more stretched latitude than the bottom. No single description covers it.
-Now pull the slider toward *county* and watch the right pane: the egg
-settles into a clean ellipse — wide, but a true ellipse, symmetric about its
-axes — and further shrinking changes nothing but the label. Drag the circle
-anywhere on the map and it happens there too: a different ellipse at every
-latitude, but always an ellipse.
+$$
+f(a+h) \approx f(a) + f'(a)\,h ,
+$$
 
-That emergence is the whole idea of differentiability, met in the wild.
-Up close, every smooth map's lie simplifies into the one shape a linear
-distortion makes of a circle. The lopsided egg needed a paragraph; the
-ellipse needs four numbers. The next section reads them off.
+good for small $h$ and better for smaller. One number suffices because the thing at
+the bottom of the zoom is a line through a point, and a line through a point has
+one degree of freedom: its slope.
+
+The first figure showed the same convergence with a different ending. Zoom into
+the stirred plane and the picture also commits — but to a *lattice*, and a lattice
+through a point has four degrees of freedom, not one.
+
+## Maps, Not Graphs
+
+First, what kind of function stirs a plane. The curve
+above eats one number and returns one number, so its graph fits on a screen. The
+stirring eats a point of the plane and returns a point of the plane — written out,
+
+$$
+F(x, y) = \bigl(f_1(x,y),\; f_2(x,y)\bigr),
+$$
+
+two inputs, two outputs. Its graph lives in four dimensions, and no amount of
+cleverness fits four dimensions on a screen. So we stop graphing and watch the
+plane itself: draw a grid, apply $F$ to every point, and look at what the grid
+becomes. That is what the opening figure has been showing all along — not a graph
+*of* the stirring but the stirred plane itself.
+
+To measure a stirring, we need a probe. Ours is the amber square the loupe has
+been carrying, and it finally gets its name: the <C k="stamp">stamp</C> — inked
+onto the plane before the map acts, with a dot on one corner so we can tell
+whether it lands right-side out. Where the map is gentle the
+stamp lands almost square; where the map is violent it lands as a bent little rag.
+One stamp is draggable below; two more are pinned for comparison, and each landed
+stamp carries a <C k="area">violet meter</C> reading the one number a first
+instinct asks for — how much the map *scaled* it:
+
+<WarpStamp />
+
+Drag the bright stamp anywhere and watch the three meters. They agree, everywhere,
+to two decimal places: ×1.00. This particular stirring happens to preserve every
+area exactly — and yet the three landed shapes could hardly look more different:
+one nearly square, one sheared into a lozenge, one bent around the vortex. The
+scale-factor meter is not wrong; it is blind. Whatever "the local behavior of the
+map" is, it is not one number. A number cannot say *which way*. We want the
+which-way.
 
 ## The Landing Report
 
-One fact about the globe first, because everything rests on it — including
-why the egg was fat side north: a degree of longitude is not a fixed
-distance. At the equator it matches a degree of latitude; at 60° north it is
-half as long; approaching the pole it shrinks to nothing. The naive grid
-prints every degree the same width anyway, so the farther north, the more
-stretched the print. The honest unit steps at any point are therefore steps
-of *ground* — one stride <C k="ex">due east</C>, one stride
-<C k="ey">due north</C>, equal true lengths. The figure below plants both
-strides at the probe and shows where the map prints them, next to dashed
-ghosts marking a print with no opinion. The selector adds Mercator and a
-third map we'll fight with later:
+Arrows can. Plant two of them on the stamp — <C k="ex">east</C> and
+<C k="ey">north</C>, each one grid-cell long — and ask where each arrow *lands*.
+Below, the loupe returns with the arrows riding it. Dashed ghosts mark where each arrow
+would land if the map did nothing, so the map's opinion is visible as the gap
+between ghost and arrow. The selector switches between four maps; the fourth is
+our stirring:
 
-<TissotLoupe mode="matrix" />
+<WarpLoupe mode="arrows" />
 
-The box in the corner is the whole local story, filed in columns: the first
-column is where the <C k="ex">east stride</C> landed, the second where the
-<C k="ey">north stride</C> landed. The ellipse you met in the last section is
-nothing separate — it is where the *whole family* of unit strides lands, and
-the two columns pin it down. This box is the Jacobian of the map at that
-point. Written in the calculus the reader already owns, with $x$ and $y$ the
-printed coordinates and the strides taken along the ground,
+The box in the corner is nothing but the landing report, filed in columns: the
+first column holds the two coordinates of where <C k="ex">east</C> landed, the
+second column where <C k="ey">north</C> landed. Read the report while switching
+maps. *Do nothing* files ones and zeros — each arrow lands on its own ghost.
+*Rotate 30°* files cosines and sines. *Shear* moves only one arrow. And the swirl
+files a report that changes as you drag, because a stirring treats every
+neighborhood differently.
+
+That box is the Jacobian of the map at that point. In symbols: writing
+$\partial f_1/\partial x$ for "how fast the first
+output coordinate changes per step east," the landing of the east arrow is
+$(\partial f_1/\partial x,\; \partial f_2/\partial x)$, the landing of the north
+arrow is the $y$-partials, and the report reads
 
 $$
 J \;=\;
 \begin{pmatrix}
-\dfrac{\partial x}{\partial e} & \dfrac{\partial x}{\partial n}\\[10pt]
-\dfrac{\partial y}{\partial e} & \dfrac{\partial y}{\partial n}
+\dfrac{\partial f_1}{\partial x} & \dfrac{\partial f_1}{\partial y}\\[10pt]
+\dfrac{\partial f_2}{\partial x} & \dfrac{\partial f_2}{\partial y}
 \end{pmatrix},
 $$
 
-columns as landings, and the map's local behavior is the linear impersonation
+columns as landings. The partial-derivative grid is a filing system for a picture:
+this is the fact the standard treatments state last, if at all, and it is why the
+matrix multiplies vectors the way it does — $J$ applied to any small displacement
+$h$ just resolves $h$ into its east and north parts and sends each part to its
+landing,
 
 $$
-F(p + h) \;\approx\; F(p) + J\,h
+F(p + h) \;\approx\; F(p) + J\,h .
 $$
 
-for small ground displacements $h$ — the ellipse being this formula applied to
-the circle of unit $h$'s. Boundary check, visible in the figure: put the probe
-on the equator under the naive grid. Both strides land exactly on their
-ghosts, $J$ files ones and zeros, and the circle prints as a circle — at that
-one happy spot, the map isn't lying at all.
-
-The instrument has a name and a pedigree. Nicolas Auguste Tissot, a French
-cartographer, published exactly this ellipse-field in 1859, and serious
-atlases have printed *Tissot's indicatrix* over their projections ever since.
-You have been looking at drawings of the Jacobian since your first atlas;
-nobody said so.
+This is the same sentence as the one-dimensional one, with the multiplication
+promoted to a matrix acting on a vector. Sanity checks, straight from the
+selector: for *do nothing*, $J$ is the identity and the approximation is exact.
+For *rotate 30°*, $J$ is the rotation matrix, exactly, everywhere — a rotation is
+already linear, so the zoom has nothing left to discard. Only the swirl needs the
+$\approx$, and the loupe shows what the $\approx$ costs: back the magnification
+off and the lattice picks its curvature back up.
 
 ## The Area Receipt
 
-The hero's receipt is hiding in the box. The landed strides span a
-parallelogram — the printed copy of a small square of ground — and its area is
-the cross-combination of the columns,
+The first debt from the top of the article comes due: the parallelogram's area,
+hiding in the report. The stamp's landed copy *is* the parallelogram with
+<C k="ex">east's landing</C> and <C k="ey">north's landing</C> as its sides, and
+the area of that parallelogram is the cross-product combination
 
 $$
 \det J \;=\;
-\frac{\partial x}{\partial e}\frac{\partial y}{\partial n}
+\frac{\partial f_1}{\partial x}\frac{\partial f_2}{\partial y}
 -
-\frac{\partial x}{\partial n}\frac{\partial y}{\partial e},
+\frac{\partial f_1}{\partial y}\frac{\partial f_2}{\partial x},
 $$
 
-the *determinant*: the map's local area magnification. On Mercator it works
-out to $\sec^2(\mathrm{lat})$ — the two strides each stretch by $\sec$, and
-area pays twice. At Greenland's central latitude, 72°, that is a factor of
-ten and a half — yet the hero's receipt read fifteen, and the gap is the
-point: $\det J$ is a rate at a *point*, and a whole coastline pays the rate
-prevailing at each of its pieces, Greenland's arctic reaches dearest of all.
-Below, the one-frame version: three circles of identical
-ground size, three violet receipts. Drag the bright one along a meridian and
-watch its receipt breathe while its ground size never changes:
-
-<TissotTrio />
-
-The receipt also settles an old classroom debt. Every change of variables in
-an integral drags in a mysterious factor — the $r$ in $r\,dr\,d\theta$ — and
-that factor is this same determinant: polar coordinates are a map, the map
-inflates area by $r$, and the integral must pay each patch by its printed
-area,
-
-$$
-\iint g \,dx\,dy \;=\; \iint g \;\lvert\det J\rvert \,du\,dv .
-$$
-
-The absolute value is doing quiet work in that formula, and a projection
-can't show why, because projections never fold. So here is one figure on
-loan from the abstract plane — a map that folds it like a sheet of paper
-pushed from both ends, with the probe square caught in the crease.
+the *determinant* — the map's local area factor. The swirl scored ×1.00 on every
+meter because a swirl only rotates each ring of the plane, and rotations spend no
+area; $\det J = 1$ there identically, which is the honest content of the meters
+agreeing. The meter below watches a different map, one built to misbehave: the
+slider folds the plane toward itself like a sheet of paper being pushed from both
+ends.
 
 <Predict
-  question="Push the fold all the way through the square. What does its area receipt do?"
+  question="Push the fold all the way. The stamp gets crushed thinner and thinner — and then the fold passes through it. What does the area meter do?"
   a="Stops at zero — an area can't be less than nothing"
   b="Crosses zero and comes out negative"
 >
   <DetFold />
 </Predict>
 
-The meter crosses. On the way it touches zero exactly when the square is
-crushed to a needle — two dimensions of ink surviving as one — and what
-unfolds on the far side is the square *mirrored*, its corner dot on the wrong
-side. A negative determinant is the picture of a patch turned over, and
-$\det J = 0$ is the moment a map destroys information: two ground points
-printed on one spot, which no formula can afterwards tell apart. That is why
-"invertible where $\det J \neq 0$" is a theorem and not a slogan — and why
-integration keeps the absolute value: ink counts the same on either face.
+The meter crosses. Watch the stamp's corner dot on the way through: as the fold
+passes, the stamp thins to a needle — that is the instant of $\det J = 0$, the
+whole square crushed onto a line, two dimensions of ink surviving as one — and
+what unfolds on the far side is the stamp *mirrored*, dot on the wrong side. The
+negative sign is not bookkeeping; it is the picture of the plane locally turned
+over. And the needle instant explains why a map can be undone only where
+$\det J \neq 0$: at the needle, two different points of the stamp got sent to one
+landing point, and no formula recovers information that was never delivered.
 
-## Choose Your Lie
+The determinant is also the resolution of a small scandal from integration. Every
+change of variables drags a mysterious factor into the integral — the $r$ in
+$r\,dr\,d\theta$ being the one everybody meets first. That $r$ is a determinant:
+the polar-coordinates map $(r, \theta) \mapsto (r\cos\theta,\, r\sin\theta)$ has
+$\det J = r$, so a stamp inked near the origin lands tiny while a stamp at radius
+ten lands enormous, and the integral must pay each patch by its landed area:
 
-Look back at Mercator's Jacobian: $\sec\phi$ down both diagonal slots, zeros
-off it. Both strides stretched *equally*, no shear — which is why every
-Tissot ellipse on Mercator is a perfect circle, just inflated. Mercator lies
-enormously about size and not at all about shape. Could a map do the reverse?
-Below, the same ground circle on two maps at once. The right one is the
-*sinusoidal* projection, built by forcing east-west distances true at every
-latitude:
+$$
+\iint g\,dx\,dy \;=\; \iint g \; \lvert\det J\rvert \;dr\,d\theta .
+$$
 
-<ProjectionDuel />
-
-Read the meters. Mercator: round to a hair, area inflated. Sinusoidal: area
-×1.00 — exactly, everywhere, its determinant is pinned to one by
-construction — but the circle lands sheared several times longer than wide,
-and the shear worsens as you drag away from the central meridian. So which should a map keep, shape or
-size? Both, is the natural answer, and Gauss's theorem is precisely the
-sentence that forbids it: keeping both everywhere is flattening the orange
-peel. Every projection ever printed is a settlement. Mercator settled for
-shape because sailors steer by angles — a compass course crosses its map as
-a straight line, which is worth any amount of Greenland to a navigator.
-Equal-area maps settle for size because censuses and rainforests are counted
-in area. The Jacobian is the ledger where each map's settlement is written
-down, point by point: its ellipse-shape says what happened to angles, its
-determinant what happened to area.
+The absolute value is there because integration pays for area regardless of
+whether the stamp came out mirrored.
 
 <Waypoint>
-You can now read a projection the way a cartographer does: at any point, two
-ground strides and their landings — four numbers; the ellipse those landings
-sweep is Tissot's indicatrix; the determinant is the area receipt, zero at a
-fold, negative through a mirror, and the reason $r$ haunts every polar
-integral. And no map escapes the choice the ledger records.
+You can now read any smooth map of the plane the way the loupe does: at each
+point, a lattice; the lattice, four numbers filed as two landings; the landings'
+parallelogram area, one signed number that prices integrals and prophesies where
+the map can be undone. All of it read off one zoom.
 </Waypoint>
 
-## The Other Map in the Atlas
+## A Field of Arrows
 
-Turn the atlas page from the oceans to the mountains. A terrain sheet — this
-one is an invented stretch of backcountry, drawn from a formula so that every
-claim about it can be checked exactly — shows height by tint and by contour
-lines. On it stands a field of <C k="grad">arrows</C>: at each point, the
-direction a ball would refuse to roll — straight uphill, crossing each
-contour at a right angle, longer where the contours crowd. Drag the ring; the
-right pane isolates your point's arrow, together with the same arrow one
-step east and one step north:
+The object below looks like a change of subject and is not. It is a landscape: one height at every point,
+$f : \mathbb{R}^2 \to \mathbb{R}$, drawn as <C k="hi">high ground</C> in red and
+<C k="lo">low ground</C> in cyan. On it stands the gradient — at every point, the
+<C k="grad">arrow</C> $\nabla f$ pointing straight uphill, longer where the ground
+is steeper. Drag the ring and the right pane isolates your point's arrow:
 
-<TerrainField />
+<GradField />
 
-Watch the right pane while you drag. The dashed ghosts are the arrow's own
-near future: <C k="ex">blue</C> joins its head to where the head sits one
-stride east, <C k="ey">green</C> to one stride north. Point in, arrow out is
-a map from the plane to the plane — precisely the kind of object the first
-half taught us to read — and so it has a landing report of its own: how much
-the arrow changes per stride, filed in the same columns as ever. That report
-has its own name: the Hessian of the terrain,
+*Point in, arrow out* is a map from the plane to the plane — exactly the kind of
+object the loupe reads. So it has a Jacobian, and the right pane shows what that
+means here. Your point's <C k="grad">arrow</C> is drawn in pink. Behind it, two
+dashed ghosts: the arrow as it is one lattice step <C k="ex">east</C> of you, and
+one step <C k="ey">north</C> — the two sample points are dotted next to the ring
+in the left pane. The ghosts are not copies; stepping changed the arrow. The
+solid <C k="ex">blue</C> segment joins your arrowhead to the east ghost's — that
+segment *is* what stepping east did — and the <C k="ey">green</C> segment is the
+same for north. Drag through the basin and along the ridge: the ghosts track you,
+and the two segments swing and stretch. Those two changes, filed as columns at
+per-step rate, are four numbers — the same filing as ever.
+
+That box — the Jacobian of the gradient — is the Hessian of the landscape:
 
 $$
 H \;=\;
@@ -240,177 +234,176 @@ H \;=\;
 \end{pmatrix},
 $$
 
-second derivatives because the arrows were already made of first ones. The
-meter shows one gift the projection half never gave us: the two off-diagonal
-entries agree, always — stepping east then measuring north-tilt equals
-stepping north and measuring east-tilt, for any twice-smooth terrain. The
-Hessian is symmetric. Hold that; it buys the geometry of the next section.
+second derivatives because the gradient was already made of first ones. One gift
+comes free and is visible in the meter: the two off-diagonal entries are always
+equal. For any twice-continuously-differentiable landscape the mixed partials
+agree — east-then-north measures the same tilt as north-then-east — so the
+Hessian is symmetric, always.
 
-## Summit, Basin, Pass
+## The Shape Left Behind
 
-The sheet has three marked spots where the arrow dies entirely: the bottom of
-a basin, the top of a summit, and — between the high ground and the low — a
-mountain pass. Hikers cross passes; topo maps have a reading for them.
+The landscape has three special points — the bottom of the cyan basin, the top of
+the red hill, and between them a mountain pass. At each one the
+<C k="grad">arrow</C> dies: $\nabla f = 0$. There the linear story has nothing to
+say: "to first order, the ground is flat" is true at all three points and
+distinguishes none of them. A hiker at a summit and a hiker at a pass would
+object. When the first-order term goes silent, zoom again and listen to the
+second:
+
+$$
+f(c + h) \;\approx\; f(c) \;+\; \tfrac{1}{2}\, h^{\!\top} H\, h ,
+$$
+
+the quadratic stand-in, with the Hessian in the seat the slope used to occupy.
+(Boundary check: on a genuinely flat plane $H$ is the zero matrix, the correction
+vanishes, and flat means flat.) The figure below zooms into each special point in
+turn. I draw the contour lines from the true landscape, never from the quadratic —
+whatever shape emerges under magnification is $f$'s own doing, not an installation.
 
 <Predict
-  question="Zoom a topo map in on a mountain pass. What do the contour lines arbitrarily close to it look like?"
-  a="Small closed rings, like a summit's"
-  b="Two lines crossing at the pass itself, four open quadrants"
+  question="The pit and the peak, magnified, will show nested rings — that much follows from bowls being bowls. What do the contours look like arbitrarily close to the mountain pass?"
+  a="Nested rings again, just stretched"
+  b="Two straight lines crossing, with four open quadrants"
 >
   <CriticalZoom />
 </Predict>
 
-At the basin and the summit: nested ellipses, cleaner the closer you look. At
-the pass: two contours *crossing* at the point, cutting the neighborhood into
-four alternating quadrants — <C k="hi">up</C>, <C k="lo">down</C>, up, down.
-The zoom is honest: those contours are drawn from the terrain itself, never
-from any quadratic stand-in, and yet a quadratic is exactly what emerges,
-because with the arrow dead the terrain's local truth is the next term of the
-impersonation:
+At the pit and the peak: nested ellipses, ever more perfect as you push the
+magnification. At the pass: two contour lines *crossing* at the point itself,
+cutting the neighborhood into four quadrants — <C k="hi">up</C>, <C k="lo">down</C>,
+up, down, in alternation. Rings and crossings are the only two smooth options,
+and which one you get is decided entirely by the four numbers in $H$.
 
-$$
-f(c + h) \;\approx\; f(c) \;+\; \tfrac{1}{2}\, h^{\!\top} H\, h .
-$$
+The violet axes overlaid on the figure decode them. A symmetric matrix — and the
+previous section guaranteed symmetry — always owns two perpendicular
+directions it does not shear, its *eigenvectors*: step exactly along one and the
+arrow-change points exactly back along it, $Hv = \lambda v$. Along each axis the
+landscape is a one-dimensional parabola, and the number $\lambda$ is its
+curvature, signed. Read the figure's meters as you switch points: the pit files
+$(+2.0, +0.9)$ — up both ways, but not equally, which is why the rings are
+ellipses and why their long axis lies along the dashed, gentler direction. The
+peak files $(-2.0, -0.9)$. The pass files one of each — up along the solid
+axis, down along the dashed one — and contours can only cross where the
+quadratic changes sign quadrant by quadrant.
 
-(Boundary check: on flat ground $H$ is the zero box and the formula says
-flat.) The violet axes decode the shape. A symmetric box always owns two
-perpendicular directions it does not shear — step along one and the arrow
-change points straight back along it, $Hv = \lambda v$ — and along each the
-terrain is a plain one-dimensional parabola with signed curvature $\lambda$.
-The basin files two positive curvatures, unequal, which is why its rings are
-ellipses with a long axis down the gentler direction. The summit files two
-negatives. The pass files one of each — the ground genuinely curves *up*
-along one axis and *down* along the other, which no single number could ever
-say, and contours can only cross where that sign change cuts the quadrants.
+That reading *is* the second-derivative test, usually taught as an incantation:
+both curvatures positive, a minimum; both negative, a maximum; mixed, a saddle.
+And the incantation's strange gatekeeper, "check the sign of
+$f_{xx}f_{yy} - f_{xy}^2$," is an old acquaintance — that expression is
+$\det H = \lambda_1 \lambda_2$, the area receipt of the gradient map, negative
+exactly when the curvatures disagree. The determinant caught folds in the first
+half; here it catches saddles, and it is doing the same job both times.
 
-Reading the signs is the second-derivative test the reader memorized once as
-an incantation — and the incantation's gatekeeper,
-$f_{xx}f_{yy} - f_{xy}^2$, is an old acquaintance: it is $\det H$, the area
-receipt of the *arrow map*, $\lambda_1\lambda_2$. Negative exactly when the
-curvatures disagree. The determinant caught folds on the projection; it
-catches passes on the terrain; it is the same bookkeeper both times.
+One warning the axes make visible: the tilt of the ellipses on screen comes from
+the off-diagonal entries. A rotated valley *needs* its mixed partials — zero them
+by fiat and you have silently decreed that every bowl in the world sits square to
+your coordinate axes. The mixed term is not bookkeeping; it is the freedom to
+tilt.
 
-## The Automatic Surveyor
+## Stepping Downhill
 
-If the signs of two curvatures can call a pass, nobody needs to point at the
-special spots by hand — the sheet can be surveyed unattended. The recipe is
-the two boxes working in sequence: glow wherever the
-<C k="grad">arrow</C> is short (a summit candidate must first be nearly
-level), then color the glow by the Hessian's two signs —
-<C k="hi">domes</C> where both curve down, <C k="lo">bowls</C> where both
-curve up, <C k="area">saddle-shaped ground</C> where they disagree. Slide
-from *terrain* to *survey*:
+Everything so far has been anatomy. Both boxes go to work in the same arena — the
+problem of walking to the bottom of a valley you cannot see, guided only by local
+measurements. This is the daily bread of optimization: the landscape is a loss,
+the walker is an algorithm, and the question is what to measure at each step.
 
-<CurvatureMap />
-
-The summit glows inside red, the basin inside cyan, and violet turns up
-*two* passes — the one the zoom visited and a twin on the far shoulder the
-prose never mentioned, found by arithmetic, not by eyes. Fainter glows trace
-the nearly-level shelves between them. This is not a
-classroom exercise dressed as software: elevation models are mined for
-peaks, sinks, and cols by exactly this eigenvalue-sign sweep, and computer
-vision's blob detectors run the same $\det H$ test on images — SIFT, the
-workhorse feature-finder, rejects a candidate point when the Hessian's
-determinant test smells an edge instead of a blob. The incantation from the
-calculus final runs inside mapping software and camera pipelines, all day,
-at scale.
-
-## Downhill in Fog
-
-One more use of the second box, and it is the one that runs the modern world.
-Put a walker on the terrain in fog: it cannot see the basin, only measure the
-ground under its feet. Measuring the <C k="grad">arrow</C> and stepping
-against it is gradient descent — the algorithm that trains every neural
-network — and on kind terrain it works. The valley below is unkind: tilted,
-and far steeper across than along. The pink walker steps against the arrow.
-The violet walker also measures the *Hessian* and steps by $-H^{-1}\nabla f$
-instead. Two knobs this once — valley narrowness and step boldness — and the
-regimes where each walker breaks are reachable on purpose:
+The obvious walker measures the <C k="grad">arrow</C> and steps against it —
+gradient descent. The valley below is a quadratic bowl, tilted 25° and much
+steeper across than along; both walkers start at the amber dot and step on a
+fixed clock, pink measuring only the arrow, violet measuring the arrow *and the
+Hessian* and taking the step $-H^{-1}\nabla f$ instead. Two knobs this once —
+valley narrowness and step boldness — and the regimes where each walker breaks
+are reachable on purpose:
 
 <NewtonRace />
 
-The pink walker zig-zags; it must. Across the narrow valley the arrow is
-huge, so a fixed step overshoots wall to wall, while along the valley the
-arrow is tiny and progress crawls; the arrow alone cannot distinguish "steep
-because far from the bottom" from "steep because the valley is narrow." Push
-boldness past the edge and pink leaves the map, each overshoot larger than
-the last. The violet walker is immune, because $H$ is the record of how the
-arrow changes: multiplying by $H^{-1}$ un-stretches the valley into a round
-bowl where downhill points at the bottom. At full boldness it lands there in
-one step, at any narrowness — that is Newton's method, and its indifference
-to the narrowness knob is the cash value of everything the eigen-axes
-taught. Honesty about the arena: real terrain is quadratic only near the
-bottom, so real Newton methods walk warily until the impersonation becomes
-trustworthy, then pounce. And nothing on this page integrates an equation —
-maps, gradients, and Hessians here are closed-form; the only thing that
-steps is the race, one walker-move per fixed tick, so your frame rate never
+The pink walker zig-zags. It must: across the narrow valley the arrow is huge, so
+a fixed step overshoots side to side, while along the valley the arrow is tiny,
+so progress toward the bottom crawls. Narrow the valley and the zig-zag worsens;
+push boldness past the tipping point and pink flies out of the map entirely —
+each overshoot larger than the last. The arrow alone cannot distinguish "steep
+because far from the bottom" from "steep because the valley is narrow."
+
+The violet walker knows the difference, because $H$ *is* the record of how the
+arrow changes — multiplying by $H^{-1}$ un-stretches the valley, turning the
+tilted narrow bowl into a round one where straight downhill genuinely points at
+the bottom. At full boldness it lands there in one step, for any narrowness, at
+any tilt: on a true quadratic, $-H^{-1}\nabla f$ is not a good direction but the
+exact displacement to the minimum. That one-step landing is Newton's method, and
+its indifference to the narrowness slider is the practical meaning of everything
+the eigen-axes section built.
+
+Honesty about the arena: real landscapes are quadratic only near the bottom, so
+real Newton methods walk cautiously until the quadratic stand-in becomes
+trustworthy, then pounce. And nothing on this page integrates an equation — every
+map, gradient, and Hessian here is closed-form; the only thing that steps is the
+race itself, one walker-move per fixed tick of a clock, so your frame rate never
 changes who wins.
 
 <Waypoint>
-Both boxes are now working instruments. The Jacobian: stride-landings,
-Tissot's ellipse, the determinant pricing area and calling folds. The
-Hessian: the same report filed on the uphill arrows — curvatures on its
-axes, passes on its determinant, and, inverted, the lens that makes crooked
-valleys round.
+You now hold both boxes. The Jacobian: where the two arrows land — the lattice at
+the bottom of the zoom, its determinant pricing area, flips, and invertibility.
+The Hessian: the same report filed on the gradient — the curvature box whose
+eigen-axes name the bowl's directions, whose signs call pit, peak, or pass, and
+whose inverse is the lens that makes crooked valleys round.
 </Waypoint>
 
-## The Confession, Everywhere
+## The Flow Map
 
-The hero returns wearing the full instrument. Every circle below is the same
-six degrees of ground; the printed sizes are the map confessing its area lie
-at every latitude at once, exactly as Tissot intended. Greenland still comes
-loose:
+The stirring at the top of this article came from somewhere specific. It is not
+an arbitrary warp; it is a *flow map* — take the vortex from the first lesson's
+fluid, let every point of the plane ride it for $t$ seconds, and call the
+start-to-finish assignment $F_t$. Below, the stirred plane returns with its
+meters unlocked, and the flow time actually flows:
 
-<MapLies mode="return" />
+<WarpLoupe mode="return" />
 
-Read it like a cartographer now: circles fat at the top, honest at the
-equator, every one of them round because Mercator's settlement kept shape
-and sold size. Fourteen times — the true Africa-to-Greenland ratio — was
-never hiding anywhere but in a determinant.
+The grid winds tighter and tighter; the landing report at your probe point churns;
+the parallelograms tilt and shear without rest. Through all of it, the violet
+meter does not move: area ×1.000, at every point, at every instant. That frozen
+meter is a sentence from the first lesson translated into this article's language
+— *incompressible* means the flow map of the fluid satisfies $\det J = 1$
+everywhere, forever. Watching dye swirl without ever bunching up and watching
+this determinant sit at one are the same observation made in two vocabularies.
 
-One more map deserves its reading. The fluid simulations elsewhere on this
-site push a velocity field's particles around the screen; the start-to-now
-assignment of each particle is a map of the plane, and it drags a Jacobian
-along every path. Incompressibility — the property the solver spends most of
-its effort enforcing — is the sentence $\det J = 1$, forever, at every
-particle: a fluid is a map that never writes a false area receipt. The
-projection page and the physics engine are keeping the same books.
+Every simulation on this site drags these boxes along invisibly. The solver's
+advection step asks where a parcel came from — a question about undoing a flow
+map, legal only while $\det J \neq 0$. The pressure projection is the machine
+that polices $\det J = 1$. And every training loop that has ever fit a model
+walked a loss landscape as one of the two walkers above.
 
 ## Further Reading
 
-John P. Snyder's *Map Projections: A Working Manual* (USGS Professional
-Paper 1395, free online) is the projection bible — every chart in it comes
-with exactly the partial derivatives this article called landing reports,
-and Snyder's own life is the subject's best anecdote: a chemist who took up
-projections as a hobby and ended up writing NASA's. The Tissot machinery
-appears there as "distortion analysis," worked to numbers.
-
 Grant Sanderson's *Essence of Linear Algebra* (3Blue1Brown) is the finest
-treatment anywhere of matrices as machines that move a plane — columns as
-landed basis vectors, determinant as area factor. This article's ellipses
-are his pictures made local; if the linear half felt fast, his chapters are
-the unhurried version.
+existing treatment of matrices as things that move a plane — determinant as area
+factor, columns as landed basis vectors — and its chapter thirteen was the first
+place many people ever *saw* a matrix. This article's first half is, knowingly, a
+calculus-flavored companion to it: his matrices act globally; the Jacobian is the
+same picture rationed out one zoom at a time.
 
-Boyd and Vandenberghe's *Convex Optimization* (free from Stanford) gives the
-fog-walking finale its rigor: chapter 9 proves how badly gradient descent
-zig-zags as conditioning worsens and why Newton's step is indifferent to it
-— the formal name is affine invariance — with bounds where this article has
-a race.
+Michael Spivak's *Calculus on Manifolds* delivers, in its first forty pages, the
+theorem this article drew: the derivative of a map is a linear map, defined by
+the quality of its impersonation, with the partial-derivative matrix demoted to a
+representation of it. The book is famously terse — every sentence has been
+sanded — but read after the figures above, its austerity turns hospitable.
+
+Boyd and Vandenberghe's *Convex Optimization* (free from Stanford's site) is
+where the second half grows teeth. Chapter 9's analysis of gradient descent
+zig-zag and Newton's affine invariance — the formal name for "indifferent to the
+narrowness slider" — is exactly the race figure, run with proofs, and their
+condition-number bounds explain quantitatively what the pink walker suffers.
 
 ## Final Words
 
-Tissot's ellipses were on the schoolroom wall the whole time; so was the
-fourteen-fold lie they measure. What was missing was only the reading: that
-the little box of partial derivatives everyone computes and nobody sees *is*
-the ellipse, that its determinant is the receipt, and that pointing the same
-box at a terrain's own arrows turns it into the curvature that calls every
-summit and pass on Earth. Two objects from a calculus course, and between
-them they run the atlas, the census, the feature-detector, and the training
-loop.
+The instrument was the same every time. Zoom into a curve: a line — one number.
+Zoom into a stirred plane: a lattice — four numbers, filed as two landings. Zoom
+into a landscape where the arrow has died: the same four numbers, curvatures now,
+because the thing under the loupe is the gradient itself. The Hessian was never a
+second idea. It is the Jacobian, pointed inward.
 
-None of the maps got fixed. The theorem stands; the wall map lies tonight
-exactly as it did when you were nine. What changed hands is custody of the
-lie — it now has a size you can read and a receipt it must sign at every
-point of the sheet. A map that cannot help lying, and will tell you exactly
-how much if you know its four-number language, is a stranger and finer thing
-than an honest one could ever have been.
+Everything these boxes are trusted with is collected on one promise — that the
+zoom always bottoms out. However hard a smooth map stirs, close enough it is
+parallelograms, and so an integral can be repriced patch by patch, a fold caught
+by its dying area, a saddle called by curvatures that disagree, a crooked valley
+made round. Smoothness is the promise that up close, the world is linear. The
+rest is filing.

@@ -1,113 +1,109 @@
-# PLAN — maths/01: Every Map Lies (the Jacobian and the Hessian)
+# PLAN — maths/01: The Jacobian and the Hessian
 
-v2, 2026-07-31, built on DENSE_CORE v2 (which wins conflicts). Section ladder =
-failure chain; figure counts are feasibility estimates, never quotas.
+Companion to DENSE_CORE.md (which wins conflicts). Skeleton = failure chain; every
+section ends on a manufactured problem. Figure counts are feasibility estimates,
+never quotas (AGENTS.md "Scale and style").
 
-## Palette contract
+## Palette contract (fixed at first appearance)
 
-Unchanged keys from v1 where the quantity survives; the probe circle inherits
-amber (it replaces the stamp as "the thing we watch").
+Role-rhyme with lessons 01–02: amber is still "the thing we watch," blue "the thing
+that acts," violet "the derived meter," red/cyan "high/low."
 
 | key    | hex      | quantity |
 |--------|----------|----------|
-| stamp  | #d97706  | the probe circle / dragged Greenland — the amber thing we watch |
-| ex     | #2563eb  | the east ground arrow and its landing (J column 1) |
-| ey     | #059669  | the north ground arrow and its landing (J column 2) |
-| area   | #7c3aed  | area receipts, det, eigen/curvature readouts |
-| grad   | #db2777  | gradient arrows on terrain |
-| hi     | #dc2626  | above-the-critical-level wash (CriticalZoom), dome class |
-| lo     | #0891b2  | below-level wash, bowl class |
-
-Terrain canvases use hypsometric tints (sea blue → lowland green → upland brown
-→ summit pale) — those are the *specimen's* real colors, like the coastline is a
-real coastline; palette keys bind the *quantities* drawn on top.
+| stamp  | #d97706  | the stamp — the amber square we watch, and its image |
+| ex     | #2563eb  | the east unit arrow ê₁ and its landing (J's first column) |
+| ey     | #059669  | the north unit arrow ê₂ and its landing (J's second column) |
+| area   | #7c3aed  | the determinant / area receipt / eigen readouts (derived meters) |
+| grad   | #db2777  | the gradient arrow(s) on the landscape |
+| hi     | #dc2626  | high ground on the landscape |
+| lo     | #0891b2  | low ground on the landscape |
 
 ## Section ladder (failure → savior)
 
-1. **(cold open + hero `MapLies`)** — Greenland vs Africa on the wall map; drag
-   Greenland to the equator and watch it deflate; violet receipt counts down.
-   Flat declaratives: the lie is mandatory (a sphere and a plane disagree about
-   distance — Gauss proved there is no fix), so every map chooses a lie. IOU:
-   the receipt's machinery. Palette amnesty.
-2. **The Circle That Confesses (`TissotLoupe` blob mode)** — probe circle drawn
-   on the ground, seen through the projection. Big circle: a bent blob — no
-   single description. Shrink it: a perfect ellipse emerges, every time,
-   anywhere. The lie is local and linear; the ellipse is the whole local truth.
-   (v1's zoom-emergence, with stakes.) Savior hook: an ellipse is four numbers —
-   which four?
-3. **The Landing Report (`TissotLoupe` matrix mode)** — east and north ground
-   arrows (the cos φ fact earned here), their landings as colored columns, J
-   named, F(p+h) ≈ F(p)+J·h. Tissot's name and 1859 as etymology-reward.
-   Boundary check: equator of the plate carrée (J = I, circle lands as circle).
-4. **The Area Receipt (`TissotTrio`, then `DetFold`)** — three same-size ground
-   circles at three latitudes on Mercator: receipts ×1.0 / ×2.0 / ×5-ish in one
-   frame; sec²φ; Greenland's number pays the hero's debt. Change of variables in
-   one line (r dr dθ). Then the paper-fold interlude: **Predict** (meter stops
-   at zero vs crosses) → `DetFold` → needle, mirror, undoable-only-where-det≠0.
-5. **Choose Your Lie (`ProjectionDuel`)** — same probe on Mercator and on an
-   equal-area map side by side: circular-but-inflated vs area-true-but-sheared.
-   Shape × size; conformal vs equal-area; you cannot have both (insight 1
-   cashed). **Waypoint 1.**
-6. **The Other Map in the Atlas (`TerrainField`)** — the island (invented,
-   confessed); contours; gradient arrows ⊥ contours; the arrow loupe: stepping
-   east/north moves the arrowhead — four numbers, symmetric — H = J of ∇f.
-7. **Summit, Basin, Pass (`CriticalZoom`)** — **Predict** (pass contours: rings
-   vs crossing) → zoom the col; eigen axes as principal curvature directions;
-   second-derivative test as sign reading; det H < 0 ⇔ pass. The determinant's
-   second job.
-8. **The Automatic Surveyor (`CurvatureMap`)** — classify every island point by
-   eigen-signs (dome red / bowl cyan / saddle violet); peaks, basins, and cols
-   light up unattended; SIFT/DEM dessert numbers.
-9. **Downhill in Fog (`NewtonRace`)** — descending the terrain blind; arrow-only
-   zig-zag vs H⁻¹ lens; boldness edge reachable. **Waypoint 2.**
-10. **Coda (hero returns)** — `MapLies` with Tissot ellipses inked on it and the
-    receipt formula; one paragraph tying det J = 1 to the site's fluid solver.
-11. **Further Reading + Final Words.**
+1. **(cold open + hero)** — the swirl warp with the loupe. Failure planted: the grid
+   is mangled beyond description in the large; under the loupe, at every point, a
+   clean parallelogram lattice. IOU: four numbers per point, two of them hiding a
+   second object. Palette amnesty sentence.
+2. **One Number Was Enough** — 1-D zoom recap: curve → line, slope = the one number,
+   f(a+h) ≈ f(a) + f′(a)h. *Failure out:* our functions now move points in the
+   plane; where a line through a point needed one number, the flattened thing we
+   just saw in the hero needs four. One number has no chance.
+3. **Maps, Not Graphs** — representation section. How to see ℝ² → ℝ²: no graph fits
+   in the world (4-D); instead, before/after — the warp of a grid, plus the stamp.
+   Naive attempt made honest: a single "stretch meter" on the stamp. *Visible
+   failure:* the same map stretches the stamp east–west at one probe point,
+   squashes it north–south at another, shears it at a third; the one-number meter
+   reads the same "1.0×" area while the shapes differ wildly. Savior: stop asking
+   for a number; ask where *arrows* land.
+4. **The Landing Report** — the loupe again, now with the two unit arrows riding the
+   stamp. Where does <ex>east</ex> land, where does <ey>north</ey> land: two arrows,
+   four numbers, filed as columns → the Jacobian. Entries revealed as the partials
+   (the box was a filing system all along). Linear impostor formula + boundary
+   checks (identity, pure rotation). Preset knob: identity / rotate / shear / swirl.
+5. **The Area Receipt** — det J as the stamp's area ratio, sign as the flip. Playable
+   failure: a fold slider drives det through zero — the stamp thins to a needle,
+   then comes out mirrored; the meter crosses zero and goes negative. Cash out
+   |det J| in change of variables on polar in one line (the r in r dr dθ).
+   **Waypoint** (end of Act 1). *Predict before the fold reveal:* when the map
+   folds, does the area meter stop at zero or go through it?
+6. **A Field of Arrows** — new object: a landscape f (color map, hi/lo), its
+   gradient as an arrow field. The hinge, stated flat: point ↦ arrow is itself a
+   map ℝ² → ℝ², so it has a Jacobian. That Jacobian has its own name: the Hessian.
+   Loupe on the *arrow field*: step east, watch the arrow change; step north, watch
+   it change; four numbers again — and this time the box is symmetric (mixed
+   partials agree; one honest sentence, no proof).
+7. **The Shape Left Behind** — at summits, pits, and passes the arrows die; the
+   linear impostor is blank there (∇f = 0 says "flat"), so zoom again: the contours
+   become perfect ellipses (bowl) or crossing hyperbolas (saddle) — the quadratic
+   impostor ½hᵀHh. Eigenvectors = the quadric's axes, eigenvalues = curvatures
+   along them; second-derivative test = reading signs; det H < 0 ⇔ saddle (the
+   area receipt returns: the "area" of a saddle's curvature pair is negative).
+   *Predict before the pass:* nested rings, or crossing lines?
+8. **Stepping Downhill** — finale, sliders galore. An anisotropic tilted valley;
+   gradient descent zig-zags (it only knows the arrow); the Newton step multiplies
+   by H⁻¹ and walks straight to the bottom: the Hessian as the lens that
+   un-stretches the valley. Knobs: anisotropy, rotation, step size.
+9. **The Flow Map (coda)** — hero returns wearing its matrix and det meter; the
+   swirl confessed as a fluid flow map; lesson 01 tie: incompressible = det J = 1
+   forever. **Waypoint** (end of Act 2) folded in just before Final Words.
+10. **Further Reading + Final Words.**
 
-## Figure list
+## Figure list (component · knob · cheapest honest rendering)
 
-| # | component | knob(s) | reuse |
-|---|-----------|---------|-------|
-| 1 | `MapLies mode="plant"` | drag Greenland | NEW (geo asset + sphere rotation) |
-| 2 | `TissotLoupe mode="blob"` | circle-size slider + draggable center | NEW, reuses lib view/matrix kit |
-| 3 | `TissotLoupe mode="matrix"` | projection select + probe | same component |
-| 4 | `TissotTrio` | none (one-frame contrast) | pattern from WarpStamp |
-| 5 | `DetFold` | fold slider | v1 as-is, prose reframed (paper map) |
-| 6 | `ProjectionDuel` | shared probe drag | NEW, assembled from lib |
-| 7 | `TerrainField` | draggable probe | GradField reskin (hypsometric) |
-| 8 | `CriticalZoom` | point select + zoom | v1 as-is (terrain framing) |
-| 9 | `CurvatureMap` | classification opacity slider | NEW, cheap (per-pixel eigsign) |
-| 10 | `NewtonRace` | narrowness + boldness | v1 as-is (fog framing) |
-| 11 | `MapLies mode="return"` | drag + Tissot overlay | hero + overlay |
+| # | component | section | the one idea | knob |
+|---|-----------|---------|--------------|------|
+| 1 | `WarpLoupe mode="plant"` | 1 | mangled grid → parallelogram lattice under zoom | zoom slider + draggable probe |
+| 2 | `ZoomLine` | 2 | curve flattens to its tangent line; slope readout | zoom slider + draggable point |
+| 3 | `WarpStamp stage="meter"` | 3 | one-number meter fails: same area, wildly different shapes at 3 probe points | draggable stamp |
+| 4 | `WarpLoupe mode="arrows"` | 4 | ê₁/ê₂ landings, live matrix as colored columns | preset select (identity/rotate/shear/swirl) + probe |
+| 5 | `DetFold` | 5 | stamp area receipt; fold drives det through 0, mirror beyond | fold slider |
+| 6 | `GradField` | 6 | landscape + gradient arrows; loupe on the arrow field shows the four rates | draggable probe |
+| 7 | `CriticalZoom` | 7 | contours at pit/summit/pass become quadrics; eigen axes + curvature readouts | critical-point selector + zoom |
+| 8 | `NewtonRace` | 8 | zig-zag vs straight; H⁻¹ un-stretches | anisotropy, rotation, step size (finale, flagged) |
+| 9 | `WarpLoupe mode="return"` | 9 | hero + matrix + det meter + flow-map confession | same as 1 |
 
-Benched from v1: `WarpLoupe` (all three modes — swirl specimen retired; its
-loupe/matrix mechanics live on inside TissotLoupe), `ZoomLine` (1-D recap cut:
-stakes-first structure; the blob→ellipse emergence carries the zoom idea),
-`WarpStamp` (superseded by TissotTrio). Files stay on disk, unregistered.
+Reuse-with-overlay: 1, 4, 9 are one component in three overlay configurations;
+3 and 5 share the warp/stamp lib. Density lands near ~1 figure / 350 words — below
+the corpus band, deliberately: this is a maths article, prose+LaTeX carry more of
+the load (AGENTS.md: an article type that begs more LaTeX is welcome to it).
 
-## Geometry honesty rules
+## Solver honesty
 
-- Projections are closed-form charts (λ, φ) → (x, y) with **ground Jacobians**:
-  J_chart · diag(1/cos φ, 1), so columns are per-unit-*ground*-distance — the
-  only honest comparison, and the cos φ fact is taught, not hidden.
-- Tissot blobs are **geodesic circles sampled on the sphere and pushed through
-  the projection point by point** — never an ellipse drawn from J. The ellipse
-  emerges as the circle shrinks; at large radius the blob's bentness is real.
-- Area receipts are shoelace measurements of the drawn polygon over the true
-  spherical cap area — measured from pixels' worth of samples, not printed from
-  the formula.
-- Greenland's drag is a true rigid rotation of the sphere (axis = c × t),
-  reprojected — the same algorithm as thetruesize.com.
-- The island terrain is invented and confessed; its gradient/Hessian are
-  analytic (v1's landscape, re-dressed). No numerical differentiation anywhere.
-- Coastline: Natural Earth 110m (public domain), decimated and coordinate-
-  rounded; provenance comment in geo.ts.
+Nothing here integrates a PDE. The warp is closed-form (swirl: rotation by angle
+θ(r) with smooth falloff), gradients and Hessians are analytic, contours are
+marching-dot iso-lines (PressureLandscape's technique). NewtonRace steps its two
+walkers with a fixed dt accumulator (AGENTS.md rule) even though each step is
+algebraic, so RAF cadence never changes the race. Stated in-post where the race
+runs.
 
 ## Ledger
 
-- Hero plants the receipt number → paid §4 (sec²φ at Greenland's latitude).
-- §2 plants "which four numbers" → paid §3 (columns).
-- §4's det-catches-folds → echoed §7 (det catches cols) — planned rhyme, one
-  sentence each, not a refrain.
-- §6 plants symmetry → paid §7 (perpendicular principal axes).
-- Hero returns §10 wearing the instrument; solver tie closes the site loop.
+- Plant (hero): four numbers per point; "two of them are hiding a second object"
+  → paid in §5 (det = the two-numbers-in-one: area+flip) and §7 (det H calls the
+  saddle).
+- Plant (§3): the stamp's dot (orientation) → paid at the mirror flip in §5.
+- Plant (§6): symmetry of H → paid in §7 (symmetric ⇒ real eigenvalues,
+  perpendicular axes — one sentence, honest).
+- Hero returns understood in §9; flow-map confession pays the "why a swirl, of all
+  maps" oddity.
