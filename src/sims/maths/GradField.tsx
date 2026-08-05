@@ -4,7 +4,6 @@ import { PALETTE } from '../lib/palette'
 import {
   landF,
   landGrad,
-  landHess,
   drawArrow,
   paneFrame,
   clipPane,
@@ -106,10 +105,25 @@ function createGradField(sharedRef: { current: Shared }): Stepper {
       const view: View = { cx: 0, cy: 0, half: HALF }
       const p = sharedRef.current.probe
       const g = landGrad(p.x, p.y)
-      const H = landHess(p.x, p.y)
       // the two neighbors the ghosts are measured at, one lattice step away
       const gE = landGrad(p.x + STEP, p.y)
       const gN = landGrad(p.x, p.y + STEP)
+      // The meter is MEASURED, not printed from landHess: centered difference
+      // quotients of the same gradient the ghosts draw. On this landscape the
+      // measurement is exact — f is cubic, so gradient components are
+      // quadratics and the centered quotient's error term (a fourth
+      // derivative of f) vanishes — which is why the off-diagonals the next
+      // section stakes symmetry on agree to the last digit. The drawn
+      // segments are the one-sided story (step east FROM here); the meter
+      // files the rate at the point itself.
+      const gW = landGrad(p.x - STEP, p.y)
+      const gS = landGrad(p.x, p.y - STEP)
+      const H: [number, number, number, number] = [
+        (gE[0] - gW[0]) / (2 * STEP),
+        (gN[0] - gS[0]) / (2 * STEP),
+        (gE[1] - gW[1]) / (2 * STEP),
+        (gN[1] - gS[1]) / (2 * STEP),
+      ]
 
       // ---- left: landscape + arrow field + probe ----
       ctx.save()
