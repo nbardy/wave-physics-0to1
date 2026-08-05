@@ -4,6 +4,7 @@ import Lesson02 from './lesson-02-fiber-bundles.mdx'
 import Lesson03 from './lesson-03-navier-stokes-history.mdx'
 import Maths01 from './maths-01-jacobian-hessian.mdx'
 import Physics01 from './physics-01-wave-particle.mdx'
+import Physics02 from './physics-02-pbits.mdx'
 
 // Lesson lifecycle as a sum type — rendering dispatches on `kind`, no stray
 // defaults. Add `draft` / `published` variants as lessons get written.
@@ -116,6 +117,17 @@ export const lessons: Lesson[] = [
     Content: Physics01,
   },
   {
+    id: 'pbits',
+    field: 'physics',
+    order: 2,
+    title: 'A Computer Made of Noise',
+    blurb:
+      'A chip that computes with the thermal noise every other chip fights. Build it from one flickering coin — and build the instrument that catches a fast sampler telling a confident lie.',
+    tags: ['probability', 'simulation'],
+    status: { kind: 'draft' },
+    Content: Physics02,
+  },
+  {
     id: 'navier-stokes',
     field: 'waves',
     order: 1,
@@ -152,9 +164,9 @@ export const lessons: Lesson[] = [
     id: 'jacobian-hessian',
     field: 'maths',
     order: 1,
-    title: 'The Jacobian and the Hessian',
+    title: 'Every Map Lies: the Jacobian and the Hessian',
     blurb:
-      'Zoom into any smooth map and a parallelogram lattice appears — four numbers per point. The Jacobian is that lattice; the Hessian is the same zoom aimed at the gradient.',
+      'Greenland is not the size of Africa. Drag it south and read the receipt: the Jacobian is the instrument atlases print to confess a map’s lie, and the Hessian is the same box aimed at terrain — summits, basins, and passes by eigenvalue.',
     tags: ['calculus', 'linear-algebra', 'geometry'],
     status: { kind: 'draft' },
     Content: Maths01,

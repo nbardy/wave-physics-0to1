@@ -128,8 +128,8 @@ function createCriticalZoom(sharedRef: { current: Shared }): Stepper {
 }
 
 const KINDS: Array<{ key: CriticalKind; label: string }> = [
-  { key: 'pit', label: 'the pit' },
-  { key: 'peak', label: 'the peak' },
+  { key: 'pit', label: 'the basin' },
+  { key: 'peak', label: 'the summit' },
   { key: 'pass', label: 'the pass' },
 ]
 

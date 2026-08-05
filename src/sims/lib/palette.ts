@@ -43,6 +43,19 @@ export const PALETTE = {
   slitB: '#db2777', // the amplitude that came through the right slit
   ejecta: '#dc2626', // ejected-electron energy (the photoelectric bench)
   cutoff: '#0891b2', // threshold frequency / the line a quantity cannot cross
+
+  // Physics P2, p-bits (articles/05-pbits/PLAN.md §Palette) — the role-rhyme
+  // continues: amber "the thing we watch" (a spin pointing up), blue its other
+  // face, violet "the derived meter" (the TV readout and every sampled bar).
+  // The ghost gray is the exact distribution and is the SAME gray in every
+  // figure of the lesson — the article's second protagonist wears one coat.
+  sUp: '#d97706', // spin +1 ink
+  sDn: '#2563eb', // spin −1 ink
+  ferro: '#dc2626', // ferromagnetic coupling J > 0 (agree)
+  anti: '#0891b2', // antiferromagnetic coupling J < 0 (disagree)
+  ghost: '#9ca3af', // the exact distribution — enumeration's bars, always this gray
+  held: '#059669', // clamp halo — a spin held by hand
+  meter: '#7c3aed', // sampled distributions, TV distance, derived readouts
 } as const
 
 export type PaletteKey = keyof typeof PALETTE

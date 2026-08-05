@@ -1,65 +1,77 @@
-# HANDOFF — maths/01: The Jacobian and the Hessian
+# HANDOFF — maths/01: Every Map Lies (the Jacobian and the Hessian)
 
-Canonical per-article state. Updated 2026-07-30.
+Canonical per-article state. Updated 2026-07-31.
 
-## Status: BUILT end-to-end, `draft`
+## Status: REBUILT around the v2 story, `draft`
 
-First article of the **maths track** (new; registry gained `track: 'waves' | 'maths'`,
-Home renders one group per track with `M`-prefixed numbers). Commissioned by Nick
-verbatim: the Jacobian and the Hessian are "the two things here I have never felt
-like I understood."
+Nick rejected the v1 "zoom → lattice" thesis ("not sure it's a great thesis, or
+great presentation"). Ten candidate stories were branched and critiqued in
+`STORY_CANDIDATES.md`; Nick approved the GEM — **#2, Every Map Lies** — and the
+article was rebuilt around it the same day. DENSE_CORE and PLAN are v2; the v1
+diagnosis (no wonder gap, stakes in §8 of 9, definition-as-story) is recorded at
+the top of STORY_CANDIDATES.md.
 
-- ~3,300 words, 9 figures (7 components; `WarpLoupe` serves 3 configurations:
-  plant / arrows / return).
-- Sims live in `src/sims/maths/` with shared kit `src/sims/maths/lib.ts` — all
-  closed-form (maps carry exact Jacobians and exact inverses; landscape carries
-  analytic gradient + Hessian). Nothing integrates a PDE; the only stepped thing
-  is NewtonRace's walker clock (fixed-dt accumulator).
-- Palette: `stamp/ex/ey/area/grad/hi/lo` added to `sims/lib/palette.ts`, role-rhyme
-  with lessons 01–02 (amber watched thing, blue actor, violet derived meter).
-- Article docs: `articles/maths/01-jacobian-hessian/{DENSE_CORE,PLAN}.md`.
+- ~3,600 words, 11 figures, title **"Every Map Lies: the Jacobian and the
+  Hessian"**.
+- Act 1 (projections): `MapLies` hero (drag Greenland — true sphere rotation,
+  measured receipts), `TissotLoupe` blob/matrix (geodesic circles sampled on
+  the sphere, ground Jacobians), `TissotTrio`, `DetFold` (kept from v1 as the
+  paper-fold interlude), `ProjectionDuel` (Mercator vs sinusoidal, measured
+  roundness + receipt).
+- Act 2 (terrain): `TerrainField` (hypsometric island, carries the improved
+  ghost-arrow loupe from the post-feedback GradField), `CriticalZoom`
+  (relabeled basin/summit/pass), `CurvatureMap` (new: levelness × curvature
+  survey), `NewtonRace` (kept, fog framing).
+- Kit: `carto.ts` (projections with exact inverses + ground Jacobians,
+  geodesic circles, Rodrigues sphere rotation, spherical/planar shoelace),
+  `terrain.ts` (hypsometric tints, contour dots), `geo.ts` (Natural Earth 110m
+  coastline + Greenland, public domain, compacted 71 KB; regeneration script
+  archived as `compact-geo-script.ts` beside this file).
+- Benched from v1, files kept unregistered: `WarpLoupe`, `ZoomLine`,
+  `WarpStamp`, `GradField` (superseded by `TerrainField`).
 
-## Reader pass (2026-07-30, hidden-tab harness per figure-audit skill)
+## Reader pass (2026-07-31, hidden-tab harness)
 
-All 9 figures screenshotted, three reader questions answered, knobs driven to both
-ends. Findings found AND fixed in the same session:
+All 11 figures screenshotted, knobs driven, claims bound. Found and fixed:
 
-1. **Isotropic pit** — original landscape (`VSCALE = 1`) gave λ₁ = λ₂ at pit/peak:
-   circular contours, degenerate eigen-axes, and the "tilt comes from the mixed
-   term" prose had no evidence. Fixed: `VSCALE = 0.45` → λ = (±2.0, ±0.9), true
-   tilted ellipses, long axis along the gentler dashed eigenvector (comment in
-   lib.ts warns against reintroducing).
-2. **Missing crossing at the pass** — contour levels skipped the critical value,
-   so the Predict's promised crossing lines didn't exist. Fixed: level `fc`
-   included (at the pit it honestly marks the flat bottom as a dot blob).
-3. **NewtonRace meter ordering** (figure-audit §2b) — at η = 0.14 the arrow-only
-   walker's distance beat the lens walker's, arguing against the prose. Fixed:
-   η defaults to 0.16 (just under GD's stability edge 2/κ) and meters report
-   "at the bottom in N steps" once home.
-4. DetFold's "0" tick was clipped; WarpStamp's far ghost was not "nearly square"
-   and its receipt clipped at the pane edge. Both fixed.
+1. **Blob mode ran on Mercator** — conformal, so every small circle lands as a
+   circle and the "always an ellipse" emergence had no eccentric specimen.
+   Moved to the naive grid (plate carrée); "potato" prose softened to the
+   lopsided egg the figure actually shows.
+2. **Hero numbers**: measured whole-outline receipt is ×15.0 vs pointwise
+   sec²(72°) ≈ 10.5 — prose now teaches the gap (det is a pointwise rate;
+   a coastline integrates it) instead of contradicting the meter.
+3. **CurvatureMap washed the sheet violet** (two cuts): midland saddle
+   curvature is as strong as the critical points', so eigen-magnitude cannot
+   gate the glow. Rebuilt as levelness² × curvedness — the honest DEM-detector
+   gate — which also surfaced the terrain's **twin pass**; it is now marked
+   and the prose owns it.
+4. Duplicate overlapping receipts on the un-dragged hero; "center −0°";
+   ProjectionDuel roundness-1.00 prose claim vs measured 1.16 (finite circle);
+   TerrainField default probe on a flat spot. All fixed.
 
-Prose slop sweep same session: removed family-18 lines ("the debt the article
-carries longest", "the article's one figure with sliders galore", "hinge of the
-whole article"), one decorative question, "honest accounting".
+Harness note, relearned the hard way: **never `scrollTo` in the hidden tab,
+even once during setup** — it froze the compositor and produced convincing
+stale screenshots that misdiagnosed a correct figure (the getImageData probe
+settled it). The figure-audit skill already says this; it now has a second
+scar to point at.
 
 ## What remains before `published`
 
-- Nick's read (voice + the two-objects-finally-understood test — the article
-  exists for exactly that feeling).
-- Mobile/touch pass (drags are pointer-based and `.sim-stir` blocks scroll-touch,
-  but nobody has held it on a phone).
-- Predict copy sanity-check with fresh eyes (both currently commit before reveal).
-- Optional: verify WarpLoupe `arrows` presets identity/rotate on screen (shear and
-  swirl were verified visually; identity/rotate are trivially J = I / rotation
-  matrix by construction).
+- Nick's read: does the map story land where the zoom story didn't?
+- Predict copy check; mobile/touch pass (drags: hero, Tissot ×2, trio, duel,
+  terrain).
+- Optional polish: hero could label Africa at ×1 for the fourteen-fold claim;
+  sinusoidal pane's interrupted look at high |lon| is honest but worth a
+  glance on a phone.
+- The solver tie (det J = 1) is prose-only in the coda; a figure exists in
+  benched `WarpLoupe mode="return"` if Nick wants it back.
 
 ## Known judgment calls (revisable)
 
-- Figure density ~1 per 350 words — below the corpus band, deliberate for a maths
-  article (AGENTS "Scale and style": LaTeX carries more load here).
-- The loupe re-inks the stamp at each zoom level (confessed in prose as "I reprint
-  the stamp smaller as we zoom" — actually phrased as the loupe keeping it
-  visible); alternative (true fixed stamp vanishing under zoom) rejected as
-  unteachable.
-- Track numbering on Home: waves keep `01…`, maths use `M1…`.
+- Terrain is an invented backcountry sheet (analytic landF), confessed in
+  prose; a real DEM was rejected to keep exact derivatives.
+- Mercator clipped at 82° with an in-figure confession line.
+- Greenland drag capped at 70° center latitude so the outline stays printable.
+- ZoomLine's 1-D recap is cut entirely — the blob→ellipse emergence carries
+  the differentiability idea with stakes attached.

@@ -161,6 +161,12 @@ branches.
     plus Monte-Carlo photon arrivals in `src/sims/physics/`; 20 headless figure
     checks green, which found two real figure bugs; awaits Nick's read and a mobile
     pass → `articles/physics/01-wave-particle/HANDOFF.md`.
+  - **Physics P2** (p-bits / thermodynamic sampling): Acts I–II BUILT 2026-08-05
+    (`draft`) — ~2,900 words scaffold, 10 figures, CPU sampler + exact oracle in
+    `src/sims/pbits/`; 30 headless checks green (`bun run check:pbits`), which
+    found one real staging bug (the two-coins target was cheatable). §7–§8,
+    WGPU backend, hero, and the voice pass remain
+    → `articles/05-pbits/HANDOFF.md` (design: DENSE_CORE/PLAN/OUTLINES/CRITIQUE).
   - **Lesson 01** (Navier–Stokes): **PUBLISHED 2026-07-06** (Stage 5 complete: slop
     scan ×2, rhythm compression, ledger closed, hero pre-roll, hysteresis measured);
     hero is the two-color wing → `articles/01-navier-stokes/HANDOFF.md`.
@@ -170,10 +176,12 @@ branches.
   - **Lesson 03** (NS history): BUILT end-to-end 2026-07-06 (`draft`) — ~5,800 words,
     20 figures, 16 new sims, computed drag meters; browser QA incomplete (preview
     env wedged) → `articles/03-navier-stokes-history/HANDOFF.md`.
-  - **Maths M1** (Jacobian & Hessian, first of the new maths track): BUILT
-    end-to-end 2026-07-30 (`draft`) — ~3,300 words, 9 figures, 7 closed-form sims
-    in `src/sims/maths/`; reader pass done with the hidden-tab harness, findings
-    fixed same session; awaits Nick's read → `articles/maths/01-jacobian-hessian/HANDOFF.md`.
+  - **Maths M1** ("Every Map Lies: the Jacobian and the Hessian"): REBUILT
+    2026-07-31 (`draft`) around the cartography story after Nick rejected the v1
+    zoom thesis — ten candidates branched in its STORY_CANDIDATES.md, GEM chosen,
+    11 figures (Tissot machinery + terrain surveyor; real Natural Earth
+    coastline), reader pass done, findings fixed same session; awaits Nick's
+    read → `articles/maths/01-jacobian-hessian/HANDOFF.md`.
   - **Lesson 04** (drag & turbulence, ordering unclaimed): CONCEPT banked
     2026-07-06 — 3D wind-tunnel hero (car + offset colored streamtubes; where
     lesson 01's "flows here are two dimensional" confession flips into the

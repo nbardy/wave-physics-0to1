@@ -140,6 +140,7 @@ export const CRITICAL = {
   pit: toWorld(1, 1), //  λ = (+2.0, +0.9)
   peak: toWorld(-1, -1), // λ = (−2.0, −0.9)
   pass: toWorld(1, -1), // λ = (+2.0, −0.9)
+  pass2: toWorld(-1, 1), // the twin pass — λ = (−2.0, +0.9)
 } as const
 export type CriticalKind = keyof typeof CRITICAL
 

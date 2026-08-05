@@ -1,116 +1,121 @@
-# DENSE CORE — maths/01: The Jacobian and the Hessian
+# DENSE CORE — maths/01: Every Map Lies (the Jacobian and the Hessian)
 
-Written first; wins conflicts with later drafts. First article of the **maths track**:
-same methodology, same voice system, but the subject is a mathematical object rather
-than a physical phenomenon — so the "phenomenon" is a *picture* the reader can hold,
-and the wonder gap is the gap between having used a thing for years and never having
-seen it.
+v2, 2026-07-31. Supersedes the v1 "zoom" core after Nick's verdict ("not sure
+it's a great thesis, or great presentation") and the ten-story branch in
+STORY_CANDIDATES.md. v1's mechanism survives as the instrument; the story is new.
 
 ## Thesis (one sentence)
 
-**A derivative is the linear map you find when you zoom in — the Jacobian is that map
-written as a matrix, and the Hessian is nothing new: it is the Jacobian of the
-gradient, the quadratic shape left standing where the arrows die.**
+**The Jacobian and the Hessian are the two instruments cartographers have been
+printing on real maps for 150 years — the ellipse that confesses a projection's
+lie, and the curvature box that reads terrain — and once you can read them on an
+atlas page you can read them anywhere.**
 
-Two objects, one instrument (the zoom), one move applied twice.
+## The wonder gap
 
-## Why these two (the commission)
+On the wall map in every classroom, Greenland is the size of Africa. Africa is
+fourteen times larger. Every reader has stared at this lie for years; almost no
+reader knows the lie is (a) mathematically mandatory, (b) precisely measurable,
+and (c) *printed with its own measuring instrument* in serious atlases — Tissot's
+indicatrix, little ellipses inked over the map. The gap: you have been looking at
+Jacobians since grade school without being told.
 
-Nick, verbatim: the Jacobian and the Hessian are "the two things here I have never
-felt like I understood." The failure mode of every standard treatment is the same:
-both objects are *defined by their formulas* (a box of ∂fᵢ/∂xⱼ; a box of ∂²f/∂xᵢ∂xⱼ)
-and never *shown being anything*. The reader can compute both and picture neither.
-This article is the inversion: the picture first, the box of partials last, as the
-bookkeeping for something already seen.
-
-## The hook / wonder gap
-
-You already trust the 1-D story: zoom into any smooth curve and it flattens into a
-line; the derivative is that line's slope. One number, because a line through a point
-needs one number. The gap: **what do you find when you zoom into a *map* — a function
-that moves points of the plane?** Answer, visible on screen: a mangled grid becomes a
-clean parallelogram lattice. A parallelogram lattice needs four numbers. That's the
-Jacobian — not a box of partials, a *landing report* for two arrows.
+The second half has the same shape: everyone has seen contour maps, summits,
+basins, mountain passes; almost nobody knows that "pass" is a statement about
+eigenvalue signs, or that terrain software finds every peak and col on Earth by
+running exactly the second-derivative test the reader half-remembers from
+calculus.
 
 ## The persistent protagonist
 
-**The stamp**: a small amber square (with a dot marking its corner-orientation)
-dropped anywhere in the plane, and the **loupe** that zooms on it. The stamp survives
-the whole article: mangled by the warp, straightened by the zoom, measured by the
-determinant, carried into the landscape act (where the stamp rides the gradient
-field), and returned in the coda riding lesson 01's flow. The Jacobian is *what the
-map does to the stamp*; the Hessian is *what the landscape does to the stamp of
-arrows*.
+**The probe circle** — a small circle drawn on the ground (on the globe in Act 1,
+on the island in Act 2) and watched through the map. It replaces v1's abstract
+stamp. In Act 1 the map is a projection and the circle lands as an ellipse (the
+Tissot indicatrix — the Jacobian, drawn). In Act 2 the "map" is the gradient of
+terrain and the circle of directions comes back as curvatures (the Hessian). One
+probe, two instruments.
 
-## The ranked insights (payoff order)
+## Ranked insights (payoff order)
 
-1. **Zoom is the definition.** Differentiability *means* "looks linear close up."
-   The Jacobian isn't derived from partials; partials are how you *file* it.
-2. **Columns are landings.** J's first column is where the unit east arrow lands;
-   second column, unit north. The matrix is read, not computed.
-3. **det J is the stamp's area receipt** — the local area magnification, signed;
-   negative means the stamp got flipped. This cashes out the |det J| in every change
-   of variables (the r in r dr dθ), and det J = 0 is the picture of "locally
-   uninvertible": the stamp crushed to a needle.
-4. **The gradient of a landscape is itself a map** (point ↦ arrow is ℝ² → ℝ²), so it
-   *has* a Jacobian. That Jacobian is the Hessian. No new machinery — the same move,
-   aimed at the gradient.
-5. **At a critical point the linear story dies** (∇f = 0), and the Hessian is the
-   *next* impostor: zoom into a summit or a pass and the contours become perfect
-   ellipses or crossing hyperbolas. Eigenvectors = the axes of that quadric;
-   eigenvalues = the curvatures along them; the second-derivative test is just
-   reading the signs; det H < 0 ⇔ saddle (the determinant returns as a character).
-6. **The Hessian is why Newton's method turns**: gradient descent zig-zags down an
-   anisotropic valley because it only knows the arrow; the Newton step multiplies by
-   H⁻¹ — it un-stretches the valley before stepping. The Hessian is the lens that
-   makes a stretched bowl round.
-7. **Coda tie to the site**: lesson 01's solver drags a stamp along every particle
-   path; incompressibility is the sentence "det J = 1, forever." The maths track and
-   the waves track are one subject.
+1. **Every flat map of the earth must lie** — not for lack of cleverness; a
+   sphere and a plane disagree about distances, provably. So the honest question
+   is never "is this map distorted?" but "*which* lie did it choose?"
+2. **The lie is local and linear.** Draw a ground circle and shrink it: however
+   bent the big blob was, the small one is always a perfect ellipse. That
+   emergence — blob → ellipse as the circle shrinks — IS differentiability, met
+   in the wild (v1's zoom-lattice, now with a reason to zoom).
+3. **The ellipse is the Jacobian.** Where east and north land = the columns; the
+   ellipse is the image of the ground's unit circle; Tissot published exactly
+   this picture in 1859 and atlases print it still.
+4. **det J is the area receipt.** Mercator at latitude φ inflates areas by
+   sec²φ — at Greenland's latitude that is ×10 and climbing; the hero's lie gets
+   its exact number. Change of variables (the r in r dr dθ) is the same receipt
+   paid inside every integral. det = 0 is a fold (paper-map interlude); negative
+   is a mirror.
+5. **You must choose your lie.** J factors into shape × size. Mercator keeps the
+   ellipse a circle (conformal: angles true, compass courses straight) and pays
+   in area; equal-area maps pin det = 1 and pay in shear. No projection escapes
+   both — the impossibility from insight 1, cashed as a theorem about J.
+6. **The gradient of terrain is itself a map, so it has a Jacobian: the
+   Hessian.** The hinge survives from v1 verbatim — point ↦ steepest-uphill
+   arrow is ℝ² → ℝ², and its landing report is symmetric.
+7. **Summit, basin, pass are eigenvalue signs.** Zoom a topo map at a col: the
+   contours cross — the reading hikers are taught, now derived. Principal
+   curvatures = eigenvalues; the second-derivative test is sign-reading;
+   det H < 0 is the pass. The determinant catches folds in Act 1 and cols in
+   Act 2 — same bookkeeper, both instruments.
+8. **The Hessian is the automatic surveyor.** Classify every point of a terrain
+   by its eigen-signs and peaks/basins/saddles light up by themselves — how DEM
+   software and blob detectors (SIFT's det-H test) actually work. The reader's
+   calculus incantation turns out to run the world's mapping software.
+9. **Newton in the fog**: descending terrain you cannot see, the arrow alone
+   zig-zags; H⁻¹ un-stretches the valley. (v1's race, reskinned; the payoff is
+   why it belongs to the same article as the atlas.)
+10. **Coda**: the site's fluid solver drags det J = 1 along every particle path —
+    the incompressibility tie, one paragraph, prose-only.
 
 ## Misconceptions to kill
 
-- *"The Jacobian is the determinant"* (common usage collapses the matrix into its
-  det) — kill by **debunk**: keep the two names separated on screen, matrix as
-  landing report, det as its area receipt.
-- *"The Hessian is just curvature = one number"* — kill by **showing** the pass:
-  curvature has a direction; at a saddle the same point curves up one way and down
-  the other. One number cannot say that; a symmetric 2×2 box can.
-- *"Second derivatives = ∂²f/∂x² and ∂²f/∂y², the mixed term is bookkeeping"* — kill
-  by **rotation**: a diagonal-only Hessian applied to a rotated valley gets the axes
-  wrong; the mixed term is what lets the bowl tilt. Shown in the eigen-axes figure.
-- Omission: total derivative vs. partial pedantry, differentials-as-infinitesimals
-  debates, tensor language. Not named at all.
+- *"Mercator is just badly made / old"* — debunk: it is optimal for exactly one
+  thing (rhumb lines straight; conformality), and its area lie is the price, not
+  a bug. The duel figure stages the trade.
+- *"The Jacobian is the determinant"* — kill by keeping ellipse (matrix) and
+  receipt (det) visually separate instruments all article.
+- *"Curvature is one number"* — the pass kills it: same point curves up one way,
+  down the other; a symmetric 2×2 is the smallest honest container.
+- Omission: Gauss's Theorema Egregium is *named once* as the impossibility's
+  pedigree, never developed; no differential-geometry vocabulary (metric,
+  curvature tensor) is admitted.
 
-## The math budget (earned, in order)
+## Math budget (earned, in order)
 
-1. 1-D: f(a+h) ≈ f(a) + f′(a)·h (recalled, not derived).
-2. The landing report: J = [image of ê₁ | image of ê₂], entries as four partials
-   *after* the arrows are seen.
-3. f(a+h) ≈ f(a) + J·h — the linear impostor, boundary-checked (identity map,
-   pure rotation).
-4. Area factor: det J, sign = orientation; |det J| in change of variables, cashed
-   on polar coordinates in one line.
-5. H = J of ∇f; symmetry noted honestly (equality of mixed partials, one sentence,
-   no proof).
-6. f(a+h) ≈ f(a) + ∇f·h + ½ hᵀH h — the quadratic impostor, boundary-checked
-   (flat plane → H = 0 leaves the linear story).
-7. Eigen story: H v = λ v, read as "along v, the bowl is a 1-D parabola with
-   curvature λ." Second-derivative test as sign-reading; det H = λ₁λ₂.
-8. Newton step: x ← x − H⁻¹∇f, read as "un-stretch, then walk to the bottom."
+1. Ground arrows: at latitude φ, one degree of longitude is cos φ shorter than
+   a degree of latitude — the single spherical fact the article needs.
+2. Landing report J = [east-landing | north-landing]; entries as partials after
+   the arrows are seen; F(p+h) ≈ F(p) + J·h with the blob→ellipse figure as its
+   meaning. Boundary check: the untilted equator point of a cylindrical map.
+3. det J as area factor; Mercator's sec²φ; ∬ g |det J| = ∬ g under change of
+   variables, cashed on r dr dθ in one line.
+4. Shape × size: J = (rotation)(stretch) informally via the ellipse's axes;
+   conformal ⇔ ellipse circular; equal-area ⇔ det = 1. (No SVD ceremony — the
+   ellipse's axes carry it.)
+5. H = J of ∇f; symmetry (mixed partials agree, one sentence).
+6. f(c+h) ≈ f(c) + ½hᵀHh at critical points; eigen as principal curvatures;
+   second-derivative test as sign table; det H = λ₁λ₂.
+7. Newton step x ← x − H⁻¹∇f as un-stretching.
 
 ## Hero figure
 
-The swirl warp with a draggable loupe: full pane shows a checkered grid mangled by a
-closed-form swirl; the loupe pane shows the neighborhood of the probe at increasing
-zoom — at high zoom the mangling is gone and a clean parallelogram lattice stands
-there, different at every probe point. Plant: those four numbers per point are the
-whole article. Return (coda): same figure, now wearing its matrix, its det meter,
-and revealed as a flow map.
+A Mercator world map. Greenland is draggable: grab it and pull it to the
+equator — the outline deflates continuously (true rigid motion on the sphere,
+reprojected live), with a violet area receipt counting down from ×10-ish to ×1.
+The IOU: the machinery that computes that receipt at every point. Returns in the
+coda wearing Tissot ellipses and the receipt formula.
 
 ## What this article is NOT
 
-Not a linear-algebra course (eigenvectors are met as bowl axes, not defined in
-generality); not a multivariable-calc syllabus (no chain rule ceremony, no implicit
-function theorem); not optimization beyond the one Newton payoff. Scope is the two
-objects Nick named, seen properly, once.
+Not a projections survey (two projections plus the naive one; Snyder gets the
+Further Reading nod); not differential geometry (sphere facts are used, never
+theorized); not an optimization course (one race, one payoff). The commission is
+unchanged: the two objects Nick named, finally seen — now on maps he has
+actually held.
