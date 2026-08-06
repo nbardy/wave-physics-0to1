@@ -3,7 +3,15 @@
 > **Superseded for the ship candidate:** the synthesis (A + C's meter +
 > B's hand-compile + the CRITIQUE.md extractions) is now canonical in
 > `DENSE_CORE.md` + `PLAN.md`. This doc remains the record of the three
-> candidate shapes; variant B is banked whole as the sequel.
+> candidate shapes. **Variant B graduated (2026-08-05)** into the series'
+> Part 2 — `articles/06-z1-compiler/` — grounded in the two 2026-08-04
+> papers (exact fabric, context matching, mixing–expressivity, meta-EBM);
+> Part 3 (EBM diffusion under the chip's economics) is seeded at
+> `articles/07-ebm-diffusion/DENSE_CORE.md`. Banked Part-1 additions not
+> yet built: the p-bit oscilloscope (telegraph dwell-ratio identity, §7
+> candidate) and the clockless/staleness section (async Poisson clocks
+> are exact with fresh reads; staleness is the continuous-time write
+> conflict — §6.5 candidate).
 
 Three Stage-1 + Stage-2 passes at the same material: Extropic-style p-bit
 hardware, block-Gibbs sampling, the Torx → Thermalizers → THRML compile stack,

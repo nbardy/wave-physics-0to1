@@ -77,7 +77,8 @@ export function createLandscape(shared: { current: LandscapeShared }, seed = 31)
       ctx.fillText('all 16 states, column height = exact probability', r.x, r.y + r.h + 16)
       ctx.font = FONT_METER
       ctx.fillStyle = '#1a1f2b'
-      ctx.fillText(`temperature knob β = ${fmt(shared.current.beta, 2)}`, r.x, 20)
+      // β is inverse temperature — the knob reads hot at small β, cold at large
+      ctx.fillText(`β = ${fmt(shared.current.beta, 2)} — inverse temperature ("coldness")`, r.x, 20)
     },
   }
 }

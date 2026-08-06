@@ -146,6 +146,15 @@ export function createPairCoupler(
       lean(x1, meanL)
       lean(x2, meanR)
 
+      if (wired) {
+        // The update rule's first run in the lesson — say on-canvas that the
+        // temperature is pinned, so σ(2(h+ΣJs)) is the whole story here and
+        // the β dial the prose promises is visibly not on this figure yet
+        // (final external audit item, 2026-08-06).
+        ctx.font = FONT_LABEL
+        ctx.fillStyle = 'rgba(85,96,111,0.9)'
+        ctx.fillText('β = 1 (locked)', w * 0.06, fieldGauge ? 60 : 24)
+      }
       if (fieldGauge) {
         // the second coin's local field, recomputed live as the first flickers
         const f = localField(m, s, 1)

@@ -9,9 +9,12 @@ with this document, this document wins.
 
 ## The seed
 
-Extropic's Z1: 269,568 p-bits on a sparse degree-16 two-colorable fabric,
-running chromatic block-Gibbs in silicon at under one watt
-(arXiv:2608.01615, arXiv:2608.01612). Every computer the reader owns spends
+Extropic's Z1: ~250,000 p-bits on a sparse, mostly-regular degree-16
+two-colorable fabric, running chromatic block-Gibbs in silicon at an
+estimated ~3×10⁻¹⁰ J per Gibbs iteration, 10⁶–10⁷ iterations/second
+(arXiv:2608.01615, arXiv:2608.01612 — numbers per the papers' own
+estimates; the once-circulated "269,568" figure and any total-wattage
+claim are NOT paper facts and were scrubbed from prose 2026-08-05). Every computer the reader owns spends
 most of its transistors and watts *fighting* noise — margining it,
 clocking it out, correcting it away. This chip recruits the noise as the
 compute. The sibling exploration thread (pbit-metal-lab) supplied the

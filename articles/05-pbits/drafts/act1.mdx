@@ -1,0 +1,300 @@
+import { BitFlicker } from '../sims/pbits/BitFlicker'
+import { DisplayTeach } from '../sims/pbits/DisplayTeach'
+import { PairCoupler } from '../sims/pbits/PairCoupler'
+import { StateAtlas } from '../sims/pbits/StateAtlas'
+import { MeterForge } from '../sims/pbits/MeterForge'
+
+# A Computer Made of Noise
+
+{/* ACT I fragment (PLAN rev. 2) — replaces the intro and §1–§4 of the built
+    lesson. F1 HERO stays deferred to Act IV. The State Atlas supersedes
+    Landscape (F7) in prose; StateGraph (F8) moves to Act II's §5. */}
+
+Every computer you own is at war with noise. Billions of transistors are margined,
+clocked, and error-corrected so that not one of them ever flips a bit by accident;
+most of the watts your laptop burns are spent winning that war. A chip exists now
+that surrenders it instead. Its bits flip at random on purpose, millions of times
+a second, driven by the same thermal jitter every other chip suppresses — and it
+computes *with* the flipping, on less power than a nightlight.
+
+Randomness is the one output the eye cannot audit. Two streams of flicker look
+identical when one of them is right and the other is confidently, permanently
+wrong — so alongside the machine, this lesson builds the instrument that can
+catch it lying. A fast, plausible-looking sampler is going to produce an
+entirely wrong answer in these pages while every energy readout applauds it,
+and the instrument will be the only witness.
+
+One amnesty up front: there is no quantum mechanics anywhere in this article.
+These are classical coins.
+
+## A bit that leans
+
+A fair coin flipped forever computes nothing — its histogram is flat and stays
+flat no matter what you wish it said. The smallest useful move is to give the
+coin an opinion. The cell below flickers between its two states, <C k="sUp">up</C>
+and <C k="sDn">down</C>, forty times a second. The knob is its *bias*. Drag it and
+watch the histogram lean:
+
+<BitFlicker />
+
+The cell still never obeys — at any bias short of the ends it sometimes lands
+against its preference. What the knob sets is not the outcome but the *lean*,
+and the histogram measures it. This flickering, opinionated cell is a p-bit — a
+probabilistic bit — and it is the only component the machine in this lesson is
+made of. The coin stays with us as the metaphor; p-bit is the working word from
+here on. In silicon a p-bit is a comparator listening to its own thermal noise —
+a real circuit, drawn in full when the machine itself arrives.
+
+Now sweep the knob slowly from one end to the other and let it rest a moment at
+each stop. Every bias you visit leaves a dot behind — its measured mean — and the
+dots trace a curve:
+
+<BitFlicker trace />
+
+That S-shape is yours; the figure only recorded it. Written down, the rule you
+just drew is
+
+$$P(s = +1) = \sigma(2h), \qquad \sigma(x) = \frac{1}{1 + e^{-x}}$$
+
+where $s$ is the p-bit's state, $h$ is the bias knob, and $\sigma$ is the S-curve
+itself. Check it at the edges: push $h$ hard positive and $\sigma(2h)$ saturates
+at 1 — the p-bit pins <C k="sUp">up</C> and the flicker dies. At $h = 0$ it gives
+exactly ½, the fair coin we started with — uselessness recovered as a special
+case.
+
+## Reading the display
+
+Before anything else happens, the display itself. A cell filled <C k="sUp">amber</C>
+points up; filled <C k="sDn">blue</C>, down. A wire between two cells means their
+leans are linked: a <C k="ferro">warm wire</C> wants its ends to agree, a
+<C k="anti">cool wire</C> wants them to disagree, and thickness is how much. A
+cell wearing the <C k="held">green ring</C> is *held* — pinned by hand, deaf to
+persuasion. The thin <C k="meter">violet arc</C> around each cell is a gauge: its
+probability of pointing up, given what its neighbors are doing right now.
+
+<DisplayTeach />
+
+Tap cells and watch the arcs. Flipping a cell moves the gauges of exactly the
+cells it is wired to and no others — persuasion here is strictly local, along
+wires. The held cell's own gauge still moves when you flip its neighbor, but its
+state never will. Every figure from here to the end of the lesson speaks this
+vocabulary and no other.
+
+None of this display is a cartoon of the hardware; it is a diagram of it. The
+wire is a programmable conductance on the chip — the neighbor's state feeds a
+weighted current in, and that current sum is the p-bit's whole view of the
+world. The arc gauge is the transfer curve of a noisy comparator: how often a
+threshold crosses when thermal noise rides on its input. The full circuit
+arrives with the chip.
+
+One more piece of furniture. The small rail in each figure's corner — TARGET ·
+ENERGY · SAMPLER · SUBSTRATE — names a pipeline this lesson refuses to blur:
+the distribution you want, the wire-and-bias landscape that encodes it, the
+schedule that samples it, and the physical thing that runs the schedule. The
+lit slot is where the figure you're looking at lives.
+
+## Two p-bits that gossip
+
+Here are two p-bits side by side, and a two-part target: make them *agree* nine
+times out of ten, while each one *stays fair* — its lean needle resting near
+center. You have a bias knob for each. Try to hit both marks:
+
+<PairCoupler mode="biases" />
+
+There is a cheat, and you should take it: crank both knobs to the rail. The
+agreement gauge sails past the <C k="ghost">gray mark</C> — and both lean
+needles slam red, while the second gauge underneath, the *connected* part of
+the agreement, never leaves zero. You didn't make two p-bits agree; you made
+two constants equal, and the lower gauge knows the difference. The moment you
+back either knob toward fair, the agreement collapses toward zero. That trade
+is exact — under separate knobs, agreement is the *product* of the two leans —
+and it is the failure worth feeling: each knob talks to its own p-bit only, so
+the only agreement biases can buy is the kind you get by destroying the coins.
+Agreement between p-bits that still flicker is a fact about the *pair*, and
+nothing that addresses them one at a time can touch it.
+
+What's missing is a wire.
+
+<Predict
+  question="The wire below is set to disagree. Which two of the four bars will grow?"
+  a="the two outer bars — both-up and both-down"
+  b="the two inner bars — the mismatched states"
+>
+  <PairCoupler mode="wire" />
+</Predict>
+
+With the knob toward *agree*, the outer bars — both-up, both-down — swell
+together and the agreement gauge climbs to the mark, while both lean needles
+rest exactly where the biases could never leave them: at fair. This time the
+connected gauge climbs right alongside the agreement — the wire buys the real
+thing, shaping the pair while leaving each p-bit alone. Toward *disagree*, the
+inner bars take over instead. The <C k="ghost">gray outlines</C> behind the
+sampled bars are new: they are the *exact* answer, computed by brute force, and
+this is the first time in the lesson the flicker can be checked against truth.
+Keep an eye on that gray; it is about to become the whole story.
+
+A wire persuades with arithmetic. Watch the second p-bit's:
+
+<PairCoupler mode="wire" fieldGauge />
+
+The right p-bit no longer consults only its own bias. It consults a running
+total — its bias plus the wire's weight times whatever its neighbor shows
+*right now* — and feeds that total to the same S-curve as before:
+
+$$P(s_i = +1) = \sigma\!\left(2\Big(h_i + \sum_j J_{ij}\, s_j\Big)\right)$$
+
+The sum is over wired neighbors; $J_{ij}$ is the wire's weight, positive for
+<C k="ferro">agree</C>, negative for <C k="anti">disagree</C>. This one line is
+the entire update rule of everything in this lesson, the 270-thousand-bit chip
+included. Nothing more will be added to it — only more neighbors. One number is
+quietly set to 1 in that formula: the temperature has been held fixed so far,
+and the dial for it arrives in the next section.
+
+The connected gauge you just watched also has one line. Raw agreement is the
+average product $\langle s_1 s_2 \rangle$; the connected part subtracts what
+the two leans could fake on their own:
+
+$$\mathrm{Cov}(s_1, s_2) = \langle s_1 s_2 \rangle - \langle s_1 \rangle\langle s_2 \rangle$$
+
+Check it against the cheat: for independent p-bits the average of a product is
+the product of the averages, so the two terms cancel and $\mathrm{Cov} = 0$ at
+*any* pair of biases — which is exactly why the lower gauge sat dead while you
+pinned both coins, and why it moves the instant a wire exists. The connected
+part is the wire's fingerprint, and no bias can forge it.
+
+## The state atlas
+
+Four p-bits now, wired in a ring: three <C k="ferro">agree-wires</C> and one
+<C k="anti">disagree-wire</C>. Go around the loop and count — no assignment of
+ups and downs can satisfy all four wires at once. The system is *frustrated*,
+and frustration keeps it interesting: instead of freezing into one happy state
+it must forever compromise.
+
+Sixteen states are possible, and sixteen is small enough to look at all of
+them. That is what this section does: one row of sixteen columns, one column
+per state — the little four-dot glyph under each column is the state itself —
+redrawn page after page, each page answering a different question about the
+same sixteen. An atlas of the whole state space. The first page asks each state
+what it costs. Tap a column and the loop at left totals that state's wires,
+term by term:
+
+<StateAtlas mode="energy" />
+
+Every satisfied wire pulls the total down by its weight; every violated wire —
+drawn dashed — pushes it up. The total is the state's *energy*, and the tally
+you just watched is the whole definition:
+
+$$E(s) = -\sum_{(i,j)} J_{ij}\, s_i s_j \;-\; \sum_i h_i\, s_i$$
+
+Check it on the ladder. All-up satisfies the three agree-wires but violates the
+disagree-wire: three terms of $-1$, one of $+1$, energy $-2$. Flip any single
+p-bit and you break two unit wires at once — the energy jumps by exactly $4$,
+to the upper rung. And the floor of the ladder is $-2$, not the $-4$ a
+wire-happy loop would reach: the frustration is visible as a rung that does
+not exist. Sixteen states, two shelves of eight.
+
+Energy is a cost, not yet a probability. The bridge between them is one
+exponential. The knob below is $\beta$ — *inverse* temperature, so it reads as
+coldness: left is hot, right is cold. Drag it both ways:
+
+<StateAtlas mode="weight" />
+
+Each column now carries the *raw weight*
+
+$$w(s) = e^{-\beta E(s)}$$
+
+— cheap states tall, expensive states short, and $\beta$ setting how brutally
+the exponential punishes cost. At the hot end the ratio of tallest to shortest
+column falls toward 1: every state equally welcome, sixteen fair coins. At the
+cold end the ratio explodes and only the cheapest shelf survives: the system
+becomes a minimizer. Between the two ends is where sampling lives.
+
+The weights have one defect: they don't add up to anything in particular. The
+next page fixes that by dividing every column by their visible sum — the
+stacked bar on the right:
+
+<StateAtlas mode="normalize" />
+
+That stacked total is the *partition function*,
+
+$$Z = \sum_{s} e^{-\beta E(s)}, \qquad p(s) = \frac{e^{-\beta E(s)}}{Z}$$
+
+and after the division the sixteen columns sum to exactly 1 — the readout
+confirms it at every $\beta$ you choose. This is the Boltzmann distribution:
+the law that assigns every state a share of the time. The amber token is a live
+four-p-bit sampler running the §3 update rule, hopping columns as it flickers —
+watch it dwell in the tall columns and starve the short ones. The law says
+where the sampler lives; the rule is how it gets there. That the two agree is
+the central fact of this field — for now, an observation.
+
+A distribution is also a scale for weighing questions. Take the one §3 cared
+about — the correlation of the first two p-bits. Each column votes with
+its height — up-columns where they match, down-columns where they differ — and
+the answer is the balance of the two sides:
+
+<StateAtlas mode="observable" />
+
+$$\langle A \rangle = \sum_s p(s)\, A(s)$$
+
+for any per-state quantity $A$; here $A = s_1 s_2$. The <C k="ghost">gray</C>
+bars are the exact balance and the <C k="meter">violet</C> fill is the live
+sampler's running vote, converging on it. Drag toward hot and both estimates
+die toward zero — with every state equally likely, matches and mismatches
+cancel and the wires' influence washes out. Coldness is what lets wires speak.
+
+The last page of the atlas is the one the rest of the lesson stands on. Tap the
+loop's cells to pin them — each tap cycles free, <C k="held">held</C> up, held
+down. Every pin erases the columns that contradict it, and the survivors
+re-normalize: they inherit the erased columns' share and sum to 1 again.
+
+<StateAtlas mode="conditional" />
+
+Pin three of the four and only two columns survive — the free p-bit's up and
+down. The figure prints their renormalized split next to something it computes
+a completely different way: the §3 update rule, $\sigma(2\beta \cdot
+\text{field})$. The two numbers agree to the last digit, at every pin pattern,
+and the reason takes two lines. Divide the surviving columns' shares — every
+factor of $Z$ cancels, and every term of $E$ not touching the free p-bit
+cancels too:
+
+$$\frac{p(s_i{=}{+1} \mid \text{rest})}{p(s_i{=}{-1} \mid \text{rest})} = \frac{e^{-\beta E_+}}{e^{-\beta E_-}} = e^{\,2\beta\left(h_i + \sum_j J_{ij} s_j\right)}$$
+
+Solve for the up-share and the odds fold back into an S-curve:
+
+$$p(s_i{=}{+1} \mid \text{rest}) = \sigma\!\left(2\beta\Big(h_i + \sum_j J_{ij}\, s_j\Big)\right)$$
+
+Check it in the figure: pin the free p-bit's neighbors both up across unit
+agree-wires and the field is 2, so at $\beta = 1$ both readouts print
+$\sigma(4) = 0.982$. The local rule from §3 and the global Boltzmann law are
+not a rule and a consequence — they are one fact read at two scales. A p-bit
+consulting its neighbors *is* drawing from this conditional slice of the law;
+run that everywhere, forever, and the dwelling times are the law itself. This
+is the object every Gibbs update in the rest of the lesson draws from.
+
+The atlas can afford all this honesty because sixteen states fit on a page.
+Promises this checkable deserve a permanent instrument. Gray bars for truth,
+violet bars for the sampler's record, and their mismatch folded into a single
+number — the *total variation distance*, half the sum of the bar-by-bar gaps.
+Zero means indistinguishable; one means never right.
+
+<MeterForge />
+
+Watch the number fall as evidence accumulates — and note the gray band hugging
+the top of each truth bar. That band is $\pm\sqrt{p(1-p)/N}$: the *typical*
+wobble of an honest $N$-sample measurement, not a promise about any single
+run. The live bars spend most of their time inside it, wander out, wander back
+— and the band itself tightens as $\sqrt{N}$, which is the stubborn arithmetic
+of all measurement: halving the typical error costs four times the evidence.
+Now move the coldness knob. The <C k="ghost">ghost itself reshapes</C> — the
+target has moved — and the meter briefly jumps, then re-earns the floor on
+fresh evidence. Hold on to that distinction: *the target moving* and *the
+sampler missing* are different events, and this pane can tell them apart.
+Nothing else in this lesson can.
+
+<Waypoint>
+  You hold one rule and one law, proven on the atlas to be the same fact — the
+  rule is the Boltzmann law sliced one p-bit at a time. And you hold an
+  instrument: exact truth in gray, evidence in violet, their distance as one
+  number with an honest error band. Everything that follows is an attack on
+  that number's floor.
+</Waypoint>

@@ -204,7 +204,15 @@ export function createStateGraph(
         const fr = probe.totalMoves ? probe.nonEdgeMoves / probe.totalMoves : 0
         // "multi-spin", not "illegal" — chromatic also moves many spins at
         // once; what this counter shows is a different process, not the crime.
+        // The qualifier line below carries that scope on-canvas (final
+        // external audit item, 2026-08-06): without it the chord counter reads
+        // as the conviction, which would wrongly indict chromatic half-sweeps.
+        // ("red/black" is deliberately not named — the rescue hasn't been
+        // taught yet when this figure runs.)
         ctx.fillText(`multi-spin moves: ${fmt(fr * 100, 1)}% of moves`, 12, 22)
+        ctx.font = FONT_LABEL
+        ctx.fillStyle = 'rgba(85,96,111,0.9)'
+        ctx.fillText('legal sweeps make multi-spin moves too — not the crime', 12, 38)
       }
     },
   }

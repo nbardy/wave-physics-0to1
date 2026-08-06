@@ -1,28 +1,55 @@
+import { MosaicHero } from '../sims/pbits/MosaicHero'
 import { BitFlicker } from '../sims/pbits/BitFlicker'
 import { DisplayTeach } from '../sims/pbits/DisplayTeach'
 import { PairCoupler } from '../sims/pbits/PairCoupler'
-import { Landscape } from '../sims/pbits/Landscape'
-import { StateGraph } from '../sims/pbits/StateGraph'
+import { StateAtlas } from '../sims/pbits/StateAtlas'
 import { MeterForge } from '../sims/pbits/MeterForge'
+import { StateGraph } from '../sims/pbits/StateGraph'
 import { GridSchedules } from '../sims/pbits/GridSchedules'
+import { WriteConflict } from '../sims/pbits/WriteConflict'
+import { Race } from '../sims/pbits/Race'
+import { Dashboard } from '../sims/pbits/Dashboard'
+import { ChipFabric } from '../sims/pbits/ChipFabric'
+import { Microscope } from '../sims/pbits/Microscope'
+import { Manual } from '../sims/pbits/Manual'
+import { Triangle } from '../sims/pbits/Triangle'
+import { Nonideality } from '../sims/pbits/Nonideality'
+import { KernelTable } from '../sims/pbits/KernelTable'
+import { CompileCopy } from '../sims/pbits/CompileCopy'
+import { XorHidden } from '../sims/pbits/XorHidden'
+import { StackFigure } from '../sims/pbits/StackFigure'
+import { Filmstrip } from '../sims/pbits/Filmstrip'
+import { PhaseTrainer } from '../sims/pbits/PhaseTrainer'
+import { DreamChain } from '../sims/pbits/DreamChain'
+import { DreamCompare } from '../sims/pbits/DreamCompare'
 
 # A Computer Made of Noise
-
-{/* STAGE 3 SCAFFOLD — blocked prose; the voice pass is Stage 4.
-    F1 HERO lands here, built last per PLAN (needs the §8 trainer). */}
 
 Every computer you own is at war with noise. Billions of transistors are margined,
 clocked, and error-corrected so that not one of them ever flips a bit by accident;
 most of the watts your laptop burns are spent winning that war. A chip exists now
 that surrenders it instead. Its bits flip at random on purpose, millions of times
-a second, driven by the same thermal jitter every other chip suppresses — and it
-computes *with* the flipping, on less power than a nightlight.
+a second, driven by the same thermal jitter every other chip suppresses — and the
+flipping is not overhead it tolerates. The flipping is the computation.
 
-This lesson builds that machine's whole idea from one noisy coin — and builds,
-alongside it, the instrument that can tell when such a machine is lying. Both
-halves matter. Randomness is the one output your eye cannot audit, and by the end
-you will have caught a fast, plausible-looking sampler producing an entirely wrong
-answer that no energy readout would ever have revealed.
+Randomness is the one output the eye cannot audit. Two streams of flicker look
+identical when one of them is right and the other is confidently, permanently
+wrong — so alongside the machine, this lesson builds the instrument that can
+catch it lying. A fast, plausible-looking sampler is going to produce an
+entirely wrong answer in these pages while every energy readout applauds it,
+and the instrument will be the only witness.
+
+Here is the surrender, running. Forty small lattices, sixteen cells each, every
+cell flipping many times a second — and pictures keep condensing out of the
+static: a bar, a box, a cross, dissolving and re-forming, never twice in the
+same place, never on a schedule.
+
+<MosaicHero />
+
+Nothing on this wall is drawn. Every cell is a coin toss; the weights loading
+the dice were trained, and they ship with this page unexplained — on credit.
+The wall returns at the end, dreaming a picture you painted, on weights
+trained in front of you.
 
 One amnesty up front: there is no quantum mechanics anywhere in this article.
 These are classical coins.
@@ -37,11 +64,13 @@ watch the histogram lean:
 
 <BitFlicker />
 
-The coin still never obeys — at any bias short of the ends it sometimes lands
-against its preference. What the knob sets is not the outcome but the *lean*, and
-the histogram measures it. This flickering, opinionated coin is called a p-bit, a
-probabilistic bit, and it is the only component the machine in this lesson is
-made of.
+The cell still never obeys — at any bias short of the ends it sometimes lands
+against its preference. What the knob sets is not the outcome but the *lean*,
+and the histogram measures it. This flickering, opinionated cell is a p-bit — a
+probabilistic bit — and it is the only component the machine in this lesson is
+made of. The coin stays with us as the metaphor; p-bit is the working word from
+here on. In silicon a p-bit is a comparator listening to its own thermal noise —
+a real circuit, drawn in full when the machine itself arrives.
 
 Now sweep the knob slowly from one end to the other and let it rest a moment at
 each stop. Every bias you visit leaves a dot behind — its measured mean — and the
@@ -54,9 +83,9 @@ just drew is
 
 $$P(s = +1) = \sigma(2h), \qquad \sigma(x) = \frac{1}{1 + e^{-x}}$$
 
-where $s$ is the coin's state, $h$ is the bias knob, and $\sigma$ is the S-curve
+where $s$ is the p-bit's state, $h$ is the bias knob, and $\sigma$ is the S-curve
 itself. Check it at the edges: push $h$ hard positive and $\sigma(2h)$ saturates
-at 1 — the coin pins <C k="sUp">up</C> and the flicker dies. At $h = 0$ it gives
+at 1 — the p-bit pins <C k="sUp">up</C> and the flicker dies. At $h = 0$ it gives
 exactly ½, the fair coin we started with — uselessness recovered as a special
 case.
 
@@ -78,23 +107,38 @@ wires. The held cell's own gauge still moves when you flip its neighbor, but its
 state never will. Every figure from here to the end of the lesson speaks this
 vocabulary and no other.
 
-## Two coins that gossip
+None of this display is a cartoon of the hardware; it is a diagram of it. The
+wire is a programmable conductance on the chip — the neighbor's state feeds a
+weighted current in, and that current sum is the p-bit's whole view of the
+world. The arc gauge is the transfer curve of a noisy comparator: how often a
+threshold crosses when thermal noise rides on its input. The full circuit
+arrives with the chip.
 
-Here are two of those coins side by side, and a two-part target: make them
-*agree* nine times out of ten, while each coin *stays fair* — its lean needle
-resting near center. You have a bias knob for each. Try to hit both marks:
+One more piece of furniture. The small rail in each figure's corner — TARGET ·
+ENERGY · SAMPLER · SUBSTRATE — names a pipeline this lesson refuses to blur:
+the distribution you want, the wire-and-bias landscape that encodes it, the
+schedule that samples it, and the physical thing that runs the schedule. The
+lit slot is where the figure you're looking at lives.
+
+## Two p-bits that gossip
+
+Here are two p-bits side by side, and a two-part target: make them *agree* nine
+times out of ten, while each one *stays fair* — its lean needle resting near
+center. You have a bias knob for each. Try to hit both marks:
 
 <PairCoupler mode="biases" />
 
 There is a cheat, and you should take it: crank both knobs to the rail. The
-agreement meter sails past the <C k="ghost">gray mark</C> — and both lean
-needles slam red. You didn't make two coins agree; you made two constants equal.
-The moment you back either knob toward fair, the agreement collapses toward
-zero. That trade is exact — under separate knobs, agreement is the *product* of
-the two leans — and it is the failure worth feeling: each knob talks to its own
-coin only, so the only agreement biases can buy is the kind you get by
-destroying the coins. Agreement between coins that still flicker is a fact about
-the *pair*, and nothing that addresses coins one at a time can touch it.
+agreement gauge sails past the <C k="ghost">gray mark</C> — and both lean
+needles slam red, while the second gauge underneath, the *connected* part of
+the agreement, never leaves zero. You didn't make two p-bits agree; you made
+two constants equal, and the lower gauge knows the difference. The moment you
+back either knob toward fair, the agreement collapses toward zero. That trade
+is exact — under separate knobs, agreement is the *product* of the two
+leans: each knob talks to its own p-bit only, so
+the only agreement biases can buy is the kind you get by destroying the coins.
+Agreement between p-bits that still flicker is a fact about the *pair*, and
+nothing that addresses them one at a time can touch it.
 
 What's missing is a wire.
 
@@ -107,101 +151,188 @@ What's missing is a wire.
 </Predict>
 
 With the knob toward *agree*, the outer bars — both-up, both-down — swell
-together and the meter climbs to the mark, while both lean needles rest exactly
-where the biases could never leave them: at fair. The wire buys agreement
-without pinning anything — it shapes the pair and leaves each coin alone.
-Toward *disagree*, the inner bars take over instead. The <C k="ghost">gray outlines</C>
-behind the sampled bars are new: they are the *exact* answer, computed by brute
-force, and this is the first time in the lesson the flicker can be checked
-against truth. Keep an eye on that gray; it is about to become the whole story.
+together and the agreement gauge climbs to the mark, while both lean needles
+rest exactly where the biases could never leave them: at fair. This time the
+connected gauge climbs right alongside the agreement — the wire buys the real
+thing, shaping the pair while leaving each p-bit alone. Toward *disagree*, the
+inner bars take over instead. The <C k="ghost">gray outlines</C> behind the
+sampled bars are new: they are the *exact* answer, computed by brute force, and
+this is the first time in the lesson the flicker can be checked against truth.
+Keep an eye on that gray; it is about to become the whole story.
 
-How does a wire persuade? Watch the second coin's arithmetic:
+A wire persuades with arithmetic. Watch the second p-bit's:
 
 <PairCoupler mode="wire" fieldGauge />
 
-The right coin no longer consults only its own bias. It consults a running total —
-its bias plus the wire's weight times whatever its neighbor shows *right now* —
-and feeds that total to the same S-curve as before:
+The right p-bit no longer consults only its own bias. It consults a running
+total — its bias plus the wire's weight times whatever its neighbor shows
+*right now* — and feeds that total to the same S-curve as before:
 
 $$P(s_i = +1) = \sigma\!\left(2\Big(h_i + \sum_j J_{ij}\, s_j\Big)\right)$$
 
 The sum is over wired neighbors; $J_{ij}$ is the wire's weight, positive for
 <C k="ferro">agree</C>, negative for <C k="anti">disagree</C>. This one line is
-the entire update rule of everything in this lesson, the 270-thousand-bit chip
-included. Nothing more will be added to it — only more neighbors.
+the entire update rule of everything in this lesson, the quarter-million-bit
+chip included. Nothing more will be added to it — only more neighbors. One number is
+quietly set to 1 in that formula: the temperature has been held fixed so far,
+and the dial for it arrives in the next section.
 
-## The mountain range
+The connected gauge you just watched also has one line. Raw agreement is the
+average product $\langle s_1 s_2 \rangle$; the connected part subtracts what
+the two leans could fake on their own:
 
-Four coins now, wired in a ring: three <C k="ferro">agree-wires</C> and one
+$$\mathrm{Cov}(s_1, s_2) = \langle s_1 s_2 \rangle - \langle s_1 \rangle\langle s_2 \rangle$$
+
+Check it against the cheat: for independent p-bits the average of a product is
+the product of the averages, so the two terms cancel and $\mathrm{Cov} = 0$ at
+*any* pair of biases — which is why the lower gauge sat dead while you
+pinned both coins, and why it moves the instant a wire exists. The connected
+part is the wire's fingerprint, and no bias can forge it.
+
+## The state atlas
+
+Four p-bits now, wired in a ring: three <C k="ferro">agree-wires</C> and one
 <C k="anti">disagree-wire</C>. Go around the loop and count — no assignment of
-ups and downs can satisfy all four wires at once. The system is *frustrated*, and
-frustration keeps it interesting: instead of freezing into one happy state it
-must forever compromise.
+ups and downs can satisfy all four wires at once. The system is *frustrated*,
+and frustration keeps it interesting: instead of freezing into one happy state
+it must forever compromise.
 
-Sixteen states are possible. Give each one a column, and make the column's height
-the state's probability — computed exactly, by adding up all sixteen cases. The
-dot is the four-coin sampler itself, hopping columns live:
+Sixteen states are possible, and sixteen is small enough to look at all of
+them: one row of sixteen columns, one column per state — the little four-dot glyph under each column is the state itself —
+redrawn page after page, each page answering a different question about the
+same sixteen. An atlas of the whole state space. The first page asks each state
+what it costs. Tap a column and the loop at left totals that state's wires,
+term by term:
 
-<Landscape />
+<StateAtlas mode="energy" />
 
-The landscape is a law, not a schedule: it says where the sampler *dwells*, not
-where it goes next. Drag toward *cold* and the range sharpens — the token gets
-trapped in the deep columns and the shallow ones starve. Toward *hot*, the range
-flattens toward sixteen equal stubs and the fair coin returns once more. The
-heights follow one formula,
+Every satisfied wire pulls the total down by its weight; every violated wire —
+drawn dashed — pushes it up. The total is the state's *energy*, and the tally
+you just watched is the whole definition:
 
-$$p(s) \propto e^{-\beta E(s)}, \qquad E(s) = -\sum_{(i,j)} J_{ij}\, s_i s_j - \sum_i h_i\, s_i$$
+$$E(s) = -\sum_{(i,j)} J_{ij}\, s_i s_j \;-\; \sum_i h_i\, s_i$$
 
-— the energy $E$ totals every wire's satisfaction, and $\beta$ is the coldness
-knob you are holding. This is the Boltzmann distribution, and here is the fact
-the whole field rests on: the humble local rule from the last section — each coin
-consulting its neighbors and flicking its S-curve — *dwells in exactly this
-global law*. One is the rule, the other is the consequence; the machine only ever
-runs the rule, and the law is what it earns.
+Check it on the ladder. All-up satisfies the three agree-wires but violates the
+disagree-wire: three terms of $-1$, one of $+1$, energy $-2$. Flip any single
+p-bit and you break two unit wires at once — the energy jumps by exactly $4$,
+to the upper rung. And the floor of the ladder is $-2$, not the $-4$ a
+wire-happy loop would reach: the frustration is visible as a rung that does
+not exist. Sixteen states, two shelves of eight.
 
-There is a second way to see the same dwelling, and it repays a minute of
-staring. Lay out all sixteen states as a map — states that differ by one coin's
-flip joined by an edge — and let the walker walk:
+Energy is a cost, not yet a probability. The bridge between them is one
+exponential. The knob below is $\beta$ — *inverse* temperature, so it reads as
+coldness: left is hot, right is cold. Drag it both ways:
 
-<StateGraph />
+<StateAtlas mode="weight" />
 
-The <C k="ghost">ring</C> around each node is its exact share; the
-<C k="meter">fill</C> is how often the walker has actually been there. Watch the
-fills catch up to the rings. That convergence has a name — stationarity — and it
-is the entire promise a sampler makes: visit every room of the state space in
-proportion to its law.
+Each column now carries the *raw weight*
 
-Promises want auditors. For four coins the truth is sixteen additions, so the
-audit can be exact: gray bars for truth, violet bars for the sampler's record,
-and their mismatch folded into a single number — the *total variation distance*,
-half the sum of the bar-by-bar gaps. Zero means indistinguishable; one means
-never right.
+$$w(s) = e^{-\beta E(s)}$$
+
+— cheap states tall, expensive states short, and $\beta$ setting how brutally
+the exponential punishes cost. At the hot end the ratio of tallest to shortest
+column falls toward 1: every state equally welcome, sixteen fair coins. At the
+cold end the ratio explodes and only the cheapest shelf survives: the system
+becomes a minimizer. Between the two ends is where sampling lives.
+
+The weights have one defect: they don't add up to anything in particular. The
+next page fixes that by dividing every column by their visible sum — the
+stacked bar on the right:
+
+<StateAtlas mode="normalize" />
+
+That stacked total is the *partition function*,
+
+$$Z = \sum_{s} e^{-\beta E(s)}, \qquad p(s) = \frac{e^{-\beta E(s)}}{Z}$$
+
+and after the division the sixteen columns sum to exactly 1 — the readout
+confirms it at every $\beta$ you choose. This is the Boltzmann distribution:
+the law that assigns every state a share of the time. The amber token is a live
+four-p-bit sampler running the update rule, hopping columns as it flickers —
+watch it dwell in the tall columns and starve the short ones. The law says
+where the sampler lives; the rule is how it gets there. That the two agree is
+the central fact of this field — for now, an observation.
+
+A distribution is also a scale for weighing questions. Take the one the two
+gossiping p-bits cared about — the correlation of the first pair. Each column votes with
+its height — up-columns where they match, down-columns where they differ — and
+the answer is the balance of the two sides:
+
+<StateAtlas mode="observable" />
+
+$$\langle A \rangle = \sum_s p(s)\, A(s)$$
+
+for any per-state quantity $A$; here $A = s_1 s_2$. The <C k="ghost">gray</C>
+bars are the exact balance and the <C k="meter">violet</C> fill is the live
+sampler's running vote, converging on it. Drag toward hot and both estimates
+die toward zero — with every state equally likely, matches and mismatches
+cancel and the wires' influence washes out.
+
+The last page of the atlas is the one the rest of the lesson stands on. Tap the
+loop's cells to pin them — each tap cycles free, <C k="held">held</C> up, held
+down. Every pin erases the columns that contradict it, and the survivors
+re-normalize: they inherit the erased columns' share and sum to 1 again.
+
+<StateAtlas mode="conditional" />
+
+Pin three of the four and only two columns survive — the free p-bit's up and
+down. The figure prints their renormalized split next to something it computes
+a completely different way: the update rule, $\sigma(2\beta \cdot
+\text{field})$. The two numbers agree to the last digit, at every pin pattern,
+and the reason takes two lines. Divide the surviving columns' shares — every
+factor of $Z$ cancels, and every term of $E$ not touching the free p-bit
+cancels too:
+
+$$\frac{p(s_i{=}{+1} \mid \text{rest})}{p(s_i{=}{-1} \mid \text{rest})} = \frac{e^{-\beta E_+}}{e^{-\beta E_-}} = e^{\,2\beta\left(h_i + \sum_j J_{ij} s_j\right)}$$
+
+Solve for the up-share and the odds fold back into an S-curve:
+
+$$p(s_i{=}{+1} \mid \text{rest}) = \sigma\!\left(2\beta\Big(h_i + \sum_j J_{ij}\, s_j\Big)\right)$$
+
+Check it in the figure: pin the free p-bit's neighbors both up across unit
+agree-wires and the field is 2, so at $\beta = 1$ both readouts print
+$\sigma(4) = 0.982$. The local update rule and the global Boltzmann law are
+not a rule and a consequence — they are one fact read at two scales. A p-bit
+consulting its neighbors *is* drawing from this conditional slice of the law;
+run that everywhere, forever, and the dwelling times are the law itself. This
+is the object every Gibbs update in the rest of the lesson draws from.
+
+The atlas can afford all this honesty because sixteen states fit on a page.
+Promises this checkable deserve a permanent instrument. Gray bars for truth,
+violet bars for the sampler's record, and their mismatch folded into a single
+number — the *total variation distance*, half the sum of the bar-by-bar gaps.
+Zero means indistinguishable; one means never right.
 
 <MeterForge />
 
-Watch the number fall as evidence accumulates — and note how it falls: to push it
-down twice as far takes four times the samples, the stubborn square-root
-arithmetic of all measurement. Now move the temperature knob. The
-<C k="ghost">ghost itself reshapes</C> — the target has moved — and the meter
-briefly jumps, then re-earns the floor on fresh evidence. Hold on to that
-distinction: *the target moving* and *the sampler missing* are different events,
-and this pane can tell them apart. Nothing else in this lesson can.
+Watch the number fall as evidence accumulates — and note the gray band hugging
+the top of each truth bar. That band is $\pm\sqrt{p(1-p)/N}$: the *typical*
+wobble of an honest $N$-sample measurement, not a promise about any single
+run. The live bars spend most of their time inside it, wander out, wander back
+— and the band itself tightens as $\sqrt{N}$, which is the stubborn arithmetic
+of all measurement: halving the typical error costs four times the evidence.
+Now move the coldness knob. The <C k="ghost">ghost itself reshapes</C> — the
+target has moved — and the meter briefly jumps, then re-earns the floor on
+fresh evidence. Hold on to that distinction: *the target moving* and *the
+sampler missing* are different events, and this pane can tell them apart.
+Nothing else in this lesson can.
 
 <Waypoint>
-  You hold one rule — each coin flicks an S-curve fed by its wired neighbors —
-  and one law, the Boltzmann distribution the rule dwells in. And you hold an
+  You hold one rule and one law, proven on the atlas to be the same fact — the
+  rule is the Boltzmann law sliced one p-bit at a time. And you hold an
   instrument: exact truth in gray, evidence in violet, their distance as one
-  number. Everything that follows is an attack on that number's floor.
+  number with an honest error band. Everything that follows is an attack on
+  that number's floor.
 </Waypoint>
 
 ## Everyone talks at once
 
-Sixteen coins were a toy. Here are 256, wired <C k="ferro">agree</C> to their
+Four p-bits were a toy. Here are 256, wired <C k="ferro">agree</C> to their
 grid neighbors — and a problem that was invisible until now. *One at a time* is
-how we've updated coins so far, each consulting the freshest state of its
-neighbors. It is correct, and it is serial: a quarter of a million cells means a
-quarter of a million turns per sweep. Every coin's update is just its own little
-S-curve — surely we can run them all at once?
+how every update so far has run, each p-bit consulting the freshest state of
+its neighbors. It is correct, and it is serial: a quarter of a million cells
+means a quarter of a million turns per sweep. Every update is just one little
+S-curve, and nothing about the arithmetic forbids running them all at once.
 
 The grid below offers both schedules. In its center, four cells are fenced by
 eight <C k="held">held</C> neighbors — held in a deliberate split, up on the
@@ -216,31 +347,49 @@ to shimmer with a strange crosshatch — and the meter climbs an order of
 magnitude and pins there. It does not descend with more evidence. This is not
 noise; it is a different, wrong answer, delivered confidently at enormous speed.
 
-The walker's map catches the same crime from a second angle:
+A second display shows how different. Shrink back to the frustrated four-loop
+from the atlas, whose sixteen states fit on one map: states one flip apart are
+joined by an edge, each node's <C k="ghost">ring</C> is sized by its exact
+share, and the sampler is a dot walking the map, its <C k="meter">fill</C>
+recording where it has been. Give the honest schedule a moment first — the
+fills swell to match the rings, which is the whole promise a sampler makes,
+kept in miniature. Then press *all at once*:
 
 <StateGraph schedules />
 
-Under *all at once*, the walker starts jumping along chords that are not edges —
-several coins flipping in one move, transitions a one-at-a-time walker can never
-make, each flashing red as it happens. The state space is being traversed by a
-different process entirely.
+Under *all at once*, the walker jumps along chords that are not edges — several
+coins changing in a single move, where the one-at-a-time walker only ever slides
+along one edge at a time. But look carefully at what the chords do and do not
+prove. They say this is a *different process*. They do not say it is an unlawful
+one — moving many p-bits in one tick is something a perfectly legal schedule can
+also do, and one is about to rescue this grid. The crime is somewhere else.
 
-Why. When every coin updates simultaneously, each consults its neighbors'
-*old* values — two wired coins persuade each other's ghosts. Two coins that
-want to agree, both currently down: each sees a down neighbor an instant before
-both flip up; next tick each sees up, and both may crash down again. The lattice
-crosshatches with exactly this oscillation. The rule ran; what it dwelled in was
-no longer the law.
+Here is where. When every coin updates simultaneously, each consults its
+neighbors' *old* values — two wired p-bits persuade each other's ghosts. Two
+p-bits that want to agree, both currently down: each sees a down neighbor an
+instant before both flip up; next tick each sees up, and both may crash down
+again. The lattice crosshatches with exactly this oscillation. The crime needs
+two things at once: a wire, and both of its ends being *written* in the same
+instant. Call that a write conflict. The panel below freezes a bare copy of the
+grid — no fence, all 256 cells free — at the moment one dispatch goes out. Every
+cell being written this instant wears a ring, and every wire joining two ringed
+cells glows red:
 
-Here is the part that should worry you. The wrongness never announces itself.
-The all-at-once lattice still finds low-energy states — happily aligned domains
-everywhere you look — and its flicker is as random-looking as the honest one's.
-Watch the two numbers under the meter: evidence keeps accumulating by the
-thousands, and the distance stops falling anyway. A correct sampler's error
-starves with evidence; a broken one's error is a fact about the process, and no
-amount of watching dilutes it. Optimization success is not sampling
-correctness, and nothing on this screen except the violet number can tell the
-difference.
+<WriteConflict />
+
+*One at a time* rings a single cell, and a wire cannot join a cell to itself, so
+the count reads zero by construction. *All at once* rings the whole board, and
+all 480 wires turn red at once — every wire is a pair of p-bits deciding on each
+other's stale ghosts. That number, not the multi-coin moves, is what separates
+the two schedules — and the rescue is about to drive it to zero without
+giving up the rings.
+
+And notice what the grid itself never told you. The all-at-once lattice still
+finds low-energy states — happily aligned domains everywhere you look — and its
+flicker is as random-looking as the honest one's. Watch the two numbers under
+the meter: evidence keeps accumulating by the thousands, and the distance stops
+falling anyway. A correct sampler's error starves with evidence; a broken one's
+error is a fact about the process, and no amount of watching dilutes it.
 
 ## The two-coloring rescue
 
@@ -248,9 +397,8 @@ The failure was never parallelism. It was *wired neighbors updating together*.
 So: color the grid like a checkerboard. Every wire joins a red cell to a black
 cell — no red touches red, no black touches black. Freeze black and update all
 128 red cells at once: each consults only frozen black neighbors, so nothing it
-reads is stale, so the 128 simultaneous updates are exactly 128 legal
-one-at-a-time updates that happen to share a clock tick. Then freeze red, flash
-black. Two half-sweeps, and every coin has taken a fully honest turn.
+reads is stale. Then freeze red, flash black. Two half-sweeps, and every coin
+has taken a fully honest turn.
 
 <Predict
   question="Red/black updates half the lattice at once — nearly the speed of all-at-once. Where does the meter land?"
@@ -260,21 +408,598 @@ black. Two half-sweeps, and every coin has taken a fully honest turn.
   <GridSchedules chromatic />
 </Predict>
 
-The floor — not a compromise between speed and truth but both at once. The only
-thing the coloring costs is generality: it works because the grid happens to
-admit a two-coloring, which is to say the graph is *bipartite*. That small
-observation is worth more than it looks, because it is the entire design secret
-of the actual chip.
+The floor — not a compromise between speed and truth but both at once. Run the
+freeze-frame again with the half-sweep on its menu and watch the discriminator
+call it:
 
-Extropic's Z1 is 269,568 p-bits, wired in a fixed sparse graph — sixteen
-neighbors each — that was *designed bipartite*. The chip's native act is the
-figure you are looking at: program the biases and the wire weights, then sweep
-red, sweep black, at millions of sweeps per second, on under one watt, with
-thermal noise itself playing the dice. The schedule you just rescued is not a
-simulation trick; it is the machine. A p-bit chip is a Gibbs machine — that is
-the name this one-at-a-time-in-parallel sampling carries — and everything it
-will ever compute must arrive dressed as biases and wire weights on that fixed
-two-colored graph.
+<WriteConflict chromatic />
 
-{/* §7 (the machine's manual, triangle embedding, nonideality, hand-compile)
-    and §8 (the finale: training) land next — steppers first, per PLAN. */}
+128 rings — half the board written in one simultaneous stroke, exactly the kind
+of multi-coin move the walker's chords could never tell apart from the crime —
+and zero red wires. That zero has an equation. With the black cells frozen, no
+wire runs between any two red cells, so the red half's joint update splits into
+independent factors:
+
+$$p(s_R \mid s_B) \;=\; \prod_{i \in R} p(s_i \mid s_B)$$
+
+— each factor the same S-curve that cell was already running on its own turn.
+One 128-cell write *is* 128 legal one-at-a-time updates that happen to share a
+clock tick. And the equation shows its own boundary: write the same product over
+all 256 cells at once and it is false, because wires run inside that set — the
+480 red wires of the all-at-once frame are precisely the places the
+factorization breaks.
+
+One defense of *all at once* is still standing, and it is the one you will
+actually meet: if the job is optimization — find the deepest valley, never mind
+the law — does the distance even matter? Stage the fight fairly. Below, one
+frustrated problem: a 4×4 patch with its 24 wires assigned at random, nine
+<C k="ferro">agree</C> and fifteen <C k="anti">disagree</C>, so that three of
+its nine little squares can never satisfy all four of their wires — real
+frustration, a real search problem. Sixteen spins means the oracle still holds
+everything: the true minimum energy is *certified* by enumeration, and so is the
+exact Boltzmann weight of every energy rung. Both panes race in hardware ticks —
+*all at once* writes the whole lattice every tick, *red/black* needs two ticks
+per sweep:
+
+<Race />
+
+Both bold traces fall to the certified floor. The broken sampler finds the true
+minimum — not approximately, the enumerator-certified ground state — about as
+fast as the honest one, even while the states it passes through run hot (the
+faint ribbon riding high is its instantaneous energy, the oscillation you
+already know). Now read the meters: a distance of 0.65 against 0.02, a third of
+all probability in the wrong place, forever. As an optimizer, *all at once* is
+defensible. As a sampler, it is wrong, and nothing on either pane except the
+violet number can tell you which machine you are holding. Optimization success
+is not sampling correctness.
+
+That verdict forces a bookkeeping question the field keeps getting wrong: what
+is the honest speed of a sampler? The board below scores all three schedules on
+the same fenced grid, three columns each. *Writes per tick* is raw parallel
+width — the hardware brag. *Samples per thousand ticks* discounts it by measured
+dependence: consecutive sweeps are correlated, so they are not each a fresh draw,
+and the column divides the sweep rate by an autocorrelation time read from the
+audited patch (a lag-one reading — crude, and enough to rank schedules).
+*Distance from exact* is the meter you already trust:
+
+<Dashboard />
+
+Parallelism honestly buys evidence: *red/black* posts a couple hundred
+independent samples per thousand ticks against *one at a time*'s two — a
+hundredfold, real, and yours to keep. And *all at once* posts the best
+evidence-rate on the whole board, which is exactly why its row is struck
+through. Throughput and evidence-rate are properties of whatever sampler you
+have; if it samples the wrong law, they measure speed toward the wrong answer.
+The first two columns mean nothing until the third one passes — a gate, not a
+trade-off.
+
+The only thing the coloring costs is generality: it works because the grid
+happens to admit a two-coloring, which is to say the graph is *bipartite*. That
+small observation is worth more than it looks, because it is the entire design
+secret of the actual chip.
+
+Extropic's Z1 is roughly a quarter-million p-bits, wired in a fixed sparse
+graph — sixteen neighbors each — that was *designed bipartite*. The chip's
+native act is the figure you just rescued: program the biases and the wire
+weights, then sweep red, sweep black, millions of Gibbs iterations a second,
+each one estimated to cost some three hundred *picojoules* — thermal noise
+itself playing the dice, so the randomness costs nothing extra. The schedule
+is not a simulation trick; it is the machine. A p-bit chip is a Gibbs
+machine — that is the name this one-at-a-time-in-parallel sampling carries —
+and everything it will ever compute must arrive dressed as biases and wire
+weights on that fixed two-colored graph. A patch of such a fabric, running
+its two-phase clock:
+
+<ChipFabric />
+
+One confession about the drawing: the wiring here is a stand-in built from the
+chip's published numbers — degree sixteen, sparse, two-colorable — not the die's
+actual routing, which is not public at the wire level. What the patch shows is
+faithful anyway, because it is the same three facts the whole section turned on:
+sixteen wires into the marked cell, count them; every ring red or black with no
+wire joining like to like; and the clock writing one whole color class per
+tick — 72 simultaneous cells, zero write conflicts, the same zero the
+freeze-frame printed.
+
+<Waypoint>
+  The discriminator is now yours: parallel updates are legal exactly when no
+  wire joins two spins written in the same instant — zero write conflicts is
+  what makes a half-sweep exact, and the factorization over a frozen half is
+  its proof. The harder verdict came with it: a sampler can reach a certified
+  minimum and still be wrong by a third of all probability, with the meter as
+  the only witness. What remains is the machine itself — what one p-bit is in
+  silicon, and what it costs to program a landscape onto sixteen wires.
+</Waypoint>
+
+## What the chip is and is not
+
+In the first section a single sentence claimed that a p-bit is, in silicon, a
+noisy comparator. Time to open one. Below is one cell of the fabric with its
+lid off. Two neighbors feed currents in through programmable conductances; a
+bias DAC adds a current of its own; everything sums at a node. Then comes the
+ingredient every other chip spends its power suppressing: thermal noise, riding
+on the summed current. A comparator asks one question — is current plus noise
+above zero? — and its answer is the cell's state. Drag the DAC and watch the
+right pane: every summed current you visit gets its flip rate *measured*, one
+dot per current, each dot a tally of real threshold events.
+
+<Microscope />
+
+The dots land on the <C k="ghost">gray curve</C>, and the gray curve is
+$\sigma(2I)$ — the same S-shape your hand traced in the first figure of this
+lesson. No lookup table produces it. The noise has a spread; the farther the
+summed current sits from zero, the rarer the noise spike big enough to carry
+the comparator across; the flip rate falls off in exactly the sigmoid's shape.
+A noisy threshold does not *approximate* $\sigma$ — the sigmoid is the
+description of what a noisy threshold is. So the update rule this whole lesson
+runs on, $P(s_i{=}{+}1) = \sigma(2\beta(h_i + \sum_j J_{ij}s_j))$, is not
+firmware loaded into the chip. It is what this circuit does by physics, with
+$\beta$ set by how loud the noise runs. Push the DAC to either rail and the
+current dwarfs the noise: the flicker dies, just as it did when you pinned the
+first coin.
+
+Every word the display has taught now has a physical referent, and the
+dictionary is short enough to print whole:
+
+<table>
+  <thead>
+    <tr><th>on screen</th><th>in the math</th><th>in silicon</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>flickering cell</td>
+      <td><TeX>{'s_i \\in \\{-1,+1\\}'}</TeX></td>
+      <td>a bistable circuit read by a comparator</td>
+    </tr>
+    <tr>
+      <td>bias knob</td>
+      <td><TeX>{'h_i'}</TeX></td>
+      <td>a programmable current offset — a DAC</td>
+    </tr>
+    <tr>
+      <td>wire, warm or cool</td>
+      <td><TeX>{'J_{ij}'}</TeX></td>
+      <td>a programmable conductance; the neighbor's state feeds a weighted current in</td>
+    </tr>
+    <tr>
+      <td>the arc gauge</td>
+      <td><TeX>{'\\sigma(2\\beta(h_i + \\textstyle\\sum_j J_{ij}s_j))'}</TeX></td>
+      <td>the comparator's transfer curve, thermal noise supplying the dice</td>
+    </tr>
+    <tr>
+      <td>held halo</td>
+      <td>clamp</td>
+      <td>an input register overriding the noise source</td>
+    </tr>
+    <tr>
+      <td>red / black clock</td>
+      <td>chromatic sweep</td>
+      <td>the chip's two-phase update clock</td>
+    </tr>
+  </tbody>
+</table>
+
+The local field is literally an analog current sum. That is the whole
+translation; nothing in the machine is not in this table. One honesty note
+about the circuit itself: the comparator drawing is a lineage, not a
+schematic. Extropic's earlier X0 test chip runs subthreshold-CMOS p-bits of
+essentially this kind as *randomness providers* — physical dice on a
+socketed chip, with the wiring diagram and the schedule living in software
+on a mediating controller — while the Z1 design etches the sixteen-neighbor
+graph into the silicon itself and runs the red/black sweeps there natively,
+exchanging only biases and wire weights with the outside between sweeps.
+Both routes land on the same S-curve, because the S-curve is what any
+thermally-noisy threshold does; which transistors implement it is the part
+this lesson happily leaves to the datasheets.
+
+A machine built from these cells has a small vocabulary of things you can
+physically do to it: program a bias, program a conductance on a wire that
+exists, hold a cell, sweep red/black. The patch below offers exactly those
+four verbs. It also, quietly, offers nothing else — try to couple two cells
+that share no wire.
+
+<Manual />
+
+The drag snaps back. That refusal is the machine's true shape: the wires were
+etched at the factory, sixteen per cell on Z1, and there is no instruction for
+"couple two arbitrary cells" any more than there is one for "branch" or
+"load". A p-bit chip is not a general processor that happens to be noisy — you
+do not upload an algorithm. You set numbers on a fixed graph and sweep, and
+whatever you wanted computed must be smuggled into those numbers.
+
+Which raises the first casualty: problems whose wiring diagram is not the
+chip's. The fabric was designed two-colorable; your problem was not consulted.
+Suppose three constraints close into a ring of three — the smallest graph that
+breaks the checkerboard trick. Try to paint it below.
+
+<Triangle />
+
+Every complete painting leaves at least one same-color wire, so a triangle can
+never run red/black as it stands. The repair is the *chain spin*: cut the odd
+loop, route the third wire through an auxiliary cell whose chain coupling
+holds it equal to its partner. The square that results is two-colorable, and
+the counter states the price plainly: four physical spins to host three
+logical ones. On real problems this overhead is the dominant cost of using the
+chip at all.
+
+The chain strength is a genuine dial, and both of its ends are bad. Drag it
+weak and the aux spin forgets its partner: the embedded machine samples
+beautifully from the *wrong* law, and the meter pins well off the floor no
+matter how long you watch. Drag it strong and the copy is enforced so
+fiercely that the chained pair can barely flip at all: the law is now right,
+but the sampler stops mixing, and at any honest evidence budget the meter
+starves high. Somewhere between sits a band where the marginal is faithful
+and the mixing survives — finding it is a real engineering search, run per
+problem, and it is the first tax the triangle pays for not being born
+bipartite.
+
+One more honest subtraction before the chip earns its compiler. Every figure
+so far has assumed all cells share one transfer curve. Fabricated silicon does
+not: each comparator comes out of the furnace with its own gain. The knob
+below scales a fixed gain-scatter pattern across the audited four-loop while
+the <C k="ghost">ghost</C> stays the ideal law — so the violet number is the
+exact price of the imperfection.
+
+<Nonideality />
+
+At ±60% scatter the distribution sits about a tenth from ideal — real error,
+delivered with a perfectly healthy-looking flicker, in the same silence that
+hid the synchronous failure. Offsets and timing skew cost the same way and are priced the same way;
+real designs calibrate them down and budget what remains. This lesson's chip
+stays ideal from here on, and you have seen what that idealization is worth.
+
+Four verbs, then, on a fixed graph, at a known price — and none of the verbs
+mentions the thing we actually want, which is an instruction. Turning wishes
+into biases and wires is a compiler's job.
+
+## Compiling an instruction
+
+A deterministic instruction maps an input to an output. This machine's native
+product is distributions, so its native instruction maps an input to a
+*distribution over outputs*: a table $K(y\,|\,x)$ with one row per input value,
+each row a probability distribution. Here is the simplest interesting one —
+copy the input, lie ten percent of the time. The entries are yours to edit;
+each row renormalizes as you drag, because a row that does not sum to one is
+not a conditional distribution.
+
+<KernelTable />
+
+Any such table is a legal stochastic instruction, and tables wire into
+circuits — one kernel's output feeding another's input — exactly as gates
+wire into logic. Extropic's name for that language is **Torx**: a Torx
+program is a wired composition of kernels like this one, drawn from a small
+standard vocabulary of named gates — PNOT flips a bit with a chosen
+probability, PSWAP trades two states with another. The ten-percent liar you
+are editing is a PNOT that fires one time in ten.
+
+Now compile the copy table by hand, using nothing but the machine's own
+verbs. One cell holds $x$; one wire of weight $J$ runs to a free cell $y$;
+$\beta$ is locked at 1 on the figure. Drag $J$ until the flip-rate meter
+reads the table's lie: 10%.
+
+<CompileCopy />
+
+The knob settles just above 1.1, and the compiled table converges onto the
+target with the error pane fading toward white. The number your hand found
+has a closed form. The free cell sees field $Jx$, so it disagrees with $x$ at
+rate $\sigma(-2\beta J)$; set that to one tenth and solve:
+
+$$\sigma(-2\beta J) = \tfrac{1}{10} \;\Rightarrow\; e^{2\beta J} = 9 \;\Rightarrow\; J = \tfrac{1}{2\beta}\ln 9 \approx 1.099 \;\;(\beta = 1)$$
+
+Check it at the ends: $J = 0$ gives a flip rate of one half — the wire is
+silent and $y$ is a fair coin again — and $J \to \infty$ gives a perfect,
+noiseless copy, the table frozen to the identity. One coupling, one closed
+form, one instruction compiled.
+
+The general recipe has to allow more cells than the two you can see. The
+triangle already showed the pattern: its aux spin was physically present and
+absent from the answer. A compiled circuit may use any number of such working
+spins $w$ — clamp the input, let everything free thermalize, read the output,
+ignore the help. The kernel the hardware then implements is
+
+$$\tilde K(y\,|\,x) \;=\; \frac{\sum_{w} e^{-E(x,w,y)}}{\sum_{y',\,w} e^{-E(x,w,y')}}$$
+
+and it is the State Atlas's conditional slice, reused: clamping $x$ throws
+away every column of the atlas that disagrees with it and renormalizes the
+rest, and marginalizing the working spins is nothing but summing the
+surviving columns that differ only in $w$. With no
+working spins the sum has one term and the formula collapses back to the
+$\sigma$ rule — the boundary case you just compiled. And when the outputs
+are few and the working spins don't touch each other, both sums can be done
+outright on paper, no sampling anywhere — which is how every fit on
+this page has been computed, and why its numbers carry no error bars.
+
+Whether a target table is *reachable* is now a real question with real
+stakes, and here is the smallest table that bites. Noisy-XOR: $y$ should
+report whether the two inputs differ, and be wrong 10% of the time. Wire $y$
+to both inputs, give it a bias, and let gradient descent shape $(h, J)$
+directly — with at most two free spins there are only four states per input,
+so the machine below computes its kernels and gradients *exactly*, by
+enumeration; nothing in this fit is sampled.
+
+<Predict
+  question="The visible-only fit is stuck. Add one hidden p-bit — can the two-wire XOR now reach the target?"
+  a="yes — one hidden spin collapses the floor"
+  b="no — a middle spin just relabels the same vote"
+>
+  <XorHidden />
+</Predict>
+
+The visible-only descent hits a wall at mean error 0.400 — the coin — and no
+amount of patience moves it, because its conditional is a monotone function
+of a weighted vote, and "do my inputs differ" is not a vote: raising both
+inputs together must push a vote one way, while XOR needs it pushed back.
+No $(h, J)$ on the visible wires exists, full stop. Switch on the hidden
+p-bit and the same plain descent collapses the floor to zero. With $w$ free,
+the conditional on $y$ is a *mixture* of two S-curves, one per state of $w$,
+and a mixture can rise in the middle where any single S-curve must keep
+going one way. One spin you will never read is the difference between impossible and
+exact.
+
+That trained object — an energy landscape shaped until its clamped
+conditional matches a target table — is called a **thermodynamic kernel**,
+and shaping it is precisely the job of **Thermalizers**, the compiler in
+Extropic's stack. What Thermalizers emits is a description in **THRML**
+terms — biases, couplings, blocks, clamps, the Gibbs machinery to sweep
+them — and THRML is what a substrate finally executes, whether that
+substrate is a JAX simulation, the sampler running behind every figure on
+this page, or Z1 itself, whose silicon runs chromatic Gibbs natively.
+
+<StackFigure />
+
+Tap the layers: each one lives on a slot of the rail this lesson has worn
+since its second figure, and Thermalizers is not a box so much as the arrow
+from TARGET to ENERGY — from the distribution you want to the landscape that
+encodes it. One vocabulary note, for honesty about what this lesson used:
+Torx's wires come in three types — the two-state p-bit, the many-state
+p-dit, and the continuous p-mode — and everything on this page spoke only
+the first. Composing kernels into longer programs, matching the contexts
+between stages, and placing-and-routing the result onto a quarter-million
+physical sites is a story for a sequel, not this lesson.
+
+<Waypoint>
+  The machine is on the table: a fabric of noisy comparators whose sigmoid
+  is physics, speaking four verbs on a factory-fixed graph, at a measurable
+  price for problems shaped wrongly and silicon fabricated imperfectly. So
+  is its compiler's idea: an instruction is a kernel table, one
+  coupling compiles the copy, a hidden spin compiles what visible wires
+  provably cannot, and the fitted energy model is the object handed down the
+  stack to the chip.
+</Waypoint>
+
+## Two measurements and a subtraction
+
+Compiling one instruction meant one hand on one knob until a meter read ten
+percent. The machine ahead of us needs hundreds of weights at once, and nobody's
+hand is that patient. The weights will have to come from examples.
+
+The examples are six little pictures — a bar, a cross, a box, an X, a checker,
+a corner — each drawn on a 4×4 grid of p-bits, <C k="sUp">ink up</C>,
+<C k="sDn">blank down</C>. Sixteen p-bits per image, on purpose: small enough
+that exact enumeration — the meter's gray half — still audits everything that
+happens here.
+
+The first move is destructive. Take a glyph and run it through a short loop:
+at step $t$, every pixel flips with probability $p_t$ — eight percent, then
+twenty, then fifty. This loop deserves an honest label: it is three lines of
+ordinary code, a biased coin per pixel, and nothing about it is thermodynamic.
+The machine's native act is still red/black Gibbs on a programmed landscape —
+the schedule that turned out to be the chip — and its role here is the
+opposite one: it will learn to run this cheap wrecking loop *backwards*.
+
+<Filmstrip />
+
+Watch a few beats. The strip redraws with a fresh wreck each time — corruption
+is a distribution, so one ruined frame proves nothing. Each pixel's
+keep-probability is the same S-curve as ever, $\sigma(2\beta_t)$, which makes
+the last step $\beta_3 = 0$: at fifty percent the pixel forgets which way it
+pointed, and $x_3$ is sixteen fair coins. Drag the noise up and the glyph dies
+earlier in the strip; the last frame cannot get any deader. The useless fair coin this article
+opened with turns out to be manufacturable on demand — and that is the trick's
+hinge, because a picture erased down to fair coins can be *re-grown* from fair
+coins, one gentle step at a time, if something knows each step's undo.
+
+That something is one small conditional machine per noise level. Its cells come
+in three populations. The noisy input $x_t$: sixteen p-bits, always
+<C k="held">held</C> — the machine consults the wreck, it never edits it. The
+output $y$: sixteen free p-bits that must settle into a plausible
+one-step-cleaner image. And four hidden p-bits $w$ with no pixel meaning at
+all, free in every phase — room for the machine to represent *which glyph this
+smells like*. Wires run from input to output and from hidden to output, none
+within a layer — so the free cells form two banks with no internal edges, and
+the two-coloring rescue applies to them by construction: flash all of
+$y$, flash all of $w$, exactly Gibbs.
+
+Training this machine takes two measurements. In the **data phase**, clamp the
+input *and* the answer — $x_t$ and the true cleaner frame $y$ both wear halos —
+and let only the hidden four flicker. In the **dream phase**, release the
+answer: clamp $x_t$ alone and let $y$ and $w$ run free under red/black sweeps —
+the machine hallucinating what it currently believes cleaner frames look like.
+The data phase sits on a <C k="held">green</C> wash — the clamped phase, in the
+clamp's own color — and the dream phase on a <C k="meter">violet</C> wash, the
+sampler running loose. Below the phases, two strips accumulate the same
+statistic from each: how strongly input pixels agree with output pixels. Their
+difference is the third row.
+
+<PhaseTrainer />
+
+For the first few seconds nothing trains, and the two strips disagree
+loudly — the dreams are static, the data is not. Then the trainer starts, and
+you can watch the disagreement curve fall as the dream strip creeps toward the
+data strip. That is the entire learning rule:
+
+$$\Delta U_{ij} \;\propto\; \langle x_i\, y_j\rangle^{+} \;-\; \langle x_i\, y_j\rangle^{-}$$
+
+— nudge each wire by the gap between what it measured with the answer held
+$(+)$ and what it dreamed without it $(-)$, and the same subtraction for every
+bias and every hidden wire. A wire that dreams too little agreement gets
+warmed; one that dreams too much gets cooled; a wire whose two phases agree is
+finished. When every strip matches, the machine's dreams are statistically
+indistinguishable from the data, which is the only sense of "learned" on offer
+here.
+
+The landscape being nudged is worth writing down. Call the input→output wires
+$U$, the hidden→output wires $W$, the output and hidden biases $b$ and $c$:
+
+$$E_\theta(x_t, w, y) \;=\; -\,b\cdot y \;-\; c\cdot w \;-\; x_t^{\mathsf T} U\, y \;-\; w^{\mathsf T} W\, y$$
+
+Check its corners. Kill $W$ and the hidden four disconnect: each output pixel
+votes alone, fed only by input pixels — hold that corner, it comes back as a
+machine of its own. Grow one diagonal $U_{ii}$ wire large and that pixel
+becomes the noisy-copy gate you compiled by hand, one section ago; this energy
+is sixteen of those plus company. The dream phase here runs ten sweeps from
+the data rather than to full stationarity — the standard shortcut, called
+contrastive divergence — so the gradient is slightly approximate, and the
+warranty comes from the meter instead: every few seconds the pane on the right
+compares the learned kernel against the *exact* reverse conditional, computed
+by summing all 65,536 output states, six-glyph mixture arithmetic the
+enumerator can still do at this size. The pane shows the auditable corner —
+the fenced-patch move again, a 2×2 marginal — while the full 65,536-column
+comparison runs offstage in this article's check harness. This is the oracle's
+last stand: one lattice size larger and no such number could be printed at
+all.
+
+## The wall of dreams
+
+Generation is the training diagram run as a chain. Start from sixteen fair
+coins — the fully erased frame the corruption ends at. Clamp them as $x_3$,
+let level 3's outputs settle through a few red/black sweeps, and the sample
+becomes $x_2$. Clamp, settle, step down. At $x_0$ a glyph has condensed out of
+static in three moves.
+
+<DreamChain />
+
+The finished dreams collect along the bottom, and they are the readout: bars,
+checkers, crosses — family members, never on a schedule, never in a fixed
+order. Starve the slider to one sweep per level and the resemblance slips —
+more strays, more smudges — because each sample gets clamped as the next
+level's evidence before it has settled. The dreams' coherence is bought with
+Gibbs time.
+
+Where the coherence comes from is easiest to see by removing it. The corner
+of the energy we flagged — kill $W$, no hidden units — trains in seconds right
+below, on the same data, seeds, and budget, and dreams beside the full model:
+
+<DreamCompare mode="factorized" />
+
+The factorized dreams are wrong in a way you can see before you can say it:
+plausible ink in implausible company, half a box welded to half a checker.
+Every pixel obeys its own conditional; nothing enforces that the sixteen
+choices belong to the *same glyph*, because "same glyph" is a fact about the
+joint, and this model has no machinery for joints. You met this exact failure
+at two coins — separate knobs buy separate leans, never agreement — and
+here it is at sixteen, with the pairwise-correlation readout under each row
+keeping score. Four hidden p-bits are the wire that fixes it: a private
+sixteen-state summary that all sixteen outputs consult, so the pixels can
+conspire.
+
+One more thing can poison the dreams, and it is an old acquaintance. The
+trainer's dream phase is a sampler, and a sampler can be run on the wrong
+schedule. Train the identical model with the all-at-once schedule as
+its negative phase — every free cell updating on its neighbors' stale
+values — and compare:
+
+<DreamCompare mode="synchronous" />
+
+Look honestly: the lower strip does not look broken. It looks like glyphs.
+The stale reads decouple the hidden bank from the output bank during the
+dream phase, so the trainer subtracts the wrong statistic and bakes the error
+permanently into the weights — and both rows here are *sampled* honestly, with
+red/black sweeps, so nothing in the flicker can warn you. Only the exact audit
+under each row can: the all-at-once-trained kernel sits well over twice as far
+from the true reverse conditional. Back on the big lattice, the broken
+schedule was at least running live, one rescue away from honest. Here it has
+retired into the weights, and no schedule fix will ever reach it. The
+wrongness has moved up a level — out of the schedule, into the learned
+landscape — and the only witness that can follow it there is the same kind
+that caught it the first time: an exact number, not an impression.
+
+The wall that opened this article is back — the one that flickered before any
+of its vocabulary existed, running weights it promised to explain.
+
+<Predict
+  question="This wall was trained on the six glyphs. When any one cell's flicker settles, what does it settle on?"
+  a="one of the six, every time"
+  b="usually one of the six — sometimes something between"
+>
+  <MosaicHero />
+</Predict>
+
+Forty independent chains, each running the three-level descent you just built,
+each on its own seed. Most cells land on a recognizable family member;
+every so often one lands *between* — a bar with a checker's accent, a box
+missing a wall. That is not a defect to apologize for. The machine's product
+was never a picture; it is a distribution, and the strays are the visible
+proof that the wall is sampling one rather than stamping copies. The weights
+running here are the ones the opening shipped on credit — trained by exactly the loop
+you just watched, on exactly these six glyphs. The paint-box settles the debt
+properly: draw your own sixteen pixels, press train, and the browser reruns
+the whole clamp–dream–subtract loop with your glyph in the dataset — four
+hundred epochs, about a second; the model is that small. Then the wall
+starts dreaming yours, ringed in <C k="held">green</C> whenever a cell lands
+on it.
+
+<Waypoint>
+  One rule built everything on this page: a p-bit flicking an S-curve fed by
+  its neighbors. Programming it meant shaping an energy; learning turned out
+  to add nothing but two measurements of the machine's own statistics — one
+  clamped, one dreaming — and a subtraction. The landscape now writes itself
+  from examples.
+</Waypoint>
+
+This lesson ran on a luxury it never hid: at sixteen p-bits the truth is
+65,536 additions, so every figure could carry its gray ghost, and "correct"
+was always one subtraction away. The Z1's state space has some $2^{250{,}000}$
+corners. The complete oracle does not survive the trip — but it does not die
+all at once, either. It degrades into a hierarchy of witnesses, each with a
+smaller jurisdiction: conditionals that stay exact inside a fenced patch;
+moments that theory pins; autocorrelation and effective sample counts; small
+embedded problems whose answers are known in advance — every one of them an
+instrument this article built at toy scale, still on duty at full scale. A
+stochastic computer is trusted the way this page's little walls came to be:
+not because its output looks random — everything's output looks random — but
+because every witness that can still speak agrees.
+
+## Further Reading
+
+Extropic's Torx paper (arXiv:2608.01612) is the source of the instruction
+language taught here: stochastic gates on typed wires — the two-state p-bit
+this lesson spoke throughout, plus the p-dit and p-mode it left alone. Its
+second half moves the dice into matter: gates whose random draws come from
+physical noise on real test silicon rather than a pseudorandom generator,
+scored the way this article scored everything — by distance from exact
+truth, including the paper's own version of the
+broken-versus-colored-schedule comparison staged above.
+
+The Thermalizers paper (arXiv:2608.01615) is the compiler. It is where the
+thermodynamic kernel — the clamp, marginalize, normalize object from the
+kernel-table page — is developed into a full pipeline: fitting kernels,
+matching the contexts between chained stages, and bounding how one stage's
+error propagates down a chain. It also describes Z1 itself, the
+quarter-million-p-bit two-colorable fabric this lesson's rescue turned out
+to be a drawing of. Of everything in it, the habit worth imitating is the
+relentless one: compiled programs are judged against exact small-system
+truth wherever truth can still be computed.
+
+Both halves of that stack are public code: THRML, Extropic's JAX library
+for block Gibbs sampling on sparse heterogeneous graphs — the red/black
+sweeps of the big lattice at industrial strength — and the Torx toolkit for
+composing kernel programs. If this page left you wanting to run the real
+schedule at sizes the browser cannot audit, that is the door.
+
+Stuart and Donald Geman's 1984 paper, *Stochastic Relaxation, Gibbs
+Distributions, and the Bayesian Restoration of Images*, is where the Gibbs
+sampler got its name — and, forty years early, most of this article's
+furniture: a lattice of pixels, each updated from its neighbors'
+conditional, images condensing out of noise. Read it after this page and the
+sampler running every figure here is recognizably theirs — waiting four
+decades for silicon willing to run it natively.
+
+## Final Words
+
+Every resistor in the room with you is flickering right now. A few microvolts
+of thermal noise ride the lamp cord, the charger cable, the tracks of the
+laptop this page is running on — the same jitter this whole article computed
+with, and the thing every other chip in the room spends most of its power
+shouting down. Nothing is listening to it. For one afternoon, on this page,
+some of it had a job.

@@ -1,0 +1,190 @@
+{/* ACT II rev. 2 fragment — the COMPLETE revised §5–§6, replacing the current
+    MDX's "Everyone talks at once" and "The two-coloring rescue" sections.
+    Import paths are written as from src/lessons/; <C>/<Predict>/<Waypoint>
+    and <TeX> are global. Assembled by the main thread only. */}
+
+import { StateGraph } from '../sims/pbits/StateGraph'
+import { GridSchedules } from '../sims/pbits/GridSchedules'
+import { WriteConflict } from '../sims/pbits/WriteConflict'
+import { Race } from '../sims/pbits/Race'
+import { Dashboard } from '../sims/pbits/Dashboard'
+import { ChipFabric } from '../sims/pbits/ChipFabric'
+
+## Everyone talks at once
+
+Sixteen coins were a toy. Here are 256, wired <C k="ferro">agree</C> to their
+grid neighbors — and a problem that was invisible until now. *One at a time* is
+how we've updated coins so far, each consulting the freshest state of its
+neighbors. It is correct, and it is serial: a quarter of a million cells means a
+quarter of a million turns per sweep. Every coin's update is just its own little
+S-curve — surely we can run them all at once?
+
+The grid below offers both schedules. In its center, four cells are fenced by
+eight <C k="held">held</C> neighbors — held in a deliberate split, up on the
+west, down on the east, so a domain wall runs straight through the fence and the
+patch inside stays honestly undecided. Because the fence never moves, the patch's
+exact distribution is computable, and the meter audits it live:
+
+<GridSchedules />
+
+*One at a time* idles at the floor. Now press *all at once*. The lattice starts
+to shimmer with a strange crosshatch — and the meter climbs an order of
+magnitude and pins there. It does not descend with more evidence. This is not
+noise; it is a different, wrong answer, delivered confidently at enormous speed.
+
+The walker's map shows how different:
+
+<StateGraph schedules />
+
+Under *all at once*, the walker jumps along chords that are not edges — several
+coins changing in a single move, where the one-at-a-time walker only ever slides
+along one edge at a time. But look carefully at what the chords do and do not
+prove. They say this is a *different process*. They do not say it is an unlawful
+one — moving many coins in one tick is something a perfectly legal schedule can
+also do, and one is about to rescue this grid. The crime is somewhere else.
+
+Here is where. When every coin updates simultaneously, each consults its
+neighbors' *old* values — two wired coins persuade each other's ghosts. Two
+coins that want to agree, both currently down: each sees a down neighbor an
+instant before both flip up; next tick each sees up, and both may crash down
+again. The lattice crosshatches with exactly this oscillation. The crime needs
+two things at once: a wire, and both of its ends being *written* in the same
+instant. Call that a write conflict. The panel below freezes a bare copy of the
+grid — no fence, all 256 cells free — at the moment one dispatch goes out. Every
+cell being written this instant wears a ring, and every wire joining two ringed
+cells glows red:
+
+<WriteConflict />
+
+*One at a time* rings a single cell, and a wire cannot join a cell to itself, so
+the count reads zero by construction. *All at once* rings the whole board, and
+all 480 wires turn red at once — every wire is a pair of coins deciding on each
+other's stale ghosts. That number, not the multi-coin moves, is what separates
+the two schedules; hold on to it, because the rescue is going to drive it to
+zero without giving up the rings.
+
+And notice what the grid itself never told you. The all-at-once lattice still
+finds low-energy states — happily aligned domains everywhere you look — and its
+flicker is as random-looking as the honest one's. Watch the two numbers under
+the meter: evidence keeps accumulating by the thousands, and the distance stops
+falling anyway. A correct sampler's error starves with evidence; a broken one's
+error is a fact about the process, and no amount of watching dilutes it.
+
+## The two-coloring rescue
+
+The failure was never parallelism. It was *wired neighbors updating together*.
+So: color the grid like a checkerboard. Every wire joins a red cell to a black
+cell — no red touches red, no black touches black. Freeze black and update all
+128 red cells at once: each consults only frozen black neighbors, so nothing it
+reads is stale. Then freeze red, flash black. Two half-sweeps, and every coin
+has taken a fully honest turn.
+
+<Predict
+  question="Red/black updates half the lattice at once — nearly the speed of all-at-once. Where does the meter land?"
+  a="near the one-at-a-time floor"
+  b="somewhere between the floor and all-at-once"
+>
+  <GridSchedules chromatic />
+</Predict>
+
+The floor — not a compromise between speed and truth but both at once. Run the
+freeze-frame again with the half-sweep on its menu and watch the discriminator
+call it:
+
+<WriteConflict chromatic />
+
+128 rings — half the board written in one simultaneous stroke, exactly the kind
+of multi-coin move the walker's chords could never tell apart from the crime —
+and zero red wires. That zero has an equation. With the black cells frozen, no
+wire runs between any two red cells, so the red half's joint update splits into
+independent factors:
+
+$$p(s_R \mid s_B) \;=\; \prod_{i \in R} p(s_i \mid s_B)$$
+
+— each factor the same S-curve that cell was already running on its own turn.
+One 128-cell write *is* 128 legal one-at-a-time updates that happen to share a
+clock tick. And the equation shows its own boundary: write the same product over
+all 256 cells at once and it is false, because wires run inside that set — the
+480 red wires of the all-at-once frame are precisely the places the
+factorization breaks.
+
+One defense of *all at once* is still standing, and it is the one you will
+actually meet: if the job is optimization — find the deepest valley, never mind
+the law — does the distance even matter? Stage the fight fairly. Below, one
+frustrated problem: a 4×4 patch with its 24 wires assigned at random, nine
+<C k="ferro">agree</C> and fifteen <C k="anti">disagree</C>, so that three of
+its nine little squares can never satisfy all four of their wires — real
+frustration, a real search problem. Sixteen spins means the oracle still holds
+everything: the true minimum energy is *certified* by enumeration, and so is the
+exact Boltzmann weight of every energy rung. Both panes race in hardware ticks —
+*all at once* writes the whole lattice every tick, *red/black* needs two ticks
+per sweep:
+
+<Race />
+
+Both bold traces fall to the certified floor. The broken sampler finds the true
+minimum — not approximately, the enumerator-certified ground state — about as
+fast as the honest one, even while the states it passes through run hot (the
+faint ribbon riding high is its instantaneous energy, the oscillation you
+already know). Now read the meters: a distance of 0.65 against 0.02, a third of
+all probability in the wrong place, forever. As an optimizer, *all at once* is
+defensible. As a sampler, it is wrong, and nothing on either pane except the
+violet number can tell you which machine you are holding. Optimization success
+is not sampling correctness.
+
+That verdict forces a bookkeeping question the field keeps getting wrong: what
+is the honest speed of a sampler? The board below scores all three schedules on
+the same fenced grid, three columns each. *Writes per tick* is raw parallel
+width — the hardware brag. *Samples per thousand ticks* discounts it by measured
+dependence: consecutive sweeps are correlated, so they are not each a fresh draw,
+and the column divides the sweep rate by an autocorrelation time read from the
+audited patch (a lag-one reading — crude, and enough to rank schedules).
+*Distance from exact* is the meter you already trust:
+
+<Dashboard />
+
+Parallelism honestly buys evidence: *red/black* posts a couple hundred
+independent samples per thousand ticks against *one at a time*'s two — a
+hundredfold, real, and yours to keep. And *all at once* posts the best
+evidence-rate on the whole board, which is exactly why its row is struck
+through. Throughput and evidence-rate are properties of whatever sampler you
+have; if it samples the wrong law, they measure speed toward the wrong answer.
+The first two columns mean nothing until the third one passes — a gate, not a
+trade-off. A splendid effective-sample rate for the wrong distribution is
+splendid garbage.
+
+The only thing the coloring costs is generality: it works because the grid
+happens to admit a two-coloring, which is to say the graph is *bipartite*. That
+small observation is worth more than it looks, because it is the entire design
+secret of the actual chip.
+
+Extropic's Z1 is 269,568 p-bits, wired in a fixed sparse graph — sixteen
+neighbors each — that was *designed bipartite*. The chip's native act is the
+figure you just rescued: program the biases and the wire weights, then sweep
+red, sweep black, at millions of sweeps per second, on under one watt, with
+thermal noise itself playing the dice. The schedule is not a simulation trick;
+it is the machine. A p-bit chip is a Gibbs machine — that is the name this
+one-at-a-time-in-parallel sampling carries — and everything it will ever compute
+must arrive dressed as biases and wire weights on that fixed two-colored graph.
+A patch of such a fabric, running its two-phase clock:
+
+<ChipFabric />
+
+One confession about the drawing: the wiring here is a stand-in built from the
+chip's published numbers — degree sixteen, sparse, two-colorable — not the die's
+actual routing, which is not public at the wire level. What the patch shows is
+faithful anyway, because it is the same three facts the whole section turned on:
+sixteen wires into the marked cell, count them; every ring red or black with no
+wire joining like to like; and the clock writing one whole color class per
+tick — 72 simultaneous cells, zero write conflicts, the same zero the
+freeze-frame printed.
+
+<Waypoint>
+  You hold the discriminator: parallel updates are legal exactly when no wire
+  joins two spins written in the same instant — zero write conflicts is what
+  makes a half-sweep exact, and the factorization over a frozen half is its
+  proof. And you hold the harder verdict: a sampler can reach a certified
+  minimum and still be wrong by a third of all probability, with the meter as
+  the only witness. What remains is the machine itself — what one p-bit is in
+  silicon, and what it costs to program a landscape onto sixteen wires.
+</Waypoint>

@@ -107,12 +107,12 @@ export function createMicroscope(
         ctx.font = FONT_LABEL
         ctx.fillStyle = 'rgba(85,96,111,0.9)'
         ctx.textAlign = 'left'
-        ctx.fillText(`${nb.J * nb.s > 0 ? '+' : '−'}${fmt(Math.abs(nb.J * nb.s), 1)}`, w * 0.17, y - 5)
+        ctx.fillText(`${nb.J * nb.s > 0 ? '+' : '-'}${fmt(Math.abs(nb.J * nb.s), 1)}`, w * 0.19, y - 9)
       })
 
       // the bias DAC feeds the same node from below
-      box(w * 0.06, h * 0.72, w * 0.115, 22, `bias DAC  h = ${fmt(shared.current.h, 1)}`)
-      wire(w * 0.06 + w * 0.115, h * 0.72 + 11, nodeX, nodeY, 'rgba(85,96,111,0.8)')
+      box(w * 0.035, h * 0.72, w * 0.155, 22, `bias DAC  h = ${fmt(shared.current.h, 1)}`)
+      wire(w * 0.035 + w * 0.155, h * 0.72 + 11, nodeX, nodeY, 'rgba(85,96,111,0.8)')
 
       // the summing node and its current readout
       ctx.beginPath()

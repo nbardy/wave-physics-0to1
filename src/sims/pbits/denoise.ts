@@ -138,7 +138,9 @@ export type Rand = (site: number, salt: number) => number
 export type NegSampler = { kind: 'chromatic' } | { kind: 'synchronous' }
 
 /** k sweeps of exact block Gibbs: all y given (x, w), then all w given y —
- * legal because the (y, w) graph is bipartite by construction. */
+ * legal because the (y, w) graph is bipartite by construction. `wMean`
+ * receives ⟨w⟩ under the field the final w was actually drawn from (the fresh
+ * y — the exact Rao–Blackwellized statistic for this sampler). */
 function negChromatic(
   m: DenoiseModel,
   x: Int8Array,
@@ -146,6 +148,7 @@ function negChromatic(
   w: Int8Array,
   k: number,
   rand: Rand,
+  wMean: Float64Array,
 ): void {
   const fy = new Float64Array(m.nv)
   const fw = new Float64Array(m.nh)
@@ -155,10 +158,16 @@ function negChromatic(
     wFieldInto(m, y, fw)
     for (let kk = 0; kk < m.nh; kk++) w[kk] = rand(kk, 8 * step + 2) < sigma2(fw[kk]) ? 1 : -1
   }
+  for (let kk = 0; kk < m.nh; kk++) wMean[kk] = Math.tanh(fw[kk])
 }
 
 /** k sweeps of the §5 crime: every free spin updates at once, each reading the
- * OLD state — y consults stale w while w consults stale y. Not Gibbs. */
+ * OLD state — y consults stale w while w consults stale y. Not Gibbs. The
+ * final hidden statistic is honestly the sampler's own: ⟨w⟩ under the STALE
+ * field it actually drew from, not a fresh read that would quietly repair the
+ * damage. (In this bipartite graph the stale reads decouple the two layers,
+ * so the negative cross-statistics ⟨w y⟩⁻ collapse toward ⟨w⟩⟨w y⟩-free
+ * products — that decoupling is exactly the bias F29 measures.) */
 function negSynchronous(
   m: DenoiseModel,
   x: Int8Array,
@@ -166,15 +175,18 @@ function negSynchronous(
   w: Int8Array,
   k: number,
   rand: Rand,
+  wMean: Float64Array,
 ): void {
   const fy = new Float64Array(m.nv)
   const fw = new Float64Array(m.nh)
+  wFieldInto(m, y, fw) // in case k = 0
   for (let step = 0; step < k; step++) {
     yFieldInto(m, x, w, fy) // reads old w
     wFieldInto(m, y, fw) // reads old y
     for (let j = 0; j < m.nv; j++) y[j] = rand(j, 8 * step + 1) < sigma2(fy[j]) ? 1 : -1
     for (let kk = 0; kk < m.nh; kk++) w[kk] = rand(kk, 8 * step + 2) < sigma2(fw[kk]) ? 1 : -1
   }
+  for (let kk = 0; kk < m.nh; kk++) wMean[kk] = Math.tanh(fw[kk])
 }
 
 function runNegChain(
@@ -185,30 +197,50 @@ function runNegChain(
   w: Int8Array,
   k: number,
   rand: Rand,
+  wMean: Float64Array,
 ): void {
   switch (sampler.kind) {
     case 'chromatic':
-      return negChromatic(m, x, y, w, k, rand)
+      return negChromatic(m, x, y, w, k, rand, wMean)
     case 'synchronous':
-      return negSynchronous(m, x, y, w, k, rand)
+      return negSynchronous(m, x, y, w, k, rand, wMean)
+  }
+}
+
+/** Gradient accumulator, same shape as the model's parameters. */
+export interface Grad {
+  b: Float64Array
+  c: Float64Array
+  U: Float64Array
+  W: Float64Array
+  count: number
+}
+
+export function freshGrad(m: DenoiseModel): Grad {
+  return {
+    b: new Float64Array(m.nv),
+    c: new Float64Array(m.nh),
+    U: new Float64Array(m.nv * m.nv),
+    W: new Float64Array(m.nh * m.nv),
+    count: 0,
   }
 }
 
 /**
- * One CD-k update on one (x_t, y = x_{t−1}) pair. Positive-phase hidden
- * statistics are exact (tanh of the field — w factorizes given y); the
- * negative chain starts at the data and runs k sweeps of the chosen sampler;
- * final hidden statistics again read as tanh. Every parameter moves by
- * lr × (positive stat − negative stat).
+ * CD-k statistics for one (x_t, y = x_{t−1}) pair, accumulated into `grad`.
+ * Positive-phase hidden statistics are exact (tanh of the field — w
+ * factorizes given y); the negative chain starts at the data and runs k
+ * sweeps of the chosen sampler; final hidden statistics again read as tanh.
+ * Each accumulated term is (positive stat − negative stat).
  */
-export function cdUpdate(
+export function cdAccumulate(
   m: DenoiseModel,
   x: Int8Array,
   y: Int8Array,
   sampler: NegSampler,
   k: number,
-  lr: number,
   rand: Rand,
+  grad: Grad,
 ): void {
   const fw = new Float64Array(m.nh)
   // positive phase: x and y clamped; ⟨w_k⟩⁺ = tanh(field)
@@ -219,21 +251,30 @@ export function cdUpdate(
   const yNeg = Int8Array.from(y)
   const wNeg = new Int8Array(m.nh)
   for (let kk = 0; kk < m.nh; kk++) wNeg[kk] = rand(kk, 0) < sigma2(fw[kk]) ? 1 : -1
-  runNegChain(m, sampler, x, yNeg, wNeg, k, rand)
-  wFieldInto(m, yNeg, fw)
   const wMinus = new Float64Array(m.nh)
-  for (let kk = 0; kk < m.nh; kk++) wMinus[kk] = Math.tanh(fw[kk])
+  runNegChain(m, sampler, x, yNeg, wNeg, k, rand, wMinus)
   // the subtraction
   for (let j = 0; j < m.nv; j++) {
     const dy = y[j] - yNeg[j]
-    m.b[j] += lr * dy
-    if (dy !== 0) for (let i = 0; i < m.nv; i++) m.U[i * m.nv + j] += lr * x[i] * dy
+    grad.b[j] += dy
+    if (dy !== 0) for (let i = 0; i < m.nv; i++) grad.U[i * m.nv + j] += x[i] * dy
   }
   for (let kk = 0; kk < m.nh; kk++) {
-    m.c[kk] += lr * (wPlus[kk] - wMinus[kk])
+    grad.c[kk] += wPlus[kk] - wMinus[kk]
     for (let j = 0; j < m.nv; j++)
-      m.W[kk * m.nv + j] += lr * (wPlus[kk] * y[j] - wMinus[kk] * yNeg[j])
+      grad.W[kk * m.nv + j] += wPlus[kk] * y[j] - wMinus[kk] * yNeg[j]
   }
+  grad.count++
+}
+
+/** Apply the mean accumulated gradient at learning rate lr, with a small
+ * weight decay on the couplings to keep the landscape from running away. */
+export function applyGrad(m: DenoiseModel, grad: Grad, lr: number, decay = 1e-4): void {
+  const s = lr / Math.max(grad.count, 1)
+  for (let j = 0; j < m.nv; j++) m.b[j] += s * grad.b[j]
+  for (let kk = 0; kk < m.nh; kk++) m.c[kk] += s * grad.c[kk]
+  for (let i = 0; i < m.nv * m.nv; i++) m.U[i] += s * grad.U[i] - lr * decay * m.U[i]
+  for (let i = 0; i < m.nh * m.nv; i++) m.W[i] += s * grad.W[i] - lr * decay * m.W[i]
 }
 
 // ---------------------------------------------------------------------------
@@ -251,10 +292,10 @@ export interface TrainConfig {
 }
 
 export const TRAIN_DEFAULTS: Omit<TrainConfig, 'sampler' | 'seed' | 'nh'> = {
-  epochs: 300,
-  drawsPerGlyph: 4,
-  k: 5,
-  lr: 0.02,
+  epochs: 400,
+  drawsPerGlyph: 8,
+  k: 10,
+  lr: 0.2,
 }
 
 export interface Trainer {
@@ -276,23 +317,27 @@ export function createTrainer(data: Int8Array[], cfg: TrainConfig): Trainer {
     },
     runEpochs(n: number) {
       for (let e = 0; e < n; e++) {
+        const grads = models.map(freshGrad)
         for (let g = 0; g < data.length; g++) {
           for (let d = 0; d < cfg.drawsPerGlyph; d++) {
             const run = (epoch * data.length + g) * cfg.drawsPerGlyph + d
             const frames = forwardChain(data[g], cfg.seed ^ 0x5f2d, run)
             for (let t = 1; t <= N_LEVELS; t++) {
-              cdUpdate(
+              cdAccumulate(
                 models[t - 1],
                 frames[t],
                 frames[t - 1],
                 cfg.sampler,
                 cfg.k,
-                cfg.lr,
                 (site, salt) => u01(cfg.seed, run * 31 + t, site, salt),
+                grads[t - 1],
               )
             }
           }
         }
+        // annealed step: the minibatch mean gradient, cooled as evidence piles up
+        const lrE = cfg.lr / (1 + epoch * 0.01)
+        for (let t = 0; t < N_LEVELS; t++) applyGrad(models[t], grads[t], lrE)
         epoch++
       }
     },
@@ -316,7 +361,7 @@ export function reverseStep(
   const fw = new Float64Array(m.nh)
   wFieldInto(m, y, fw)
   for (let kk = 0; kk < m.nh; kk++) w[kk] = u01(seed, run, kk, 3) < sigma2(fw[kk]) ? 1 : -1
-  negChromatic(m, xt, y, w, sweeps, (site, salt) => u01(seed, run, site, 16 + salt))
+  negChromatic(m, xt, y, w, sweeps, (site, salt) => u01(seed, run, site, 16 + salt), fw)
   return y
 }
 
@@ -327,7 +372,7 @@ export function dream(
   run: number,
   sweeps = 6,
 ): Int8Array[] {
-  let x = new Int8Array(NV)
+  let x: Int8Array = new Int8Array(NV)
   for (let i = 0; i < NV; i++) x[i] = u01(seed, run, i, 999) < 0.5 ? -1 : 1
   const frames = [x]
   for (let t = N_LEVELS; t >= 1; t--) {

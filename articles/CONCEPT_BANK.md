@@ -4,6 +4,26 @@ Ideas that were fully worked out during article sessions but lost to a better
 candidate. Each was judged viable when cut; steal freely. (Lesson-04's 3D
 wind-tunnel car is NOT here — it has its own DENSE_CORE.)
 
+## M2 candidate — "Why the Walker Settles" (Markov chains, detailed balance, mixing)
+
+Banked 2026-08-05, from the p-bit series' scope question "does Gibbs deserve
+its own breakdown?" Verdict: Gibbs-the-move is simple and stays inside Part 1
+(`physics-02-pbits`); Gibbs-the-guarantee is the real article — the theory the
+series proves only empirically. Maths field, optional-depth sibling that Part 1
+links to once; the series must never depend on it.
+
+Content: why conditional resampling converges at all (detailed balance,
+ergodicity — with the proof that synchronous updating violates it, which
+Part 1 only *measures*); how fast (mixing time, spectral gap, the story under
+the dashboard's autocorrelation column); the family (Metropolis–Hastings with
+Gibbs as the always-accept case); blocked/collapsed variants. Instruments
+mostly exist: the p-bit StateGraph is the mixing figure awaiting a spectral
+overlay, the exact-ghost meter is the oracle, and the never-built
+detailed-balance ledger figure (reader balances a two-state transaction book
+by hand — designed as variant C §4 in `articles/05-pbits/OUTLINES.md`, cut in
+the merge) is the natural centerpiece. Cost: low-to-medium — prose and two or
+three new overlays on built steppers.
+
 ## Hero visuals (from the lesson-01 hero exploration, 2026-07-05)
 
 - **Nature versus browser.** A public-domain NASA photo of a Kármán vortex

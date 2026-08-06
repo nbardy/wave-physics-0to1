@@ -1,0 +1,217 @@
+{/* ACT IV — §9–§10 + ending (PLAN rev. 2). Fragment for assembly into
+    src/lessons/physics-02-pbits.mdx; imports below assume the lesson's own
+    directory. <C>/<Predict>/<Waypoint> are global in lesson MDX.
+    ASSEMBLER NOTES:
+    — F30 = F1: mount <MosaicHero /> at the top of §1 as the hero too; the §1
+      IOU prose already promises "the weights were trained" — the provenance
+      constant is src/sims/pbits/pretrained.ts.
+    — Phase tints (first appearance F26): local constants TINT_DATA/TINT_DREAM
+      in PhaseTrainer.tsx, derived from the held green and meter violet at low
+      alpha; prose binds with <C k="held">/<C k="meter">, so palette.ts needs
+      no edit. If promoted later: keys `phaseData`/`phaseDream`.
+    — Further Reading is article-wide and stays with the assembler. */}
+
+import { Filmstrip } from '../sims/pbits/Filmstrip'
+import { PhaseTrainer } from '../sims/pbits/PhaseTrainer'
+import { DreamChain } from '../sims/pbits/DreamChain'
+import { DreamCompare } from '../sims/pbits/DreamCompare'
+import { MosaicHero } from '../sims/pbits/MosaicHero'
+
+## Two measurements and a subtraction
+
+Compiling one instruction meant one hand on one knob until a meter read ten
+percent. The machine ahead of us needs hundreds of weights at once, and nobody's
+hand is that patient. The weights will have to come from examples.
+
+The examples are six little pictures — a bar, a cross, a box, an X, a checker,
+a corner — each drawn on a 4×4 grid of p-bits, <C k="sUp">ink up</C>,
+<C k="sDn">blank down</C>. Sixteen p-bits per image, on purpose: small enough
+that exact enumeration — the meter's gray half — still audits everything that
+happens here.
+
+The first move is destructive. Take a glyph and run it through a short loop:
+at step $t$, every pixel flips with probability $p_t$ — eight percent, then
+twenty, then fifty. This loop deserves an honest label: it is three lines of
+ordinary code, a biased coin per pixel, and nothing about it is thermodynamic.
+The machine's native act is still red/black Gibbs on a programmed landscape —
+the schedule that turned out to be the chip — and its role here is the
+opposite one: it will learn to run this cheap wrecking loop *backwards*.
+
+<Filmstrip />
+
+Watch a few beats. The strip redraws with a fresh wreck each time — corruption
+is a distribution, so one ruined frame proves nothing. Each pixel's
+keep-probability is the same S-curve as ever, $\sigma(2\beta_t)$, which makes
+the last step $\beta_3 = 0$: at fifty percent the pixel forgets which way it
+pointed, and $x_3$ is sixteen fair coins. Drag the noise up and the glyph dies
+earlier in the strip; the last frame cannot get any deader. The useless fair coin this article
+opened with turns out to be manufacturable on demand — and that is the trick's
+hinge, because a picture erased down to fair coins can be *re-grown* from fair
+coins, one gentle step at a time, if something knows each step's undo.
+
+That something is one small conditional machine per noise level. Its cells come
+in three populations. The noisy input $x_t$: sixteen p-bits, always
+<C k="held">held</C> — the machine consults the wreck, it never edits it. The
+output $y$: sixteen free p-bits that must settle into a plausible
+one-step-cleaner image. And four hidden p-bits $w$ with no pixel meaning at
+all, free in every phase — room for the machine to represent *which glyph this
+smells like*. Wires run from input to output and from hidden to output, none
+within a layer — so the free cells form two banks with no internal edges, and
+the two-coloring rescue applies to them by construction: flash all of
+$y$, flash all of $w$, exactly Gibbs.
+
+Training this machine takes two measurements. In the **data phase**, clamp the
+input *and* the answer — $x_t$ and the true cleaner frame $y$ both wear halos —
+and let only the hidden four flicker. In the **dream phase**, release the
+answer: clamp $x_t$ alone and let $y$ and $w$ run free under red/black sweeps —
+the machine hallucinating what it currently believes cleaner frames look like.
+The data phase sits on a <C k="held">green</C> wash — the clamped phase, in the
+clamp's own color — and the dream phase on a <C k="meter">violet</C> wash, the
+sampler running loose. Below the phases, two strips accumulate the same
+statistic from each: how strongly input pixels agree with output pixels. Their
+difference is the third row.
+
+<PhaseTrainer />
+
+For the first few seconds nothing trains, and the two strips disagree
+loudly — the dreams are static, the data is not. Then the trainer starts, and
+you can watch the disagreement curve fall as the dream strip creeps toward the
+data strip. That is the entire learning rule:
+
+$$\Delta U_{ij} \;\propto\; \langle x_i\, y_j\rangle^{+} \;-\; \langle x_i\, y_j\rangle^{-}$$
+
+— nudge each wire by the gap between what it measured with the answer held
+$(+)$ and what it dreamed without it $(-)$, and the same subtraction for every
+bias and every hidden wire. A wire that dreams too little agreement gets
+warmed; one that dreams too much gets cooled; a wire whose two phases agree is
+finished. When every strip matches, the machine's dreams are statistically
+indistinguishable from the data, which is the only sense of "learned" on offer
+here.
+
+The landscape being nudged is worth writing down. Call the input→output wires
+$U$, the hidden→output wires $W$, the output and hidden biases $b$ and $c$:
+
+$$E_\theta(x_t, w, y) \;=\; -\,b\cdot y \;-\; c\cdot w \;-\; x_t^{\mathsf T} U\, y \;-\; w^{\mathsf T} W\, y$$
+
+Check its corners. Kill $W$ and the hidden four disconnect: each output pixel
+votes alone, fed only by input pixels — hold that corner, it comes back as a
+machine of its own. Grow one diagonal $U_{ii}$ wire large and that pixel
+becomes the noisy-copy gate you compiled by hand, one section ago; this energy
+is sixteen of those plus company. The dream phase here runs ten sweeps from
+the data rather than to full stationarity — the standard shortcut, called
+contrastive divergence — so the gradient is slightly approximate, and the
+warranty comes from the meter instead: every few seconds the pane on the right
+compares the learned kernel against the *exact* reverse conditional, computed
+by summing all 65,536 output states, six-glyph mixture arithmetic the
+enumerator can still do at this size. The pane shows the auditable corner —
+the fenced-patch move again, a 2×2 marginal — while the full 65,536-column
+comparison runs offstage in this article's check harness. This is the oracle's
+last stand: one lattice size larger and no such number could be printed at
+all.
+
+## The wall of dreams
+
+Generation is the training diagram run as a chain. Start from sixteen fair
+coins — the fully erased frame the corruption ends at. Clamp them as $x_3$,
+let level 3's outputs settle through a few red/black sweeps, and the sample
+becomes $x_2$. Clamp, settle, step down. At $x_0$ a glyph has condensed out of
+static in three moves.
+
+<DreamChain />
+
+The finished dreams collect along the bottom, and they are the readout: bars,
+checkers, crosses — family members, never on a schedule, never in a fixed
+order. Starve the slider to one sweep per level and the resemblance slips —
+more strays, more smudges — because each sample gets clamped as the next
+level's evidence before it has settled. Gibbs time is what coherence costs.
+
+Where the coherence comes from is easiest to see by removing it. The corner
+of the energy we flagged — kill $W$, no hidden units — trains in seconds right
+below, on the same data, seeds, and budget, and dreams beside the full model:
+
+<DreamCompare mode="factorized" />
+
+The factorized dreams are wrong in a way you can see before you can say it:
+plausible ink in implausible company, half a box welded to half a checker.
+Every pixel obeys its own conditional; nothing enforces that the sixteen
+choices belong to the *same glyph*, because "same glyph" is a fact about the
+joint, and this model has no machinery for joints. You met this exact failure
+at two coins — separate knobs buy separate leans, never agreement — and
+here it is at sixteen, with the pairwise-correlation readout under each row
+keeping score. Four hidden p-bits are the wire that fixes it: a private
+sixteen-state summary that all sixteen outputs consult, so the pixels can
+conspire.
+
+One more thing can poison the dreams, and it is an old acquaintance. The
+trainer's dream phase is a sampler, and a sampler can be run on the wrong
+schedule. Train the identical model with the all-at-once schedule as
+its negative phase — every free cell updating on its neighbors' stale
+values — and compare:
+
+<DreamCompare mode="synchronous" />
+
+Look honestly: the lower strip does not look broken. It looks like glyphs.
+The stale reads decouple the hidden bank from the output bank during the
+dream phase, so the trainer subtracts the wrong statistic and bakes the error
+permanently into the weights — and both rows here are *sampled* honestly, with
+red/black sweeps, so nothing in the flicker can warn you. Only the exact audit
+under each row can: the all-at-once-trained kernel sits well over twice as far
+from the true reverse conditional. Back on the big lattice, the broken
+schedule was at least running live, one rescue away from honest. Here it has
+retired into the weights, and no schedule fix will ever reach it. The
+wrongness has moved up a level — out of the schedule, into the learned
+landscape — and the only witness that can follow it there is the same kind
+that caught it the first time: an exact number, not an impression.
+
+The wall that opened this article is back — the one that flickered before any
+of its vocabulary existed, running weights it promised to explain.
+
+<Predict
+  question="This wall was trained on the six glyphs. When any one cell's flicker settles, what does it settle on?"
+  a="one of the six, every time"
+  b="usually one of the six — sometimes something between"
+>
+  <MosaicHero />
+</Predict>
+
+Forty independent chains, each running the three-level descent you just built,
+each on its own seed. Most cells land on a recognizable family member;
+every so often one lands *between* — a bar with a checker's accent, a box
+missing a wall. That is not a defect to apologize for. The machine's product
+was never a picture; it is a distribution, and the strays are the visible
+proof that the wall is sampling one rather than stamping copies. The weights
+running here are the ones the opening shipped on credit — trained by exactly the loop
+you just watched, on exactly these six glyphs. The paint-box settles the debt
+properly: draw your own sixteen pixels, press train, and the browser reruns
+the whole clamp–dream–subtract loop with your glyph in the dataset — four
+hundred epochs, about a second; the model is that small. Then the wall
+starts dreaming yours, ringed in <C k="held">green</C> whenever a cell lands
+on it.
+
+<Waypoint>
+  One rule built everything on this page: a p-bit flicking an S-curve fed by
+  its neighbors. Programming it meant shaping an energy; learning turned out
+  to add nothing but two measurements of the machine's own statistics — one
+  clamped, one dreaming — and a subtraction. The landscape now writes itself
+  from examples.
+</Waypoint>
+
+This lesson ran on a luxury it never hid: at sixteen p-bits the truth is
+65,536 additions, so every figure could carry its gray ghost, and "correct"
+was always one subtraction away. The Z1's state space has $2^{269{,}568}$
+corners. The complete oracle does not survive the trip — but it does not die
+all at once, either. It degrades into a hierarchy of witnesses, each with a
+smaller jurisdiction: conditionals that stay exact inside a fenced patch;
+moments that theory pins; autocorrelation and effective sample counts; small
+embedded problems whose answers are known in advance — every one of them an
+instrument this article built at toy scale, still on duty at full scale. A
+stochastic computer is trusted the way this page's little walls came to be:
+not because its output looks random — everything's output looks random — but
+because every witness that can still speak agrees.
+
+Every resistor in the room with you is flickering right now. A few microvolts
+of thermal noise ride the lamp cord, the charger cable, the tracks of the
+laptop this page is running on — the same jitter this whole article computed
+with, and the thing every other chip in the room spends most of its power
+shouting down. Nothing is listening to it. For one afternoon, on this page,
+some of it had a job.

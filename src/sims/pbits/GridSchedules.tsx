@@ -27,8 +27,11 @@ import {
 // while the lattice itself blinks; chromatic (when offered) rejoins the floor
 // at parallel speed.
 
-const GW = 16
-const GH = 16
+// Exported for Dashboard.tsx (F15): one fenced grid, defined once.
+export const GRID_W = 16
+export const GRID_H = 16
+const GW = GRID_W
+const GH = GRID_H
 const BETA = 0.45
 const SWEEPS_PER_SEC = 240
 
@@ -36,7 +39,7 @@ const SWEEPS_PER_SEC = 240
 // vertical domain wall (west of the wall up, east down).
 const IX = 7
 const IY = 7
-const INTERIOR: number[] = [
+export const FENCED_INTERIOR: number[] = [
   IY * GW + IX,
   IY * GW + IX + 1,
   (IY + 1) * GW + IX,
@@ -53,7 +56,7 @@ const FENCE: Array<{ site: number; value: 1 | -1 }> = [
   { site: (IY + 2) * GW + IX + 1, value: -1 },
 ]
 
-function buildGrid() {
+export function buildFencedGrid() {
   const clamp = new Int8Array(GW * GH)
   for (const { site, value } of FENCE) clamp[site] = value
   return gridModel(GW, GH, 1, BETA, clamp)
@@ -75,10 +78,10 @@ export function createGridSchedules(
   probe?: GridProbe,
   seed = 97,
 ): Stepper {
-  const m = buildGrid()
+  const m = buildFencedGrid()
   const s = freshSpins(m, seed)
   // the fence is clamped, so the patch's conditional target never moves
-  const exact = enumerate(subModel(m, s, INTERIOR))
+  const exact = enumerate(subModel(m, s, FENCED_INTERIOR))
   const chromatic = buildChromatic(m, twoColorGrid(GW, GH), 2)
   let counts = new Float64Array(16)
   let sweepN = 0
@@ -102,7 +105,7 @@ export function createGridSchedules(
         acc -= 1
         sweepN++
         sweep(m, s, sched, (site, salt) => u01(seed, sweepN, site, salt))
-        counts[stateIndex(s, INTERIOR)]++
+        counts[stateIndex(s, FENCED_INTERIOR)]++
       }
     },
     draw(ctx, w, h) {
