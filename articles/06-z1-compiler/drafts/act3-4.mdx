@@ -1,0 +1,287 @@
+import { MixingDial } from '../sims/pbits/MixingDial'
+import { CostStrip } from '../sims/pbits/CostStrip'
+import { MetaImpossible } from '../sims/pbits/MetaImpossible'
+import { SoftProduct } from '../sims/pbits/SoftProduct'
+import { MetaEbmChain } from '../sims/pbits/MetaEbmChain'
+import { WalkHero } from '../sims/pbits/WalkHero'
+
+## The mixing tax
+
+Everything the compiler has bought so far, it bought with couplings. Hidden
+spins earned their keep by wiring strongly into the output; the ladder's last
+rung shaped the landscape harder still; and back at the floor figure a number
+moved in a direction worth remembering — training the kernels sharper raised
+the chain's contraction. Strong couplings are how an energy model says
+anything definite. They are also, it turns out, how a sampler stops moving.
+
+The whole mechanism fits in two spins. Wire them to agree with strength $J$
+and the two states they love — both up, both down — sit in valleys separated
+by a barrier of height $2J$. To cross, the thermal flicker must land a move
+against a field of that size:
+
+$$E(s_1, s_2) = -J\, s_1 s_2 \qquad\Rightarrow\qquad P_{\text{cross}} \propto e^{-2J}, \qquad \tau \sim e^{\,2J}$$
+
+At $J = 0$ the coins are free and every sweep is a fresh draw. Every unit of
+coupling multiplies the waiting time by $e^2$. The definiteness and the
+waiting are the same wires — a model cannot be given strong opinions without
+also being given long silences between changes of mind.
+
+The figure below stages the trade as one knob. A four-spin model is fit to a
+fixed, strongly-coupled target — the fit is real gradient descent, and after
+every step the couplings are clipped to a cap $J_{\max}$, which is the knob.
+Three readouts, all measured, none sketched: <C k="meter">KL to the
+target</C>, exact by enumeration on both sides; the <C k="ferro">
+autocorrelation time τ</C>, read from an actual forty-thousand-sweep Gibbs run
+on the fitted model; and <C k="anti">effective samples per sweep</C>, which is
+just $1/\tau$ — what one sweep of work now buys in evidence.
+
+<Predict
+  question="The knob's far end lifts the cap to the target's own coupling strength, and the fit becomes essentially exact. What does the bottom pane read there?"
+  a="unchanged — the couplings only match a target that was already samplable"
+  b="collapsed — a sweep now buys a small fraction of an independent sample"
+>
+  <MixingDial />
+</Predict>
+
+The fit pane earns its perfection: KL falls from 1.119 at the tight end to
+zero at the meter's precision. And the price arrives on the panes beside it —
+τ climbs from 1.7 sweeps to 194, and the effective yield collapses from 0.589
+of a sample per sweep to 0.0052. At the loose end this model is *right*, and
+it hands over one independent draw per two hundred sweeps. Part 1 ended its
+schedule fight with a gate: throughput means nothing until the distance
+passes. Here is the gate's other jaw. This sampler passes the distance and
+fails the throughput — correct, and nearly motionless — and neither meter
+alone would have told you.
+
+The trade bites twice in a compiled kernel's life, in exactly the two places
+the last act trained: it biases the truncated dream phases during fitting, and
+it inflates the sweeps each sample costs at deployment.
+
+But one class of spin is exempt, and it is the class the compiler leans on
+hardest. A clamped spin never flips, so no barrier of its making ever has to be *crossed* — it shifts
+its neighbors' fields and creates no valley among them. Clamped spins do not
+enter this tradeoff at all: a kernel's inputs may be wired to the free spins
+as strongly as the hardware allows, at no cost in mixing time. Read the
+compiled kernels of the last act again with that exemption in mind — their
+most violent couplings hang off the clamped inputs, where violence is free,
+and the tax falls only on the hidden and output spins that actually flicker.
+The partition into roles was never bookkeeping. It is where the mixing tax
+gets assessed.
+
+## The bill
+
+Two taxes are now measured — spins and sweeps. The chip itself charges in a
+third currency, and it is the natural one: Gibbs iterations, the thing the
+fabric does natively, millions of times a second. Everything else the machine
+can do is billed as a multiple of them.
+
+The rates come from the papers, and they are lopsided. Reading the state out
+costs about as much *energy* as $10^2$–$10^3$ iterations — a ratio of
+energies, not a waiting time. Flashing new couplings onto the fabric costs
+about 91 times a readout, node for node. And holding a cell — the clamp every
+kernel is built on — is priced like flashing one. The strip below runs a live
+patch of the real fabric and bills your choices at those rates: sweeps accrue
+at one iteration each, the buttons charge readout at 300 and reflash at
+27,300, and a rate line watches the papers' one stated operating limit — the chip's
+speed and energy advantage holds only while re-flashing stays below about
+once per second — turning <C k="ferro">red</C> when you cross it.
+
+<CostStrip />
+
+The left pane is the walk kernel from the last act, placed. Five
+<C k="held">input</C> cells, three <C k="anti">hidden</C>, five
+<C k="meter">output</C> — thirteen logical spins — and every logical coupling
+routed through the fabric as a shortest path, the interior cells of each route
+shaded <C k="ferro">warm</C>. Those are chain spins, Part 1's triangle repair
+recurring at kernel scale, and the counter totals them: 13 logical spins cost
+51 physical cells, 3.92 per logical. That number is a floor — overlapping
+routes were counted once, and a placement that must keep routes apart pays
+more. The patch of fabric a compiled kernel occupies this way has a name in
+the papers — a Thermodynamic Sampling Unit — and the name earns its keep here:
+the unit of hardware is not a p-bit but a placed, routed, clamped region.
+
+Run the strip for a while before touching anything. The bill climbs by one
+per sweep — and the right-hand column reminds you that nothing has been
+learned yet, because the state runs unobserved. Sampling is the cheap part;
+*knowing what was sampled* is what costs. Press read-out and five spins
+arrive, billed at three hundred sweeps' worth of energy. Press reflash and the
+bill jumps by 27,300 — swapping which kernel lives on the patch
+costs as much energy as an entire long sampling run. The strip converts the
+total to joules in its last line at the papers' own estimate of roughly
+$3\times10^{-10}$ joules per iteration, and the word *estimate* is
+load-bearing: it is a projection, not a measurement, and the strip charges in
+iterations first for exactly that reason.
+
+The shape of the bill is the design constraint the rest of the stack lives
+under. A program that holds one landscape and sweeps it for thousands of
+iterations runs at the advertised advantage. A program that wants a fresh
+kernel every few milliseconds — reflash, clamp, read, repeat — pays flash
+prices at flash frequencies and the advantage is gone. Compiled programs
+earn their keep by *staying compiled*.
+
+<Waypoint>
+  The three taxes now all carry numbers, and all three were paid on the real
+  fabric: an embedding tax of 3.92 physical spins per logical one — a floor,
+  not a quote; a context tax measured in the last act, where a kernel trained
+  on inputs its program never sends leaks exactly where the program lives; and
+  a mixing tax of two hundred sweeps per independent sample at the cap's loose
+  end, waived entirely for clamped inputs. What remains is to spend all three
+  on purpose — on a model the chip cannot even write down.
+</Waypoint>
+
+## Sampling the impossible
+
+Here is the target: twelve spins, a field on each, eighteen pairwise couplings
+drawn from the 66 possible pairs, and twenty *three-body* terms — triples
+whose energy contribution is a product $x_n x_m x_{m'}$ — with all magnitudes
+drawn from $\mathcal N(0, 0.6^2)$. Twelve spins keep the oracle alive: 4,096
+states, every figure in this act audited against the exact law. Lay the
+target's wiring over the die:
+
+<MetaImpossible />
+
+Re-roll the placement a few times and watch what changes and what cannot. The
+pairwise wires are a lottery — a few land <C k="held">green</C> on native
+fabric edges, the rest hang <C k="ferro">red</C> with no direct wire at any
+placement, waiting for routed chains. That is the familiar impossibility, the
+embedding tax again. The three-body row is the new one: zero of twenty, at
+every roll, and re-rolling does not budge it, because it is not a placement
+problem. A pairwise Ising energy has no product-of-three term at *any*
+distance — and this fabric is bipartite by construction, so it does not even
+contain a triangle to hang one on. The first impossibility costs spins. The
+second is categorical: the fabric cannot say $x_n x_m x_{m'}$ at all.
+
+The papers' answer is a change of object. Do not compile the model — compile
+the *sampler*. A Gibbs sweep of the target is twelve single-spin updates, and
+each update is something this article already knows intimately: a conditional
+kernel, one row per context, exactly the tables of the kernel act. Site $n$'s
+update draws from an S-curve on the logit
+
+$$\theta_n(x) = W_n + \tfrac{1}{2}\textstyle\sum W_{mn}\, x_m + \tfrac{1}{3!}\textstyle\sum W^{(3)}_{nmm'}\, x_m x_{m'}$$
+
+and there is the obstruction in its purest form: a *product* $x_m x_{m'}$
+sitting inside a logit that the substrate must realize with pairwise wires,
+which natively supply only the constant and the linear terms. What buys the
+product is the machine's oldest trick, pushed one step further. In Part 1, one
+hidden spin bought XOR — a function no weighted vote could express. Here, one
+hidden spin buys one product term, and this time the mechanism has a closed
+form. Give a hidden spin coupling $\alpha_a$ from the inputs and $\beta_a$ to
+the output, and marginalizing it adds to the logit
+
+$$\tfrac{1}{2}\left[\,\mathrm{sp}\!\left(-2(\alpha_a^{\mathsf T}x - \beta_a)\right) - \mathrm{sp}\!\left(-2(\alpha_a^{\mathsf T}x + \beta_a)\right)\right], \qquad \mathrm{sp}(z) = \ln(1 + e^z)$$
+
+— the difference of two softplus ramps. Kill $\beta_a$ and the two ramps
+coincide and the contribution vanishes identically: a hidden spin that does
+not talk to the output does nothing, as it should. One subtlety the formula's
+notation hides, and our own derivation had to find the hard way: the
+difference of ramps is a constant plus an *odd* function of its input field,
+and an odd function of a purely linear projection contains no even term — its
+$x_m x_{m'}$ content is identically zero for every choice of $\alpha$. The
+hidden spin must carry a bias of its own into that field to break the
+symmetry. With the bias in place and the projection aligned to the pair, the
+gate's value on the four input corners decomposes exactly — not in a limit,
+as an identity — into a constant, a linear part, and a product:
+
+$$\text{gate} = A + B\,(x_m + x_{m'}) + C\, x_m x_{m'}$$
+
+The constant and the linear part are native Ising vocabulary — the compiler
+cancels them with programmed field and coupling offsets, furniture the fabric
+already owns — and what remains is $C\, x_m x_{m'}$: one hidden spin *is* a
+product term. The figure below builds the gate for this model's largest
+three-body coefficient. The knob is the coupling magnitude.
+
+<SoftProduct />
+
+On the left, the two <C k="ghost">ramps</C> and their <C k="meter">
+difference</C>, with dots where the four input corners land. In the middle,
+the target product surface, the realized surface, and their
+<C k="ferro">residual</C>. Drag the coupling up and watch the residual die:
+the softplus difference sharpens toward a ReLU, the realized corner values
+converge on $\pm W$, and the right-hand pane tracks the error on a log axis —
+a straight line, the residual dying as $e^{-4.00a}$ by measurement against a
+theoretical rate of exactly $-4$. Each unit of coupling buys a factor of
+$e^4 \approx 55$ in accuracy. That line is the mixing tax's other face,
+priced: expressivity is not forbidden, it is *exponentially rationed* — you
+approach the product as fast as you are willing to stiffen the couplings that
+realize it, and the last act priced what stiff couplings cost the free spins.
+
+Now compile all twelve updates. Each site's kernel gets one soft-product spin
+per three-body term touching it — sixty hidden spins across the twelve
+kernels, up to eight in one kernel — and the compilation, like the papers'
+own experiment, is over a fully connected spin set with the coupling cap
+$J_{\max}$ as the single knob. One honesty line before the chain runs: the
+papers state that the connectivity residual — the extra cost of forcing this
+onto Z1's actual graph — is not simulated in that experiment, so no number
+below prices it either. What is measured is the cap, alone.
+
+<MetaEbmChain />
+
+Three things run at once. On the left, sampled chains accumulate occupancy on
+the four-spin marginal carrying the most three-body weight, against the exact
+law's <C k="ghost">ghost</C> — the meter as always. In the middle, the
+quantity the act has been building toward: <C k="meter">$\tilde\delta$</C>,
+the distance between the compiled chain and the *ideal* Gibbs chain, both
+propagated exactly through all 4,096 states. It accumulates fast —
+63% of its final value by sweep three — then settles onto a floor, 0.0385 at
+$J_{\max} = 2.5$, and between sweeps thirty and sixty it does not move. Compilation error
+does not compound with depth. Each sweep's small infidelity is partly erased
+by the contraction of the next, and the papers bound the balance point in one
+line:
+
+$$\tilde\delta_t \;\le\; \frac{\bar\varepsilon}{1 - \rho_0}$$
+
+worst per-step error over one minus the ideal chain's contraction — a
+depth-independent ceiling. The <C k="ghost">gray curve</C> beside the violet
+one is a different clock and the figure keeps them scrupulously apart: it is
+the compiled chain's distance to the law itself, still falling long after
+$\tilde\delta$ has frozen, because approaching the law is *mixing*, and this
+target's own couplings make its Gibbs dynamics slow. The knob owns only the
+violet curve. Tighten the cap and the floor climbs — not because the chain
+mixes worse, since the contraction belongs to the target, but because the cap
+clips ever sharper logits and the per-step residual $\bar\varepsilon$ rises.
+Loosen it from 2.5 to 4.5 and the floor drops more than twentyfold. The cap
+buys fidelity; the target's own physics sets the pace; and the chip is now
+doing something worth saying plainly: sampling, faithfully, from a
+twenty-term three-body law that its fabric cannot express — because what was
+compiled was never the model. It was the moves.
+
+The walk that opened this article has been waiting for exactly this
+vocabulary.
+
+<WalkHero revealed />
+
+The two panes are the ones from the beginning, and the one-step histograms
+still match — that much was always true, and it was always worthless as
+evidence. What is new is the split-meter underneath, no longer withheld: the
+per-step pane and the trajectory pane, read together. The opening's right pane
+lied in the gap between them — one-step-perfect kernels leaking mass, step
+after step, onto states the program never visits. The compiled walk running
+here has paid its way back through everything since: hidden spins against the
+factorized leak, visitation-weighted training against the context lie, the
+reward-shaped last rung that traded per-step polish for trajectory truth. Both
+panes now agree, at both scales, and you can read every tax that agreement
+cost. And the toy's ladder has an industrial-scale twin: the papers run the
+same uniform → context-matched → post-trained staircase on a market simulator
+spanning fourteen assets and 4,802 trading days, and its composite error walks
+down the same shape — 0.818, 0.667, 0.486.
+
+## Final Words
+
+The chip on the table runs one motion on one fixed graph. Everything this
+article did was arrange for that motion to be some other machine's: a walk it
+has no token for, a conditional it has no table for, a three-body law it has
+no wire for. The arranging was never free, and the price list is now
+explicit — spins for the graph you wanted and weren't given, honesty about
+which inputs your kernels will actually face, and sweeps surrendered for
+every coupling stiff enough to mean something. But notice what the price list
+is *for*. Nothing on it says impossible. Every fixed machine is a universal
+sampler one compiler away, at a price you can now compute.
+
+That sentence is the two papers this article was compiled from, read as one.
+Torx says what a stochastic program is; Thermalizers says what it costs to
+make heat run one. They are dense, and they are honest the way this series
+has tried to be — every claimed kernel audited against exact small-system
+truth, every floor measured against its bound. You now own the instruments
+they assume: the split-meter, the ghost, the taxes. Read them with those in
+hand, and the equations arrive the way the best ones always do — as the
+formalization of something you have already paid for.

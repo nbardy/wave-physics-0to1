@@ -100,10 +100,13 @@ export function createMicroscope(
       // neighbors feed weighted currents through conductances into the node
       NBR.forEach((nb, k) => {
         const y = nodeY + (k === 0 ? -46 : 46)
+        // min box widths: at 360px the proportional boxes shrank below their
+        // own labels (figure audit, 2026-08-11)
+        const jBoxW = Math.max(w * 0.075, 46)
         drawSpin(ctx, w * 0.045, y, 9, nb.s)
         wire(w * 0.045 + 9, y, w * 0.085, y, 'rgba(85,96,111,0.8)')
-        box(w * 0.085, y - 10, w * 0.075, 20, `J = ${fmt(nb.J, 1)}`)
-        wire(w * 0.085 + w * 0.075, y, nodeX, nodeY, 'rgba(85,96,111,0.8)')
+        box(w * 0.085, y - 10, jBoxW, 20, `J = ${fmt(nb.J, 1)}`)
+        wire(w * 0.085 + jBoxW, y, nodeX, nodeY, 'rgba(85,96,111,0.8)')
         ctx.font = FONT_LABEL
         ctx.fillStyle = 'rgba(85,96,111,0.9)'
         ctx.textAlign = 'left'
@@ -111,8 +114,11 @@ export function createMicroscope(
       })
 
       // the bias DAC feeds the same node from below
-      box(w * 0.035, h * 0.72, w * 0.155, 22, `bias DAC  h = ${fmt(shared.current.h, 1)}`)
-      wire(w * 0.035 + w * 0.155, h * 0.72 + 11, nodeX, nodeY, 'rgba(85,96,111,0.8)')
+      const narrowCirc = w < 520
+      const dacX = Math.max(w * 0.035, 8)
+      const dacW = narrowCirc ? 74 : w * 0.155
+      box(dacX, h * 0.72, dacW, 22, narrowCirc ? `h = ${fmt(shared.current.h, 1)}` : `bias DAC  h = ${fmt(shared.current.h, 1)}`)
+      wire(dacX + dacW, h * 0.72 + 11, nodeX, nodeY, 'rgba(85,96,111,0.8)')
 
       // the summing node and its current readout
       ctx.beginPath()

@@ -75,7 +75,11 @@ function drawCornerTile(
     ctx.globalAlpha = 1
     ctx.fillStyle = '#1a1f2b'
     ctx.textAlign = 'center'
+    // digits fit their own cell — at 360px "−1.07" spilled into the neighbor
+    // (figure audit, 2026-08-11)
+    ctx.font = cw < 36 ? '500 8px ui-sans-serif, system-ui' : FONT_LABEL
     ctx.fillText(fmt(v, 2), cx + cw / 2, cy + ch / 2 + 4)
+    ctx.font = FONT_LABEL
   })
   ctx.textAlign = 'left'
   ctx.fillStyle = 'rgba(85,96,111,0.9)'
@@ -154,8 +158,30 @@ export function createSoftProduct(
       ctx.font = FONT_LABEL
       ctx.fillStyle = 'rgba(85,96,111,0.9)'
       ctx.textAlign = 'left'
-      ctx.fillText('two softplus ramps · their difference is the gate', rp.x, rp.y - 8)
-      ctx.fillText('dots: where the four input corners land', rp.x, rp.y + rp.h + 14)
+      // header stays inside its own pane — the full wording ran into the
+      // middle column's header at every width (figure audit, 2026-08-11)
+      const fitText = (cands: string[], maxW: number): string =>
+        cands.find((s) => ctx.measureText(s).width <= maxW) ?? cands[cands.length - 1]
+      ctx.fillText(
+        fitText(
+          ['two softplus ramps · their difference is the gate', 'ramps · difference = gate', 'ramp difference'],
+          rp.w + 20,
+        ),
+        rp.x,
+        rp.y - 8,
+      )
+      ctx.fillText(
+        fitText(['dots: where the four input corners land', 'dots: the 4 input corners', 'input corners'], rp.w + 20),
+        rp.x,
+        rp.y + rp.h + 14,
+      )
+      if (gate.beta < 0) {
+        // at the knob's weak end the gate has no plateau — the curve and its
+        // corner dots leave the pane's y-range, which read as a silently
+        // blank pane (figure audit, 2026-08-11); say why on-canvas instead
+        ctx.fillStyle = 'rgba(85,96,111,0.9)'
+        ctx.fillText('β < 0 — no plateau: gate broken', rp.x + 6, rp.y + 16)
+      }
 
       // --- middle: the corner surfaces ------------------------------------
       const scale = Math.max(absW * 1.05, 1e-9)
@@ -167,7 +193,11 @@ export function createSoftProduct(
       })
       ctx.font = FONT_LABEL
       ctx.fillStyle = 'rgba(85,96,111,0.9)'
-      ctx.fillText('W·x_m x_m′ at the four input corners', w * 0.37, 40)
+      ctx.fillText(
+        fitText(['W·x_m x_m′ at the four input corners', 'W·x_m x_m′ at the corners', 'four corners'], w * 0.75 - w * 0.37 - 8),
+        w * 0.37,
+        40,
+      )
       drawCornerTile(ctx, tile(0), 'target', target, scale)
       drawCornerTile(ctx, tile(1), 'realized', realized, scale)
       drawCornerTile(ctx, tile(2), 'residual', resid, scale, PALETTE.ferro)
@@ -187,9 +217,13 @@ export function createSoftProduct(
       )
       ctx.font = FONT_LABEL
       ctx.fillStyle = 'rgba(85,96,111,0.9)'
-      ctx.fillText(`one hidden spin · W = ${fmt(W, 2)} (the model's largest`, w * 0.37, h - 46)
-      ctx.fillText(`three-body term) · constant + linear parts`, w * 0.37, h - 32)
-      ctx.fillText('cancelled by native wires — the product remains', w * 0.37, h - 18)
+      // narrow cedes the note block to the prose — it collided with the
+      // coupling readout at 360px (figure audit, 2026-08-11)
+      if (w >= 520) {
+        ctx.fillText(`one hidden spin · W = ${fmt(W, 2)} (the model's largest`, w * 0.37, h - 46)
+        ctx.fillText(`three-body term) · constant + linear parts`, w * 0.37, h - 32)
+        ctx.fillText('cancelled by native wires — the product remains', w * 0.37, h - 18)
+      }
 
       // --- right: the residual across the whole knob, log scale -----------
       const cp: Rect = { x: w * 0.75, y: 44, w: w * 0.22, h: h - 122 }
@@ -214,15 +248,24 @@ export function createSoftProduct(
       ctx.restore()
       ctx.font = FONT_LABEL
       ctx.fillStyle = 'rgba(85,96,111,0.9)'
-      ctx.fillText('residual vs coupling (log)', cp.x, cp.y - 8)
+      ctx.fillText(fitText(['residual vs coupling (log)', 'residual (log)'], w - cp.x - 8), cp.x, cp.y - 8)
       // measured decay rate over the hard-limit stretch of the curve
       const kA = AS.findIndex((v) => v >= 3.5)
       const slope =
         (Math.log(RS[RS.length - 1]) - Math.log(RS[kA])) / (AS[AS.length - 1] - AS[kA])
-      ctx.fillText(`measured decay e^(${fmt(slope, 1)}·a)`, cp.x, cp.y + cp.h + 14)
+      ctx.fillText(
+        fitText([`measured decay e^(${fmt(slope, 1)}·a)`, `decay e^(${fmt(slope, 1)}·a)`], w - cp.x - 8),
+        cp.x,
+        cp.y + cp.h + 14,
+      )
+      // under the decay pane — at the old top-right spot this overprinted the
+      // rail tabs at every width (figure audit, 2026-08-11); narrow tucks it
+      // bottom-left where the ceded note block freed the room
       ctx.font = FONT_METER
       ctx.fillStyle = '#1a1f2b'
-      ctx.fillText(`coupling a = ${fmt(a, 2)} · β = 3a - ${fmt(gateDelta(absW), 2)}`, cp.x - 30, 26)
+      const couplingLabel = `coupling a = ${fmt(a, 2)} · β = 3a - ${fmt(gateDelta(absW), 2)}`
+      if (w < 520) ctx.fillText(couplingLabel, 16, h - 18)
+      else ctx.fillText(couplingLabel, cp.x - 30, cp.y + cp.h + 32)
     },
   }
 }

@@ -236,36 +236,52 @@ export function createCostStrip(shared: { current: CostShared }, probe?: CostPro
       ctx.fillText('in (green) · hidden (teal) · out (violet)', lp.x, lp.y + lp.h + 48)
 
       // ---- right: the running bill ------------------------------------------
+      // At mobile width the full explainer strings ran ~230px past the canvas
+      // edge, hiding the bill — the figure's whole point (figure audit,
+      // 2026-08-11). Narrow canvases get compressed wordings of the same facts.
+      const narrow = w < 520
       const rx = w * 0.46
-      ctx.font = '600 20px ui-sans-serif, system-ui'
+      ctx.font = narrow ? '600 15px ui-sans-serif, system-ui' : '600 20px ui-sans-serif, system-ui'
       ctx.fillStyle = PALETTE.meter
       ctx.fillText(`iterations charged: ${total.toLocaleString()}`, rx, 58)
-      ctx.font = FONT_METER
+      ctx.font = narrow ? FONT_LABEL : FONT_METER
       ctx.fillStyle = '#1a1f2b'
       ctx.fillText(
-        `= ${sweeps.toLocaleString()} sweeps + ${readouts} × ${READOUT_ITERS} readout + ${reflashes} × ${REFLASH_ITERS.toLocaleString()} reflash`,
+        narrow
+          ? `= ${sweeps.toLocaleString()} swp + ${readouts}×${READOUT_ITERS} read`
+          : `= ${sweeps.toLocaleString()} sweeps + ${readouts} × ${READOUT_ITERS} readout + ${reflashes} × ${REFLASH_ITERS.toLocaleString()} reflash`,
         rx,
         82,
       )
+      if (narrow) ctx.fillText(`  + ${reflashes}×${REFLASH_ITERS.toLocaleString()} reflash`, rx, 96)
       ctx.font = FONT_LABEL
       ctx.fillStyle = 'rgba(85,96,111,0.9)'
-      ctx.fillText(`readout: energy of 10²–10³ iterations per read (§II B) — charged at ${READOUT_ITERS}`, rx, 102)
-      ctx.fillText(
-        `reflash: ≈${REFLASH_OVER_READOUT}× readout per node (Appendix B) — charged at ${REFLASH_ITERS.toLocaleString()}`,
-        rx,
-        118,
-      )
+      if (narrow) {
+        ctx.fillText(`readout ≈ ${READOUT_ITERS} iters (§II B)`, rx, 114)
+        ctx.fillText(`reflash ≈ ${REFLASH_OVER_READOUT}× readout (App. B)`, rx, 128)
+      } else {
+        ctx.fillText(`readout: energy of 10²–10³ iterations per read (§II B) — charged at ${READOUT_ITERS}`, rx, 102)
+        ctx.fillText(
+          `reflash: ≈${REFLASH_OVER_READOUT}× readout per node (Appendix B) — charged at ${REFLASH_ITERS.toLocaleString()}`,
+          rx,
+          118,
+        )
+      }
       const rate = simTime > 0 ? reflashes / simTime : 0
       ctx.fillStyle = rate > 1 ? PALETTE.ferro : 'rgba(85,96,111,0.9)'
       ctx.fillText(
-        `reflash rate: ${fmt(rate, 2)}/s — paper's limit: about once per second`,
+        narrow
+          ? `reflash rate ${fmt(rate, 2)}/s · limit ~1/s`
+          : `reflash rate: ${fmt(rate, 2)}/s — paper's limit: about once per second`,
         rx,
-        134,
+        narrow ? 142 : 134,
       )
-      ctx.font = FONT_METER
+      ctx.font = narrow ? FONT_LABEL : FONT_METER
       ctx.fillStyle = PALETTE.meter
       ctx.fillText(
-        `≈ ${fmtEnergy(total * JOULES_PER_ITER)} · §II B estimate, ~3e-10 J/iteration`,
+        narrow
+          ? `≈ ${fmtEnergy(total * JOULES_PER_ITER)} · ~3e-10 J/iter`
+          : `≈ ${fmtEnergy(total * JOULES_PER_ITER)} · §II B estimate, ~3e-10 J/iteration`,
         rx,
         160,
       )
@@ -275,7 +291,7 @@ export function createCostStrip(shared: { current: CostShared }, probe?: CostPro
       ctx.font = FONT_LABEL
       ctx.fillStyle = 'rgba(85,96,111,0.9)'
       if (snapshot) {
-        ctx.fillText(`last readout (what ${READOUT_ITERS} iterations bought):`, rx, ry)
+        ctx.fillText(narrow ? `last readout:` : `last readout (what ${READOUT_ITERS} iterations bought):`, rx, ry)
         for (let k = 0; k < snapshot.length; k++) {
           ctx.beginPath()
           ctx.arc(rx + 10 + k * 26, ry + 18, 8, 0, Math.PI * 2)
@@ -283,7 +299,7 @@ export function createCostStrip(shared: { current: CostShared }, probe?: CostPro
           ctx.fill()
         }
       } else {
-        ctx.fillText('no readout yet — the state runs unobserved (and unbilled)', rx, ry)
+        ctx.fillText(narrow ? 'no readout yet — unobserved, unbilled' : 'no readout yet — the state runs unobserved (and unbilled)', rx, ry)
       }
     },
   }

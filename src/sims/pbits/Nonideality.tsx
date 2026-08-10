@@ -98,8 +98,12 @@ export function createNonideality(
       const j = shared.current.jitter
       ctx.font = FONT_METER
       ctx.fillStyle = '#1a1f2b'
+      // narrow drops the per-cell list — the full line overprinted the rail
+      // tabs at 360px (figure audit, 2026-08-11)
       ctx.fillText(
-        `gain scatter ±${Math.round(j * 100)}%   cell gains: ${GAIN_PATTERN.map((d) => fmt(1 + j * d, 2)).join('  ')}`,
+        w < 520
+          ? `gain scatter ±${Math.round(j * 100)}%`
+          : `gain scatter ±${Math.round(j * 100)}%   cell gains: ${GAIN_PATTERN.map((d) => fmt(1 + j * d, 2)).join('  ')}`,
         28,
         24,
       )

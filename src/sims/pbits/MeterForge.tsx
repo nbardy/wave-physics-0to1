@@ -110,10 +110,14 @@ export function createMeterForge(
       const tv = drawMeter(ctx, r, exact, probs, { samples: total })
       ctx.font = FONT_METER
       ctx.fillStyle = '#1a1f2b'
+      // narrow: β down a line, subtitle dropped — both overprinted the rail
+      // tabs at 360px (figure audit, 2026-08-11)
       ctx.fillText(`β = ${fmt(shared.current.beta, 2)}`, 28, 20)
-      ctx.font = FONT_LABEL
-      ctx.fillStyle = 'rgba(85,96,111,0.9)'
-      ctx.fillText('inverse temperature — "coldness"', 92, 20)
+      if (w >= 520) {
+        ctx.font = FONT_LABEL
+        ctx.fillStyle = 'rgba(85,96,111,0.9)'
+        ctx.fillText('inverse temperature — "coldness"', 92, 20)
+      }
       ctx.textAlign = 'right'
       ctx.fillText('band: ±√(p(1−p)/N)', r.x + r.w, r.y + r.h - 14)
       ctx.textAlign = 'left'

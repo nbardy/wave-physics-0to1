@@ -240,14 +240,29 @@ export function createManual(shared: { current: FabricState }, seed = 71): Stepp
       ctx.font = FONT_LABEL
       ctx.fillStyle = 'rgba(85,96,111,0.9)'
       ctx.textAlign = 'left'
-      const hint =
-        st.mode === 'bias'
+      // Narrow canvases compress both statuslines — the full wordings collided
+      // mid-word at 360px (figure audit, 2026-08-11).
+      const narrow = w < 560
+      const hint = narrow
+        ? st.mode === 'bias'
+          ? 'tap: bias none → up → down'
+          : st.mode === 'wire'
+            ? 'drag: wire silent → agree → disagree'
+            : 'tap: hold free → up → down'
+        : st.mode === 'bias'
           ? 'tap a cell to cycle its bias: none → up → down'
           : st.mode === 'wire'
             ? 'drag cell to cell to cycle a wire: silent → agree → disagree'
             : 'tap a cell to cycle its hold: free → held up → held down'
       ctx.fillText(hint, 14, h - 10)
-      ctx.fillText(st.sweepOn ? 'sweeping red / black' : 'sweep paused', w - 150, h - 10)
+      const sweepLabel = narrow
+        ? st.sweepOn
+          ? 'sweeping'
+          : 'paused'
+        : st.sweepOn
+          ? 'sweeping red / black'
+          : 'sweep paused'
+      ctx.fillText(sweepLabel, w - (narrow ? 66 : 150), h - 10)
     },
   }
 }

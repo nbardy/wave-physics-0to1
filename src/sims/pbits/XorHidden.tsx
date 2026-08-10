@@ -168,8 +168,16 @@ export function createXorHidden(shared: { current: XorShared }, probe?: XorProbe
       ctx.fillText(`mean kernel error: ${fmt(err, 3)}`, lr.x, lr.y + lr.h + 38)
       ctx.font = FONT_LABEL
       ctx.fillStyle = 'rgba(85,96,111,0.95)'
+      // narrow: shortened — the full wording ran into the rail tabs' row at
+      // 360px (figure audit, 2026-08-11)
       ctx.fillText(
-        mode === 'visible' ? 'two wires, no hidden spin' : 'two inputs + ONE hidden p-bit',
+        w < 520
+          ? mode === 'visible'
+            ? '2 wires, no hidden'
+            : '2 inputs + 1 hidden'
+          : mode === 'visible'
+            ? 'two wires, no hidden spin'
+            : 'two inputs + ONE hidden p-bit',
         lr.x,
         14,
       )

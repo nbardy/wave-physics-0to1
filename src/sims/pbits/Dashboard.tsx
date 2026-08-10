@@ -147,15 +147,25 @@ export function createDashboard(probe?: DashboardProbe): Stepper {
         probe.tv = rows.map((x) => x.tv)
       }
 
+      // Columns scale with canvas width — fixed x=150/310/470 pushed the
+      // third column ("distance from exact", the gate itself) fully off a
+      // 360px mobile canvas (figure audit, 2026-08-11). Titles compress too.
+      const narrow = w < 520
+      const colX0 = narrow ? 108 : Math.max(150, w * 0.23)
+      const colGap = narrow ? 12 : 30
+      const colW = (w - 16 - colX0 - 2 * colGap) / 3
+      const titles = narrow
+        ? ['writes/tick', 'samples/1k', 'dist. from exact']
+        : ['writes / tick', 'samples / 1k ticks', 'distance from exact']
       const col = [
-        { x: 150, w: 130, title: 'writes / tick', peak: Math.max(...rows.map((x) => x.r.writes)) },
+        { x: colX0, w: colW, title: titles[0], peak: Math.max(...rows.map((x) => x.r.writes)) },
         {
-          x: 310,
-          w: 130,
-          title: 'samples / 1k ticks',
+          x: colX0 + colW + colGap,
+          w: colW,
+          title: titles[1],
           peak: Math.max(1, ...rows.map((x) => x.ess)),
         },
-        { x: 470, w: 130, title: 'distance from exact', peak: Math.max(...rows.map((x) => x.tv), 0.02) },
+        { x: colX0 + 2 * (colW + colGap), w: colW, title: titles[2], peak: Math.max(...rows.map((x) => x.tv), 0.02) },
       ]
       ctx.font = FONT_LABEL
       ctx.fillStyle = 'rgba(85,96,111,0.9)'

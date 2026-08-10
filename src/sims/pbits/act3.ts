@@ -73,7 +73,10 @@ export function drawKernelHeat(
 ): void {
   const nr = rows.length
   const nc = rows[0].length
-  const labelW = 26
+  // Mobile guard (figure audit, 2026-08-11): at 360px canvas width these
+  // panes shrink until 11px digits spilled across neighboring cells and the
+  // three pane titles ran into each other. Sizes scale down with the pane.
+  const labelW = r.w < 90 ? 16 : 26
   const headH = opts.title ? 16 : 0
   const grid: Rect = {
     x: r.x + labelW,
@@ -89,7 +92,12 @@ export function drawKernelHeat(
   if (opts.title) {
     ctx.fillStyle = 'rgba(85,96,111,0.95)'
     ctx.textAlign = 'left'
-    ctx.fillText(opts.title, r.x, r.y + 10)
+    // keep the title inside its own pane — shrink, then ellipsize
+    let title = opts.title
+    if (ctx.measureText(title).width > r.w + labelW) ctx.font = '500 9px ui-sans-serif, system-ui'
+    while (title.length > 3 && ctx.measureText(title).width > r.w + labelW) title = `${title.slice(0, -2)}…`
+    ctx.fillText(title, r.x, r.y + 10)
+    ctx.font = FONT_LABEL
   }
   for (let c = 0; c < nc; c++) {
     ctx.fillStyle = 'rgba(85,96,111,0.9)'
@@ -111,7 +119,8 @@ export function drawKernelHeat(
       if (opts.numbers !== false) {
         ctx.fillStyle = v > 0.55 ? '#ffffff' : '#1a1f2b'
         ctx.textAlign = 'center'
-        ctx.font = ch > 26 ? FONT_METER : FONT_LABEL
+        // digits must fit their own cell: "0.90" at 11px is ~24px wide
+        ctx.font = cw < 27 ? '500 8px ui-sans-serif, system-ui' : ch > 26 ? FONT_METER : FONT_LABEL
         ctx.fillText(fmt(v, 2), cx + cw / 2, cy + ch / 2 + 4)
         ctx.font = FONT_LABEL
       }

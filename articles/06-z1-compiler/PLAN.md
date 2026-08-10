@@ -195,3 +195,27 @@ variant until the effect is figure-scale, and confess the choice; (3)
 asymmetric couplings tempt scope creep — one fenced figure, no more;
 (4) the meta-EBM act is the likely week-scale item; it is the finale and
 can ship behind `draft` last.
+
+## Measured facts — hero heal + audit round (2026-08-11, binding)
+
+- The healed (revealed) hero: trajectory TV 0.421 → **0.144**; off-graph
+  0.190 → **0.040**; per-step conditionals WORSEN (worst-step TV 0.329 →
+  0.697; q-weighted KL 0.414 → 1.917) while the one-step HISTOGRAM
+  **improves** (0.265 → 0.140): REINFORCE warps conditionals so errors
+  cancel in aggregate, and a histogram is an aggregate — it cannot see
+  the warp. Prose claims must follow this shape (they do, as shipped).
+  Anchored in scripts/check-part2b.ts (19 hero assertions incl.
+  bit-identical determinism).
+- Full-figure audit (both lessons, 44 instances, contact sheets in
+  _figure_check/audit/): all prose-claim bindings verified or fixed;
+  17 components gained mobile-360 layouts; DreamChain latent crash
+  guarded; Filmstrip's last step now PINNED at ½ (was cap-only —
+  denoise.ts comment); split-meter TV label right-aligned; Neighborhood
+  torus-vs-truncated prose corrected (each drawing now names its own
+  edge-lie); Race prose de-brittled ("north of a half").
+- Still open (small): PhaseTrainer level-3 disagreement falls weakly
+  (0.95→0.85) — prose "watch it fall" is strong only at level 1;
+  GridSchedules/PhaseTrainer/DreamChain minor right-edge clips at 360;
+  DreamChain sweep-starvation contrast subtle; palette unification
+  decisions (visit/hid promotion, ferro overload, fabric-class inks)
+  queued for Nick.

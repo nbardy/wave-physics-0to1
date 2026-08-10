@@ -151,19 +151,31 @@ export function createPairCoupler(
         // temperature is pinned, so σ(2(h+ΣJs)) is the whole story here and
         // the β dial the prose promises is visibly not on this figure yet
         // (final external audit item, 2026-08-06).
+        // headTop drops these under the rail tabs on narrow canvases, where
+        // they overprinted TARGET · ENERGY at 360px (figure audit, 2026-08-11)
+        const headTop = w < 520 ? 38 : 24
         ctx.font = FONT_LABEL
         ctx.fillStyle = 'rgba(85,96,111,0.9)'
-        ctx.fillText('β = 1 (locked)', w * 0.06, fieldGauge ? 60 : 24)
+        // narrow + fieldGauge: β joins the P(up) line — a third header row
+        // landed on the left coin at 360px (figure audit, 2026-08-11)
+        if (!(w < 520 && fieldGauge)) ctx.fillText('β = 1 (locked)', w * 0.06, fieldGauge ? headTop + 36 : headTop)
       }
       if (fieldGauge) {
         // the second coin's local field, recomputed live as the first flickers
+        const headTop = w < 520 ? 38 : 24
         const f = localField(m, s, 1)
         ctx.font = FONT_METER
         ctx.fillStyle = PALETTE.meter
-        ctx.fillText(`field on the right coin: ${fmt(f, 2)}`, w * 0.06, 24)
+        ctx.fillText(`field on the right coin: ${fmt(f, 2)}`, w * 0.06, headTop)
         ctx.font = FONT_LABEL
         ctx.fillStyle = 'rgba(85,96,111,0.9)'
-        ctx.fillText(`P(up) = ${fmt(100 / (1 + Math.exp(-2 * f)), 0)}%`, w * 0.06, 42)
+        ctx.fillText(
+          w < 520
+            ? `P(up) = ${fmt(100 / (1 + Math.exp(-2 * f)), 0)}% · β = 1 (locked)`
+            : `P(up) = ${fmt(100 / (1 + Math.exp(-2 * f)), 0)}%`,
+          w * 0.06,
+          headTop + 18,
+        )
       }
 
       // two stacked gauges: raw agreement ⟨s₁s₂⟩ with the target mark, and the
@@ -191,8 +203,15 @@ export function createPairCoupler(
         ctx.fillStyle = 'rgba(85,96,111,0.9)'
         ctx.fillText(label, gr.x, gr.y + gr.h + 13)
       }
-      gauge(h - 76, corr, `agreement ⟨s₁s₂⟩: ${fmt(corr, 2)}   (target mark: ${TARGET_CORR})`, TARGET_CORR)
-      gauge(h - 40, cov, `connected part ⟨s₁s₂⟩ − ⟨s₁⟩⟨s₂⟩: ${fmt(cov, 2)}`)
+      // Narrow canvases shorten the gauge labels — the full wordings ran under
+      // the histogram's columns at 360px (figure audit, 2026-08-11).
+      if (w < 520) {
+        gauge(h - 76, corr, `agreement: ${fmt(corr, 2)} (mark ${TARGET_CORR})`, TARGET_CORR)
+        gauge(h - 40, cov, `connected: ${fmt(cov, 2)}`)
+      } else {
+        gauge(h - 76, corr, `agreement ⟨s₁s₂⟩: ${fmt(corr, 2)}   (target mark: ${TARGET_CORR})`, TARGET_CORR)
+        gauge(h - 40, cov, `connected part ⟨s₁s₂⟩ − ⟨s₁⟩⟨s₂⟩: ${fmt(cov, 2)}`)
+      }
       if (probe) {
         probe.corr = corr
         probe.cov = cov

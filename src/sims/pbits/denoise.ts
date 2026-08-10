@@ -36,6 +36,12 @@ export const N_LEVELS = 3
 export const FLIP_P: readonly number[] = [0.08, 0.2, 0.5]
 
 export function flipAt(t: number, scale = 1): number {
+  // The LAST step is pinned at ½ regardless of scale — not merely capped:
+  // the final frame must be fair coins at every knob setting, or the prose's
+  // "cannot get any deader" and generation-from-pure-noise premise both break
+  // at scale < 1 (figure audit found the cap-only version reading 20%,
+  // 2026-08-11).
+  if (t === N_LEVELS) return 0.5
   return Math.min(0.5, FLIP_P[t - 1] * scale)
 }
 

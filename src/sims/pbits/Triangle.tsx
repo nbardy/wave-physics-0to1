@@ -198,7 +198,13 @@ export function createTriangle(shared: { current: TriShared }, probe?: TriProbe,
         )
         ctx.font = FONT_LABEL
         ctx.fillStyle = 'rgba(85,96,111,0.9)'
-        ctx.fillText('no legal red/black schedule exists for this shape', w * 0.5, h * 0.5)
+        // narrow: the full sentence ran off the 360px canvas (figure audit, 2026-08-11)
+        if (w < 520) {
+          ctx.fillText('no legal red/black schedule', w * 0.45, h * 0.5 - 8)
+          ctx.fillText('exists for this shape', w * 0.45, h * 0.5 + 8)
+        } else {
+          ctx.fillText('no legal red/black schedule exists for this shape', w * 0.5, h * 0.5)
+        }
         return
       }
 

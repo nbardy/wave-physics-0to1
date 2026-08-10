@@ -120,11 +120,15 @@ export function createMetaEbmChain(
       ctx.font = FONT_LABEL
       ctx.fillStyle = 'rgba(85,96,111,0.9)'
       ctx.textAlign = 'left'
-      ctx.fillText(`occupancy on spins {${PROJ.join(',')}}`, mr.x - 4, mr.y - 16)
-      ctx.fillText('the marginal carrying the most 3-body terms', mr.x - 4, mr.y + mr.h + 32)
+      // Mobile guard (figure audit, 2026-08-11): the three-column layout
+      // collided everywhere at 360px. Narrow canvases shorten every caption
+      // and cede the ledger column to the prose, letting the δ̃ pane widen.
+      const narrow = w < 520
+      ctx.fillText(narrow ? `occupancy {${PROJ.join(',')}}` : `occupancy on spins {${PROJ.join(',')}}`, mr.x - 4, mr.y - 16)
+      ctx.fillText(narrow ? 'top 3-body marginal' : 'the marginal carrying the most 3-body terms', mr.x - 4, mr.y + mr.h + 32)
 
       // --- middle: δ̃ against the ideal chain, log scale ------------------
-      const cp: Rect = { x: w * 0.4, y: 46, w: w * 0.28, h: h - 116 }
+      const cp: Rect = { x: w * 0.4, y: 46, w: narrow ? w * 0.6 - 20 : w * 0.28, h: h - 116 }
       paneFrame(ctx, cp)
       const floor = dCurve.length ? dCurve[dCurve.length - 1] : 0
       ctx.save()
@@ -161,8 +165,8 @@ export function createMetaEbmChain(
       ctx.restore()
       ctx.font = FONT_LABEL
       ctx.fillStyle = 'rgba(85,96,111,0.9)'
-      ctx.fillText('compiled vs ideal chain: error δ (violet) saturates', cp.x, cp.y - 16)
-      ctx.fillText('gray: TV to the law itself, falling on the mixing clock', cp.x, cp.y + cp.h + 16)
+      ctx.fillText(narrow ? 'error δ (violet) saturates' : 'compiled vs ideal chain: error δ (violet) saturates', cp.x, cp.y - 16)
+      ctx.fillText(narrow ? 'gray: TV to the law itself' : 'gray: TV to the law itself, falling on the mixing clock', cp.x, cp.y + cp.h + 16)
       ctx.font = FONT_METER
       ctx.fillStyle = PALETTE.meter
       if (dCurve.length >= 3) {
@@ -174,30 +178,33 @@ export function createMetaEbmChain(
       }
 
       // --- right: the impossibility ledger --------------------------------
-      const lx = w * 0.72
-      let ly = 52
-      const line = (s: string, strong = false) => {
-        ctx.font = strong ? FONT_METER : FONT_LABEL
-        ctx.fillStyle = strong ? '#1a1f2b' : 'rgba(85,96,111,0.95)'
-        ctx.fillText(s, lx, ly)
-        ly += strong ? 20 : 16
+      // (prose carries these facts on narrow canvases — 200px lines cannot)
+      if (!narrow) {
+        const lx = w * 0.72
+        let ly = 52
+        const line = (s: string, strong = false) => {
+          ctx.font = strong ? FONT_METER : FONT_LABEL
+          ctx.fillStyle = strong ? '#1a1f2b' : 'rgba(85,96,111,0.95)'
+          ctx.fillText(s, lx, ly)
+          ly += strong ? 20 : 16
+        }
+        line('what the fabric cannot say', true)
+        line(`· ${MODEL.pairs.length} pairwise terms (of 66 possible) —`)
+        line('  its graph is not the fabric’s graph')
+        line(`· ${MODEL.triples.length} three-body terms — native`)
+        line('  support on any pairwise Ising: zero')
+        line('· the fabric is bipartite: no triangles')
+        ly += 8
+        line('what the compiler spent', true)
+        line(`· ${cm.hiddenSpins} soft-product hidden spins`)
+        line(`  (≤ ${Math.max(...MODEL.tripleAt.map((t) => t.length))} per site kernel)`)
+        line('· fully connected spin set, as in the')
+        line('  paper — Z1 placement penalty not')
+        line('  simulated there, so not priced here')
       }
-      line('what the fabric cannot say', true)
-      line(`· ${MODEL.pairs.length} pairwise terms (of 66 possible) —`)
-      line('  its graph is not the fabric’s graph')
-      line(`· ${MODEL.triples.length} three-body terms — native`)
-      line('  support on any pairwise Ising: zero')
-      line('· the fabric is bipartite: no triangles')
-      ly += 8
-      line('what the compiler spent', true)
-      line(`· ${cm.hiddenSpins} soft-product hidden spins`)
-      line(`  (≤ ${Math.max(...MODEL.tripleAt.map((t) => t.length))} per site kernel)`)
-      line('· fully connected spin set, as in the')
-      line('  paper — Z1 placement penalty not')
-      line('  simulated there, so not priced here')
       ctx.font = FONT_METER
       ctx.fillStyle = '#1a1f2b'
-      ctx.fillText(`J_max = ${fmt(jGate, 1)}`, lx, h - 14)
+      ctx.fillText(`J_max = ${fmt(jGate, 1)}`, narrow ? 20 : w * 0.72, h - 14)
 
       if (probe) {
         probe.tvMeter = tv

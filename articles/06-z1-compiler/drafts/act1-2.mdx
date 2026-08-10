@@ -1,0 +1,366 @@
+import { WalkHero } from '../sims/pbits/WalkHero'
+import { Neighborhood } from '../sims/pbits/Neighborhood'
+import { ParityToggle } from '../sims/pbits/ParityToggle'
+import { Z1Layers } from '../sims/pbits/Z1Layers'
+import { AsymmetricLoop } from '../sims/pbits/AsymmetricLoop'
+import { PartitionFigure } from '../sims/pbits/PartitionFigure'
+import { WalkLeak } from '../sims/pbits/WalkLeak'
+import { WalkLadder } from '../sims/pbits/WalkLadder'
+import { WalkFloor } from '../sims/pbits/WalkFloor'
+import { LambdaShift } from '../sims/pbits/LambdaShift'
+
+# Compiling Into Heat
+
+The smallest stochastic program worth compiling is a walk. Five nodes in a
+ring, a token hopping between them once per step: from four of the nodes it
+drifts clockwise more often than not, and at the fifth it sticks, staying put
+seven times out of ten. Three probabilities per node and nothing else — a
+program you could run with dice. The papers open on the same kind of object,
+a biased walk on a 5×5 grid compiled gate by gate; this ring is that
+demonstration shrunk until Part 1's oracle — exact enumeration, gray ghosts,
+numbers with no error bars — holds every quantity in sight.
+
+Below, the walk twice. On the left it runs *as written*: the token obeys its
+three probabilities directly, and the histogram under it counts where the
+token has been. On the right, the same walk after the treatment Part 1 ended
+with — each step re-expressed as a thermodynamic kernel, clamped, sampled,
+read out — running on a patch wired with the actual chip's connection rules.
+The <C k="ghost">gray outlines</C> are the exact one-step law; both sets of
+<C k="meter">violet</C> bars settle onto them.
+
+<WalkHero />
+
+By every number on this figure, the compilation worked. It did not. The
+right pane is lying in a way a one-step histogram cannot see: let the
+compiled walk run deep — a hundred steps, each feeding the next — and its
+occupancy drifts somewhere the program *cannot go*, into states that don't
+mean any node at all. One-step agreement is the cheapest promise a compiler
+makes, and the only one this figure checks. The lie has a name the papers
+coined for it, an instrument that catches it, a repair whose price got
+measured, and a floor below which no repair reaches — and this walk is
+small enough to keep every one of those claims in exact numbers.
+
+## Four moves and a checkerboard
+
+Part 1 owed one debt to honesty that this article can now pay. Its fabric
+drawing was a confessed stand-in — degree sixteen, sparse, two-colorable,
+wiring invented. The real wiring is public, and it is stranger than the
+stand-in: every cell on the Z1 die follows the same four connection rules,
+
+$$(a,b)\in\{(1,0),\;(2,1),\;(2,3),\;(4,1)\}$$
+
+each rule contributing its offset and that offset's three 90° rotations —
+four wires per rule, sixteen per cell. Pick cells below and watch the same
+sixteen moves redraw around each one:
+
+<Neighborhood />
+
+The shape never varies: one rook-step, then three progressively stranger
+knight-moves, the longest reaching $\sqrt{17} \approx 4.1$ cells away. This
+is not a grid with trimmings — most of a cell's sixteen neighbors are not
+adjacent to it, and two cells sitting side by side on the die often share no
+wire at all. One confession about every fabric drawing in this article: our
+patches wrap at the edges, torus-style, so that every cell keeps its full
+sixteen; the die itself just truncates, and its border cells run short —
+"mostly regular" is the papers' own phrase for that.
+
+Four strange moves, chosen from the infinity of possible offset sets. The
+choice hides a fact you can test. Add each rule's coordinates: $1{+}0$,
+$2{+}1$, $2{+}3$, $4{+}1$ — odd, every one, and a 90° rotation only swaps
+and negates coordinates, so all sixteen moves are odd. An odd move on a
+checkerboard always lands on the other color. Every wire in the fabric joins
+<C k="sUp">amber</C> to <C k="sDn">blue</C> — the graph is bipartite by
+construction, and Part 1's red/black rescue runs on it natively. The figure
+below lets you break this on purpose: swap one rule for an even move and
+watch what the checkerboard loses.
+
+<ParityToggle />
+
+With any even rule in the set, wires appear joining like color to like — and
+every such wire is a write conflict waiting for the sweep, the exact crime
+the freeze-frame counted in Part 1. The four published moves are not four
+random eccentricities. Odd parity *is* the design: reach scattered widely
+across the plane, purchased without surrendering the one property that makes
+a massively parallel sweep exact.
+
+Bipartite is a stronger word than it looks, and the next figure shows what
+it buys. Choose a few cells of the fabric to be the ones you actually read —
+three, say — and re-hang the whole graph from them: every cell placed in a
+column by its wiring distance to the nearest readable cell.
+
+<Z1Layers />
+
+Every wire in the re-hung graph spans two adjacent columns. None stays
+inside a column — a same-column wire would close an odd loop, and the
+parity fact forbids odd loops outright. What hangs there is a *layered*
+machine: readable cells, then a bank one wire away, then a bank two wires
+away, each bank speaking only to its neighbors — the deep, hidden-layered
+Boltzmann machines of Part 1's training pages, emerging from a flat die the
+moment you decide which cells count as visible. Re-roll the choice and the
+layers reshuffle; the graph never changes. One staging note: the figure
+draws its readable cells from a single checkerboard color, which is what
+guarantees no wire hides inside a column — mix the colors and two visible
+neighbors would share column zero, wire and all.
+
+One last fact about the wires, and it is the strangest on the die. Each edge
+carries *two* programmable couplings, one per direction: what cell $i$
+whispers to cell $j$ and what $j$ whispers back are separate numbers.
+Everything Part 1 proved — the energy ladder, the Boltzmann law, the
+gray ghost itself — quietly assumed they agree. Below, a small loop of
+cells with a knob that splits the two directions apart, and a meter reading
+the net probability current circulating around the loop:
+
+<AsymmetricLoop />
+
+Symmetric, the flux meter idles at zero: the machine detailed-balances, and
+every trip around the loop is paid back in full. Split the couplings and the
+meter wakes — probability *circulates*, steadily, forever, which no
+equilibrium allows. There is no landscape under this machine anymore: no
+scalar energy exists whose conditional slices generate an asymmetric sweep,
+so the entire apparatus of Part 1 — cost, weight, $Z$, the ghost — has
+nothing to grip. A stationary law still exists; it just has no closed form,
+and the papers' own verdict on learning in this regime is blunt: it appears
+intractable, and their document — like this one, from here on — restricts
+itself to the symmetric case. The second coupling stays on the die, a door
+the theory cannot yet walk through.
+
+<Waypoint>
+  The fabric is real to you now: sixteen wires per cell from four odd moves,
+  odd on purpose — parity is what keeps the parallel sweep exact — and
+  secretly layered, re-hung from whichever cells you elect to read. The
+  directional couplings stay symmetric from here, by the papers' own
+  retreat. What remains of the hero is its other half: what "compiled as a
+  thermodynamic kernel" actually commits the fabric to do.
+</Waypoint>
+
+## Clamp, marginalize, normalize
+
+Part 1 built the thermodynamic kernel with hands: clamp the input, let the
+free spins thermalize, read the output, ignore the help. The atlas said why
+that works — clamping erases the columns that disagree and renormalizes the
+rest; marginalizing sums the survivors that differ only in spins you don't
+read. What the sequel needs is the same object with its roles made
+permanent. Every spin in a compiled kernel is conscripted into exactly one
+of three populations: inputs $V_{\text{in}}$, <C k="held">held</C> for the
+whole transaction; hidden spins $V_{\text{hid}}$, free and never read;
+outputs $V_{\text{out}}$, free and read. One energy, three jobs:
+
+<PartitionFigure />
+
+Written down, the kernel the hardware serves is
+
+$$P^F(y \mid x) \;=\; \frac{1}{Z^F(x)} \sum_{w} e^{-E(x,w,y)}, \qquad Z^F(x) \;=\; \sum_{y',\,w} e^{-E(x,w,y')}$$
+
+— the same formula the copy-gate page collapsed to a $\sigma$ when the
+hidden sum had one term, now carrying its full anatomy. Check it at the
+boundary as always: strip $V_{\text{hid}}$ empty and the sum over $w$
+vanishes, leaving the clamped softmax Part 1 fit by hand. The detail worth
+holding is the argument of $Z$. This is not the one partition function of
+the atlas; it is a *family* of them, one per input — clamp a different $x$
+and the whole normalization is re-run in a different room. A per-input
+normalizer will earn its keep twice on this page: once as the loophole a
+compiler never fixes, and first — right now — as the thing that decides
+which inputs a fit even cares about.
+
+## The context tax
+
+Compile one step of the walk. The token's position becomes five p-bits,
+one-hot: the occupied node's spin <C k="sUp">up</C>, the other four
+<C k="sDn">down</C>. Five inputs, five outputs, three hidden spins between
+them, and the fit runs exactly — every kernel and every gradient on this
+page enumerated, nothing sampled, Part 1's luxury still paying out.
+
+The first trouble is visible before any training starts. The energy model
+normalizes over all $2^5 = 32$ output configurations — but only five of
+them *mean* anything. Twenty-seven configurations mark zero tokens or two;
+the program cannot say them; the kernel can. With no hidden spins the
+output bits are conditionally independent and mass *must* smear onto the
+invalid states — Part 1's factorized failure, recurring one level up the
+stack. Hidden spins buy concentration back, never all of it. The papers
+have a name for what leaks out: **conservation leakage** — the compiled
+gates assign small nonzero probability to states outside the one-token
+world, and over many chained steps the trajectory accumulates real
+occupancy there.
+
+Small per-step, real at depth: catching that combination is a two-pane job,
+and the instrument for it sits on every compiled figure from here to the
+end of the series. The **split-meter**. Left pane: per-step KL, one bar per
+input context — how wrong each row of the compiled table is. Right pane:
+trajectory occupancy at depth $T$ — where the chained kernel actually
+lives, <C k="ghost">exact law outlined</C>, compiled chain in
+<C k="meter">violet</C>, and the leaked mass collected in its own
+<C k="ferro">red</C> bucket at the edge. Two panes because the two numbers can disagree — a
+kernel can hold every row of its table close while its chain drifts, and
+the reverse is coming — and neither pane alone is the truth.
+
+One pane wears a new color — the only new color in this article. The warm
+wash behind the per-step bars is the *visitation glow*: how often the
+upstream program actually shows the kernel each input. The walk's glow is
+lopsided — the sticky node hoards attention — and the fit below starts by
+ignoring that entirely, training all five contexts with equal weight. The
+loss being descended is a weighted sum of the per-context errors,
+
+$$\mathcal{L} \;=\; \sum_{x} q(x)\, D_{\mathrm{KL}}\!\left(K(\cdot \mid x)\,\big\|\,\tilde K_\theta(\cdot \mid x)\right)$$
+
+and the whole question of this section is what to put for $q$. One more
+honesty note before the figure: this kernel's input wires are deliberately
+poor — tied around the ring, five shared numbers instead of twenty-five
+private ones. With a private wire for every context, each row of the table
+fits alone, and weighting has nothing to reallocate; the tie is a stand-in
+for the real scarcity, a placed kernel owning only the wires the fabric
+routes. Every number that follows belongs to this tied kernel.
+
+<Predict
+  question="The refit weights the same starved capacity by the walk's own visitation — favoring the sticky node's neighborhood. The rarely-visited contexts lose their weight. What happens to their per-step bars?"
+  a="they rise — capacity moves to where the weight went, and the cold contexts pay for it"
+  b="they barely move — the shared wires spill the improvement outward"
+>
+  <WalkLeak />
+</Predict>
+
+Under uniform weighting the fit converges and the two panes tell different
+stories: the per-step bars settle at modest heights, while at $T = 30$ the red
+bucket holds roughly two-thirds of all occupancy — the chain has mostly
+leaked off the graph, and trajectory TV sits near 0.66. Toggle to the
+walk's own visitation and the same capacity refits from scratch: the leaked
+bucket falls to about 0.19, trajectory TV to about 0.49 — and the
+cold contexts' bars did not rise. No price appeared. That is a measured
+fact about this kernel, not a law: weighting helps where it counts, and
+here it cost the cold contexts nothing, because the tied wires spill
+whatever the hot contexts learn. Make capacity scarcer and a genuine trade
+emerges; this model is not yet poor enough to show one.
+
+The papers carry the weighting question as one inequality, and its scariest
+inhabitant is worth meeting in the open. Train the kernel under some
+distribution $\mu$, deploy it under the program's actual $q$, and the
+deployed error inherits an inflation factor
+
+$$c \;=\; \max_x \frac{q(x)}{\mu(x)}$$
+
+— which is exactly as frightening as a worst-case ratio and no more: it is
+the price of the single input your training weighted least, relative to how
+often the program sends it. Train uniform over $n$ contexts and $c$ is just
+$n$ times the hottest context's share. Match $\mu$ to $q$ and $c = 1$: the
+inflation is gone by definition, which is the entire argument for
+context-matched training, made in one line. The bound also confesses its
+own pessimism — it charges every step the worst context's rate, so it grows
+linearly in program depth even when the truth, as the next figure shows,
+does not.
+
+The full repair is a ladder, and it is the papers' own pipeline run at our
+scale: fit under uniform weighting, refit under the program's visitation,
+then a third stage that abandons per-step fitting altogether and trains on
+the trajectory itself — REINFORCE, nudging parameters by reward times a
+centered score. The third stage is operationally *cheaper* than the
+training Part 1 did: contrastive divergence needed two clamping patterns,
+data phase and dream phase; REINFORCE needs only the dream — inputs held,
+everything else free. What it costs instead is variance: a score-function
+gradient only discriminates once the model's samples already reach the
+region the reward cares about, which is why it rides last, handed a good
+model by the two stages before it.
+
+<WalkLadder />
+
+The stairs land at 0.662, 0.491, 0.144 — trajectory TV at thirty steps,
+cut to under a quarter of where uniform fitting left it. The papers' grid
+walk steps 5.64 to 0.30 to 0.08 through the same three stages; the shape is
+the reproduction, the numbers are ours. Now read the split-meter's left
+pane across stage three, because it is moving the wrong way: per-step KL
+*rises* from 0.414 to 1.917 while the trajectory error collapses. That is
+not a glitch in the figure; it is the deal. REINFORCE does not improve the
+kernel's table — it warps the table, deliberately, so that each step's bias
+cancels the accumulated drift of the steps before it. Per-step honesty is
+spent as currency for trajectory honesty. A one-pane instrument would call
+stage three a regression or a triumph depending on which pane it kept;
+keeping both is why the split-meter exists.
+
+## The floor
+
+The hero's lie was that error at depth stays invisible; the ladder priced
+it; one more fact makes the picture honest, and it is good news with a
+boundary. Chained error does not accumulate forever. Each step of the
+compiled chain *contracts*: feed it two different distributions and it
+returns two less-different ones, closer by a factor $\rho < 1$. Old errors
+fade while fresh ones arrive, and the contest settles at a depth-independent
+ceiling:
+
+$$\tilde\delta \;\le\; \frac{\bar\varepsilon}{1-\rho}$$
+
+with $\bar\varepsilon$ the worst single-step error and $\rho$ the chain's
+contraction rate — both measurable from the compiled chain itself, no
+oracle required. Geometric decay against steady injection; the sum is the
+one every physicist knows.
+
+<WalkFloor />
+
+With two hidden spins the bound is a real promise: measured
+$\bar\varepsilon = 0.177$, measured $\rho = 0.753$, ceiling 0.718 drawn
+as the line the curve cannot cross — and the
+curve saturates far under it, flattening at 0.305, a little over
+four-tenths of the bound, and flat it stays: over the last twenty steps of
+depth it moves by parts in a hundred thousand. The papers' own large
+construction rides its bound the same way, at about six-tenths. Now take
+the hidden spins away. Per-step error swells until
+$\bar\varepsilon/(1-\rho)$ passes 1 — a bound on a probability distance
+that exceeds its maximum bounds nothing — and the figure says so in place
+of drawing the line. The curve still saturates, near 0.77, because
+saturation belongs to the chain; the *guarantee* belonged to the capacity,
+and it starved with the hidden spins. So the accumulation story ends in
+full: trajectory error grows, then stops growing, and where it stops is
+computable from two numbers — provided the kernel was good enough for the
+arithmetic to say anything at all. One shadow worth logging as we leave:
+train a kernel longer and sharper and its measured $\rho$ creeps upward —
+contraction is mixing wearing other clothes, and sharpness taxes it. That
+account gets opened properly in the next act.
+
+## What the forward law cannot see
+
+Everything so far audited how well the compiled forward law was fit. This
+section is about what the forward law does not even witness. Take a
+compiled kernel with energy $E_A$ and build a second one by adding a
+per-input offset: $E_B(x,w,y) = E_A(x,w,y) + \lambda(x)$, any function of
+the input at all. Given a clamped $x$, $e^{-\lambda(x)}$ is one constant
+shared by every $(w,y)$ — and §3's private normalizer collects it:
+
+$$\tilde K_B(y \mid x) \;=\; \frac{\sum_w e^{-E_A(x,w,y)-\lambda(x)}}{\sum_{y',w} e^{-E_A(x,w,y')-\lambda(x)}} \;=\; \tilde K_A(y \mid x)$$
+
+The constant rides both the sum and its normalizer and divides itself out —
+exactly, at any $\lambda$, for any energy. The figure computes it rather
+than assuming it: $\lambda$ enters every energy evaluation below, and the
+forward panes refuse to move anyway.
+
+<LambdaShift />
+
+Drag $\lambda$ to its limit. The forward row holds model B's outline
+flush against model A's fill, sixteen bars, and prints its verdict to six
+digits: max TV 0.000000, at every setting of the slider. The backward row
+runs the same two models the other direction — inferring, for each output,
+the input that produced it — and there the difference pane burns brighter the
+harder you drag, because the *joint* law never forgot: $\lambda$ reweights
+how much of the model's mass sits at each input, which is invisible when
+$x$ is clamped and decisive when $x$ is inferred. Boundary check both
+claims at the slider's other end: at $\lambda = 0$ the models are
+identical and the backward difference dies too; the forward number never
+had anything to lose.
+
+The consequence is a fact about compilation itself, stated flatly: fitting
+a forward kernel does not determine an energy. It determines an
+*equivalence class* of energies — one member per choice of $\lambda$ — and
+every training run on this page simply landed on some member without being
+asked. For a single kernel run forward, the choice is pure convention. The
+moment compiled kernels are tiled together, or anything runs in reverse —
+inference, backward passes, the joint sampled whole — the convention is
+load-bearing, and a compiler that never pinned it down has left a free
+parameter in the machine.
+
+<Waypoint>
+  The compiled walk now stands audited end to end: leakage named and
+  watched forming, the weighting inflation reduced to one ratio, the
+  three-stage repair measured with its real price on the split-meter, and
+  the drift capped by a floor you can compute from two measurements — when
+  capacity keeps the bound below one. And one humility: the forward fits
+  this act trusted were each one representative of a family the fit cannot
+  tell apart. Every fit here also helped itself to couplings as strong as
+  it pleased. Hardware will not, and what strong couplings cost a sampler —
+  not in joules, in time — is the next tax on the bill.
+</Waypoint>

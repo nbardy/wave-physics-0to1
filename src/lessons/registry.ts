@@ -5,6 +5,7 @@ import Lesson03 from './lesson-03-navier-stokes-history.mdx'
 import Maths01 from './maths-01-jacobian-hessian.mdx'
 import Physics01 from './physics-01-wave-particle.mdx'
 import Physics02 from './physics-02-pbits.mdx'
+import Physics03 from './physics-03-z1.mdx'
 
 // Lesson lifecycle as a sum type — rendering dispatches on `kind`, no stray
 // defaults. Add `draft` / `published` variants as lessons get written.
@@ -126,6 +127,17 @@ export const lessons: Lesson[] = [
     tags: ['probability', 'simulation'],
     status: { kind: 'draft' },
     Content: Physics02,
+  },
+  {
+    id: 'z1-compiler',
+    field: 'physics',
+    order: 3,
+    title: 'Compiling Into Heat',
+    blurb:
+      'The sequel to the noise computer: Extropic’s actual stack. Compile a stochastic program onto the real Z1 fabric and pay the three taxes — embedding, context, mixing — with every tax measured on an exact meter.',
+    tags: ['probability', 'simulation'],
+    status: { kind: 'draft' },
+    Content: Physics03,
   },
   {
     id: 'navier-stokes',

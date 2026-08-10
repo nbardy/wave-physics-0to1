@@ -175,7 +175,12 @@ export function drawSplitMeter(
   ctx.fillText('off', ox + bw * 0.2, right.y + 10)
   ctx.font = FONT_METER
   ctx.fillStyle = PALETTE.meter
-  ctx.fillText(`TV: ${fmt(d.tv, 3)}`, right.x, right.y + right.h + 16)
+  // Right-align the TV readout at its pane's right edge: at 360px article
+  // width the two panes sit close enough that left-aligned KL and TV labels
+  // mashed into one string (figure audit, 2026-08-11).
+  ctx.textAlign = 'right'
+  ctx.fillText(`TV: ${fmt(d.tv, 3)}`, right.x + right.w, right.y + right.h + 16)
+  ctx.textAlign = 'left'
 
   return { kl: d.klWeighted, tv: d.tv }
 }

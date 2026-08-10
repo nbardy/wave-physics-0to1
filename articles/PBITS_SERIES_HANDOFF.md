@@ -225,3 +225,21 @@ build the PLAN and Part 2 speaks Torx natively.
 - Measured-facts sections in PLANs BIND prose; when a measurement
   contradicts the planned narrative, the narrative changes.
 - Propose publish flips; never surprise. Never commit unprompted.
+
+## AUDIT ROUND CLOSE-OUT (2026-08-11)
+
+Part 2 assembled, registered (`/lesson/z1-compiler`, `draft`), and audited
+end-to-end. Three-agent audit fleet all landed: (1) hero healed — revealed
+mode climbs the full ladder live; measured override recorded (histogram
+IMPROVES 0.265→0.140 while conditionals worsen — aggregates cannot see the
+warp; now in 06 PLAN's binding facts); (2) full Stage-4/5 voice pass on
+Part 2 (18 fixes incl. the "act"-vocabulary leak, aphorism budget, PAsymSwap
+attribution; Further Reading written w/ Levin & Peres; complete fact-trace —
+nothing untraceable); (3) figure audit of all 44 instances with evidence
+(17 files gained mobile-360 layouts; DreamChain crash guarded; Filmstrip
+last step pinned at ½; split-meter label fix; torus/truncated prose
+corrected; Race prose de-brittled). ALL SUITES GREEN. Remaining: the small
+open items + palette decisions listed at the end of 06 PLAN's audit-facts
+section; Nick's standing decision queue (Part 1 publish flip, Z1Layers
+promotion, Microscope toggle, epigraphs, Part 3's six open questions);
+Part 3 build (design complete, awaiting Nick's read). Nothing committed.

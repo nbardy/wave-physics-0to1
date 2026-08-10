@@ -112,7 +112,7 @@ export function createZ1Layers(shared: { current: Z1LayersShared }): Stepper {
       }
       ctx.font = FONT_LABEL
       ctx.fillStyle = 'rgba(85,96,111,0.9)'
-      ctx.fillText('the die: one cell’s 16 moves · visible cells ringed', lp.x, lp.y + lp.h + 14)
+      ctx.fillText(w < 520 ? 'die: 16 moves · ringed = visible' : 'the die: one cell’s 16 moves · visible cells ringed', lp.x, lp.y + lp.h + 14)
 
       // right pane: hung by the visible cells
       const rp: Rect = { x: w * 0.5, y: 30, w: w * 0.46, h: h - 66 }
@@ -150,12 +150,23 @@ export function createZ1Layers(shared: { current: Z1LayersShared }): Stepper {
         ctx.fill()
         ctx.globalAlpha = 1
       }
+      // light backing so the header reads over the wire bundle it sits on
+      // (figure audit, 2026-08-11: it was drawn bare across dozens of red wires)
       ctx.font = FONT_METER
+      const hdr = `hung by ${K_VISIBLE} visible cells: ${maxLayer + 1} layers`
+      const hdrW = ctx.measureText(hdr).width
+      ctx.fillStyle = 'rgba(247,249,252,0.85)'
+      ctx.fillRect(rp.x + 4, rp.y + 6, hdrW + 10, 17)
       ctx.fillStyle = '#1a1f2b'
-      ctx.fillText(`hung by ${K_VISIBLE} visible cells: ${maxLayer + 1} layers`, rp.x + 8, rp.y + 18)
+      ctx.fillText(hdr, rp.x + 8, rp.y + 18)
       ctx.font = FONT_LABEL
       ctx.fillStyle = 'rgba(85,96,111,0.9)'
-      ctx.fillText('same graph · every wire spans adjacent columns — none stays inside one', rp.x, rp.y + rp.h + 14)
+      // narrow: the full caption overprinted the die pane's caption at 360px
+      ctx.fillText(
+        w < 520 ? 'wires span adjacent columns only' : 'same graph · every wire spans adjacent columns — none stays inside one',
+        rp.x,
+        rp.y + rp.h + 14,
+      )
     },
   }
 }

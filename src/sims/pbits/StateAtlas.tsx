@@ -230,10 +230,13 @@ function drawColumns(
   }
 }
 
-function betaLabel(ctx: CanvasRenderingContext2D, x: number, beta: number): void {
+function betaLabel(ctx: CanvasRenderingContext2D, x: number, beta: number, w: number): void {
   ctx.font = FONT_METER
   ctx.fillStyle = '#1a1f2b'
   ctx.fillText(`β = ${fmt(beta, 2)}`, x, 20)
+  // narrow canvases skip the subtitle — it overprinted the rail tabs at 360px
+  // (figure audit, 2026-08-11)
+  if (w < 520) return
   ctx.font = FONT_LABEL
   ctx.fillStyle = 'rgba(85,96,111,0.9)'
   ctx.fillText('inverse temperature — "coldness"', x + 64, 20)
@@ -421,7 +424,15 @@ export function createStateAtlas(
       ctx.fillText(`E = ${terms} = ${E[sel] > 0 ? '+' : ''}${E[sel]}`, 14, h - 12)
       ctx.font = FONT_LABEL
       ctx.fillStyle = 'rgba(85,96,111,0.9)'
-      ctx.fillText('tap a column', pane.x + 4, h - 12)
+      // narrow: right-aligned — beside the energy tally it mashed at 360px
+      // (figure audit, 2026-08-11)
+      if (w < 520) {
+        ctx.textAlign = 'right'
+        ctx.fillText('tap a column', pane.x + pane.w, h - 12)
+        ctx.textAlign = 'left'
+      } else {
+        ctx.fillText('tap a column', pane.x + 4, h - 12)
+      }
       if (probe) {
         probe.heights.set(E)
       }
@@ -434,7 +445,7 @@ export function createStateAtlas(
       const { w: wt, Z } = atlasExact(shared.current.beta)
       drawColumns(ctx, pane, wt, () => 0.5)
       drawGlyphRow(ctx, pane)
-      betaLabel(ctx, pane.x, shared.current.beta)
+      betaLabel(ctx, pane.x, shared.current.beta, w)
       let lo = Infinity
       let hi = 0
       for (let i = 0; i < STATES; i++) {
@@ -493,7 +504,7 @@ export function createStateAtlas(
       ctx.fillText('Z', sx + 13, pane.y - 4)
       ctx.fillText('÷', sx - 12, pane.y + pane.h / 2)
       ctx.textAlign = 'left'
-      betaLabel(ctx, pane.x, shared.current.beta)
+      betaLabel(ctx, pane.x, shared.current.beta, w)
       let sum = 0
       for (let i = 0; i < STATES; i++) sum += p[i]
       ctx.font = FONT_METER
@@ -575,17 +586,26 @@ export function createStateAtlas(
       ctx.fillStyle = 'rgba(85,96,111,0.9)'
       ctx.fillText('⟨s₁s₂⟩', gx, gTop - 8)
       ctx.textAlign = 'left'
-      betaLabel(ctx, pane.x, shared.current.beta)
+      betaLabel(ctx, pane.x, shared.current.beta, w)
+      // Narrow canvases: two readouts, ends of the line — the three-label
+      // row overprinted itself at 360px (figure audit, 2026-08-11).
+      const narrowObs = w < 520
       ctx.font = FONT_METER
       ctx.fillStyle = '#1a1f2b'
       ctx.fillText(`exact ⟨s₁s₂⟩ = ${fmt(exact, 3)}`, pane.x, h - 12)
       ctx.fillStyle = PALETTE.meter
-      ctx.fillText(`sampled: ${fmt(sampled, 3)}`, pane.x + 170, h - 12)
-      ctx.font = FONT_LABEL
-      ctx.fillStyle = 'rgba(85,96,111,0.9)'
-      ctx.textAlign = 'right'
-      ctx.fillText(`${Math.round(total).toLocaleString()} samples`, pane.x + pane.w, h - 12)
-      ctx.textAlign = 'left'
+      if (narrowObs) {
+        ctx.textAlign = 'right'
+        ctx.fillText(`sampled: ${fmt(sampled, 3)}`, pane.x + pane.w, h - 12)
+        ctx.textAlign = 'left'
+      } else {
+        ctx.fillText(`sampled: ${fmt(sampled, 3)}`, pane.x + 170, h - 12)
+        ctx.font = FONT_LABEL
+        ctx.fillStyle = 'rgba(85,96,111,0.9)'
+        ctx.textAlign = 'right'
+        ctx.fillText(`${Math.round(total).toLocaleString()} samples`, pane.x + pane.w, h - 12)
+        ctx.textAlign = 'left'
+      }
       if (probe) {
         for (let i = 0; i < STATES; i++) probe.heights[i] = p[i] * pairSign(i)
         probe.sampleMean = sampled
@@ -622,16 +642,26 @@ export function createStateAtlas(
       for (let i = 0; i < STATES; i++) sum += p[i]
       ctx.font = FONT_METER
       ctx.fillStyle = '#1a1f2b'
-      ctx.fillText(`β = 1`, pane.x, 20)
-      ctx.font = FONT_LABEL
-      ctx.fillStyle = 'rgba(85,96,111,0.9)'
-      ctx.fillText('inverse temperature, fixed', pane.x + 44, 20)
+      // narrow: β sits at the far left — at pane.x it overprinted the rail's
+      // TARGET tab at 360px (figure audit, 2026-08-11)
+      ctx.fillText(`β = 1`, w < 520 ? 20 : pane.x, 20)
+      if (w >= 520) {
+        // subtitle overprinted the rail tabs at 360px (figure audit, 2026-08-11)
+        ctx.font = FONT_LABEL
+        ctx.fillStyle = 'rgba(85,96,111,0.9)'
+        ctx.fillText('inverse temperature, fixed', pane.x + 44, 20)
+      }
+      // Narrow canvases compress both bottom lines — they overprinted each
+      // other at 360px (figure audit, 2026-08-11).
+      const narrowCond = w < 520
       ctx.fillText(
-        `${STATES >> nPinned} live columns · sum = ${fmt(sum, 2)} · slice mass was ${fmt(mass, 2)}`,
+        narrowCond
+          ? `${STATES >> nPinned} live · sum ${fmt(sum, 2)} · was ${fmt(mass, 2)}`
+          : `${STATES >> nPinned} live columns · sum = ${fmt(sum, 2)} · slice mass was ${fmt(mass, 2)}`,
         pane.x,
         h - 12,
       )
-      ctx.fillText('tap a cell: free → held up → held down', 14, h - 12)
+      ctx.fillText(narrowCond ? 'tap cells to pin' : 'tap a cell: free → held up → held down', 14, h - 12)
       let sliceP = NaN
       let ruleP = NaN
       if (nPinned === N - 1) {
@@ -645,8 +675,16 @@ export function createStateAtlas(
         ruleP = condProbPlus(frustratedLoop(shared.current.beta), sc, free)
         ctx.font = FONT_METER
         ctx.fillStyle = PALETTE.meter
-        ctx.fillText(`slice: P(s${free + 1}=+1) = ${fmt(sliceP, 3)}`, pane.x, h - 30)
-        ctx.fillText(`rule: σ(2β·field) = ${fmt(ruleP, 3)}`, pane.x + 200, h - 30)
+        if (narrowCond) {
+          // stacked under the loop, in the left column's free space — side by
+          // side the rule readout fell off the 360px canvas
+          ctx.font = FONT_LABEL
+          ctx.fillText(`slice: P(s${free + 1}=+1) = ${fmt(sliceP, 3)}`, 8, h - 44)
+          ctx.fillText(`rule: σ(2β·field) = ${fmt(ruleP, 3)}`, 8, h - 28)
+        } else {
+          ctx.fillText(`slice: P(s${free + 1}=+1) = ${fmt(sliceP, 3)}`, pane.x, h - 30)
+          ctx.fillText(`rule: σ(2β·field) = ${fmt(ruleP, 3)}`, pane.x + 200, h - 30)
+        }
       }
       if (probe) {
         probe.heights.set(p)

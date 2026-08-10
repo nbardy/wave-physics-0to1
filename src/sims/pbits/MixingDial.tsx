@@ -192,7 +192,9 @@ export function createMixingDial(shared: { current: MixShared }, probe?: MixProb
       ctx.font = FONT_METER
       ctx.fillStyle = '#1a1f2b'
       ctx.textAlign = 'left'
-      ctx.fillText(`coupling cap J_max = ${fmt(cap, 2)}`, 16, 24)
+      // narrow: header sits under the rail tabs — same line overprinted them
+      // at 360px (figure audit, 2026-08-11)
+      ctx.fillText(`coupling cap J_max = ${fmt(cap, 2)}`, 16, w < 520 ? 38 : 24)
 
       // left: the fit itself — target ghost vs fitted model's exact bars
       const mr: Rect = { x: 16, y: 46, w: w * 0.42, h: h - 100 }
@@ -265,7 +267,19 @@ export function createMixingDial(shared: { current: MixShared }, probe?: MixProb
           ctx.fillStyle = q.ink
           ctx.textAlign = 'right'
           const v = q.of(cur)
-          ctx.fillText(v >= 100 ? fmt(v, 0) : v >= 1 ? fmt(v, 1) : fmt(v, 3), r.x + r.w - 6, r.y + 16)
+          // sit the readout in the corner the curve's endpoint is NOT in —
+          // at the loose cap the τ label printed under its own endpoint dot
+          // (figure audit, 2026-08-11)
+          const endHigh =
+            points.length > 0 &&
+            (() => {
+              const vals = points.map((pt) => (q.log ? Math.log(q.of(pt)) : q.of(pt)))
+              const last = vals[vals.length - 1]
+              const lo = Math.min(...vals)
+              const hi = Math.max(...vals)
+              return hi - lo > 1e-9 && (last - lo) / (hi - lo) > 0.6
+            })()
+          ctx.fillText(v >= 100 ? fmt(v, 0) : v >= 1 ? fmt(v, 1) : fmt(v, 3), r.x + r.w - 6, endHigh ? r.y + r.h - 8 : r.y + 16)
           ctx.textAlign = 'left'
         }
       })

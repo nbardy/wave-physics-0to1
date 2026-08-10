@@ -77,7 +77,11 @@ export function createDreamChain(
         return
       }
       acc += dt
-      while (acc >= SWEEP_PERIOD) {
+      // `holding <= 0` guard: when a run finishes mid-drain, the loop must
+      // stop — one more pass would index models[level-1] with level = 0.
+      // Unreachable under <Sim>'s dt ≤ 0.05 clamp, but any headless driver
+      // stepping with larger dt (the check scripts do) crashed here (2026-08-11).
+      while (holding <= 0 && acc >= SWEEP_PERIOD) {
         acc -= SWEEP_PERIOD
         const m = models[level - 1]
         const x = frames[level] as Int8Array

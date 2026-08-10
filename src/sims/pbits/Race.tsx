@@ -225,7 +225,9 @@ export function createRace(probe?: RaceProbe): Stepper {
           ctx.font = FONT_METER
           ctx.fillStyle = INK
           ctx.textAlign = 'right'
-          ctx.fillText(`lowest found: ${r.minE}`, tr.x + tr.w, tr.y + 10)
+          // narrow: 'lowest found' overprinted the pane title at 360px
+          // (figure audit, 2026-08-11)
+          ctx.fillText(w < 520 ? `low: ${r.minE}` : `lowest found: ${r.minE}`, tr.x + tr.w, tr.y + 10)
           ctx.textAlign = 'left'
         }
 
