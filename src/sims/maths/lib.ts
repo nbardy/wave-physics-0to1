@@ -292,10 +292,13 @@ export function drawStampImage(
   ctx.lineWidth = 1.8
   ctx.stroke()
   if (opts.dot !== false) {
-    const [X, Y] = map.f(cx + s * 0.62, cy + s * 0.62)
+    // ON the north-east corner — the prose says "a dot on one corner", and at
+    // the old 0.62 offset it floated in the interior, reading as a misplaced
+    // center dot rather than a chirality marker (flagged by Nick, 2026-08-05)
+    const [X, Y] = map.f(cx + s, cy + s)
     const [px, py] = toPx(view, r, X, Y)
     ctx.beginPath()
-    ctx.arc(px, py, 3, 0, Math.PI * 2)
+    ctx.arc(px, py, 3.4, 0, Math.PI * 2)
     ctx.fillStyle = PALETTE.stamp
     ctx.fill()
   }
