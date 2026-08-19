@@ -14,12 +14,11 @@ import { buildModel, drawHalo, drawLayerRail, edgeColor, type Edge, type PbitMod
 // question. The check script recomputes every readout through lib's
 // subModel + enumerate — an independent route to the same numbers.
 //
-// HIDDEN-ROLE INK: the working hue is PALETTE.dye2 (#db2777), the one warm
-// pink already in the palette contract and unused by the p-bit set —
-// ASSEMBLER: promote to a named key (e.g. PALETTE.hid) at the next palette
-// edit and re-point this import.
+// HIDDEN-ROLE INK: promoted to the palette contract as PALETTE.hid
+// (2026-08-13; same hex the figure always wore) — this alias keeps the
+// check-script import stable.
 
-export const HID_INK = PALETTE.dye2
+export const HID_INK = PALETTE.hid
 
 export const PART_N = 6
 export const PART_BETA = 0.9

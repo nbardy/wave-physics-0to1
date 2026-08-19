@@ -177,6 +177,10 @@ export function createPhaseTrainer(
       const cell = 14
       const pane = GLYPH_SIDE * cell
 
+      // narrow: the dream pane's fixed x = 198 ran its 172px tint to 370 —
+      // 10px past a 360px canvas (figure audit close-out item, 2026-08-17)
+      const narrow = w < 520
+      const paneW = narrow ? (w - 24) / 2 : 172
       const drawPhase = (
         px: number,
         tint: string,
@@ -186,7 +190,7 @@ export function createPhaseTrainer(
         yHeld: boolean,
       ) => {
         ctx.fillStyle = tint
-        ctx.fillRect(px, 30, 172, 196)
+        ctx.fillRect(px, 30, paneW, 196)
         ctx.font = FONT_METER
         ctx.fillStyle = '#1a1f2b'
         ctx.fillText(label, px + 10, 48)
@@ -208,8 +212,8 @@ export function createPhaseTrainer(
         ctx.fillStyle = 'rgba(85,96,111,0.9)'
         ctx.fillText('w — the hidden four, always free', px + 14, 186)
       }
-      drawPhase(16, TINT_DATA, 'data phase', yData, wData, true)
-      drawPhase(198, TINT_DREAM, 'dream phase', yDream, wDream, false)
+      drawPhase(narrow ? 8 : 16, TINT_DATA, 'data phase', yData, wData, true)
+      drawPhase(narrow ? 16 + paneW : 198, TINT_DREAM, 'dream phase', yDream, wDream, false)
 
       // strips — the two phases' statistics and their difference, the nudge
       const sy = 240

@@ -47,6 +47,7 @@ export function createDreamChain(
   const finished: Int8Array[] = []
   let finishedCount = 0
   let withinFamily = 0
+  let distSum = 0 // running Σ nearest-glyph Hamming distance over finished dreams
   const y = new Int8Array(NV)
   const wHid = new Int8Array(4)
   const fy = new Float64Array(NV)
@@ -103,6 +104,7 @@ export function createDreamChain(
             finishedCount++
             const dist = nearestGlyphDistance(done)
             if (dist <= 3) withinFamily++
+            distSum += dist
             if (probe) {
               probe.finished = finishedCount
               probe.withinFamily = withinFamily
@@ -164,9 +166,23 @@ export function createDreamChain(
       ctx.font = FONT_LABEL
       ctx.fillStyle = 'rgba(85,96,111,0.9)'
       ctx.fillText('finished dreams, newest first:', 30, sy - 6)
+      // the measured readout: running mean nearest-glyph Hamming distance —
+      // the number the sweeps knob moves (audit measured 1.24 @1 sweep vs
+      // 0.83 @10; check-pbit-act4.ts holds the knob's two ends to it)
+      if (finishedCount > 0) {
+        ctx.fillStyle = PALETTE.meter
+        ctx.textAlign = 'right'
+        const mean = (distSum / finishedCount).toFixed(2)
+        // narrow: the full label collided with the strip label at 360px
+        ctx.fillText(w < 520 ? `mean dist ${mean}` : `mean px from nearest glyph: ${mean}`, w - 30, sy - 6)
+        ctx.textAlign = 'left'
+      }
       const sc = 8
       finished.forEach((f, i) => {
-        drawGlyph(ctx, 30 + i * (GLYPH_SIDE * sc + 10), sy, sc, f)
+        // fit guard: at 360px the eighth strip glyph ran off the right edge
+        // (figure audit close-out item, 2026-08-17); 640px draws all eight
+        const px = 30 + i * (GLYPH_SIDE * sc + 10)
+        if (px + GLYPH_SIDE * sc <= w - 6) drawGlyph(ctx, px, sy, sc, f)
       })
     },
   }

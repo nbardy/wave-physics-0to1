@@ -415,6 +415,41 @@ a:hover {
   overflow-x: auto;
   padding: 0.5rem 0;
 }
+/* tables — for content that genuinely is tabular, not for layout. The wrapper
+   scrolls rather than the page: a wide table must never push the article body
+   sideways on a phone. */
+.prose table {
+  display: block;
+  overflow-x: auto;
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.94rem;
+  line-height: 1.5;
+}
+.prose thead th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--ink-soft);
+  font-size: 0.82rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--line);
+  padding: 0.4rem 0.9rem 0.4rem 0;
+  white-space: nowrap;
+}
+.prose tbody td {
+  vertical-align: top;
+  padding: 0.55rem 0.9rem 0.55rem 0;
+  border-bottom: 1px solid var(--line-soft, rgba(120, 140, 170, 0.18));
+}
+.prose tbody tr:last-child td {
+  border-bottom: none;
+}
+.prose tbody td:first-child {
+  color: var(--ink);
+  white-space: nowrap;
+}
 
 /* sim */
 .sim {

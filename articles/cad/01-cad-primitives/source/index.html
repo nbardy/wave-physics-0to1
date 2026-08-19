@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#090b10" />
+  <meta name="description" content="An interactive WebGPU explainer for B-splines, NURBS, T-splines, subdivision surfaces, and boundary representations." />
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <title>CAD primitives, visually</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <svg id="term-connector-layer" aria-hidden="true">
+    <path id="term-connector-path" d="" />
+  </svg>
+
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="CAD primitives, visually — home">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span>CAD primitives, visually</span>
+    </a>
+    <nav class="top-nav" aria-label="Primary navigation">
+      <a href="#map">Map</a>
+      <a href="#bspline">B-spline</a>
+      <a href="#nurbs">NURBS</a>
+      <a href="#tspline">T-spline</a>
+      <a href="#subd">SubD</a>
+      <a href="#brep">B-rep</a>
+    </nav>
+    <div class="runtime-badge" id="runtime-badge" aria-live="polite">
+      <span class="runtime-dot"></span>
+      <span id="runtime-label">Starting visuals…</span>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero shell">
+      <div class="hero-copy">
+        <p class="eyebrow">Interactive geometry foundations</p>
+        <h1>They are not four competing ways to draw the same surface.</h1>
+        <p class="hero-lede">
+          B-splines and NURBS are finite bases. T-splines alter the refinement structure.
+          SubD defines a smooth limit from a control mesh. B-rep records which bounded
+          pieces of geometry form a solid. This page lets you touch each distinction.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="#map">See how they fit</a>
+          <button class="button quiet" id="tour-button" type="button">Start guided tour</button>
+        </div>
+      </div>
+      <div class="category-stack" aria-label="Three categories">
+        <article class="category-card basis-card">
+          <p class="category-number">01</p>
+          <h2>Geometry basis</h2>
+          <p>B-spline, NURBS, T-spline</p>
+          <span>How a function or parametric surface is represented.</span>
+        </article>
+        <article class="category-card authoring-card">
+          <p class="category-number">02</p>
+          <h2>Authoring mechanism</h2>
+          <p>Control grids, T-meshes, SubD cages</p>
+          <span>How a designer creates and refines shape.</span>
+        </article>
+        <article class="category-card topology-card">
+          <p class="category-number">03</p>
+          <h2>Solid topology</h2>
+          <p>B-rep</p>
+          <span>How faces, wires, edges, and vertices bound matter.</span>
+        </article>
+      </div>
+    </section>
+
+    <section class="map-section shell" id="map">
+      <div class="section-heading compact-heading">
+        <p class="eyebrow">The category map</p>
+        <h2>One object can use all of them.</h2>
+        <p>
+          A SubD cage can author a form; a T-spline can add local surface detail; NURBS
+          patches can carry exact parametric geometry; a B-rep can assemble trimmed faces
+          into a closed solid. Toggle the layers rather than forcing a false winner.
+        </p>
+      </div>
+
+      <div class="integrated-card">
+        <div class="integrated-copy">
+          <div class="representation-flow" aria-label="Representation flow">
+            <button class="flow-node active" data-integration-layer="cage" type="button">
+              <span>Control structure</span>
+              <strong>SubD cage / T-mesh</strong>
+            </button>
+            <span class="flow-arrow" aria-hidden="true">→</span>
+            <button class="flow-node active" data-integration-layer="surface" type="button">
+              <span>Surface geometry</span>
+              <strong>B-spline / NURBS</strong>
+            </button>
+            <span class="flow-arrow" aria-hidden="true">→</span>
+            <button class="flow-node active" data-integration-layer="topology" type="button">
+              <span>Boundary topology</span>
+              <strong>B-rep</strong>
+            </button>
+          </div>
+          <div class="equation-card map-equation">
+            <p class="equation-label">Read it as composition, not replacement</p>
+            <div class="display-equation" aria-label="Control structure maps to surface geometry maps to boundary topology maps to solid">
+              <span class="math-token" tabindex="0" data-scene="integration" data-term="cage">control structure</span>
+              <span class="math-operator">↦</span>
+              <span class="math-token" tabindex="0" data-scene="integration" data-term="surface">surface geometry</span>
+              <span class="math-operator">↦</span>
+              <span class="math-token" tabindex="0" data-scene="integration" data-term="topology">boundary topology</span>
+              <span class="math-operator">↦</span>
+              <span class="math-token" tabindex="0" data-scene="integration" data-term="solid">solid</span>
+            </div>
+            <button class="latex-reveal" type="button" data-latex-target="latex-integration">View source</button>
+            <pre class="latex-source" id="latex-integration"><code>\text{control structure}\mapsto
+\text{surface geometry}\mapsto
+\text{boundary topology}\mapsto\text{solid}</code></pre>
+          </div>
+        </div>
+        <figure class="stage integration-stage" data-stage="integration">
+          <div class="canvas-wrap">
+            <canvas data-canvas="integration" aria-label="Interactive integrated CAD representation visual"></canvas>
+            <div class="canvas-fallback" data-fallback="integration"></div>
+            <div class="scene-overlay" data-overlay="integration"></div>
+            <div class="scene-target-handle" data-target-handle="integration" aria-hidden="true"><span></span></div>
+            <div class="canvas-corner-label">drag to orbit</div>
+          </div>
+          <figcaption class="stage-caption">
+            <label class="control-row lens-control" data-controls-term="surface">
+              <span>Representation lens</span>
+              <input id="integration-lens" type="range" min="0" max="2" value="1" step="0.01" />
+              <output for="integration-lens">surface</output>
+            </label>
+          </figcaption>
+        </figure>
+      </div>
+
+      <div class="comparison-wrap" aria-label="Comparison of CAD primitives">
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Primitive</th>
+              <th>Mathematical category</th>
+              <th>Typical authoring object</th>
+              <th>Local refinement</th>
+              <th>Solid occupancy by itself?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><th>B-spline / NURBS</th><td>Basis expansion and parametric map</td><td>Control polygon or rectangular grid</td><td>Local on curves; grid-propagating on tensor surfaces</td><td>No</td></tr>
+            <tr><th>T-spline</th><td>Locally structured spline basis</td><td>T-mesh</td><td>More genuinely local</td><td>No</td></tr>
+            <tr><th>SubD</th><td>Limit of recursive refinement</td><td>Polygonal control cage</td><td>Mesh edits and subdivision</td><td>No</td></tr>
+            <tr><th>B-rep</th><td>Topological boundary graph with geometry</td><td>Features, faces, wires, edges</td><td>Not a basis-refinement concept</td><td>Yes, when closed and valid</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="explainer-section shell" id="bspline" data-section="bspline">
+      <article class="lesson-copy">
+        <p class="eyebrow">01 · Geometry basis</p>
+        <h2>B-spline</h2>
+        <p class="definition">
+          A compactly supported basis for a finite-dimensional function space—closer to a
+          high-continuity finite-element basis than to a mysterious CAD curve.
+        </p>
+
+        <div class="equation-card">
+          <p class="equation-label">Curve evaluation</p>
+          <div class="display-equation" aria-label="C of u equals the sum from i equals zero to n of N i p of u times P i">
+            <span class="math-token editable" tabindex="0" data-scene="bspline" data-term="curve">C(<i>u</i>)</span>
+            <span class="math-operator">=</span>
+            <span class="math-token" tabindex="0" data-scene="bspline" data-term="sum">∑<span class="limit">ⁿᵢ₌₀</span></span>
+            <span class="math-token" tabindex="0" data-scene="bspline" data-term="basis">N<sub>i,p</sub>(<i>u</i>)</span>
+            <span class="math-token editable" tabindex="0" data-scene="bspline" data-term="control">P<sub>i</sub></span>
+          </div>
+          <button class="latex-reveal" type="button" data-latex-target="latex-bspline">View LaTeX</button>
+          <pre class="latex-source" id="latex-bspline"><code>C(u)=\sum_{i=0}^{n}N_{i,p}(u)P_i</code></pre>
+        </div>
+
+        <h3>What the symbols do</h3>
+        <p>
+          The basis functions <button class="inline-term" data-scene="bspline" data-term="basis" type="button">N<sub>i,p</sub></button>
+          are nonnegative, piecewise polynomial, compactly supported, and form a partition
+          of unity. The curve is therefore a local weighted average of nearby
+          <button class="inline-term" data-scene="bspline" data-term="control" type="button">control points</button>.
+          For degree <i>p</i>, at most <i>p + 1</i> basis functions are normally active inside one knot span.
+        </p>
+
+        <div class="concept-grid">
+          <article>
+            <h4>Knots partition parameter space</h4>
+            <p>They set polynomial joins, support intervals, continuity, and where additional control becomes available.</p>
+          </article>
+          <article>
+            <h4>Multiplicity controls continuity</h4>
+            <p>An interior knot of multiplicity <i>r</i> in degree <i>p</i> generally gives continuity C<sup>p−r</sup>.</p>
+          </article>
+          <article>
+            <h4>Knot insertion is exact refinement</h4>
+            <p>Add a knot and new control points without changing the represented curve. Try it in the visual.</p>
+          </article>
+        </div>
+
+        <details class="derivation">
+          <summary>Cox–de Boor recurrence</summary>
+          <div class="derivation-body">
+            <div class="small-equation">
+              <span>N<sub>i,0</sub>(u)=1</span> on [u<sub>i</sub>,u<sub>i+1</sub>) and 0 elsewhere.
+            </div>
+            <div class="small-equation multi-line">
+              <span>N<sub>i,p</sub>(u)=</span>
+              <span class="fraction"><span>(u−u<sub>i</sub>)N<sub>i,p−1</sub>(u)</span><span>u<sub>i+p</sub>−u<sub>i</sub></span></span>
+              <span>+</span>
+              <span class="fraction"><span>(u<sub>i+p+1</sub>−u)N<sub>i+1,p−1</sub>(u)</span><span>u<sub>i+p+1</sub>−u<sub>i+1</sub></span></span>
+            </div>
+            <p>Zero-over-zero terms are interpreted as zero.</p>
+          </div>
+        </details>
+      </article>
+
+      <figure class="stage sticky-stage" data-stage="bspline">
+        <div class="stage-head">
+          <div><span class="stage-kicker">Live basis evaluation</span><strong>Move P<sub>i</sub>; watch only local spans respond</strong></div>
+          <button class="reset-button" data-reset="bspline" type="button">Reset</button>
+        </div>
+        <div class="canvas-wrap">
+          <canvas data-canvas="bspline" aria-label="Interactive B-spline curve visual"></canvas>
+          <div class="canvas-fallback" data-fallback="bspline"></div>
+          <div class="scene-overlay handles-overlay" data-overlay="bspline"></div>
+          <div class="scene-target-handle" data-target-handle="bspline" aria-hidden="true"><span></span></div>
+          <div class="canvas-corner-label">drag control points</div>
+        </div>
+        <figcaption class="stage-caption controls-grid">
+          <label class="control-row" data-controls-term="u">
+            <span>Parameter <i>u</i></span>
+            <input id="bspline-u" type="range" min="0" max="1" value="0.42" step="0.001" />
+            <output for="bspline-u">0.42</output>
+          </label>
+          <label class="control-row" data-controls-term="degree">
+            <span>Degree <i>p</i></span>
+            <select id="bspline-degree"><option value="2">2 · quadratic</option><option value="3" selected>3 · cubic</option><option value="4">4 · quartic</option></select>
+          </label>
+          <label class="control-row" data-controls-term="control">
+            <span>Selected P<sub>i</sub></span>
+            <select id="bspline-point"></select>
+          </label>
+          <div class="control-row button-row" data-controls-term="knot">
+            <span>Knot refinement</span>
+            <button id="bspline-insert" type="button">Insert knot at u</button>
+            <output id="bspline-error">Δ = 0</output>
+          </div>
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="explainer-section shell" id="nurbs" data-section="nurbs">
+      <article class="lesson-copy">
+        <p class="eyebrow">02 · Rational basis</p>
+        <h2>NURBS</h2>
+        <p class="definition">
+          A NURBS curve is a rational B-spline: the same local spline basis plus a positive
+          weight at each control point and a normalization denominator.
+        </p>
+
+        <div class="equation-card">
+          <p class="equation-label">Rational curve</p>
+          <div class="display-equation rational-equation" aria-label="C of u equals sum N i p of u w i P i divided by sum N i p of u w i">
+            <span class="math-token" tabindex="0" data-scene="nurbs" data-term="curve">C(<i>u</i>)</span>
+            <span class="math-operator">=</span>
+            <span class="fraction">
+              <span>
+                <span class="math-token" tabindex="0" data-scene="nurbs" data-term="basis">∑ N<sub>i,p</sub>(u)</span>
+                <span class="math-token editable" tabindex="0" data-scene="nurbs" data-term="weight">w<sub>i</sub></span>
+                <span class="math-token editable" tabindex="0" data-scene="nurbs" data-term="control">P<sub>i</sub></span>
+              </span>
+              <span class="math-token" tabindex="0" data-scene="nurbs" data-term="denominator">∑ N<sub>i,p</sub>(u)w<sub>i</sub></span>
+            </span>
+          </div>
+          <button class="latex-reveal" type="button" data-latex-target="latex-nurbs">View LaTeX</button>
+          <pre class="latex-source" id="latex-nurbs"><code>C(u)=\frac{\sum_iN_{i,p}(u)w_iP_i}{\sum_iN_{i,p}(u)w_i}</code></pre>
+        </div>
+
+        <p>
+          In homogeneous coordinates, evaluate an ordinary B-spline through
+          <span class="math-inline">P̃<sub>i</sub>=(w<sub>i</sub>P<sub>i</sub>,w<sub>i</sub>)</span>
+          and project back. That rational projection is what lets finite NURBS exactly
+          represent conics such as circles and ellipses.
+        </p>
+
+        <div class="callout">
+          <strong>A weight is not “importance” in the abstract.</strong>
+          <p>Increasing w<sub>i</sub> changes the normalized rational blend and pulls the curve toward P<sub>i</sub>. Use the vertical handles in the visual.</p>
+        </div>
+
+        <h3>The tensor-product catch</h3>
+        <p>
+          On a rectangular NURBS surface, inserting a knot in one parameter direction
+          normally inserts a complete control-grid line across the patch. The desired edit
+          may be local; the representation refinement propagates. That is the pressure that
+          motivated T-splines.
+        </p>
+      </article>
+
+      <figure class="stage sticky-stage" data-stage="nurbs">
+        <div class="stage-head">
+          <div><span class="stage-kicker">Rational influence</span><strong>Drag P<sub>i</sub> or its weight stalk</strong></div>
+          <button class="reset-button" data-reset="nurbs" type="button">Reset</button>
+        </div>
+        <div class="canvas-wrap">
+          <canvas data-canvas="nurbs" aria-label="Interactive NURBS curve visual"></canvas>
+          <div class="canvas-fallback" data-fallback="nurbs"></div>
+          <div class="scene-overlay handles-overlay" data-overlay="nurbs"></div>
+          <div class="scene-target-handle" data-target-handle="nurbs" aria-hidden="true"><span></span></div>
+          <div class="canvas-corner-label">point = move · stalk = weight</div>
+        </div>
+        <figcaption class="stage-caption controls-grid">
+          <label class="control-row" data-controls-term="u"><span>Parameter <i>u</i></span><input id="nurbs-u" type="range" min="0" max="1" value="0.5" step="0.001" /><output for="nurbs-u">0.50</output></label>
+          <label class="control-row" data-controls-term="control"><span>Selected P<sub>i</sub></span><select id="nurbs-point"></select></label>
+          <label class="control-row" data-controls-term="weight"><span>Weight w<sub>i</sub></span><input id="nurbs-weight" type="range" min="0.1" max="4" value="1" step="0.01" /><output for="nurbs-weight">1.00</output></label>
+          <div class="control-row button-row" data-controls-term="denominator"><span>Presets</span><button id="nurbs-free" type="button">Free curve</button><button id="nurbs-circle" type="button">Exact quarter circle</button></div>
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="explainer-section shell" id="tspline" data-section="tspline">
+      <article class="lesson-copy">
+        <p class="eyebrow">03 · Local spline structure</p>
+        <h2>T-spline</h2>
+        <p class="definition">
+          A spline surface whose control-grid lines may terminate in T-junctions, allowing
+          local refinement without forcing every new line across the entire patch.
+        </p>
+
+        <div class="equation-card">
+          <p class="equation-label">Anchor-local rational basis</p>
+          <div class="display-equation rational-equation" aria-label="S of u v equals rational sum over anchors A of weights, points and local basis functions">
+            <span class="math-token" tabindex="0" data-scene="tspline" data-term="surface">S(u,v)</span>
+            <span class="math-operator">=</span>
+            <span class="fraction">
+              <span>∑<sub>A</sub>
+                <span class="math-token editable" tabindex="0" data-scene="tspline" data-term="anchor">w<sub>A</sub>P<sub>A</sub></span>
+                <span class="math-token" tabindex="0" data-scene="tspline" data-term="local-basis">N<sub>A</sub>(u)M<sub>A</sub>(v)</span>
+              </span>
+              <span>∑<sub>A</sub>w<sub>A</sub>N<sub>A</sub>(u)M<sub>A</sub>(v)</span>
+            </span>
+          </div>
+          <button class="latex-reveal" type="button" data-latex-target="latex-tspline">View LaTeX</button>
+          <pre class="latex-source" id="latex-tspline"><code>S(u,v)=\frac{\sum_A w_AP_A N_A(u)M_A(v)}{\sum_Aw_A N_A(u)M_A(v)}</code></pre>
+        </div>
+
+        <p>
+          Each anchor obtains local knot vectors from the surrounding T-mesh rather than
+          from one global rectangular index pair. The combinatorics matter: arbitrary
+          T-junctions do not automatically preserve linear independence, partition of unity,
+          nestedness, or analysis compatibility.
+        </p>
+
+        <div class="callout warning-callout">
+          <strong>What this panel shows—and what it does not.</strong>
+          <p>The GPU surface is a support/refinement diagram: it faithfully shows terminating grid lines and localized influence, but it is not a production analysis-suitable T-spline evaluator.</p>
+        </div>
+
+        <div class="concept-grid two-up">
+          <article><h4>Tensor grid</h4><p>A new knot line propagates through the whole patch.</p></article>
+          <article><h4>T-mesh</h4><p>A refinement strip can terminate, concentrating controls near the edit.</p></article>
+        </div>
+      </article>
+
+      <figure class="stage sticky-stage" data-stage="tspline">
+        <div class="stage-head">
+          <div><span class="stage-kicker">Local refinement structure</span><strong>Compare a full grid line with a T-junction</strong></div>
+          <button class="reset-button" data-reset="tspline" type="button">Reset</button>
+        </div>
+        <div class="canvas-wrap">
+          <canvas data-canvas="tspline" aria-label="Interactive T-spline support and local refinement visual"></canvas>
+          <div class="canvas-fallback" data-fallback="tspline"></div>
+          <div class="scene-overlay handles-overlay" data-overlay="tspline"></div>
+          <div class="scene-target-handle" data-target-handle="tspline" aria-hidden="true"><span></span></div>
+          <div class="canvas-corner-label">drag to orbit</div>
+        </div>
+        <figcaption class="stage-caption controls-grid">
+          <label class="control-row" data-controls-term="anchor"><span>Local anchor height</span><input id="tspline-detail" type="range" min="-0.8" max="1.4" value="0.65" step="0.01" /><output for="tspline-detail">0.65</output></label>
+          <label class="control-row switch-row" data-controls-term="t-junction"><span>Terminate refinement line</span><input id="tspline-local" type="checkbox" checked /><i></i></label>
+          <label class="control-row switch-row" data-controls-term="local-basis"><span>Show support footprint</span><input id="tspline-support" type="checkbox" checked /><i></i></label>
+          <label class="control-row" data-controls-term="anchor"><span>Selected anchor</span><select id="tspline-anchor"><option value="center">center local anchor</option><option value="left">left neighbor</option><option value="right">right neighbor</option></select></label>
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="explainer-section shell" id="subd" data-section="subd">
+      <article class="lesson-copy">
+        <p class="eyebrow">04 · Recursive limit surface</p>
+        <h2>Subdivision surface / SubD</h2>
+        <p class="definition">
+          A smooth surface defined as the limit of repeatedly refining a coarse polygonal
+          control mesh.
+        </p>
+
+        <div class="equation-card">
+          <p class="equation-label">Catmull–Clark vertex update</p>
+          <div class="display-equation rational-equation" aria-label="P prime equals F bar plus two E bar plus n minus three P all divided by n">
+            <span class="math-token editable" tabindex="0" data-scene="subd" data-term="updated-vertex">P′</span>
+            <span class="math-operator">=</span>
+            <span class="fraction">
+              <span>
+                <span class="math-token" tabindex="0" data-scene="subd" data-term="face-points">F̄</span>
+                + 2<span class="math-token" tabindex="0" data-scene="subd" data-term="edge-midpoints">Ē</span>
+                + (<span class="math-token" tabindex="0" data-scene="subd" data-term="valence">n</span>−3)
+                <span class="math-token editable" tabindex="0" data-scene="subd" data-term="control-vertex">P</span>
+              </span>
+              <span>n</span>
+            </span>
+          </div>
+          <button class="latex-reveal" type="button" data-latex-target="latex-subd">View LaTeX</button>
+          <pre class="latex-source" id="latex-subd"><code>P'=\frac{\bar F+2\bar E+(n-3)P}{n}</code></pre>
+        </div>
+
+        <p>
+          Face points average each face. Interior edge points average their two endpoints
+          and two neighboring face points. Old vertices move according to the rule above.
+          Each polygon is replaced with quads; repeating the process approaches the limit.
+        </p>
+
+        <div class="concept-grid two-up">
+          <article><h4>Regular region</h4><p>At valence four, Catmull–Clark agrees with a bicubic uniform B-spline surface.</p></article>
+          <article><h4>Extraordinary vertex</h4><p>Other valences permit arbitrary mesh topology; smoothness analysis uses the subdivision matrix.</p></article>
+        </div>
+
+        <p>
+          SubD is an exceptional authoring mechanism for organic forms and arbitrary cage
+          topology. Exact radii, analytic cylinders, trimming, robust booleans, and solid
+          semantics belong to other layers.
+        </p>
+      </article>
+
+      <figure class="stage sticky-stage" data-stage="subd">
+        <div class="stage-head">
+          <div><span class="stage-kicker">Computed Catmull–Clark</span><strong>Edit the coarse cage; inspect each refinement level</strong></div>
+          <button class="reset-button" data-reset="subd" type="button">Reset</button>
+        </div>
+        <div class="canvas-wrap">
+          <canvas data-canvas="subd" aria-label="Interactive Catmull-Clark subdivision surface visual"></canvas>
+          <div class="canvas-fallback" data-fallback="subd"></div>
+          <div class="scene-overlay handles-overlay" data-overlay="subd"></div>
+          <div class="scene-target-handle" data-target-handle="subd" aria-hidden="true"><span></span></div>
+          <div class="canvas-corner-label">drag cage points · background to orbit</div>
+        </div>
+        <figcaption class="stage-caption controls-grid">
+          <label class="control-row" data-controls-term="level"><span>Refinement level k</span><input id="subd-level" type="range" min="0" max="4" value="3" step="1" /><output for="subd-level">3</output></label>
+          <label class="control-row" data-controls-term="control-vertex"><span>Selected P</span><select id="subd-vertex"></select></label>
+          <label class="control-row" data-controls-term="control-vertex"><span>Selected vertex height</span><input id="subd-height" type="range" min="-1.4" max="1.4" value="0.8" step="0.01" /><output for="subd-height">0.80</output></label>
+          <label class="control-row switch-row" data-controls-term="face-points"><span>Show one-step construction</span><input id="subd-construction" type="checkbox" /><i></i></label>
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="explainer-section shell" id="brep" data-section="brep">
+      <article class="lesson-copy">
+        <p class="eyebrow">05 · Boundary topology</p>
+        <h2>B-rep</h2>
+        <p class="definition">
+          A boundary representation is not a surface basis. It is an oriented topological
+          structure saying which bounded curves and surfaces form the boundary of a solid.
+        </p>
+
+        <div class="equation-card hierarchy-equation">
+          <p class="equation-label">Topological containment</p>
+          <div class="display-equation hierarchy-line">
+            <span class="math-token" tabindex="0" data-scene="brep" data-term="solid">Solid</span>
+            <span>⊃</span>
+            <span class="math-token" tabindex="0" data-scene="brep" data-term="shell">Shell</span>
+            <span>= ⋃</span>
+            <span class="math-token" tabindex="0" data-scene="brep" data-term="face">Face<sub>j</sub></span>
+          </div>
+          <div class="display-equation hierarchy-line">
+            <span>∂</span><span class="math-token" tabindex="0" data-scene="brep" data-term="face">Face</span>
+            <span>=</span>
+            <span class="math-token editable" tabindex="0" data-scene="brep" data-term="outer-wire">Wire<sub>outer</sub></span>
+            <span>⊔</span>
+            <span class="math-token editable" tabindex="0" data-scene="brep" data-term="inner-wire">Wire<sub>inner</sub></span>
+          </div>
+          <button class="latex-reveal" type="button" data-latex-target="latex-brep">View LaTeX</button>
+          <pre class="latex-source" id="latex-brep"><code>\mathrm{Solid}\supset\mathrm{Shell}=\bigcup_j\mathrm{Face}_j
+
+\partial\mathrm{Face}=\mathrm{Wire}_{outer}\sqcup\mathrm{Wire}_{inner}</code></pre>
+        </div>
+
+        <p>
+          A face is a bounded region of an underlying surface. An edge is a bounded interval
+          of a curve. A wire is an oriented loop of edges. A shell is an oriented connected
+          set of faces. A valid closed shell can bound a solid.
+        </p>
+
+        <div class="callout">
+          <strong>Geometry and topology are deliberately distinct.</strong>
+          <p>The top face in the visual lies on an infinite plane, but its outer and inner wires select only a finite planar region with a hole.</p>
+        </div>
+
+        <h3>Why booleans are hard</h3>
+        <p>
+          A B-rep boolean intersects support surfaces, constructs intersection curves,
+          splits faces and edges, classifies fragments, rebuilds shells, and verifies
+          orientation and closure. Tangencies, near-coincidences, slivers, and tolerance-scale
+          features make that pipeline numerically delicate.
+        </p>
+      </article>
+
+      <figure class="stage sticky-stage" data-stage="brep">
+        <div class="stage-head">
+          <div><span class="stage-kicker">Topology over geometry</span><strong>A closed plate with one inner wire</strong></div>
+          <button class="reset-button" data-reset="brep" type="button">Reset</button>
+        </div>
+        <div class="canvas-wrap">
+          <canvas data-canvas="brep" aria-label="Interactive boundary representation hierarchy visual"></canvas>
+          <div class="canvas-fallback" data-fallback="brep"></div>
+          <div class="scene-overlay handles-overlay" data-overlay="brep"></div>
+          <div class="scene-target-handle" data-target-handle="brep" aria-hidden="true"><span></span></div>
+          <div class="canvas-corner-label">drag hole corner · background to orbit</div>
+        </div>
+        <figcaption class="stage-caption controls-grid">
+          <label class="control-row" data-controls-term="inner-wire"><span>Inner-wire size</span><input id="brep-hole" type="range" min="0.25" max="0.72" value="0.46" step="0.01" /><output for="brep-hole">0.46</output></label>
+          <label class="control-row" data-controls-term="solid"><span>Solid thickness</span><input id="brep-thickness" type="range" min="0.12" max="0.8" value="0.38" step="0.01" /><output for="brep-thickness">0.38</output></label>
+          <label class="control-row" data-controls-term="face"><span>Inspect entity</span><select id="brep-entity"><option value="solid">Solid</option><option value="shell">Shell</option><option value="face">Top Face</option><option value="outer-wire">Outer Wire</option><option value="inner-wire">Inner Wire</option><option value="edge">Edge</option><option value="vertex">Vertex</option><option value="surface">Underlying Surface</option></select></label>
+          <label class="control-row switch-row" data-controls-term="surface"><span>Show support plane</span><input id="brep-plane" type="checkbox" /><i></i></label>
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="closing-section shell">
+      <div>
+        <p class="eyebrow">The durable mental model</p>
+        <h2>Basis, authoring, and topology are separate axes.</h2>
+      </div>
+      <div class="closing-copy">
+        <p><strong>B-spline / NURBS:</strong> finite coordinates for parametric functions.</p>
+        <p><strong>T-spline:</strong> a locally refinable spline support structure.</p>
+        <p><strong>SubD:</strong> a smooth limit generated from recursive cage refinement.</p>
+        <p><strong>B-rep:</strong> a topological boundary structure whose entities reference geometry.</p>
+      </div>
+    </section>
+
+    <section class="references shell">
+      <div class="section-heading compact-heading">
+        <p class="eyebrow">Primary reading</p>
+        <h2>Go beneath the explainer.</h2>
+      </div>
+      <div class="reference-grid">
+        <a href="https://ftp.cs.wisc.edu/Approx/paper.pdf" target="_blank" rel="noreferrer"><strong>Carl de Boor</strong><span>B(asic)-Spline Basics</span></a>
+        <a href="https://dl.acm.org/doi/10.1145/882262.882295" target="_blank" rel="noreferrer"><strong>Sederberg et al.</strong><span>T-splines and T-NURCCs</span></a>
+        <a href="https://people.eecs.berkeley.edu/~sequin/CS284/PAPERS/CatmullClark_SDSurf.pdf" target="_blank" rel="noreferrer"><strong>Catmull &amp; Clark</strong><span>Recursively generated B-spline surfaces</span></a>
+        <a href="https://dev.opencascade.org/doc/overview/html/specification__brep_format.html" target="_blank" rel="noreferrer"><strong>Open CASCADE</strong><span>BRep format and topology</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer shell">
+    <span>Interactive CAD primitives explainer</span>
+    <span>WebGPU with a Canvas fallback · no stored data</span>
+  </footer>
+
+  <dialog id="tour-dialog">
+    <button class="dialog-close" type="button" aria-label="Close tour">×</button>
+    <p class="eyebrow">How to use the page</p>
+    <h2>Follow a symbol into geometry.</h2>
+    <ol>
+      <li>Hover or focus a highlighted equation term.</li>
+      <li>The matching GPU geometry lights up and a connector identifies it.</li>
+      <li>Click the term to pin it and focus its editor.</li>
+      <li>Drag the on-canvas handle or use the precise control below.</li>
+    </ol>
+    <button class="button primary dialog-start" type="button">Begin with B-splines</button>
+  </dialog>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

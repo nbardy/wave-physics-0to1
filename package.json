@@ -12,6 +12,8 @@
     "check:pbits": "bun run scripts/check-pbit-figures.ts && bun run scripts/check-pbit-act1.ts && bun run scripts/check-pbit-act2.ts && bun run scripts/check-pbit-act3.ts && bun run scripts/check-pbit-act4.ts",
     "check:z1": "bun run scripts/check-z1.ts && bun run scripts/check-walk.ts",
     "check:part2": "bun run scripts/check-walk-figs.ts && bun run scripts/check-part2-figs.ts && bun run scripts/check-metaebm.ts",
+    "check:cad": "bun run scripts/check-cad.ts",
+    "check:learned": "bun run scripts/check-learned.ts",
     "deploy": "bash scripts/deploy-pages.sh"
   },
   "dependencies": {
@@ -31,6 +33,7 @@
     "@vitejs/plugin-react": "^4.3.4",
     "@webgpu/types": "^0.1.71",
     "rehype-katex": "^7.0.1",
+    "remark-gfm": "^4.0.1",
     "remark-math": "^6.0.0",
     "typescript": "^5.6.3",
     "vite": "^6.0.3"

@@ -24,10 +24,10 @@ import {
 
 /** The article's one new color: visitation glow q(x) — how often the
  *  upstream program shows an input. Warm, adjacent to nothing in the p-bit
- *  set (sUp amber marks a spin, this marks attention). Local constant
- *  because palette.ts is FROZEN this round — ASSEMBLER: promote to
- *  PALETTE.visit at the next palette edit and re-point these imports. */
-export const VISIT = '#fb923c'
+ *  set (sUp amber marks a spin, this marks attention). Promoted to the
+ *  palette contract (2026-08-13); this alias keeps the figure/check imports
+ *  stable. */
+export const VISIT = PALETTE.visit
 
 /** Per-context per-step KL(K(·|i) ‖ K̃(·|i)) over the five valid contexts —
  *  the left pane's bars, exact (target mass on invalid outputs is zero). */
@@ -125,8 +125,12 @@ export function drawSplitMeter(
   ctx.textAlign = 'left'
   ctx.font = FONT_LABEL
   ctx.fillStyle = 'rgba(85,96,111,0.9)'
-  ctx.fillText('per-step KL', left.x, r.y + 8)
-  ctx.fillText(`trajectory occupancy, T=${d.depth}`, right.x, r.y + 8)
+  // Narrow instrument (the 360px mounts hand the meter ~120–160px): the full
+  // right-pane header ran ~130px and overprinted whatever sat to its right
+  // (figure audit, 2026-08-13). Same facts, compressed wording.
+  const narrow = r.w < 240
+  ctx.fillText(narrow ? 'step KL' : 'per-step KL', left.x, r.y + 8)
+  ctx.fillText(narrow ? `occup. T=${d.depth}` : `trajectory occupancy, T=${d.depth}`, right.x, r.y + 8)
   paneFrame(ctx, left)
   paneFrame(ctx, right)
 
@@ -144,7 +148,9 @@ export function drawSplitMeter(
   }
   ctx.font = FONT_METER
   ctx.fillStyle = PALETTE.meter
-  ctx.fillText(`q-avg KL: ${fmt(d.klWeighted, 3)}`, left.x, left.y + left.h + 16)
+  // Narrow: the full 'q-avg KL' readout ran into the right-aligned TV number
+  // on the same row — compressed label, same number.
+  ctx.fillText(narrow ? `KL ${fmt(d.klWeighted, 3)}` : `q-avg KL: ${fmt(d.klWeighted, 3)}`, left.x, left.y + left.h + 16)
 
   // right: 6 buckets — 5 nodes + the off-graph bucket
   const nb = N_NODES + 1

@@ -1,0 +1,472 @@
+import { WarmStartRace } from '../sims/learned/WarmStartRace'
+import { SolveDebt } from '../sims/learned/SolveDebt'
+import { SlowModes } from '../sims/learned/SlowModes'
+import { ProposalAnatomy } from '../sims/learned/ProposalAnatomy'
+import { FourWays } from '../sims/learned/FourWays'
+import { ImpulseResponse } from '../sims/learned/ImpulseResponse'
+import { UngatedRollout } from '../sims/learned/UngatedRollout'
+import { SabotageGate } from '../sims/learned/SabotageGate'
+
+# Teaching a Solver to Guess
+
+There is a neural network running a few centimeters below this paragraph. It has 809
+weights, they are checked into this website's repository, and they were trained on the
+fluid solver from lesson 01 — the same channel, the same disc, the same Gauss–Seidel
+sweeps. It is doing real work. About two thirds of the arithmetic in a pressure solve
+stops happening because of it.
+
+It is also, by the only measurement that solver ever takes, worse than guessing zero.
+
+<WarmStartRace height={250} />
+
+Three panes, one moment of a fluid simulation. On the left is the defect the solver
+has to fix: the amount by which the flow, at this instant, is trying to squeeze fluid
+into places that are already full. Lesson 01 called that
+<C k="div">divergence</C>, and it is still violet, and it is still the crime.
+
+The middle pane and the right pane are both solving the same problem: find the
+<C k="pHi">pressure</C> field whose gradient cancels that defect. The middle one
+starts from nothing and sweeps. The right one starts from what the network proposed —
+and I will use <C k="dye">amber</C> for that proposal throughout this lesson and for
+nothing else, so a color always answers *who said this*. In every other lesson in this
+series amber is the thing we watch. Here it is the thing we do not trust.
+
+Watch the first frame. The middle pane is blank; the right pane already has a
+pressure field in it, and the field is nearly correct. Now read the two meters
+underneath. The blank pane has a residual of 1.000. The pane with a nearly correct
+answer in it has a residual of 2.42.
+
+Nothing is broken. The residual is telling the truth. So is the picture. Getting those
+two facts to sit in the same head is most of what there is to learn here, and once
+they do, the question *where should a neural network go inside a physics simulation*
+answers itself.
+
+## The Seam
+
+Lesson 01 ended by assembling the equation and then running it. One timestep of that
+solver is four moves, in order — with whatever outside force there is, your finger or
+a fan, added before the first of them:
+
+$$\text{diffuse} \;\to\; \text{advect} \;\to\; \text{boundaries} \;\to\; \text{project}$$
+
+The last one is the expensive one. *Project* is where the solver conjures the pressure
+field that keeps the fluid incompressible — the silent bookkeeping from lesson 01's
+last paragraph. It is expensive because, unlike the other four, it is not a formula
+you evaluate. It is a linear system you have to solve:
+
+$$\nabla^2 p = \nabla\cdot\mathbf{u}^*, \qquad \text{then} \qquad \mathbf{u} = \mathbf{u}^* - \nabla p$$
+
+Every cell's pressure depends on its neighbours', whose pressure depends on theirs,
+all the way across the grid. On a 96 × 64 channel that is six thousand equations in
+six thousand unknowns, and the solver has to answer them again before the next frame.
+
+That is the seam. Three of those moves are local formulas with no notion of being
+finished, and the fourth is a question with a checkable answer. You can hand the solver a
+pressure field — any pressure field, from anywhere, computed by anything — and it can
+tell you in one pass over the grid how wrong that field is. Nothing else in the
+timestep has that property.
+
+Hold onto it. It is going to turn out to be the entire safety argument.
+
+## The Debt in the Timestep
+
+Here is something lesson 01 did not tell you about its own solver. `project` does not
+solve that system. It does forty Gauss–Seidel sweeps and stops.
+
+Not forty sweeps *because* forty is enough. Forty because forty was the number in the
+code. There is no check, no tolerance, and no report. Whatever defect is left over
+after the fortieth sweep rides forward into the next timestep, and the solver has
+never once mentioned it.
+
+<SolveDebt height={250} />
+
+The wake on the left is the lesson-01 cylinder, unchanged. The trace on the right is
+the one line of instrumentation this lesson adds: after the projection has spent its
+budget, how much of the defect is still there? The answer, at the shipped setting of
+forty sweeps, is about a fifth of it — two hundred times the <C k="visc">gate</C> the
+rest of this lesson will use, and the solver crosses that gate on precisely zero of
+its timesteps.
+
+Drag the budget down to four sweeps and the flow visibly changes: the streaks stop
+mixing, the wake thins, the fluid gets stiffer and more obedient than any real fluid
+is. Drag it up to two hundred and the defect falls, slowly, and the frame rate falls
+with it. Nowhere on that slider does the trace touch the gate.
+
+This is worth sitting with, because it is the honest starting position for everything
+that follows. The simulation in lesson 01 is not converged. It was never converged.
+It looks like a fluid because the leftover defect is smooth and small and gets
+partially cancelled next step, not because the pressure equation was solved.
+
+## Five Ways to Be Wrong
+
+Before asking whether learning improves a solver, name the error it is supposed to
+reduce. There are five, they are genuinely different, and a technique that shrinks one
+of them can be completely silent about the other four.
+
+| the error | what it means | what fixes it |
+|---|---|---|
+| **model-form** | the equations leave out a real stress, flux, or phase | better physics; a closure that supplies the missing term |
+| **discretization** | the grid and the timestep approximate the continuum badly | finer mesh, better stencils, higher-order fluxes |
+| **iterative** | the linear system was not solved tightly enough | more sweeps, a better solver, a better initial guess |
+| **input / state** | the geometry, the forcing, the initial condition are wrong | measurement, data assimilation, inverse modelling |
+| **tail / decision** | the mean is fine and the rare event is what mattered | ensembles, uncertainty, calibration |
+
+The trace you just watched is the third row and only the third row. A neural network
+that helps with it will not make the physics more correct, will not fix a coarse
+grid, and will not tell you that your inflow speed was measured wrong. It will make
+the machine reach the answer it was already going to reach, sooner.
+
+That is a much smaller claim than "deep learning improves the simulation." It is also
+the only one in the table with a meter attached, which is why it is the one this
+lesson can actually settle.
+
+<Waypoint>
+The pressure projection is a linear system the solver never finishes, and the amount
+it leaves unfinished is measurable in one pass over the grid. Everything from here is
+about making that unfinished business cheaper — never about making it optional.
+</Waypoint>
+
+## Why Sweeping Is Slow
+
+A Gauss–Seidel sweep is the simplest thing that could possibly work: walk the grid,
+and set each cell's pressure to the average of its four neighbours, minus the local
+defect. Repeat. It converges. It just converges at wildly different speeds depending
+on *what shape* the remaining error has.
+
+The demonstration below is that fact, isolated. The exact answer to the problem it is
+solving is zero everywhere, so whatever is in the field *is* the error, and you can
+watch it die. It starts as the sum of two patterns of equal size: one gentle bulge
+spanning the whole box, and one fine ripple you can set with the slider.
+
+<SlowModes height={240} />
+
+The ripple is gone in about a dozen sweeps. The bulge is still there after six
+hundred.
+
+This is not a quirk of Gauss–Seidel; it is what local averaging *is*. Averaging a cell
+with its neighbours can only move information one cell per sweep, so an error that
+spans a hundred cells needs on the order of a hundred sweeps before the two ends of it
+have even heard about each other — and thousands before they agree. An error that
+spans three cells is negotiated away immediately.
+
+Now put that next to the residual. The residual is $\nabla^2 p - b$, and $\nabla^2$ is
+a difference of neighbours: it responds enormously to a field that wiggles between
+adjacent cells and barely at all to a field that drifts gently across the whole
+domain. The residual is loudest about exactly the errors that are cheapest to remove,
+and quietest about the errors that cost thousands of sweeps.
+
+So the meter the solver watches and the work the solver has left are, in the regime
+that matters, almost anti-correlated. That is the whole strange arithmetic of the
+opening figure, and it also says precisely what a useful guess would look like: get
+the gentle, whole-domain part right, and don't waste a single parameter on the ripple.
+
+## Learning the Smooth Half
+
+Which is what the network is. All 809 numbers of it.
+
+<ProposalAnatomy height={220} />
+
+Read it left to right. The first pane is the defect — six thousand numbers. The second
+pane is everything the network is permitted to look at: the same field averaged down
+to 8 × 8 blocks, ninety-six numbers, ninety-eight percent of the information thrown
+away before the first multiply.
+
+That is not a compromise made for speed. It is the architecture stating what it
+believes. A network that cannot see structure finer than eight cells cannot propose
+structure finer than eight cells, so it can never spend effort on the ripple the
+sweeps were going to erase for free — and it can never be blamed for getting the
+ripple wrong.
+
+From those ninety-six numbers it runs three 3 × 3 convolutions. Stacked, they span
+seven coarse cells — seven of the twelve across the channel and seven of the eight
+down it, which is most of the domain. That reach is the point: pressure is nonlocal — poke the fluid here and the pressure everywhere changes
+— and three small local operations, stacked, is how you build a long-range response
+out of short-range parts.
+
+Then the coarse field is stretched back to full resolution, and that is the proposal:
+the third pane. The fourth is the answer, from a conjugate-gradient solve run a
+thousand times past the gate.
+
+The two panes look almost the same, and the meter agrees: roughly nine tenths of the
+field is already right. The other meter — the residual — reads 2.42, which is to say that if
+you rank these two by the quantity the solver actually measures, an empty grid beats
+it.
+
+Two symmetries are built into the model rather than trained into it, because a network
+that has to learn a symmetry burns capacity and still only gets it approximately.
+Pressure scales linearly with the defect, so the input is divided by its own magnitude
+on the way in and multiplied back on the way out; doubling the inflow speed cannot
+surprise this network because it never sees a magnitude. And pressure carries a factor
+of length squared, so the network's own numbers are read in units of the coarse cell's
+size squared, which keeps them near one.
+
+## Where the Data Came From
+
+Six configurations of the lesson-01 channel — different inflow speeds, viscosities,
+disc positions and sizes, some of them stirred with random impulses. Each one warmed
+up and then sampled forty times, giving 240 divergence fields.
+
+Those fields are not simulated stand-ins for what a solver sees. They are read
+directly out of `solver.div` after a real timestep, which is the array `project`
+itself writes before it starts sweeping. The network is trained on the exact defect
+the exact solver hands it.
+
+The targets are the converged pressure fields, from conjugate gradients run to a
+relative residual of $10^{-5}$ — a hundred times tighter than the gate anything in
+this lesson is judged against. Training is 8,000 steps of Adam on batches of twelve,
+about a minute on a laptop, with the analytic gradient checked against finite
+differences before the first step is taken.
+
+And the loss is mean-squared error on the pressure field. Not on the residual.
+
+That choice is the entire preceding section, cashed out. The residual is the quantity
+you can measure without knowing the answer, which makes it the tempting thing to
+train on, and it is the wrong thing to train on: minimizing it would push the network
+to chase the high-frequency modes it cannot represent and does not need to, and would
+teach it to ignore the smooth error that is the only thing it is there for. Train on
+the error you are trying to remove, even when the error is the expensive quantity to
+compute. You only have to compute it once, offline, in a script.
+
+## The Race
+
+<WarmStartRace height={250} knobs />
+
+Same figure as the top of the page, now with its knobs exposed.
+
+The first two cases are held-out fields — same family as the training set, parameters
+the network never saw. Averaged over sixteen of them, the sweep count to reach a
+relative residual of $10^{-3}$ falls from 2330 to 840. The network saves 64% of the
+work, and the two paths agree on the answer to about a quarter of a percent of peak
+pressure.
+
+The gate buttons are worth a minute on their own, because they show where the headline
+number comes from. Loosen the gate to $10^{-2}$ and the speedup climbs above eight
+times. Tighten it to $10^{-4}$ and it falls to about two. The reason is not subtle: a
+warm start is a head start, and the further away the finish line is, the less a head
+start is worth. Any speedup quoted for a technique like this is a function of how much
+correctness you were willing to stop short of, and quoting it without the tolerance is
+quoting nothing.
+
+Watch the agreement number as you loosen the gate too. At $10^{-3}$ the two accepted
+answers differ by 0.24% of peak pressure; at $10^{-2}$ they differ by 6%. The gate is
+not a formality attached to the end of the pipeline. It *is* the contract, and its
+number is the strength of the contract.
+
+The last three cases are out of distribution — an airfoil at 14°, two discs, an open
+channel with no obstacle at all. The speedup drops to about 1.6×. Notice what does
+not drop.
+
+## Name the Baseline
+
+Everything so far is true and everything so far is incomplete, because a speedup is a
+ratio and a ratio needs a denominator. Gauss–Seidel is what this series ships. It is
+also, as solvers of this system go, a soft target — and an accelerator measured only
+against a soft target has proved nothing except that the target was soft.
+
+So: conjugate gradients. Same matrix, same right-hand side, same gate, no learning
+anywhere, and published in 1952.
+
+<Predict
+  question="Cold conjugate gradients against the network-warmed sweeps — which crosses the gate first?"
+  a="the warm sweeps: the network is worth more than a better algorithm"
+  b="cold conjugate gradients: the better algorithm is worth more than the network"
+>
+  <FourWays height={300} />
+</Predict>
+
+The horizontal axis is passes over the grid rather than iterations, because iterations
+are not comparable between these methods: a Gauss–Seidel sweep touches every cell
+once, and a conjugate-gradient step touches it about three times. Counting iterations
+would flatter conjugate gradients by a factor of three, and this figure is meant to be
+unflattering to whichever method you arrived rooting for.
+
+Four numbers, on the same field, in the same units of work:
+
+| | passes to the gate |
+|---|---|
+| sweeps, from zero | 2679 |
+| sweeps, from the network | 792 |
+| conjugate gradients, from zero | 420 |
+| conjugate gradients, from the network | 378 |
+
+The network's 3.4× is real. It is also smaller than the 6.4× you get by changing
+nothing about the machine learning and everything about the linear algebra — and the
+two are not additive, because they are competing to remove the same smooth error.
+Applied to the better solver, the network is worth 1.1×.
+
+None of that makes the 3.4× a lie. It makes it an answer to a question about
+Gauss–Seidel. "Our neural accelerator makes this solver 3.4× faster" and "a 1952
+algorithm makes it 6.4× faster, and the accelerator then adds 11% on top of that" are
+the same afternoon of measurements, on the same field, to the same tolerance. Only one
+of them tells you what to do on Monday.
+
+<Waypoint>
+The network genuinely removes most of the smooth error, and so does a good classical
+solver, and there is only one smooth error to remove. Whatever a learned component is
+worth, it is worth it against the best baseline you were willing to implement — never
+against the one you happened to have.
+</Waypoint>
+
+## What It Actually Learned
+
+There is a temptation, once something works, to describe it as having learned the
+operator: *the network learned to solve Poisson's equation*. It is easy to check
+whether that is true. Poke the divergence field in one place and look at the response.
+
+<ImpulseResponse height={330} />
+
+The true response is the Green's function of the discrete Laplacian: a symmetric well,
+deepest at the poke, falling away logarithmically, and — this is the part that
+matters — the same shape wherever you put it. Drag the slider and the left pane's well
+slides along with you, unchanged.
+
+The right pane does not do that. It produces a blurred, blocky approximation, missing
+the sharp centre entirely, with visible eight-cell seams from the grid it was built
+on, and it is 40 to 45% wrong depending on where you put the poke — against 11% on the
+wake fields it was trained on.
+
+So the honest description is narrower and more useful: it learned what the pressure
+around a wake in this channel tends to look like. It is a very good prior and it is
+not an operator. That single sentence predicts the out-of-distribution numbers from
+the previous section before you measure them, which is the test of whether a
+description of a model is worth anything.
+
+## The Gate Is the Architecture
+
+Which brings us back to the strange arithmetic at the top of the page, and to the
+reason any of this is allowed near a simulation.
+
+The network is 89% right about the pressure field. Suppose we simply believed it.
+
+<UngatedRollout height={300} />
+
+Both channels start from the same flow and run the same solver with the same network
+in the same place. On the left, the proposal is the pressure field and nothing checks
+it. On the right, it is a starting point and the solver sweeps from there — as many
+times as you like.
+
+The left channel does not drift. It comes apart in about eight timesteps, and the
+wreckage names its own cause: those are eight-cell blocks, the seams of the coarse
+grid the proposal was stretched from. The gradient of that proposal has a small step
+at every seam, each step is a velocity error injected on every timestep at exactly the
+wavelength the flow cannot dissipate, and the next step sees a bigger defect and
+proposes a bigger pressure. The loop closes on itself.
+
+Slide the correction sweeps down and you can find the edge yourself. Somewhere between
+two sweeps and forty, "mostly right" stops being survivable.
+
+None of this is a failure of the network. One pane over, the same weights are saving
+two thirds of the work. It is a failure of a component with no check on its output
+being asked to carry load.
+
+So put the check back, and then attack the network directly. The slider below adds
+noise to all 809 weights, from the trained model at the left end to a random function
+of the divergence field at the right.
+
+<SabotageGate height={300} />
+
+Three numbers move as you drag, and they do not move together. The proposal's error
+climbs and keeps climbing. The sweeps to the gate climb, cross the cold-start line
+somewhere in the middle, and keep going — the accelerator becomes a decelerator, and
+at full damage the solver would have been better off with no guess at all.
+
+And the accepted answer does not move. At every position of that slider it agrees with
+the pure cold-start solution to about a percent — and that number is not a property of
+the network at all. It is set by the gate. Both fields were swept until the same
+residual test passed, so the most they can differ by is what a residual of $10^{-3}$
+permits, whatever put them in the neighbourhood.
+
+That is the trade, stated as sharply as this article knows how to state it. **Behind a
+verifiable gate, a learned component can spend your time and cannot spend your
+correctness.** Every claim in this lesson — the 2.8×, the 1.1×, the out-of-distribution
+degradation, the failure of the impulse response — is a claim about the clock. Not one
+of them is a claim about whether the answer is right, because the answer's correctness
+was never delegated.
+
+## The Seams Without Gates
+
+The pressure solve is the friendliest seam in a fluid solver, and it is fair to ask
+what happens at the others. Two are worth naming, because they are where most of the
+field's real work is, and because both give up the property this whole article rests
+on.
+
+**Learned closure.** A coarse grid cannot resolve small eddies, so their effect on the
+resolved flow — a stress, a flux, a drag — has to be supplied from outside. That is
+the *model-form* row of the table, the first row, and it is the row where learning has
+the most to offer: the missing term is genuinely unknown, and there is data. It is
+also a row with no residual. You cannot hand a closure's output to a one-pass check
+and ask whether it is right; you find out by running the simulation and comparing
+against a finer one, which is a verification loop measured in hours rather than
+microseconds.
+
+**Whole-solver surrogates.** Wrap the entire timestep — geometry and forcing in, future
+flow field out. The speedups are enormous and so is the exposure, because now nothing
+in the pipeline is classical and there is no residual left to gate on. What you saw in
+the ungated pane is the mildest possible version of this failure mode, produced by a
+model that was 89% right.
+
+The same shape appears in four fields, which is the argument that this is
+architecture rather than a fluids trick:
+
+| field | structure kept fixed | the map that is learned | what verifies it |
+|---|---|---|---|
+| fluids | mass, momentum, the pressure projection | subgrid stress, or a solver accelerator | conservation, residual, measured forces |
+| weather | resolved atmospheric dynamics | cloud and convection parameterization, or the whole forecast operator | forecast skill, extremes, ensemble calibration |
+| molecules | Newtonian time integration | the potential-energy surface and its forces | energies, stability, rare chemistry |
+| solids | balance laws, finite-element equilibrium | the constitutive law, plasticity, damage | thermodynamic admissibility, load paths, failure tests |
+
+Every row keeps a different thing fixed and learns a different missing map. What
+separates the good rows from the exciting ones is whether the fourth column can be
+evaluated in the loop or only in a paper.
+
+## Further Reading
+
+Jonathan Tompson, Kristofer Schlachter, Pablo Sprechmann and Ken Perlin's
+[*Accelerating Eulerian Fluid Simulation With Convolutional Networks*](https://arxiv.org/abs/1607.03597)
+(ICML 2017) is the paper this article's demonstration is a small, honest
+descendant of — a network trained to supply the pressure field, with the
+divergence and long-rollout discussion that motivated the ungated pane above.
+
+Ayano Kaneda and colleagues' [*A Deep Conjugate Direction Method for Iteratively
+Solving Linear Systems*](https://arxiv.org/abs/2205.10763) (ICML 2023) is the
+version of this idea that takes the baseline question seriously: the network
+supplies search directions *inside* a Krylov method, so it has to compete with
+conjugate gradients rather than with a sweep counter.
+
+Kiwon Um and colleagues' [*Solver-in-the-Loop*](https://arxiv.org/abs/2007.00016)
+(NeurIPS 2020) is the cleanest statement of why a model trained on single steps
+behaves badly over a rollout, and what training it inside the solver does about it.
+
+Jonathan Shewchuk's [*An Introduction to the Conjugate Gradient Method Without the
+Agonizing Pain*](https://www.cs.cmu.edu/~quake-papers/painless-conjugate-gradient.pdf)
+(1994) is the friendliest possible route to the algorithm in the blue curve, and
+it is where the spectral picture in *Why Sweeping Is Slow* comes from.
+
+And for the classical side of the seam, William Briggs' *A Multigrid Tutorial* is
+the book-length version of this lesson's central observation — that error has a
+shape, that smooth error is the expensive kind, and that the fix is to look at it
+on a coarser grid. Achi Brandt's
+[*Multi-Level Adaptive Solutions to Boundary-Value Problems*](https://www.wisdom.weizmann.ac.il/~achi/LOP16.pdf)
+got there in 1977 without a training set, and any learned accelerator is, whether
+or not it says so, competing with it.
+
+## Final Words
+
+The interesting thing about the network in this article is not that it works. Small
+networks trained on their own solver's output have been supplying warm starts for the
+better part of a decade, and 809 parameters buying 64% of a Poisson solve is a
+pleasant result, not a surprising one.
+
+The interesting thing is the shape of what it is allowed to do. It never touches the
+equation. It never touches the answer. It offers an opinion, the opinion is checked
+by arithmetic that predates it by seventy years, and the check is cheap enough to run
+every single time. Break the network and you get a slower simulation of the same
+fluid. There is no setting of that slider, no field it has never seen, no failure of
+generalization that turns into a wrong flow — because the part that decides what is
+right was never the part that learned.
+
+I do not think that is a limitation to be engineered away. I think it is the design.
+The seams in a physics solver worth putting a model into are the ones where being
+wrong is expensive and *detectable*, and the field's hard problem is not building
+bigger models for the other seams. It is finding, for each of them, something a
+solver can check in one pass over the grid.

@@ -172,7 +172,12 @@ export function createDreamCompare(
         ctx.font = FONT_METER
         ctx.fillStyle = '#1a1f2b'
         ctx.fillText(row.label, 20, ry - 6)
-        row.kept.forEach((d, i) => drawGlyph(ctx, 20 + i * paneW, ry, sc, d))
+        row.kept.forEach((d, i) => {
+          // fit guard: at 360px the seventh kept glyph ran off the right edge
+          // (figure audit close-out item, 2026-08-17); 640px draws all nine
+          const px = 20 + i * paneW
+          if (px + GLYPH_SIDE * sc <= w - 6) drawGlyph(ctx, px, ry, sc, d)
+        })
         ctx.font = FONT_LABEL
         ctx.fillStyle = PALETTE.meter
         const bits: string[] = []

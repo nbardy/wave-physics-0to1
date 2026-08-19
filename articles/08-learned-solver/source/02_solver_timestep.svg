@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1090" viewBox="0 0 1600 1090" role="img" aria-label="One Navier-Stokes timestep with safe deep-learning insertion points">
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+<path d="M 0 0 L 10 5 L 0 10 z" fill="#5c6470"/>
+</marker>
+<pattern id="dotgrid" width="10" height="10" patternUnits="userSpaceOnUse">
+<circle cx="2" cy="2" r="1.1" fill="#6b7280" opacity="0.28"/>
+</pattern>
+<filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+<feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#111827" flood-opacity="0.08"/>
+</filter>
+</defs>
+<rect width="1600" height="1090" fill="#fcfcfa"/>
+<text x="70" y="82" text-anchor="start" fill="#17191d" opacity="1.0" style="font-family:DejaVu Serif, Georgia, serif;font-size:43px;font-weight:600;">One timestep, with the seams exposed</text>
+<text x="70" y="125" text-anchor="start" fill="#5c6470" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:20px;font-weight:400;">
+<tspan x="70" dy="0">The durable hybrid pattern is learned proposal → physical or numerical correction → measurable acceptance</tspan>
+<tspan x="70" dy="27.0">test.</tspan>
+</text>
+<line x1="70" y1="167" x2="1530" y2="167" stroke="#d7d6cf" stroke-width="1.5" stroke-linecap="round" opacity="1.0"/>
+<rect x="210" y="205" width="1180" height="82" rx="17" fill="#f3f4f6" stroke="#111827" stroke-width="1.8" stroke-dasharray="8 7" opacity="1.0"/>
+<rect x="210" y="205" width="1180" height="82" rx="17" fill="url(#dotgrid)" opacity="0.55"/>
+<rect x="235" y="226" width="205" height="34" rx="17.0" fill="#111827" stroke="#111827" stroke-width="1.5" opacity="1.0"/>
+<text x="337.5" y="249.12" text-anchor="middle" fill="#ffffff" opacity="1.0" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:15px;font-weight:700;">LEARNED CONTROLLER</text>
+<text x="465" y="251" text-anchor="start" fill="#111827" opacity="1.0" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:22px;font-weight:700;">choose mesh · timestep · fidelity · model escalation</text>
+<rect x="50" y="365" width="190" height="185" rx="18" fill="#ffffff" stroke="#2563eb" stroke-width="2.5" filter="url(#shadow)" opacity="1.0"/>
+<rect x="68" y="383" width="154" height="34" rx="17.0" fill="#2563eb" stroke="#2563eb" stroke-width="1.5" opacity="1.0"/>
+<text x="145.0" y="406.12" text-anchor="middle" fill="#ffffff" opacity="1.0" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:15px;font-weight:700;">STATE N</text>
+<text x="145.0" y="455" text-anchor="middle" fill="#2563eb" opacity="1.0" style="font-family:DejaVu Serif, Georgia, serif;font-size:22px;font-weight:700;">uⁿ, αⁿ, pⁿ</text>
+<text x="145.0" y="490" text-anchor="middle" fill="#5c6470" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:15px;font-weight:400;">
+<tspan x="145.0" dy="0">observed / simulated</tspan>
+<tspan x="145.0" dy="20.25">state</tspan>
+</text>
+<line x1="245" y1="457.5" x2="265" y2="457.5" stroke="#5c6470" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)" opacity="1.0"/>
+<rect x="270" y="365" width="190" height="185" rx="18" fill="#ffffff" stroke="#6b7280" stroke-width="2.5" filter="url(#shadow)" opacity="1.0"/>
+<rect x="288" y="383" width="154" height="34" rx="17.0" fill="#6b7280" stroke="#6b7280" stroke-width="1.5" opacity="1.0"/>
+<text x="365.0" y="406.12" text-anchor="middle" fill="#ffffff" opacity="1.0" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:15px;font-weight:700;">ADD FORCES</text>
+<text x="365.0" y="455" text-anchor="middle" fill="#6b7280" opacity="1.0" style="font-family:DejaVu Serif, Georgia, serif;font-size:22px;font-weight:700;">u* ← u + Δt f</text>
+<text x="365.0" y="490" text-anchor="middle" fill="#5c6470" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:15px;font-weight:400;">
+<tspan x="365.0" dy="0">gravity · wavemaker ·</tspan>
+<tspan x="365.0" dy="20.25">control</tspan>
+</text>
+<line x1="465" y1="457.5" x2="485" y2="457.5" stroke="#5c6470" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)" opacity="1.0"/>
+<rect x="490" y="365" width="190" height="185" rx="18" fill="#ffffff" stroke="#059669" stroke-width="2.5" filter="url(#shadow)" opacity="1.0"/>
+<rect x="508" y="383" width="154" height="34" rx="17.0" fill="#059669" stroke="#059669" stroke-width="1.5" opacity="1.0"/>
+<text x="585.0" y="406.12" text-anchor="middle" fill="#ffffff" opacity="1.0" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:15px;font-weight:700;">DIFFUSE / CLOSE</text>
+<text x="585.0" y="455" text-anchor="middle" fill="#059669" opacity="1.0" style="font-family:DejaVu Serif, Georgia, serif;font-size:22px;font-weight:700;">ν∇²u + τ</text>
+<text x="585.0" y="490" text-anchor="middle" fill="#5c6470" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:15px;font-weight:400;">
+<tspan x="585.0" dy="0">resolved viscosity +</tspan>
+<tspan x="585.0" dy="20.25">missing stress</tspan>
+</text>
+<line x1="685" y1="457.5" x2="705" y2="457.5" stroke="#5c6470" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)" opacity="1.0"/>
+<rect x="710" y="365" width="190" height="185" rx="18" fill="#ffffff" stroke="#2563eb" stroke-width="2.5" filter="url(#shadow)" opacity="1.0"/>
+<rect x="728" y="383" width="154" height="34" rx="17.0" fill="#2563eb" stroke="#2563eb" stroke-width="1.5" opacity="1.0"/>
+<text x="805.0" y="406.12" text-anchor="middle" fill="#ffffff" opacity="1.0" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:15px;font-weight:700;">ADVECT</text>
+<text x="805.0" y="455" text-anchor="middle" fill="#2563eb" opacity="1.0" style="font-family:DejaVu Serif, Georgia, serif;font-size:22px;font-weight:700;">−(u·∇)u</text>
+<text x="805.0" y="490" text-anchor="middle" fill="#5c6470" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:15px;font-weight:400;">
+<tspan x="805.0" dy="0">move and deform the</tspan>
+<tspan x="805.0" dy="20.25">fields</tspan>
+</text>
+<line x1="905" y1="457.5" x2="925" y2="457.5" stroke="#5c6470" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)" opacity="1.0"/>
+<rect x="930" y="365" width="190" height="185" rx="18" fill="#ffffff" stroke="#0891b2" stroke-width="2.5" filter="url(#shadow)" opacity="1.0"/>
+<rect x="948" y="383" width="154" height="34" rx="17.0" fill="#0891b2" stroke="#0891b2" stroke-width="1.5" opacity="1.0"/>
+<text x="1025.0" y="406.12" text-anchor="middle" fill="#ffffff" opacity="1.0" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:15px;font-weight:700;">INTERFACES + BCS</text>
+<text x="1025.0" y="455" text-anchor="middle" fill="#0891b2" opacity="1.0" style="font-family:DejaVu Serif, Georgia, serif;font-size:22px;font-weight:700;">geometry · phases</text>
+<text x="1025.0" y="490" text-anchor="middle" fill="#5c6470" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:15px;font-weight:400;">
+<tspan x="1025.0" dy="0">walls · surface ·</tspan>
+<tspan x="1025.0" dy="20.25">topology</tspan>
+</text>
+<line x1="1125" y1="457.5" x2="1145" y2="457.5" stroke="#5c6470" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)" opacity="1.0"/>
+<rect x="1150" y="365" width="190" height="185" rx="18" fill="#ffffff" stroke="#dc2626" stroke-width="2.5" filter="url(#shadow)" opacity="1.0"/>
+<rect x="1168" y="383" width="154" height="34" rx="17.0" fill="#dc2626" stroke="#dc2626" stroke-width="1.5" opacity="1.0"/>
+<text x="1245.0" y="406.12" text-anchor="middle" fill="#ffffff" opacity="1.0" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:15px;font-weight:700;">PROJECT PRESSURE</text>
+<text x="1245.0" y="455" text-anchor="middle" fill="#dc2626" opacity="1.0" style="font-family:DejaVu Serif, Georgia, serif;font-size:22px;font-weight:700;">∇²p = div(u*)</text>
+<text x="1245.0" y="490" text-anchor="middle" fill="#5c6470" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:15px;font-weight:400;">
+<tspan x="1245.0" dy="0">enforce ∇·u = 0</tspan>
+</text>
+<line x1="1345" y1="457.5" x2="1365" y2="457.5" stroke="#5c6470" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)" opacity="1.0"/>
+<rect x="1370" y="365" width="190" height="185" rx="18" fill="#ffffff" stroke="#2563eb" stroke-width="2.5" filter="url(#shadow)" opacity="1.0"/>
+<rect x="1388" y="383" width="154" height="34" rx="17.0" fill="#2563eb" stroke="#2563eb" stroke-width="1.5" opacity="1.0"/>
+<text x="1465.0" y="406.12" text-anchor="middle" fill="#ffffff" opacity="1.0" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:15px;font-weight:700;">STATE N+1</text>
+<text x="1465.0" y="455" text-anchor="middle" fill="#2563eb" opacity="1.0" style="font-family:DejaVu Serif, Georgia, serif;font-size:22px;font-weight:700;">uⁿ⁺¹, αⁿ⁺¹</text>
+<text x="1465.0" y="490" text-anchor="middle" fill="#5c6470" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:15px;font-weight:400;">
+<tspan x="1465.0" dy="0">accepted next state</tspan>
+</text>
+<line x1="145.0" y1="550" x2="145.0" y2="600" stroke="#2563eb" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="5 5" opacity="1.0"/>
+<rect x="50" y="610" width="190" height="100" rx="14" fill="#f3f4f6" stroke="#111827" stroke-width="1.4" stroke-dasharray="7 6" opacity="1.0"/>
+<rect x="50" y="610" width="190" height="100" rx="14" fill="url(#dotgrid)" opacity="0.38"/>
+<text x="145.0" y="645" text-anchor="middle" fill="#111827" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:16px;font-weight:650;">
+<tspan x="145.0" dy="0">Assimilate sensors</tspan>
+<tspan x="145.0" dy="21.6">or infer hidden state</tspan>
+</text>
+<line x1="365.0" y1="550" x2="365.0" y2="600" stroke="#6b7280" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="5 5" opacity="1.0"/>
+<rect x="270" y="610" width="190" height="100" rx="14" fill="#f3f4f6" stroke="#111827" stroke-width="1.4" stroke-dasharray="7 6" opacity="1.0"/>
+<rect x="270" y="610" width="190" height="100" rx="14" fill="url(#dotgrid)" opacity="0.38"/>
+<text x="365.0" y="645" text-anchor="middle" fill="#111827" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:16px;font-weight:650;">
+<tspan x="365.0" dy="0">Infer forcing,</tspan>
+<tspan x="365.0" dy="21.6">roughness, controls</tspan>
+</text>
+<line x1="585.0" y1="550" x2="585.0" y2="600" stroke="#059669" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="5 5" opacity="1.0"/>
+<rect x="490" y="610" width="190" height="100" rx="14" fill="#f3f4f6" stroke="#111827" stroke-width="1.4" stroke-dasharray="7 6" opacity="1.0"/>
+<rect x="490" y="610" width="190" height="100" rx="14" fill="url(#dotgrid)" opacity="0.38"/>
+<text x="585.0" y="645" text-anchor="middle" fill="#111827" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:16px;font-weight:650;">
+<tspan x="585.0" dy="0">Learn SGS stress,</tspan>
+<tspan x="585.0" dy="21.6">entrainment, breakup</tspan>
+</text>
+<line x1="805.0" y1="550" x2="805.0" y2="600" stroke="#2563eb" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="5 5" opacity="1.0"/>
+<rect x="710" y="610" width="190" height="100" rx="14" fill="#f3f4f6" stroke="#111827" stroke-width="1.4" stroke-dasharray="7 6" opacity="1.0"/>
+<rect x="710" y="610" width="190" height="100" rx="14" fill="url(#dotgrid)" opacity="0.38"/>
+<text x="805.0" y="645" text-anchor="middle" fill="#111827" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:16px;font-weight:650;">
+<tspan x="805.0" dy="0">Learn flux / limiter</tspan>
+<tspan x="805.0" dy="21.6">or residual correction</tspan>
+</text>
+<line x1="1025.0" y1="550" x2="1025.0" y2="600" stroke="#0891b2" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="5 5" opacity="1.0"/>
+<rect x="930" y="610" width="190" height="100" rx="14" fill="#f3f4f6" stroke="#111827" stroke-width="1.4" stroke-dasharray="7 6" opacity="1.0"/>
+<rect x="930" y="610" width="190" height="100" rx="14" fill="url(#dotgrid)" opacity="0.38"/>
+<text x="1025.0" y="645" text-anchor="middle" fill="#111827" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:16px;font-weight:650;">
+<tspan x="1025.0" dy="0">Learn reconstruction</tspan>
+<tspan x="1025.0" dy="21.6">or topology policy</tspan>
+</text>
+<line x1="1245.0" y1="550" x2="1245.0" y2="600" stroke="#dc2626" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="5 5" opacity="1.0"/>
+<rect x="1150" y="610" width="190" height="100" rx="14" fill="#f3f4f6" stroke="#111827" stroke-width="1.4" stroke-dasharray="7 6" opacity="1.0"/>
+<rect x="1150" y="610" width="190" height="100" rx="14" fill="url(#dotgrid)" opacity="0.38"/>
+<text x="1245.0" y="645" text-anchor="middle" fill="#111827" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:16px;font-weight:650;">
+<tspan x="1245.0" dy="0">Predict p₀,</tspan>
+<tspan x="1245.0" dy="21.6">preconditioner, AMG</tspan>
+</text>
+<rect x="110" y="780" width="1380" height="235" rx="22" fill="#ffffff" stroke="#d7d6cf" stroke-width="1.5" filter="url(#shadow)" opacity="1.0"/>
+<text x="145" y="825" text-anchor="start" fill="#17191d" opacity="1.0" style="font-family:DejaVu Serif, Georgia, serif;font-size:29px;font-weight:700;">The safest flagship demo: learned pressure warm start</text>
+<text x="145" y="860" text-anchor="start" fill="#5c6470" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:18px;font-weight:400;">
+<tspan x="145" dy="0">A network proposes a useful low-frequency pressure field. The classical solver still owns convergence and</tspan>
+<tspan x="145" dy="24.3">acceptance.</tspan>
+</text>
+<rect x="160" y="900" width="205" height="72" rx="14" fill="#f7f9fc" stroke="#7c3aed" stroke-width="2" opacity="1.0"/>
+<text x="262.5" y="932" text-anchor="middle" fill="#7c3aed" opacity="1.0" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:19px;font-weight:750;">divergence b</text>
+<text x="262.5" y="957" text-anchor="middle" fill="#5c6470" opacity="1.0" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:13px;font-weight:600;">measured defect</text>
+<line x1="370" y1="936" x2="412" y2="936" stroke="#5c6470" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)" opacity="1.0"/>
+<rect x="420" y="900" width="205" height="72" rx="14" fill="#f3f4f6" stroke="#111827" stroke-width="2" stroke-dasharray="7 6" opacity="1.0"/>
+<text x="522.5" y="932" text-anchor="middle" fill="#111827" opacity="1.0" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:19px;font-weight:750;">network → p₀</text>
+<text x="522.5" y="957" text-anchor="middle" fill="#5c6470" opacity="1.0" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:13px;font-weight:600;">proposal only</text>
+<line x1="630" y1="936" x2="692" y2="936" stroke="#5c6470" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)" opacity="1.0"/>
+<rect x="700" y="900" width="205" height="72" rx="14" fill="#f7f9fc" stroke="#dc2626" stroke-width="2" opacity="1.0"/>
+<text x="802.5" y="932" text-anchor="middle" fill="#dc2626" opacity="1.0" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:19px;font-weight:750;">PCG / multigrid</text>
+<text x="802.5" y="957" text-anchor="middle" fill="#5c6470" opacity="1.0" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:13px;font-weight:600;">correct to tolerance</text>
+<line x1="910" y1="936" x2="982" y2="936" stroke="#5c6470" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)" opacity="1.0"/>
+<rect x="990" y="900" width="205" height="72" rx="14" fill="#f7f9fc" stroke="#7c3aed" stroke-width="2" opacity="1.0"/>
+<text x="1092.5" y="932" text-anchor="middle" fill="#7c3aed" opacity="1.0" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:19px;font-weight:750;">‖A p − b‖ &lt; ε</text>
+<text x="1092.5" y="957" text-anchor="middle" fill="#5c6470" opacity="1.0" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:13px;font-weight:600;">residual gate</text>
+<line x1="1200" y1="936" x2="1252" y2="936" stroke="#5c6470" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)" opacity="1.0"/>
+<rect x="1260" y="900" width="205" height="72" rx="14" fill="#f7f9fc" stroke="#059669" stroke-width="2" opacity="1.0"/>
+<text x="1362.5" y="932" text-anchor="middle" fill="#059669" opacity="1.0" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:19px;font-weight:750;">accept uⁿ⁺¹</text>
+<text x="1362.5" y="957" text-anchor="middle" fill="#5c6470" opacity="1.0" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:13px;font-weight:600;">or escalate</text>
+<text x="110" y="1060" text-anchor="start" fill="#17191d" opacity="1.0" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:19px;font-weight:700;">A bad learned guess costs iterations—not an unverified pressure field.</text>
+<text x="1490" y="1060" text-anchor="end" fill="#059669" opacity="1.0" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:28px;font-weight:800;">→</text>
+</svg>

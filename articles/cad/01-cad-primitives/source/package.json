@@ -1,0 +1,12 @@
+{
+  "name": "cad-primitives-visually",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A dependency-free WebGPU explainer for B-splines, NURBS, T-splines, subdivision surfaces, and B-reps.",
+  "scripts": {
+    "check": "node scripts/check.mjs",
+    "build": "node scripts/build.mjs",
+    "serve": "python3 -m http.server 4173"
+  }
+}

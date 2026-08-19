@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1050" viewBox="0 0 1600 1050" role="img" aria-label="Physics simulation error budget and deep learning interventions">
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+<path d="M 0 0 L 10 5 L 0 10 z" fill="#5c6470"/>
+</marker>
+<pattern id="dotgrid" width="10" height="10" patternUnits="userSpaceOnUse">
+<circle cx="2" cy="2" r="1.1" fill="#6b7280" opacity="0.28"/>
+</pattern>
+<filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+<feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#111827" flood-opacity="0.08"/>
+</filter>
+</defs>
+<rect width="1600" height="1050" fill="#fcfcfa"/>
+<text x="70" y="82" text-anchor="start" fill="#17191d" opacity="1.0" style="font-family:DejaVu Serif, Georgia, serif;font-size:43px;font-weight:600;">“More accurate” only means something after naming the error</text>
+<text x="70" y="125" text-anchor="start" fill="#5c6470" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:20px;font-weight:400;">
+<tspan x="70" dy="0">Deep learning can reduce different errors directly, indirectly, or not at all. The acceptance test must</tspan>
+<tspan x="70" dy="27.0">match the claim.</tspan>
+</text>
+<line x1="70" y1="167" x2="1530" y2="167" stroke="#d7d6cf" stroke-width="1.5" stroke-linecap="round" opacity="1.0"/>
+<text x="70" y="222" text-anchor="start" fill="#5c6470" opacity="1.0" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:14px;font-weight:800;letter-spacing:1.4px;">ERROR SOURCE</text>
+<text x="330" y="222" text-anchor="start" fill="#5c6470" opacity="1.0" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:14px;font-weight:800;letter-spacing:1.4px;">WHAT IT MEANS</text>
+<text x="785" y="222" text-anchor="start" fill="#5c6470" opacity="1.0" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:14px;font-weight:800;letter-spacing:1.4px;">DEEP-LEARNING LANE</text>
+<text x="1190" y="222" text-anchor="start" fill="#5c6470" opacity="1.0" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:14px;font-weight:800;letter-spacing:1.4px;">ACCEPTANCE TEST</text>
+<line x1="70" y1="242" x2="1530" y2="242" stroke="#d7d6cf" stroke-width="1.5" stroke-linecap="round" opacity="1.0"/>
+<rect x="60" y="270" width="1480" height="124" rx="14" fill="#ffffff" stroke="#e8e7e1" stroke-width="1.5" opacity="1.0"/>
+<rect x="60" y="270" width="8" height="124" rx="4" fill="#059669"/>
+<rect x="84" y="298" width="205" height="38" rx="19.0" fill="#059669" stroke="#059669" stroke-width="1.5" opacity="1.0"/>
+<text x="186.5" y="323.84000000000003" text-anchor="middle" fill="#ffffff" opacity="1.0" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:15px;font-weight:700;">MODEL-FORM</text>
+<text x="330" y="306" text-anchor="start" fill="#17191d" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:17px;font-weight:400;">
+<tspan x="330" dy="0">The equations or closures omit a real stress,</tspan>
+<tspan x="330" dy="22.950000000000003">flux, force, material response, or phase process.</tspan>
+</text>
+<rect x="785" y="290" width="360" height="88" rx="12" fill="#f3f4f6" stroke="#111827" stroke-width="1.3" stroke-dasharray="7 6" opacity="1.0"/>
+<text x="805" y="317" text-anchor="start" fill="#111827" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:16px;font-weight:620;">
+<tspan x="805" dy="0">Learn a turbulence, constitutive,</tspan>
+<tspan x="805" dy="21.6">interface, chemistry, or discrepancy</tspan>
+<tspan x="805" dy="21.6">closure.</tspan>
+</text>
+<text x="1190" y="306" text-anchor="start" fill="#5c6470" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:16px;font-weight:560;">
+<tspan x="1190" dy="0">Experimental or higher-fidelity QoIs;</tspan>
+<tspan x="1190" dy="21.6">stability; conservation; regime</tspan>
+<tspan x="1190" dy="21.6">transfer.</tspan>
+</text>
+<rect x="60" y="406" width="1480" height="124" rx="14" fill="#fafaf8" stroke="#e8e7e1" stroke-width="1.5" opacity="1.0"/>
+<rect x="60" y="406" width="8" height="124" rx="4" fill="#2563eb"/>
+<rect x="84" y="434" width="205" height="38" rx="19.0" fill="#2563eb" stroke="#2563eb" stroke-width="1.5" opacity="1.0"/>
+<text x="186.5" y="459.84000000000003" text-anchor="middle" fill="#ffffff" opacity="1.0" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:15px;font-weight:700;">DISCRETIZATION</text>
+<text x="330" y="442" text-anchor="start" fill="#17191d" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:17px;font-weight:400;">
+<tspan x="330" dy="0">The grid, timestep, reconstruction, or numerical</tspan>
+<tspan x="330" dy="22.950000000000003">flux approximates the continuum poorly.</tspan>
+</text>
+<rect x="785" y="426" width="360" height="88" rx="12" fill="#f3f4f6" stroke="#111827" stroke-width="1.3" stroke-dasharray="7 6" opacity="1.0"/>
+<text x="805" y="453" text-anchor="start" fill="#111827" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:16px;font-weight:620;">
+<tspan x="805" dy="0">Learn a stencil, limiter, flux, coarse-</tspan>
+<tspan x="805" dy="21.6">grid correction, mesh policy, or local</tspan>
+<tspan x="805" dy="21.6">fidelity.</tspan>
+</text>
+<text x="1190" y="442" text-anchor="start" fill="#5c6470" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:16px;font-weight:560;">
+<tspan x="1190" dy="0">Mesh / timestep convergence;</tspan>
+<tspan x="1190" dy="21.6">truncation behavior; conserved fluxes;</tspan>
+<tspan x="1190" dy="21.6">shock or interface tests.</tspan>
+</text>
+<rect x="60" y="542" width="1480" height="124" rx="14" fill="#ffffff" stroke="#e8e7e1" stroke-width="1.5" opacity="1.0"/>
+<rect x="60" y="542" width="8" height="124" rx="4" fill="#7c3aed"/>
+<rect x="84" y="570" width="205" height="38" rx="19.0" fill="#7c3aed" stroke="#7c3aed" stroke-width="1.5" opacity="1.0"/>
+<text x="186.5" y="595.84" text-anchor="middle" fill="#ffffff" opacity="1.0" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:15px;font-weight:700;">ITERATIVE</text>
+<text x="330" y="578" text-anchor="start" fill="#17191d" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:17px;font-weight:400;">
+<tspan x="330" dy="0">The discrete algebraic system has not converged</tspan>
+<tspan x="330" dy="22.950000000000003">tightly enough—or consumes the compute budget.</tspan>
+</text>
+<rect x="785" y="562" width="360" height="88" rx="12" fill="#f3f4f6" stroke="#111827" stroke-width="1.3" stroke-dasharray="7 6" opacity="1.0"/>
+<text x="805" y="589" text-anchor="start" fill="#111827" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:16px;font-weight:620;">
+<tspan x="805" dy="0">Warm start, smoother, preconditioner,</tspan>
+<tspan x="805" dy="21.6">coarse space, solver policy.</tspan>
+</text>
+<text x="1190" y="578" text-anchor="start" fill="#5c6470" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:16px;font-weight:560;">
+<tspan x="1190" dy="0">Residual below tolerance; same</tspan>
+<tspan x="1190" dy="21.6">converged solution; wall-clock and</tspan>
+<tspan x="1190" dy="21.6">iteration reduction.</tspan>
+</text>
+<rect x="60" y="678" width="1480" height="124" rx="14" fill="#fafaf8" stroke="#e8e7e1" stroke-width="1.5" opacity="1.0"/>
+<rect x="60" y="678" width="8" height="124" rx="4" fill="#d97706"/>
+<rect x="84" y="706" width="205" height="38" rx="19.0" fill="#d97706" stroke="#d97706" stroke-width="1.5" opacity="1.0"/>
+<text x="186.5" y="731.84" text-anchor="middle" fill="#ffffff" opacity="1.0" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:15px;font-weight:700;">INPUT / STATE</text>
+<text x="330" y="714" text-anchor="start" fill="#17191d" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:17px;font-weight:400;">
+<tspan x="330" dy="0">Geometry, forcing, initial conditions,</tspan>
+<tspan x="330" dy="22.950000000000003">parameters, or hidden state are wrong or</tspan>
+<tspan x="330" dy="22.950000000000003">incomplete.</tspan>
+</text>
+<rect x="785" y="698" width="360" height="88" rx="12" fill="#f3f4f6" stroke="#111827" stroke-width="1.3" stroke-dasharray="7 6" opacity="1.0"/>
+<text x="805" y="725" text-anchor="start" fill="#111827" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:16px;font-weight:620;">
+<tspan x="805" dy="0">Data assimilation, inverse modeling,</tspan>
+<tspan x="805" dy="21.6">sensor fusion, boundary inference.</tspan>
+</text>
+<text x="1190" y="714" text-anchor="start" fill="#5c6470" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:16px;font-weight:560;">
+<tspan x="1190" dy="0">Held-out sensors and experiments;</tspan>
+<tspan x="1190" dy="21.6">identifiable parameters; calibrated</tspan>
+<tspan x="1190" dy="21.6">posterior.</tspan>
+</text>
+<rect x="60" y="814" width="1480" height="124" rx="14" fill="#ffffff" stroke="#e8e7e1" stroke-width="1.5" opacity="1.0"/>
+<rect x="60" y="814" width="8" height="124" rx="4" fill="#6b7280"/>
+<rect x="84" y="842" width="205" height="38" rx="19.0" fill="#6b7280" stroke="#6b7280" stroke-width="1.5" opacity="1.0"/>
+<text x="186.5" y="867.84" text-anchor="middle" fill="#ffffff" opacity="1.0" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:15px;font-weight:700;">TAIL / DECISION</text>
+<text x="330" y="850" text-anchor="start" fill="#17191d" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:17px;font-weight:400;">
+<tspan x="330" dy="0">The point forecast may be plausible while rare</tspan>
+<tspan x="330" dy="22.950000000000003">events, uncertainty, or applicability are wrong.</tspan>
+</text>
+<rect x="785" y="834" width="360" height="88" rx="12" fill="#f3f4f6" stroke="#111827" stroke-width="1.3" stroke-dasharray="7 6" opacity="1.0"/>
+<text x="805" y="861" text-anchor="start" fill="#111827" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:16px;font-weight:620;">
+<tspan x="805" dy="0">Ensembles, error models, out-of-</tspan>
+<tspan x="805" dy="21.6">distribution detection, active data</tspan>
+<tspan x="805" dy="21.6">selection.</tspan>
+</text>
+<text x="1190" y="850" text-anchor="start" fill="#5c6470" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:16px;font-weight:560;">
+<tspan x="1190" dy="0">Calibration, coverage, tail recall,</tspan>
+<tspan x="1190" dy="21.6">abstention quality, decision loss.</tspan>
+</text>
+<rect x="110" y="965" width="1380" height="62" rx="14" fill="#f7f9fc" stroke="#d7d6cf" stroke-width="1.5" opacity="1.0"/>
+<text x="135" y="1004" text-anchor="start" fill="#17191d" opacity="1.0" style="font-family:DejaVu Sans, Arial, sans-serif;font-size:19px;font-weight:700;">Accelerators improve accuracy only indirectly—when saved compute buys finer grids, tighter tolerances, or larger ensembles.</text>
+</svg>

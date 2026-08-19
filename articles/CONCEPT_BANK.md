@@ -70,6 +70,32 @@ three new overlays on built steppers.
   simulation. Cheap reframe (art direction only) whenever a Re slider needs to
   carry the scale-invariance point without prose.
 
+## From the cad/01 hero pass (2026-08-18) — two figures that lost to scope, not to quality
+
+Both designed during the cube-hero candidate pass (`articles/cad/01-cad-primitives/
+STORY_CANDIDATES.md`); each lost the hero slot for structural reasons and is
+worth stealing whole.
+
+- **The turned part (locality made solid).** Dual-pane: a 2-D NURBS profile with
+  draggable control points on the left, the revolved 3-D shaft it generates on
+  the right. Drag one control point and only a *band* of the metal bulges —
+  compact support demonstrated on a real part before the word "support" exists.
+  Bonus fact riding along: the shaft's sharp shoulder IS a repeated knot, so
+  edges-live-at-knot-lines arrives visually. Lost the cad/01 hero slot because
+  its topology axis is a cameo (no through-hole, genus 0). Natural homes: hero
+  of any future "basis locality / splines" article, or a cameo wherever compact
+  support needs to feel physical. Cost: 1–2 days — revolve mesh generator
+  (profile samples × angle → quads) into the existing `src/sims/cad/mesh.ts`
+  camera; all spline machinery exists.
+- **The hole that isn't there (wire-heal toggle).** One checkbox on the existing
+  `BrepStack` plate: *forget the wires*. The through-hole heals — material
+  floods back — while a meter reads "surfaces re-fitted: 0", because only the
+  inner loops were dropped from the face records; no geometry changed. The
+  sharpest single image of geometry-vs-topology available to the article. Lost
+  as *hero* because it opens on the axis the article closes with (would force a
+  topology-first spine); as a section figure it is hours of work — `faces()`
+  already carries the loops, even-odd fill does the rest.
+
 ## Every Map Lies — the full cartography build (maths-01 v2, built & retired 2026-07-31)
 
 A complete, working alternative telling of the Jacobian/Hessian article:
@@ -93,3 +119,29 @@ the CurvatureMap surveyor as a cameo figure wherever eigenvalue signs earn a
 payoff. The reusable lesson is in the retirement itself: a hero everyone has
 seen is anti-hook for this site — novelty of the *presentation* is part of the
 commission (recorded in memory + STORY_CANDIDATES postmortem).
+
+## From the learned-solver storyboard (2026-08-20) — the persistent equation dock
+
+Proposed in `articles/08-learned-solver/source/VISUAL_STORYBOARD.md` and cut from
+that article for a structural reason, not a quality one: it is a five-term
+navigation spine, and lesson 04 is about one seam.
+
+The idea: pin a compact, always-visible dock near the top of the viewport
+carrying the whole equation — `∂u/∂t = −(u·∇)u − (1/ρ)∇p + ν∇²u + f`, and
+`∇·u = 0` beside it. Every term is a focus target. Hovering or tapping one term
+re-emphasizes, in concert, every figure currently on screen: the physical
+phenomenon that term names, the numerical operation that approximates it, the
+error it dominates, and the acceptance test that catches it going wrong. The
+equation stops being a display line the reader passes once and becomes the
+article's table of contents.
+
+Cost: a focus context plus a per-figure emphasis hook, so it is only cheap if
+the figures are designed against it from the start. Worth it for an article that
+actually walks all five terms — the natural host is a second pass at lesson 01,
+or any article whose spine IS the equation rather than one line of the solver.
+
+Also banked from the same source: the **layer legend** convention that made
+lesson 04's palette work and that any hybrid-architecture figure can steal —
+colour keeps meaning *what physical thing is this?*, and line style answers
+*who computed it?* (solid = classical operation, dashed = learned proposal,
+violet = residual or failure, green = accepted). Do not give "AI" its own hue.

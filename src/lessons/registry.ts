@@ -2,10 +2,12 @@ import type { ComponentType } from 'react'
 import Lesson01 from './lesson-01-navier-stokes.mdx'
 import Lesson02 from './lesson-02-fiber-bundles.mdx'
 import Lesson03 from './lesson-03-navier-stokes-history.mdx'
+import Lesson04 from './lesson-04-learned-solver.mdx'
 import Maths01 from './maths-01-jacobian-hessian.mdx'
 import Physics01 from './physics-01-wave-particle.mdx'
 import Physics02 from './physics-02-pbits.mdx'
 import Physics03 from './physics-03-z1.mdx'
+import Cad01 from './cad-01-primitives.mdx'
 
 // Lesson lifecycle as a sum type — rendering dispatches on `kind`, no stray
 // defaults. Add `draft` / `published` variants as lessons get written.
@@ -20,7 +22,7 @@ export type LessonStatus =
 // prefix keeps `P1` and `01` and `M1` distinguishable at a glance.
 // ---------------------------------------------------------------------------
 
-export type Field = 'physics' | 'waves' | 'maths'
+export type Field = 'physics' | 'waves' | 'maths' | 'cad'
 
 export interface FieldSpec {
   field: Field
@@ -50,9 +52,16 @@ export const FIELD_SPEC: Record<Field, FieldSpec> = {
     prefix: 'M',
     blurb: 'The machinery the physics keeps borrowing, taught on its own terms.',
   },
+  cad: {
+    field: 'cad',
+    label: 'CAD maths',
+    prefix: 'C',
+    blurb:
+      'The geometry inside every solid modeller: spline bases, the meshes that author them, and the topology that decides which side is metal.',
+  },
 }
 
-export const FIELD_ORDER: readonly Field[] = ['physics', 'waves', 'maths']
+export const FIELD_ORDER: readonly Field[] = ['physics', 'waves', 'maths', 'cad']
 
 export const FIELDS: readonly FieldSpec[] = FIELD_ORDER.map((f) => FIELD_SPEC[f])
 
@@ -173,6 +182,17 @@ export const lessons: Lesson[] = [
     Content: Lesson03,
   },
   {
+    id: 'learned-solver',
+    field: 'waves',
+    order: 4,
+    title: 'Teaching a Solver to Guess',
+    blurb:
+      'A real neural network, trained on lesson 01’s solver and shipped in this repo, cuts two thirds of the work out of the pressure solve — and is worse than guessing zero by the only meter the solver takes. Both are true, and the gap is the whole architecture.',
+    tags: ['fluids', 'simulation', 'linear-algebra'],
+    status: { kind: 'draft' },
+    Content: Lesson04,
+  },
+  {
     id: 'jacobian-hessian',
     field: 'maths',
     order: 1,
@@ -182,6 +202,17 @@ export const lessons: Lesson[] = [
     tags: ['calculus', 'linear-algebra', 'geometry'],
     status: { kind: 'draft' },
     Content: Maths01,
+  },
+  {
+    id: 'cad-primitives',
+    field: 'cad',
+    order: 1,
+    title: 'Basis, Cage, and Boundary',
+    blurb:
+      'B-splines, NURBS, T-splines, SubD, and B-rep are not five ways to draw the same surface. Three are bases, one is an authoring mesh, one is topology — and one part carries all of them at once.',
+    tags: ['geometry', 'linear-algebra', 'simulation'],
+    status: { kind: 'draft' },
+    Content: Cad01,
   },
 ]
 

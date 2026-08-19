@@ -56,6 +56,36 @@ export const PALETTE = {
   ghost: '#9ca3af', // the exact distribution — enumeration's bars, always this gray
   held: '#059669', // clamp halo — a spin held by hand
   meter: '#7c3aed', // sampled distributions, TV distance, derived readouts
+
+  // Physics P3, the Z1 compiler (articles/06-z1-compiler/PLAN.md §Persistent
+  // chrome) — the series' two promoted inks. `visit` is Part 2's one new
+  // color: the visitation glow q(x), how often the upstream program shows an
+  // input — warm attention, adjacent to nothing in the p-bit set. `hid` is
+  // the hidden-role pink of the three-role kernel partition (input green =
+  // held, output violet = meter, hidden pink = summed out) — same hex as
+  // dye2, renamed so prose binds to the role. By series convention ferro's
+  // red doubles as the violation ink — write conflicts, leaked off-graph
+  // mass, broken rate limits all wear it, because a violated coupling and a
+  // violated invariant point the same accusing color.
+  visit: '#fb923c', // visitation glow q(x) — the program's attention on an input
+  hid: '#db2777', // hidden-role spins V_hid — free, summed out, never read
+
+  // CAD C1, the primitives (articles/cad/01-cad-primitives/PLAN.md §Palette) —
+  // the role-rhyme again: amber is the thing we watch and drag (the finite
+  // coordinates), blue is the thing that acts (the basis, and the curve or
+  // surface it produces), violet is the derived meter (basis plots, deviation
+  // readouts, counts). Green is the knot — the one quantity in this lesson that
+  // is neither coordinate nor output but the partition both live on. Red is the
+  // selected topological entity, because in the B-rep panel the question is
+  // never "what value" but "which thing", and red is the article's pointing
+  // finger. Cyan is the trimmed-away region: the part of an infinite surface a
+  // wire refuses.
+  ctrl: '#d97706', // control points, cage vertices, T-mesh anchors — what you drag
+  curve: '#2563eb', // the evaluated curve or limit surface — what the basis produces
+  basis: '#7c3aed', // basis functions, deviation meters, vertex/face counts
+  knot: '#059669', // knots, knot lines, refinement strips
+  topo: '#dc2626', // the selected B-rep entity — the pointing finger
+  hole: '#0891b2', // inner wire, trimmed-away region, the hole that isn't material
 } as const
 
 export type PaletteKey = keyof typeof PALETTE

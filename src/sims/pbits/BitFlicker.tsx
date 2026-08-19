@@ -129,7 +129,13 @@ export function createBitFlicker(
       ctx.setLineDash([])
       ctx.font = FONT_LABEL
       ctx.fillStyle = 'rgba(85,96,111,0.9)'
-      ctx.fillText('mean vs bias — every bias you visit leaves its dot', tr.x + 6, tr.y + tr.h + 14)
+      // narrow: the full caption truncated mid-word at 360px (figure audit
+      // close-out item, 2026-08-17) — same fact, compressed wording
+      ctx.fillText(
+        w < 520 ? 'mean vs bias — every bias leaves a dot' : 'mean vs bias — every bias you visit leaves its dot',
+        tr.x + 6,
+        tr.y + tr.h + 14,
+      )
     },
   }
 }

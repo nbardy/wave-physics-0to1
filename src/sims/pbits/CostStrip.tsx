@@ -219,8 +219,11 @@ export function createCostStrip(shared: { current: CostShared }, probe?: CostPro
           ctx.stroke()
         }
       }
+      // hidden halos wear the kernel partition's own hidden-role pink — one
+      // ink per role across the whole lesson (anti-cyan until the palette
+      // promotion, 2026-08-13)
       halo(emb.ins, PALETTE.held)
-      halo(emb.hids, PALETTE.anti)
+      halo(emb.hids, PALETTE.hid)
       halo(emb.outs, PALETTE.meter)
       ctx.font = FONT_METER
       ctx.fillStyle = '#1a1f2b'
@@ -233,7 +236,7 @@ export function createCostStrip(shared: { current: CostShared }, probe?: CostPro
       ctx.font = FONT_LABEL
       ctx.fillStyle = 'rgba(85,96,111,0.9)'
       ctx.fillText('chain cells: shortest routes, overlaps counted once — a floor', lp.x, lp.y + lp.h + 34)
-      ctx.fillText('in (green) · hidden (teal) · out (violet)', lp.x, lp.y + lp.h + 48)
+      ctx.fillText('in (green) · hidden (pink) · out (violet)', lp.x, lp.y + lp.h + 48)
 
       // ---- right: the running bill ------------------------------------------
       // At mobile width the full explainer strings ran ~230px past the canvas

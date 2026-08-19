@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { Sim, type Stepper } from '../../components/Sim'
 import { PALETTE } from '../lib/palette'
 import { FONT_LABEL, fmt, paneFrame, type Rect } from '../lib/chrome'
@@ -21,6 +21,7 @@ import {
 } from './walkCompile'
 import { LADDER_FD_ITERS, LADDER_FD_LR, LADDER_NH, LADDER_RF_ITERS, LADDER_RF_LR } from './WalkLadder'
 import { drawSplitMeter, readSplitMeter, type SplitMeterData } from './part2lib'
+import { healedParams } from './walkHealed'
 
 // Part 2, PLAN F1 (and F17, the return) — the hero. The same program twice:
 // left, the 5-node sticky walk run as written, a token hopping by the rule's
@@ -36,16 +37,20 @@ import { drawSplitMeter, readSplitMeter, type SplitMeterData } from './part2lib'
 // — puts measurable mass off the graph entirely and drifts from the walk's
 // law. The number is printed and NOT explained; §4 exists to explain it.
 //
-// With `revealed` (the F17 mount: <WalkHero revealed />) the figure does not
-// merely re-show the opening kernel — it continues live through the ladder's
-// remaining rungs with WalkLadder's EXACT calls: after the opening's untied
-// uniform compile (kept identical, then discarded exactly as the ladder
-// discards its own rung 1), rung 2 restarts from fresh TIED params and fits
-// under the walk's visitation, rung 3 REINFORCE-post-trains that kernel in
-// place. The strip names each rung as it runs, then becomes the split-meter
-// reading the FINAL kernel. The measured ladder numbers (trajectory TV
-// 0.491 → 0.144 while q-weighted per-step KL 0.414 → 1.917, PLAN 2026-08-06)
-// belong to this tied path.
+// With `revealed` (the F17 mount: <WalkHero revealed />) the figure loads
+// the SHIPPED healed kernel (walkHealed.ts — produced offline by the exact
+// ladder below, provenance in that file) and goes live from the first
+// frame: split-meter reading TV 0.144 / q-weighted KL 1.917 immediately,
+// with the shipment confessed in a small on-canvas note. The "retrain in
+// front of me" button reruns the full ladder live with WalkLadder's EXACT
+// calls: the opening's untied uniform compile (run, then discarded exactly
+// as the ladder discards its own rung 1), rung 2 restarting from fresh TIED
+// params under the walk's visitation, rung 3 REINFORCE-post-training that
+// kernel in place. Every fit is exact and the RNG is counter-based, so the
+// retrain lands on the shipped numbers to float ulps — check-part2b holds
+// the constants to a fresh identical run. The measured ladder numbers
+// (trajectory TV 0.491 → 0.144 while q-weighted per-step KL 0.414 → 1.917,
+// PLAN 2026-08-06) belong to this tied path.
 //
 // MEASURED SURPRISE (2026-08-11, guarded by check-part2b): the live one-step
 // histograms do NOT drift apart after healing — the healed kernel's sampled
@@ -87,6 +92,8 @@ export interface HeroProbe {
   trajTV: number
   offGraph: number
   worstStep: number
+  /** q-weighted per-step KL the split-meter prints (revealed live only). */
+  kl?: number
 }
 
 const uniformQ = new Float64Array(N_NODES).fill(1 / N_NODES)
@@ -105,11 +112,20 @@ export function heroStripRect(w: number, h: number): Rect {
   return { x: 16, y: 216, w: w - 60, h: h - 226 }
 }
 
-export function createWalkHero(revealed: boolean, probe?: HeroProbe): Stepper {
+export interface HeroShared {
+  /** Monotone counter — the revealed mount's "retrain in front of me". */
+  retrain: number
+}
+
+export function createWalkHero(
+  revealed: boolean,
+  probe?: HeroProbe,
+  shared?: { current: HeroShared },
+): Stepper {
   // counter RNG lanes: (t, 0) the left hop, (t, 1) the right one-step draw
   const u = (t: number, salt: number) => u01(SEED, t, salt, 1)
 
-  let p: KernelParams = freshParams(HERO_NH)
+  let p: KernelParams = revealed ? healedParams() : freshParams(HERO_NH)
   let iterN = 0 // progress within the current training rung
   let itersTotal = 0 // cumulative — what the probe reports
   let accCompile = 0
@@ -121,6 +137,10 @@ export function createWalkHero(revealed: boolean, probe?: HeroProbe): Stepper {
   let rightCfg = oneHotConfig(0)
   let leftCounts = new Float64Array(N_NODES + 1) // 6 buckets to compare 1:1
   let rightCounts = new Float64Array(N_NODES + 1)
+  // shipped = the live kernel came from walkHealed.ts, not a fit the reader
+  // watched — the drawn confession stays on until a retrain replaces it
+  let shipped = revealed
+  let lastRetrain = shared?.current.retrain ?? 0
   const patch = z1Graph(8, 8)
   const qTarget = targetStationary()
 
@@ -135,6 +155,9 @@ export function createWalkHero(revealed: boolean, probe?: HeroProbe): Stepper {
     rightCounts = new Float64Array(N_NODES + 1)
     hops = 0
   }
+  // revealed opens already live on the shipped kernel — split-meter reading
+  // TV 0.144 / KL 1.917 from the first frame (check-part2b holds this)
+  if (revealed) goLive(qTarget)
 
   // One handler per training rung: iteration budget, pacing, the exact
   // walkCompile call (rungs 2–3 mirror WalkLadder.tsx call-for-call), and
@@ -184,8 +207,10 @@ export function createWalkHero(revealed: boolean, probe?: HeroProbe): Stepper {
       probe.trajTV = phase.traj.tv
       probe.offGraph = phase.traj.offGraph
       probe.worstStep = phase.worstStep
+      probe.kl = phase.split.klWeighted
     }
   }
+  publish()
 
   const oneHop = () => {
     t++
@@ -202,6 +227,20 @@ export function createWalkHero(revealed: boolean, probe?: HeroProbe): Stepper {
 
   return {
     step(dt) {
+      if (shared && shared.current.retrain !== lastRetrain) {
+        // the confession's other half: rerun the exact ladder, live, from
+        // scratch — counter RNG + exact fits land it on the shipped numbers
+        lastRetrain = shared.current.retrain
+        shipped = false
+        p = freshParams(HERO_NH)
+        iterN = 0
+        itersTotal = 0
+        accCompile = 0
+        phase = { kind: 'compiling' }
+        leftCounts = new Float64Array(N_NODES + 1)
+        rightCounts = new Float64Array(N_NODES + 1)
+        hops = 0
+      }
       if (phase.kind !== 'live') {
         const rung = RUNGS[phase.kind]
         accCompile = Math.min(accCompile + dt * rung.rate, rung.cap)
@@ -227,9 +266,12 @@ export function createWalkHero(revealed: boolean, probe?: HeroProbe): Stepper {
     draw(ctx, w, h) {
       ctx.clearRect(0, 0, w, h)
       drawLayerRail(ctx, w, 'sampler')
+      // panes sit at y = 40 so their headers clear the layer rail's tab row
+      // (they overprinted SAMPLER · SUBSTRATE at both widths — final audit,
+      // 2026-08-13)
       const paneW = w * 0.44
-      const lp: Rect = { x: 16, y: 30, w: paneW - 16, h: 150 }
-      const rp: Rect = { x: w * 0.5, y: 30, w: paneW - 16, h: 150 }
+      const lp: Rect = { x: 16, y: 40, w: paneW - 16, h: 150 }
+      const rp: Rect = { x: w * 0.5, y: 40, w: paneW - 16, h: 150 }
       ctx.textAlign = 'left'
       ctx.font = FONT_LABEL
       ctx.fillStyle = 'rgba(85,96,111,0.9)'
@@ -386,6 +428,20 @@ export function createWalkHero(revealed: boolean, probe?: HeroProbe): Stepper {
       }
       if (revealed) {
         drawSplitMeter(ctx, strip, phase.split)
+        // the honesty note: shipped weights are confessed on canvas until
+        // the reader has watched the ladder rerun them
+        if (shipped) {
+          ctx.font = FONT_LABEL
+          ctx.fillStyle = 'rgba(85,96,111,0.9)'
+          ctx.textAlign = 'left'
+          ctx.fillText(
+            w < 520
+              ? 'weights shipped — retrain reruns the ladder here'
+              : 'healed weights shipped (trained offline by this exact ladder) — press retrain to rerun it here',
+            strip.x,
+            h - 4,
+          )
+        }
         return
       }
       // quiet: the same kernel chained T steps, occupancy vs the walk's law
@@ -436,5 +492,19 @@ function normalized(counts: Float64Array): Float64Array {
 export function WalkHero({ revealed = false }: { revealed?: boolean }) {
   const revealedRef = useRef(revealed)
   revealedRef.current = revealed
-  return <Sim height={340} create={() => createWalkHero(revealedRef.current)} />
+  const [retrain, setRetrain] = useState(0)
+  const shared = useRef<{ current: HeroShared }>({ current: { retrain } })
+  shared.current.current.retrain = retrain
+  return (
+    <Sim
+      height={340}
+      create={() => createWalkHero(revealedRef.current, undefined, shared.current)}
+    >
+      {revealed ? (
+        <button type="button" onClick={() => setRetrain((r) => r + 1)}>
+          retrain in front of me
+        </button>
+      ) : null}
+    </Sim>
+  )
 }

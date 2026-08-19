@@ -3,8 +3,9 @@
 **Nick's Visual Math Lessons** — explorable explanations at Ciechanowski grade: his
 pedagogy, plus the equations he deliberately omits. It began as a wave-physics
 self-study and that spine is still here, now as one **field** among several. A
-lesson belongs to exactly one field (`physics` · `waves` · `maths`, ordered per
-field) and carries **tags** that cut across all of them; both are closed unions in
+lesson belongs to exactly one field (`physics` · `waves` · `maths` · `cad`,
+ordered per field) and carries **tags** that cut across all of them; both are
+closed unions in
 `src/lessons/registry.ts`, so a typo is a compile error rather than an orphan chip.
 Add a tag only when a second lesson would carry it.
 
@@ -64,7 +65,9 @@ forward from our own intuition and taste with guiding principles.
 
 Vite + React + TS · MDX lessons with KaTeX (`$…$`, `$$…$$`) · Canvas-2D sims ·
 Cloudflare Pages. `<Sim>` and `<TeX>` are available in MDX without imports.
-`bun run dev` / `bun run typecheck` / `bun run build` / `bun run check:figures`.
+`bun run dev` / `bun run typecheck` / `bun run build` / `bun run check:figures`
+(per-lesson check scripts: `check:figures` `check:pbits` `check:z1` `check:part2`
+`check:cad` `check:learned` — there is no aggregate).
 **Display math stays on one line** — remark-math needs the closing `$$` at a
 line start, so a two-line `$$eq … eq$$` silently swallows the rest of the
 document (measured: it truncated two sections of physics-02, 2026-08-05).
@@ -191,7 +194,34 @@ branches.
     map build banked in CONCEPT_BANK.md). Next version agreed in direction —
     "Newton's One Idea" spine, fluid-freight opening — with a MANDATORY hook
     checkpoint before any build → `articles/maths/01-jacobian-hessian/HANDOFF.md`.
-  - **Lesson 04** (drag & turbulence, ordering unclaimed): CONCEPT banked
+  - **CAD C1** (Basis, Cage, and Boundary — first lesson of the `cad` field,
+    opened 2026-08-16): PORTED end-to-end (`draft`) from an external
+    standalone explainer (vanilla ES modules + raw WebGPU) delivered as a zip.
+    ~2,900 words, 7 figures, the maths rebuilt in `src/sims/cad/`
+    (Cox–de Boor, Boehm insertion, rational NURBS, Catmull–Clark, a B-rep plate
+    with its Euler–Poincaré balance); 54 assertions green via `bun run check:cad`.
+    The original project is preserved verbatim under
+    `articles/cad/01-cad-primitives/source/` and the port is checked against ITS
+    recorded numbers, not against itself. Voice pass, reader-ToM review, and a
+    mobile pass are the remaining work →
+    `articles/cad/01-cad-primitives/HANDOFF.md`.
+  - **Lesson 04** (learned solver — *Teaching a Solver to Guess*): BUILT end-to-end
+    2026-08-20 (`draft`) from an external visual storyboard Nick supplied as a zip
+    (preserved verbatim under `articles/08-learned-solver/source/`). ~4,300 words,
+    9 figure slots from 7 live components, and the repo's first genuinely TRAINED
+    model: 809 parameters that warm-start the pressure projection, trained by
+    `scripts/train-pressure-net.ts` on the lesson-01 solver's own divergence
+    fields, shipped as `src/sims/learned/weights.ts` with its measurement manifest.
+    50 assertions green via `bun run check:learned` — which guards the prose's
+    numbers, not just the pixels. Browser QA and mobile pass NOT done (the preview
+    pane was visibility-hidden all session, which suspends rAF and blanks every
+    canvas) → `articles/08-learned-solver/HANDOFF.md`. Two repo-wide changes rode
+    along: `remark-gfm` + table styling (first tables in the repo), and
+    `lazyStepper` in `sims/learned/figlib.ts` for lessons whose figures are
+    expensive to construct. **Ordering note:** it took waves `order: 4`, which the
+    banked drag/turbulence concept below had informally claimed; if drag ships
+    first, this becomes 05 and only `registry.ts` changes.
+  - **Lesson 04-or-05** (drag & turbulence, ordering unclaimed): CONCEPT banked
     2026-07-06 — 3D wind-tunnel hero (car + offset colored streamtubes; where
     lesson 01's "flows here are two dimensional" confession flips into the
     thesis). Week-scale solver+renderer work, scoped honestly in

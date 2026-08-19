@@ -140,8 +140,15 @@ export function createGridSchedules(
       ctx.fillStyle = 'rgba(85,96,111,0.9)'
       ctx.fillText('the fenced patch is the auditable corner', gx, gy + GH * cell + 16)
 
-      // the meter on the patch's 16 states
-      const mr = { x: w * 0.6, y: 40, w: w * 0.36, h: h - 96 }
+      // the meter on the patch's 16 states — narrow: w*0.36 put the pane
+      // frame's right edge past the canvas at 360px (~6px clipped; figure
+      // audit close-out item, 2026-08-17), so the width is fit to the canvas
+      const mr = {
+        x: w * 0.6,
+        y: 40,
+        w: w < 520 ? w - w * 0.6 - 18 : w * 0.36,
+        h: h - 96,
+      }
       paneFrame(ctx, { x: mr.x - 8, y: mr.y - 10, w: mr.w + 16, h: mr.h + 24 })
       let total = 0
       for (let i = 0; i < counts.length; i++) total += counts[i]
