@@ -167,7 +167,9 @@ branches.
     plus Monte-Carlo photon arrivals in `src/sims/physics/`; 20 headless figure
     checks green, which found two real figure bugs; awaits Nick's read and a mobile
     pass → `articles/physics/01-wave-particle/HANDOFF.md`.
-  - **Physics P2 + the p-bit SERIES** (thermodynamic computing, three parts):
+  - **The p-bit SERIES** (field `thermo`, “Thermodynamic computing” — split out of
+    `physics` 2026-08-20 so the broad-physics field stays standalone lessons; the
+    series is T1/T2/T3, read in order):
     Part 1 "A Computer Made of Noise" BUILT end-to-end 2026-08-05 (`draft`,
     ~8,500 words, 28 figures, ~180 checks green via `bun run check:pbits`);
     Part 2 "Compiling Into Heat" (Extropic stack) skeleton + core infra built

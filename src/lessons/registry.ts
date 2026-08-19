@@ -22,7 +22,7 @@ export type LessonStatus =
 // prefix keeps `P1` and `01` and `M1` distinguishable at a glance.
 // ---------------------------------------------------------------------------
 
-export type Field = 'physics' | 'waves' | 'maths' | 'cad'
+export type Field = 'physics' | 'thermo' | 'waves' | 'maths' | 'cad'
 
 export interface FieldSpec {
   field: Field
@@ -39,6 +39,13 @@ export const FIELD_SPEC: Record<Field, FieldSpec> = {
     label: 'Broad physics',
     prefix: 'P',
     blurb: 'Standalone lessons on whatever the physics is actually doing. No curriculum order.',
+  },
+  thermo: {
+    field: 'thermo',
+    label: 'Thermodynamic computing',
+    prefix: 'T',
+    blurb:
+      'A series, read in order: chips that compute with the thermal noise every other chip spends its power budget fighting.',
   },
   waves: {
     field: 'waves',
@@ -61,7 +68,7 @@ export const FIELD_SPEC: Record<Field, FieldSpec> = {
   },
 }
 
-export const FIELD_ORDER: readonly Field[] = ['physics', 'waves', 'maths', 'cad']
+export const FIELD_ORDER: readonly Field[] = ['physics', 'thermo', 'waves', 'maths', 'cad']
 
 export const FIELDS: readonly FieldSpec[] = FIELD_ORDER.map((f) => FIELD_SPEC[f])
 
@@ -128,8 +135,8 @@ export const lessons: Lesson[] = [
   },
   {
     id: 'pbits',
-    field: 'physics',
-    order: 2,
+    field: 'thermo',
+    order: 1,
     title: 'A Computer Made of Noise',
     blurb:
       'A chip that computes with the thermal noise every other chip fights. Build it from one flickering coin — and build the instrument that catches a fast sampler telling a confident lie.',
@@ -139,8 +146,8 @@ export const lessons: Lesson[] = [
   },
   {
     id: 'z1-compiler',
-    field: 'physics',
-    order: 3,
+    field: 'thermo',
+    order: 2,
     title: 'Compiling Into Heat',
     blurb:
       'The sequel to the noise computer: Extropic’s actual stack. Compile a stochastic program onto the real Z1 fabric and pay the three taxes — embedding, context, mixing — with every tax measured on an exact meter.',

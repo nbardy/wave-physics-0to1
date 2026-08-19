@@ -44,7 +44,7 @@ export const PALETTE = {
   ejecta: '#dc2626', // ejected-electron energy (the photoelectric bench)
   cutoff: '#0891b2', // threshold frequency / the line a quantity cannot cross
 
-  // Physics P2, p-bits (articles/05-pbits/PLAN.md §Palette) — the role-rhyme
+  // Thermo T1, p-bits (articles/05-pbits/PLAN.md §Palette) — the role-rhyme
   // continues: amber "the thing we watch" (a spin pointing up), blue its other
   // face, violet "the derived meter" (the TV readout and every sampled bar).
   // The ghost gray is the exact distribution and is the SAME gray in every
@@ -57,7 +57,7 @@ export const PALETTE = {
   held: '#059669', // clamp halo — a spin held by hand
   meter: '#7c3aed', // sampled distributions, TV distance, derived readouts
 
-  // Physics P3, the Z1 compiler (articles/06-z1-compiler/PLAN.md §Persistent
+  // Thermo T2, the Z1 compiler (articles/06-z1-compiler/PLAN.md §Persistent
   // chrome) — the series' two promoted inks. `visit` is Part 2's one new
   // color: the visitation glow q(x), how often the upstream program shows an
   // input — warm attention, adjacent to nothing in the p-bit set. `hid` is
