@@ -243,3 +243,17 @@ open items + palette decisions listed at the end of 06 PLAN's audit-facts
 section; Nick's standing decision queue (Part 1 publish flip, Z1Layers
 promotion, Microscope toggle, epigraphs, Part 3's six open questions);
 Part 3 build (design complete, awaiting Nick's read). Nothing committed.
+
+## VISUAL PERFECTION ROUND — COMPLETE (2026-08-17, d087102, deployed)
+
+All nine decided items landed across three passes (one agent stalled, one
+hit a session limit; main thread finished directly): healed instant hero +
+retrain button, palette promotion (visit/hid), split-meter narrow fixes,
+all mobile clips, DreamChain nearest-glyph readout, Z1Layers promoted into
+Part 1's chip reveal (confession reconciled), PhaseTrainer prose scoped to
+measured per-level behavior, and the new SplitMeterTeach figure (per-step
+pane depth-blind at KL 0.568, trajectory pane 0.268→0.634 with visible
+saturation; scripts/check-teach.ts). Declined and recorded: Microscope
+toggle, fabric-class recolor. All suites green; live on gh-pages.
+Remaining for the series: Nick's human read-through, publish flips,
+Part 3 build (design approved-pending-read; six open questions in its PLAN).
