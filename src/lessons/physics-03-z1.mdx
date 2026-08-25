@@ -44,16 +44,12 @@ and it prints two numbers the histograms cannot see: a distance from the
 walk's law that exceeds any single step's error, and nearly a fifth of all
 occupancy pooled in a <C k="ferro">red</C> bucket, states that mean no node
 at all. One-step agreement is the cheapest promise a compiler makes, and
-the matching histograms check no other. The lie has a name the papers
-coined for it, an instrument that catches it, a repair whose price got
-measured, and a floor below which no repair reaches — and this walk is
-small enough to keep every one of those claims in exact numbers.
+the matching histograms check no other.
 
 ## Four moves and a checkerboard
 
-Part 1 owed one debt to honesty that this article can now pay. Its fabric
-drawing was a confessed stand-in — degree sixteen, sparse, two-colorable,
-wiring invented. The real wiring is public, and it is stranger than the
+Part 1's fabric drawing was a confessed stand-in — degree sixteen, sparse,
+two-colorable, wiring invented. The real wiring is public, and it is stranger than the
 stand-in: every cell on the Z1 die follows the same four connection rules,
 
 $$(a,b)\in\{(1,0),\;(2,1),\;(2,3),\;(4,1)\}$$
@@ -90,8 +86,7 @@ watch what the checkerboard loses.
 
 With any even rule in the set, wires appear joining like color to like — and
 every such wire is a write conflict waiting for the sweep, the exact crime
-the freeze-frame counted in Part 1. The four published moves are not four
-random eccentricities. Odd parity *is* the design: reach scattered widely
+the freeze-frame counted in Part 1. Odd parity *is* the design: reach scattered widely
 across the plane, purchased without surrendering the one property that makes
 a massively parallel sweep exact.
 
@@ -170,9 +165,9 @@ vanishes, leaving the clamped softmax Part 1 fit by hand. The detail worth
 holding is the argument of $Z$. This is not the one partition function of
 the atlas; it is a *family* of them, one per input — clamp a different $x$
 and the whole normalization is re-run in a different room. A per-input
-normalizer will matter twice — later as the loophole a compiler never
-fixes, and first, right now, as the thing that decides which inputs a fit
-even cares about.
+normalizer decides which inputs a fit even cares about — that bill arrives
+immediately. It also hides a loophole no forward fit can see; that one
+keeps.
 
 ## The context tax
 
@@ -195,9 +190,23 @@ world, and over many chained steps the trajectory accumulates real
 occupancy there.
 
 Small per-step, real at depth: catching that combination is a two-pane job,
-and the instrument for it sits on every compiled figure from here to the
-end of the series. The **split-meter**. Left pane: per-step KL, one bar per
-input context — how wrong each row of the compiled table is. Right pane:
+and the per-step half needs a distance Part 1 never built. Total variation
+weighs every state's gap equally. Training descends a different one — the
+**KL divergence**,
+
+$$D_{\mathrm{KL}}\!\left(K \,\|\, \tilde K\right) \;=\; \sum_y K(y \mid x)\,\ln\frac{K(y \mid x)}{\tilde K(y \mid x)}$$
+
+— each state's log-error, weighted by how often the truth actually says
+that state. Check its ends: agree everywhere and every log is zero. Starve
+a state the truth visits and the divergence blows up — a row that refuses
+to say a state the walk actually says is *infinitely* wrong by this
+measure, where TV charges it no more than its missing share. That severity
+is what the descent needs: the loss must scream where a table is
+qualitatively wrong, not just tally the gap.
+
+The instrument itself is the **split-meter**, and it sits on every compiled
+figure from here to the end of the series. Left pane: per-step KL, one bar
+per input context — how wrong each row of the compiled table is. Right pane:
 trajectory occupancy at depth $T$ — where the chained kernel actually
 lives, <C k="ghost">exact law outlined</C>, compiled chain in
 <C k="meter">violet</C>, and the leaked mass collected in its own
@@ -253,8 +262,7 @@ here it cost the cold contexts nothing, because the tied wires spill
 whatever the hot contexts learn. Make capacity scarcer and a genuine trade
 emerges; this model is not yet poor enough to show one.
 
-The papers carry the weighting question as one inequality, and its scariest
-inhabitant is worth meeting in the open. Train the kernel under some
+The papers carry the weighting question as one inequality. Train the kernel under some
 distribution $\mu$, deploy it under the program's actual $q$, and the
 deployed error inherits an inflation factor
 
@@ -275,9 +283,13 @@ our scale — their middle rung weights by the visitation the *model* itself
 generates, where ours uses the target walk's: fit under uniform weighting,
 refit under the program's visitation,
 then a third stage that abandons per-step fitting altogether and trains on
-the trajectory itself — REINFORCE, nudging parameters by reward times a
-centered score. The third stage is operationally *cheaper* than the
-training Part 1 did: contrastive divergence needed two clamping patterns,
+the trajectory itself. That stage's rule is **REINFORCE**, and it is three
+moves: run the compiled chain and keep whole trajectories; score each one
+by how closely it tracks the walk's law; then nudge every parameter toward
+the trajectories that scored above average and away from the ones below —
+reward times a centered score. Nothing differentiates through the sampler;
+the samples themselves are the gradient's only informants. The third stage
+is operationally *cheaper* than the training Part 1 did: contrastive divergence needed two clamping patterns,
 data phase and dream phase; REINFORCE needs only the dream — inputs held,
 everything else free. What it costs instead is variance: a score-function
 gradient only discriminates once the model's samples already reach the
@@ -301,7 +313,7 @@ keeping both is why the split-meter exists.
 ## The floor
 
 The hero's strip put a number on error at depth; the ladder priced its
-repair; one more fact makes the picture honest, and it is good news with a
+repair; one more fact remains, and it is good news with a
 boundary. Chained error does not accumulate forever. Each step of the
 compiled chain *contracts*: feed it two different distributions and it
 returns two less-different ones, closer by a factor $\rho < 1$. Old errors
@@ -312,7 +324,7 @@ $$\tilde\delta \;\le\; \frac{\bar\varepsilon}{1-\rho}$$
 
 with $\bar\varepsilon$ the worst single-step error and $\rho$ the chain's
 contraction rate — both measurable from the compiled chain itself, no
-oracle required. Two honesty notes about $\rho$ before the figure prints
+oracle required. Two caveats about $\rho$ before the figure prints
 one. The papers state this ceiling against the *ideal* chain's contraction
 $\rho_0$; the figure below measures the compiled chain's own. And what it
 measures is the asymptotic rate — the factor the chain's slowest surviving
@@ -373,7 +385,7 @@ claims at the slider's other end: at $\lambda = 0$ the models are
 identical and the backward difference dies too; the forward number never
 had anything to lose.
 
-The consequence is a fact about compilation itself, stated flatly: fitting
+Fitting
 a forward kernel does not determine an energy. It determines an
 *equivalence class* of energies — one member per choice of $\lambda$ — and
 every training run on this page landed on some member without being
@@ -412,9 +424,9 @@ against a field of that size:
 $$E(s_1, s_2) = -J\, s_1 s_2 \qquad\Rightarrow\qquad P_{\text{cross}} \propto e^{-2J}, \qquad \tau \sim e^{\,2J}$$
 
 At $J = 0$ the coins are free and every sweep is a fresh draw. Every unit of
-coupling multiplies the waiting time by $e^2$. The definiteness and the
-waiting are the same wires — a model cannot be given strong opinions without
-also being given long silences between changes of mind.
+coupling multiplies the waiting time by $e^2$. A model cannot be given
+strong opinions without also being given long silences between changes of
+mind, because both arrive down the same wires.
 
 The figure below stages the trade as one knob. A four-spin model is fit to a
 fixed, strongly-coupled target — the fit is real gradient descent, and after
@@ -454,8 +466,7 @@ as strongly as the hardware allows, at no cost in mixing time. Read the
 compiled walk kernels again with that exemption in mind — their
 most violent couplings hang off the clamped inputs, where violence is free,
 and the tax falls only on the hidden and output spins that actually flicker.
-The partition into roles was never bookkeeping. It is where the mixing tax
-gets assessed.
+The partition into roles is where the mixing tax gets assessed.
 
 ## The bill
 
@@ -486,9 +497,9 @@ shaded <C k="ferro">warm</C>. Those are chain spins, Part 1's triangle repair
 recurring at kernel scale, and the counter totals them: 13 logical spins cost
 51 physical cells, 3.92 per logical. That number is a floor — overlapping
 routes were counted once, and a placement that must keep routes apart pays
-more. The patch of fabric a compiled kernel occupies this way has a name in
-the papers — a Thermodynamic Sampling Unit — and the name draws the honest
-boundary: the unit of hardware is not a p-bit but a placed, routed, clamped
+more. The patch of fabric a compiled kernel occupies this way is what the
+papers call a **Thermodynamic Sampling Unit**, and the name draws the
+boundary where it belongs: the unit of hardware is not a p-bit but a placed, routed, clamped
 region.
 
 Run the strip for a while before touching anything. The bill climbs by one
@@ -497,7 +508,8 @@ learned yet, because the state runs unobserved. Sampling is the cheap part;
 *knowing what was sampled* is what costs. Press read-out and five spins
 arrive, billed at three hundred sweeps' worth of energy. Press reflash and the
 bill jumps by 27,300 — swapping which kernel lives on the patch
-costs as much energy as an entire long sampling run. The strip converts the
+costs as much energy as an entire long sampling run. On this fabric,
+moving house costs more than living. The strip converts the
 total to joules in its last line at the papers' own estimate of roughly
 $3\times10^{-10}$ joules per iteration, and the word *estimate* is
 load-bearing: it is a projection, not a measurement, and the strip charges in
@@ -591,7 +603,7 @@ converge on $\pm W$, and the right-hand pane tracks the error on a log axis —
 a straight line, the residual dying as $e^{-4.00a}$ by measurement against a
 theoretical rate of exactly $-4$. Each unit of coupling buys a factor of
 $e^4 \approx 55$ in accuracy. That line is the mixing tax's other face,
-priced: expressivity is not forbidden, it is *exponentially rationed* — you
+priced: expressivity here is exponentially rationed — you
 approach the product as fast as you are willing to stiffen the couplings that
 realize it, and the mixing tax already priced what stiffness costs the free
 spins.
@@ -634,7 +646,7 @@ clips ever sharper logits and the per-step residual $\bar\varepsilon$ rises.
 Loosen it from 2.5 to 4.5 and the floor collapses from 0.0385 to about
 $1.4\times10^{-5}$ — nearly three orders of magnitude. The cap
 buys fidelity; the target's own physics sets the pace; and the compiled
-sampler is now doing something worth saying plainly: sampling, faithfully,
+sampler is sampling, faithfully,
 from a twenty-term three-body law that pairwise couplings cannot express —
 because what was compiled was never the model. It was the moves.
 
@@ -702,8 +714,8 @@ contraction coefficient under the floor and the mixing time under the tax.
 It works from concrete chains — shuffled cards, glued graphs, Glauber
 dynamics on the Ising model itself — and its bottleneck arguments are what
 make $e^{2J}$ waiting times a theorem rather than an anecdote. It is the
-honest next step for a reader who wants the mixing tax as mathematics
-instead of a meter.
+natural next step for a reader who wants the mixing tax as mathematics
+rather than as a meter.
 
 ## Final Words
 
@@ -717,9 +729,7 @@ every coupling stiff enough to mean something. But notice what the price list
 is *for*. Nothing on it says impossible. Every fixed machine is a universal
 sampler one compiler away, at a price you can now compute.
 
-That sentence is the two papers this article was compiled from, read as one.
-Torx says what a stochastic program is; Thermalizers says what it costs to
-make heat run one. You now own the instruments they assume — the
-split-meter, the ghost, the taxes — and with those in hand their equations
-arrive the way the best ones always do: as the formalization of something
-you have already paid for.
+That sentence is the two papers this article was compiled from, read as
+one — Torx saying what a stochastic program is, Thermalizers what it costs
+to make heat run one. The instruments their equations assume — the
+split-meter, the ghost, the taxes — are the ones now in your hands.

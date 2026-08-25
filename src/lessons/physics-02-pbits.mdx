@@ -35,10 +35,9 @@ flipping is not overhead it tolerates. The flipping is the computation.
 
 Randomness is the one output the eye cannot audit. Two streams of flicker look
 identical when one of them is right and the other is confidently, permanently
-wrong — so alongside the machine, this lesson builds the instrument that can
-catch it lying. A fast, plausible-looking sampler is going to produce an
-entirely wrong answer in these pages while every energy readout applauds it,
-and the instrument will be the only witness.
+wrong — and a fast, plausible-looking sampler can sit half a distribution
+from the law while every energy readout applauds it. So alongside the
+machine, this lesson builds the instrument that can catch it lying.
 
 Here is the surrender, running. Forty small lattices, sixteen cells each, every
 cell flipping many times a second — and pictures keep condensing out of the
@@ -108,7 +107,7 @@ wires. The held cell's own gauge still moves when you flip its neighbor, but its
 state never will. Every figure from here to the end of the lesson speaks this
 vocabulary and no other.
 
-None of this display is a cartoon of the hardware; it is a diagram of it. The
+This display is a diagram of the hardware, not a cartoon of it. The
 wire is a programmable conductance on the chip — the neighbor's state feeds a
 weighted current in, and that current sum is the p-bit's whole view of the
 world. The arc gauge is the transfer curve of a noisy comparator: how often a
@@ -162,7 +161,6 @@ thing, shaping the pair while leaving each p-bit alone. Toward *disagree*, the
 inner bars take over instead. The <C k="ghost">gray outlines</C> behind the
 sampled bars are new: they are the *exact* answer, computed by brute force, and
 this is the first time in the lesson the flicker can be checked against truth.
-Keep an eye on that gray; it is about to become the whole story.
 
 A wire persuades with arithmetic. Watch the second p-bit's:
 
@@ -305,8 +303,9 @@ consulting its neighbors *is* drawing from this conditional slice of the law;
 run that everywhere, forever, and the dwelling times are the law itself. This
 is the object every Gibbs update in the rest of the lesson draws from.
 
-The atlas can afford all this honesty because sixteen states fit on a page.
-Promises this checkable deserve a permanent instrument. Gray bars for truth,
+The atlas could check every one of those claims by brute force because
+sixteen states fit on a page. That check now becomes a permanent
+instrument. Gray bars for truth,
 violet bars for the sampler's record, and their mismatch folded into a single
 number — the *total variation distance*, half the sum of the bar-by-bar gaps.
 Zero means indistinguishable; one means never right.
@@ -315,7 +314,7 @@ Zero means indistinguishable; one means never right.
 
 Watch the number fall as evidence accumulates — and note the gray band hugging
 the top of each truth bar. That band is $\pm\sqrt{p(1-p)/N}$: the *typical*
-wobble of an honest $N$-sample measurement, not a promise about any single
+wobble of an $N$-sample measurement, not a promise about any single
 run. The live bars spend most of their time inside it, wander out, wander back
 — and the band itself tightens as $\sqrt{N}$, which is the stubborn arithmetic
 of all measurement: halving the typical error costs four times the evidence.
@@ -329,7 +328,7 @@ Nothing else in this lesson can.
   You hold one rule and one law, proven on the atlas to be the same fact — the
   rule is the Boltzmann law sliced one p-bit at a time. And you hold an
   instrument: exact truth in gray, evidence in violet, their distance as one
-  number with an honest error band. Everything that follows is an attack on
+  number with its error band. Everything that follows is an attack on
   that number's floor.
 </Waypoint>
 
@@ -359,7 +358,7 @@ A second display shows how different. Shrink back to the frustrated four-loop
 from the atlas, whose sixteen states fit on one map: states one flip apart are
 joined by an edge, each node's <C k="ghost">ring</C> is sized by its exact
 share, and the sampler is a dot walking the map, its <C k="meter">fill</C>
-recording where it has been. Give the honest schedule a moment first — the
+recording where it has been. Give the one-at-a-time schedule a moment first — the
 fills swell to match the rings, which is the whole promise a sampler makes,
 kept in miniature. Then press *all at once*:
 
@@ -389,8 +388,7 @@ cells glows red:
 the count reads zero by construction. *All at once* rings the whole board, and
 all 480 wires turn red at once — every wire is a pair of p-bits deciding on each
 other's stale ghosts. That number, not the multi-coin moves, is what separates
-the two schedules — and the rescue is about to drive it to zero without
-giving up the rings.
+the two schedules.
 
 And notice what the grid itself never told you. The all-at-once lattice still
 finds low-energy states — happily aligned domains everywhere you look — and its
@@ -399,14 +397,14 @@ the meter: evidence keeps accumulating by the thousands, and the distance stops
 falling anyway. A correct sampler's error starves with evidence; a broken one's
 error is a fact about the process, and no amount of watching dilutes it.
 
-## The two-coloring rescue
+## The checkerboard schedule
 
 The failure was never parallelism. It was *wired neighbors updating together*.
 So: color the grid like a checkerboard. Every wire joins a red cell to a black
 cell — no red touches red, no black touches black. Freeze black and update all
 128 red cells at once: each consults only frozen black neighbors, so nothing it
 reads is stale. Then freeze red, flash black. Two half-sweeps, and every coin
-has taken a fully honest turn.
+has taken a correct turn.
 
 <Predict
   question="Red/black updates half the lattice at once — nearly the speed of all-at-once. Where does the meter land?"
@@ -473,7 +471,7 @@ audited patch (a lag-one reading — crude, and enough to rank schedules).
 
 <Dashboard />
 
-Parallelism honestly buys evidence: *red/black* posts a couple hundred
+Parallelism genuinely buys evidence: *red/black* posts a couple hundred
 independent samples per thousand ticks against *one at a time*'s two — a
 hundredfold, real, and yours to keep. And *all at once* posts the best
 evidence-rate on the whole board, which is exactly why its row is struck
@@ -493,7 +491,7 @@ native act is the figure you just rescued: program the biases and the wire
 weights, then sweep red, sweep black, millions of Gibbs iterations a second,
 each one estimated to cost some three hundred *picojoules* — thermal noise
 itself playing the dice, so the randomness costs nothing extra. The schedule
-is not a simulation trick; it is the machine. A p-bit chip is a Gibbs
+is the machine. A p-bit chip is a Gibbs
 machine — that is the name this one-at-a-time-in-parallel sampling carries —
 and everything it will ever compute must arrive dressed as biases and wire
 weights on that fixed two-colored graph. A patch of such a fabric, running
@@ -602,7 +600,7 @@ dictionary is short enough to print whole:
 </table>
 
 The local field is literally an analog current sum. That is the whole
-translation; nothing in the machine is not in this table. One honesty note
+translation; nothing in the machine is not in this table. One note
 about the circuit itself: the comparator drawing is a lineage, not a
 schematic. Extropic's earlier X0 test chip runs subthreshold-CMOS p-bits of
 essentially this kind as *randomness providers* — physical dice on a
@@ -649,13 +647,13 @@ weak and the aux spin forgets its partner: the embedded machine samples
 beautifully from the *wrong* law, and the meter pins well off the floor no
 matter how long you watch. Drag it strong and the copy is enforced so
 fiercely that the chained pair can barely flip at all: the law is now right,
-but the sampler stops mixing, and at any honest evidence budget the meter
+but the sampler stops mixing, and at any finite evidence budget the meter
 starves high. Somewhere between sits a band where the marginal is faithful
 and the mixing survives — finding it is a real engineering search, run per
 problem, and it is the first tax the triangle pays for not being born
 bipartite.
 
-One more honest subtraction before the chip earns its compiler. Every figure
+One more subtraction remains. Every figure
 so far has assumed all cells share one transfer curve. Fabricated silicon does
 not: each comparator comes out of the furnace with its own gain. The knob
 below scales a fixed gain-scatter pattern across the audited four-loop while
@@ -803,7 +801,7 @@ happens here.
 
 The first move is destructive. Take a glyph and run it through a short loop:
 at step $t$, every pixel flips with probability $p_t$ — eight percent, then
-twenty, then fifty. This loop deserves an honest label: it is three lines of
+twenty, then fifty. This loop deserves a plain label: it is three lines of
 ordinary code, a biased coin per pixel, and nothing about it is thermodynamic.
 The machine's native act is still red/black Gibbs on a programmed landscape —
 the schedule that turned out to be the chip — and its role here is the
@@ -929,7 +927,7 @@ values — and compare:
 
 <DreamCompare mode="synchronous" />
 
-Look honestly: the lower strip does not look broken. It looks like glyphs.
+Look closely: the lower strip does not look broken. It looks like glyphs.
 The stale reads decouple the hidden bank from the output bank during the
 dream phase, so the trainer subtracts the wrong statistic and bakes the error
 permanently into the weights — and both rows here are *sampled* honestly, with
@@ -960,8 +958,8 @@ missing a wall. That is not a defect to apologize for. The machine's product
 was never a picture; it is a distribution, and the strays are the visible
 proof that the wall is sampling one rather than stamping copies. The weights
 running here are the ones the opening shipped on credit — trained by exactly the loop
-you just watched, on exactly these six glyphs. The paint-box settles the debt
-properly: draw your own sixteen pixels, press train, and the browser reruns
+you just watched, on exactly these six glyphs. The paint-box closes the
+loop: draw your own sixteen pixels, press train, and the browser reruns
 the whole clamp–dream–subtract loop with your glyph in the dataset — four
 hundred epochs, about a second; the model is that small. Then the wall
 starts dreaming yours, ringed in <C k="held">green</C> whenever a cell lands

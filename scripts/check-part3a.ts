@@ -21,6 +21,7 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { PALETTE } from '../src/sims/lib/palette'
 import { READOUT_ITERS, REFLASH_ITERS, JOULES_PER_ITER } from '../src/sims/pbits/CostStrip'
+import { KL_SPECIALIST, KL_CONDITIONED, KL_UNTRAINED_T3 } from '../src/sims/pbits/SharedPrice'
 import {
   billOf,
   CLAMP_BASIS_NODES,
@@ -291,6 +292,22 @@ const klUntrained: number[] = []
       `cond ${klCond[t - 1].toFixed(3)} vs specialist ${klSpec[t - 1].toFixed(3)} (recorded ${recCond[t - 1]})`,
     )
   }
+  // the SharedPrice figure prints these same measurements as static bars
+  // (the 2^16 enumeration is too slow for a browser draw call) — if a
+  // retrain moves the audit, the canvas constants must move with it
+  for (let t = 1; t <= T; t++) {
+    ok(
+      Math.abs(klCond[t - 1] - KL_CONDITIONED[t - 1]) < 0.01 &&
+        Math.abs(klSpec[t - 1] - KL_SPECIALIST[t - 1]) < 0.01,
+      `cond/figure-constants-t${t}`,
+      `SharedPrice canvas ${KL_SPECIALIST[t - 1]}/${KL_CONDITIONED[t - 1]} vs measured ${klSpec[t - 1].toFixed(3)}/${klCond[t - 1].toFixed(3)}`,
+    )
+  }
+  ok(
+    Math.abs(klUntrained[2] - KL_UNTRAINED_T3) < 0.01,
+    'cond/figure-untrained-t3',
+    `SharedPrice untrained line ${KL_UNTRAINED_T3} vs measured ${klUntrained[2].toFixed(3)}`,
+  )
   // the honest shape of the sharing cost: near-parity at the middle level,
   // measured factors at the ends — Predict #2's options are written from this
   ok(
