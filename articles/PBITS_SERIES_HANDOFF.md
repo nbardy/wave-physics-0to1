@@ -257,3 +257,27 @@ saturation; scripts/check-teach.ts). Declined and recorded: Microscope
 toggle, fabric-class recolor. All suites green; live on gh-pages.
 Remaining for the series: Nick's human read-through, publish flips,
 Part 3 build (design approved-pending-read; six open questions in its PLAN).
+
+## SERIES COMPLETE (2026-08-17, a8930f5, deployed)
+
+All three parts PUBLISHED and live: /lesson/pbits, /lesson/z1-compiler,
+/lesson/ebm-diffusion (thermo field T1–T3). Part 3 built in two fleet
+rounds from the approved design + six coordinator decisions (recorded in
+its PLAN): bill library (schedule sum type; clamp priced per-node off the
+shared reflash constant), conditioned trainer (sharing costs ×1.2–7.5 KL,
+stated as the trade), OpTimeline/AmortizeStrip/ClampFloor/MixBudget (the
+allocation NULL kept as an honest finding), fabric-native 8×8 (zero
+pixel–pixel wires, hidden = BFS layers, witnesses named where the joint
+oracle dies; 6×6 fallback NOT needed), CeilingChart (naive crossing 67.6
+ABOVE the papers' band — gap named on canvas), and the BilledWall ring-
+closer (60 dreams bit-identical across schedules; wall 0px diff, strip
+thousands; 36,264 → 287,801 samples/J, all computed never typed). Prose
+in two halves + main-thread assembly (hook re-bound to the built canvas:
+20 chains, shipped weights, witness row). The series aphorism landed:
+"the schedule and the bill are one object read twice." ~5,200 words,
+8 figures, ~196 new assertions, every suite green.
+
+Editorial note for Nick: Sohl-Dickstein 2015 added to Part 3's Further
+Reading (the diffusion ancestor; qualitative only, outside the RESEARCH
+ledger). Remaining forever-item: Nick's own phone/desktop read of all
+three, now that the trilogy is live.
