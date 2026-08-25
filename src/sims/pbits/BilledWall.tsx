@@ -41,12 +41,22 @@ import { PRETRAINED8 } from './pretrained8'
 // rate readout burns violation red, and the samples-per-joule slot prints the
 // naive number outright — absurd but computed (07 PLAN DECISIONS #4).
 // `settled` (the finale): the IDENTICAL wall — same seeds, same dreams, bit
-// for bit — running the verdict schedule (batched + conditioned): one kernel,
-// flashed once ever, its single setup flash amortized over 64-dream batches;
-// the bill collapses by the measured ×7.94 and what remains is mostly the
-// clamps — the floor no schedule escapes. The schedule changes the BILL,
-// never the samples; scripts/check-billedwall.ts asserts the dreams are
-// bit-identical between the two modes.
+// for bit — BILLED at the verdict schedule (batched + conditioned): one
+// kernel, flashed once ever, its single setup flash amortized over 64-dream
+// batches; the bill collapses by the measured ×7.94 and what remains is
+// mostly the clamps — the floor no schedule escapes.
+//
+// SCOPE OF THE BIT-IDENTITY CLAIM (F1, adversarial review 2026-08-25): the
+// dreams are bit-identical because BOTH modes run the same three specialist
+// weights (PRETRAINED8) — settled changes only the loop order and the bill
+// (COND_CHAIN prices the conditioned schedule's 18-node clamps; the
+// conditioned kernel itself is billed, never run — one conditioned energy
+// could not host three independent weight sets). Bit-identity is therefore
+// a LOOP-REORDERING fact, exact as such; actually swapping the specialists
+// for the trained conditioned kernel WOULD move the dreams, by the measured
+// 4×4 accuracy factors (×1.20 middle, ×4.0 / ×7.5 at the ends —
+// check-part3a). scripts/check-billedwall.ts asserts the dreams are
+// bit-identical between the two modes as run.
 //
 // BILLING BASIS (the one modeling statement, printed on the canvas): each
 // dream is billed as the ARTICLE'S canonical chain — T=3 levels, k=6 sweeps
@@ -566,8 +576,8 @@ export function createBilledWall(
               ? 'the dreams are not in question:'
               : 'the price is in question — the dreams are not:'
             : tight
-              ? 'same seeds — dreams bit-identical:'
-              : 'same seeds — dreams identical, bit for bit:',
+              ? 'same weights — dreams bit-identical:'
+              : 'same weights, same seeds — bit-identical:',
           hx,
           296,
         )
@@ -626,7 +636,7 @@ export function createBilledWall(
             : `billed per dream at the article's chain: T=${N_LEVELS} · k=${K_SWEEPS} · ${NV}-px clamp — and a reflash at EVERY level of EVERY dream`
           : L.narrow
             ? `billed: conditioned kernel — clamp ${NV}+${TAU_SPINS}τ px · one flash ever`
-            : `billed per dream at the article's chain: T=${N_LEVELS} · k=${K_SWEEPS} · clamp ${NV}+${TAU_SPINS}τ px — one conditioned kernel, flashed ONCE, ever`,
+            : `billed at the article's chain: T=${N_LEVELS} · k=${K_SWEEPS} · clamp ${NV}+${TAU_SPINS}τ px · one flash ever — the dreams run the specialists`,
         L.wallX,
         basisY,
       )

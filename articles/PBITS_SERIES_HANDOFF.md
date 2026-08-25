@@ -281,3 +281,30 @@ Editorial note for Nick: Sohl-Dickstein 2015 added to Part 3's Further
 Reading (the diffusion ancestor; qualitative only, outside the RESEARCH
 ledger). Remaining forever-item: Nick's own phone/desktop read of all
 three, now that the trilogy is live.
+
+## ADVERSARIAL-REVIEW CORRECTIONS (2026-08-25, correctness only, uncommitted)
+
+Seventeen findings (F1–F17) applied across the three lessons; no style or
+structure changes. The load-bearing ones: (F1) the finale's bit-identity
+claim re-scoped to what is measured — a loop-reordering fact on the same
+specialist weights; the conditioned kernel is BILLED, never run (scope now
+documented in BilledWall.tsx's header + on-canvas basis line, and in
+check-billedwall's header); (F2) the 16-px-vs-64-px clamp-basis
+idealization confessed in the finale's prose (64-px pricing: 119,218 /
+27,963 samples/J, amortization ~×3, floor >97%); (F3) Part 1's "flip any
+single p-bit → ΔE = 4" false universal fixed (disagree-wire ends slide at
+ΔE = 0 — frustration itself) and check-pbit-act1's rung test now pins BOTH
+spin classes; (F6) the conditioned-sharing gloss now states near-parity is
+the MIDDLE level (×1.20), the copy-like gentle end pays ×4.0, and at t=3
+trained-shared (1.886) is worse than untrained (0.896); (F7) "matching
+Part 1's trained quality" replaced by the k=6 witness truth (11.38 px /
+30-of-60 / TV 0.398) plus the sweeps-are-0.16%-of-the-bill observation.
+Smaller: ρ softened to motivated-not-theorem with the ρ vs ρ₀ flag (F4),
+hero-reveal tied-vs-untied capacity flag (F5), Race waypoint third→half
+(F8), "chip"→"compiled sampler" at the meta-EBM victory (F9), papers'
+ladder hedged kindred (F10), PhaseTrainer 0.82→0.32 at the default level
+(F11), meta-EBM floor stated as 0.0385→1.4e-5 (F12), 45 s → "about a
+minute on a laptop" (F13), wall count forty→twenty acknowledged (F14),
+PairCoupler target defined in ⟨s₁s₂⟩ units at the 0.9 mark (F15), "mostly
+sixteen neighbors" (F16), DreamChain contrast re-bound to the measured
+third-of-a-pixel readout (F17). All suites green after; nothing committed.

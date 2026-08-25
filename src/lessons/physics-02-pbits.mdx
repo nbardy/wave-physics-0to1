@@ -123,9 +123,12 @@ lit slot is where the figure you're looking at lives.
 
 ## Two p-bits that gossip
 
-Here are two p-bits side by side, and a two-part target: make them *agree* nine
-times out of ten, while each one *stays fair* — its lean needle resting near
-center. You have a bias knob for each. Try to hit both marks:
+Here are two p-bits side by side, and a two-part target: make them *agree*,
+strongly, while each one *stays fair* — its lean needle resting near center.
+The agreement gauge keeps score in the pair's own currency, the average
+product of the two states — $+1$ when they match, $-1$ when they differ — and
+its mark sits at 0.9: a match nineteen ticks in every twenty. You have a bias
+knob for each. Try to hit both marks:
 
 <PairCoupler mode="biases" />
 
@@ -214,11 +217,15 @@ you just watched is the whole definition:
 $$E(s) = -\sum_{(i,j)} J_{ij}\, s_i s_j \;-\; \sum_i h_i\, s_i$$
 
 Check it on the ladder. All-up satisfies the three agree-wires but violates the
-disagree-wire: three terms of $-1$, one of $+1$, energy $-2$. Flip any single
-p-bit and you break two unit wires at once — the energy jumps by exactly $4$,
-to the upper rung. And the floor of the ladder is $-2$, not the $-4$ a
-wire-happy loop would reach: the frustration is visible as a rung that does
-not exist. Sixteen states, two shelves of eight.
+disagree-wire: three terms of $-1$, one of $+1$, energy $-2$. Flip a p-bit
+away from the disagree-wire and you break two unit wires at once — the energy
+jumps by exactly $4$, to the upper rung. Flip either end of the disagree-wire
+and the energy does not move at all: one wire breaks, the other mends, and the
+unhappy wire just changes address. That zero-cost slide is the frustration
+seen locally — the violated wire can sit anywhere on the loop, which is why
+the floor shelf holds eight states. And the floor of the ladder is $-2$, not
+the $-4$ a wire-happy loop would reach: the frustration is visible as a rung
+that does not exist. Sixteen states, two shelves of eight.
 
 Energy is a cost, not yet a probability. The bridge between them is one
 exponential. The knob below is $\beta$ — *inverse* temperature, so it reads as
@@ -481,7 +488,7 @@ small observation is worth more than it looks, because it is the entire design
 secret of the actual chip.
 
 Extropic's Z1 is roughly a quarter-million p-bits, wired in a fixed sparse
-graph — sixteen neighbors each — that was *designed bipartite*. The chip's
+graph — mostly sixteen neighbors each — that was *designed bipartite*. The chip's
 native act is the figure you just rescued: program the biases and the wire
 weights, then sweep red, sweep black, millions of Gibbs iterations a second,
 each one estimated to cost some three hundred *picojoules* — thermal noise
@@ -521,7 +528,7 @@ choice is what keeps every wire between adjacent columns.
   wire joins two spins written in the same instant — zero write conflicts is
   what makes a half-sweep exact, and the factorization over a frozen half is
   its proof. The harder verdict came with it: a sampler can reach a certified
-  minimum and still be wrong by a third of all probability, with the meter as
+  minimum and still be wrong by half of all probability, with the meter as
   the only witness. What remains is the machine itself — what one p-bit is in
   silicon, and what it costs to program a landscape onto sixteen wires.
 </Waypoint>
@@ -840,9 +847,10 @@ difference is the third row.
 
 For the first few seconds nothing trains, and the two strips disagree
 loudly — the dreams are static, the data is not. Then the trainer starts. At
-the gentlest noise level the disagreement collapses from near one to a few
-hundredths as the dream strip creeps onto the data strip. Drag to the
-noisiest level and the same fall barely begins — half the pixels arrive as
+the figure's default middle level the disagreement falls from 0.82 to 0.32 as
+the dream strip creeps onto the data strip; drag to the gentlest level and
+the same fall runs from near one to a few hundredths. Drag to the
+noisiest level and it barely begins — half the pixels arrive as
 coin flips there, so most of the agreement the data ever carried is already
 gone, and the machine can only learn back what the noise left standing.
 Either way, the mechanism is the entire learning rule:
@@ -891,8 +899,9 @@ static in three moves.
 The finished dreams collect along the bottom, and they are the readout: bars,
 checkers, crosses — family members, never on a schedule, never in a fixed
 order. Starve the slider to one sweep per level and the resemblance slips —
-more strays, more smudges — because each sample gets clamped as the next
-level's evidence before it has settled. The dreams' coherence is bought with
+measurably, if not dramatically: the nearest-glyph readout under the strip
+drifts out by about a third of a pixel — because each sample gets clamped as
+the next level's evidence before it has settled. The dreams' coherence is bought with
 Gibbs time.
 
 Where the coherence comes from is easiest to see by removing it. The corner

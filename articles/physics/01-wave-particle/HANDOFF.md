@@ -6,9 +6,17 @@ Canonical state for this article. AGENTS.md carries one line pointing here.
 
 **BUILT end-to-end 2026-07-31 · `draft` · awaits Nick's read.**
 
-~3,100 words, 6 figures, all six new, all closed-form or Monte-Carlo — nothing is
+~3,100 words, 7 figures, all new, all closed-form or Monte-Carlo — nothing is
 integrated and nothing is pre-rendered. `bun run typecheck`, `bun run build` and
-`bun run check:figures` (20 checks) all clean.
+`bun run check:figures` (27 checks) all clean.
+
+2026-08-19: added figure 0, `BenchSetup` — a top-view drawing of the apparatus
+(Nick asked to see the lamp, slits, and screen as hardware before the data
+figures). Deliberately agnostic: no rays and no wavefronts, since either would
+presuppose an answer; the only output drawn is the pattern on the screen. The
+loupe over the card is the one place a = 0.04 mm and d = 0.20 mm are at a
+single true scale — the bench-scale nicks are exaggerated to stay visible, and
+the printed dimensions carry the truth.
 
 ## What is verified, and how
 

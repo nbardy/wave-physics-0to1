@@ -14,9 +14,12 @@
  *      op-by-op accumulated bill equals scheduleBill() for exactly 60
  *      samples — the wall charges precisely what the schedule model
  *      composes, line item by line item. Then the hero's core claim: the
- *      two modes' dreams are BIT-IDENTICAL (the schedule changes the bill,
- *      never the samples) — asserted on the finished-dream signatures and
- *      on every witness number.
+ *      two modes' dreams are BIT-IDENTICAL — asserted on the finished-dream
+ *      signatures and on every witness number. Scope (F1, 2026-08-25): this
+ *      is a LOOP-REORDERING fact — both modes dream on the same specialist
+ *      weights; the conditioned kernel is billed, never run, and swapping
+ *      it in would move the dreams by the measured 4×4 accuracy factors
+ *      (see BilledWall.tsx header).
  *   3. Rendering: both modes at 640 and 360, knobless but mode-driven —
  *      violation ink (ferro) present in the naive strip and absent from the
  *      whole settled canvas; bill ink on the strip; dreams painting in spin

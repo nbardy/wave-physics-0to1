@@ -46,6 +46,7 @@ Each is `src/sims/physics/<Name>.tsx`, stepper factory exported so
 
 | # | Figure | Must show, in one frame |
 |---|---|---|
+| 0 | `BenchSetup` | The hardware, once: lamp, mask, screen, drawn agnostic — no rays, no wavefronts, because either would take a side. A loupe resolves the slit pair at one true scale (so the drawn a : d is the real 1 : 5), and the screen carries the fringed pattern, λL/d apart. |
 | 1 | `PhotonRain` (hero) | Discrete arrivals **and** fringes **and** the counterfactual: one marked column that is starved with two slits and flooded with one. Both screens on one vertical scale, both tallies counted from the dots. |
 | 2 | `SlitSpread` | The ray prediction and the truth on the same axes, and a knob that *reverses* — past the crossover, narrower means wider. Exact Fresnel across the whole slider. |
 | 3 | `PhasorSum` | Two contributions laid tip to tail, and the closing arrow going to zero while both contributions stay full length. Paired with the full screen profile and the no-interference ghost. |
@@ -71,8 +72,8 @@ Each is `src/sims/physics/<Name>.tsx`, stepper factory exported so
 
 ## Verification
 
-`bun run check:figures` renders all six headlessly and asserts the specific thing
-each must teach — 20 checks. It exists because pixel-coverage checks are
+`bun run check:figures` renders all seven headlessly and asserts the specific thing
+each must teach — 27 checks. It exists because pixel-coverage checks are
 worthless here: every one of these figures paints a background wash, and three of
 the first-draft measurements were reading a reference line, a ghost outline, or a
 guide circle rather than the quantity. Two genuine figure bugs (arrows leaving

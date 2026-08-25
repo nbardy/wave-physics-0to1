@@ -270,8 +270,10 @@ own pessimism — it charges every step the worst context's rate, so it grows
 linearly in program depth even when the truth, as the next figure shows,
 does not.
 
-The full repair is a ladder, and it is the papers' own pipeline run at our
-scale: fit under uniform weighting, refit under the program's visitation,
+The full repair is a ladder, kindred to the papers' own pipeline and run at
+our scale — their middle rung weights by the visitation the *model* itself
+generates, where ours uses the target walk's: fit under uniform weighting,
+refit under the program's visitation,
 then a third stage that abandons per-step fitting altogether and trains on
 the trajectory itself — REINFORCE, nudging parameters by reward times a
 centered score. The third stage is operationally *cheaper* than the
@@ -286,7 +288,7 @@ model by the two stages before it.
 
 The stairs land at 0.662, 0.491, 0.144 — trajectory TV at thirty steps,
 cut to under a quarter of where uniform fitting left it. The papers' grid
-walk steps 5.64 to 0.30 to 0.08 through the same three stages; the shape is
+walk steps 5.64 to 0.30 to 0.08 through its own three stages; the shape is
 the reproduction, the numbers are ours. Now read the split-meter's left
 pane across stage three, because it is moving the wrong way: per-step KL
 *rises* from 0.414 to 1.917 while the trajectory error collapses. That is
@@ -310,14 +312,19 @@ $$\tilde\delta \;\le\; \frac{\bar\varepsilon}{1-\rho}$$
 
 with $\bar\varepsilon$ the worst single-step error and $\rho$ the chain's
 contraction rate — both measurable from the compiled chain itself, no
-oracle required. Geometric decay against steady injection; the ceiling is
-the geometric series, summed.
+oracle required. Two honesty notes about $\rho$ before the figure prints
+one. The papers state this ceiling against the *ideal* chain's contraction
+$\rho_0$; the figure below measures the compiled chain's own. And what it
+measures is the asymptotic rate — the factor the chain's slowest surviving
+mode shrinks by per step — not a guarantee on any single step, so the
+ceiling is motivated arithmetic, not a theorem. Geometric decay against
+steady injection; the ceiling is the geometric series, summed.
 
 <WalkFloor />
 
-With two hidden spins the bound is a real promise: measured
+With two hidden spins the arithmetic behaves like a promise: measured
 $\bar\varepsilon = 0.177$, measured $\rho = 0.753$, ceiling 0.718 drawn
-as the line the curve cannot cross — and the
+as the line the curve is not expected to cross — and the
 curve saturates far under it, flattening at 0.305, a little over
 four-tenths of the bound, and flat it stays: over the last twenty steps of
 depth it moves by parts in a hundred thousand. Their large construction
@@ -624,11 +631,12 @@ target's own couplings make its Gibbs dynamics slow. The knob owns only the
 violet curve. Tighten the cap and the floor climbs — not because the chain
 mixes worse, since the contraction belongs to the target, but because the cap
 clips ever sharper logits and the per-step residual $\bar\varepsilon$ rises.
-Loosen it from 2.5 to 4.5 and the floor drops more than twentyfold. The cap
-buys fidelity; the target's own physics sets the pace; and the chip is now
-doing something worth saying plainly: sampling, faithfully, from a
-twenty-term three-body law that its fabric cannot express — because what was
-compiled was never the model. It was the moves.
+Loosen it from 2.5 to 4.5 and the floor collapses from 0.0385 to about
+$1.4\times10^{-5}$ — nearly three orders of magnitude. The cap
+buys fidelity; the target's own physics sets the pace; and the compiled
+sampler is now doing something worth saying plainly: sampling, faithfully,
+from a twenty-term three-body law that pairwise couplings cannot express —
+because what was compiled was never the model. It was the moves.
 
 The walk that opened this article has been waiting for exactly this
 vocabulary.
@@ -638,9 +646,12 @@ vocabulary.
 The two panes are the ones from the beginning, but the strip beneath them no
 longer keeps quiet: it climbs the ladder live — the uniform compile the
 opening ran, then the visitation refit, then the REINFORCE rung — and the
-split-meter reads the kernel that comes out the far end. The trajectory pane
+split-meter reads the kernel that comes out the far end. From the refit on,
+the ladder restarts on the tied wires of the context tax, so its numbers
+belong to the tied capacity: on those wires the uniform rung reads 0.662,
+not the untied opening's 0.421. The trajectory pane
 has healed. The opening printed its drift as an unexplained 0.421; thirty
-steps deep, this chain sits at 0.144 from the walk's law, and the off-graph
+steps deep, the tied chain sits at 0.144 from the walk's law, and the off-graph
 bucket that once held a fifth of the occupancy is down to a sliver. The
 per-step pane paid for it: KL 1.917, up from 0.414 at the rung before, the
 worst conditional now wronger than anything the opening's kernel produced.

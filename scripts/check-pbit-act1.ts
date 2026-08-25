@@ -103,20 +103,36 @@ function longRun(m: PbitModel, sweeps: number, seed: number): Float64Array {
 
 {
   // energy ladder boundary facts the prose leans on: the frustrated loop's
-  // ground level is −2 (one wire always unhappy — never −4), and flipping one
-  // end of a satisfied unit wire costs exactly 2J = 2 in E.
+  // ground level is −2 (one wire always unhappy — never −4), and the rung
+  // move covers BOTH spin classes (F3, adversarial review 2026-08-25 — the
+  // prose once claimed "flip any single p-bit and the energy jumps by 4",
+  // a false universal): a spin AWAY from the disagree-wire (1 or 2) breaks
+  // its two agree-wires, ΔE = +4; an END of the disagree-wire (0 or 3)
+  // breaks an agree-wire and mends the anti-wire in the same stroke, ΔE = 0
+  // — the zero-cost slide that is frustration seen locally, and why the
+  // floor shelf holds eight states.
   const E = atlasEnergies()
   const eMin = Math.min(...Array.from(E))
   ok(eMin === -2, 'oracle/frustration-floor', `min E = ${eMin} (a happy loop would reach −4)`)
-  const s = spinsOf(15) // all up
-  const e0 = E[15]
-  s[1] = -1 // breaks the two satisfied unit agree-wires at spin 1, heals nothing
-  const flippedIdx = stateIndex(s)
-  ok(
-    E[flippedIdx] - e0 === 4,
-    'oracle/wire-cost',
-    `flipping one spin of all-up breaks two unit agree-wires: ΔE = ${E[flippedIdx] - e0} = 2J + 2J`,
-  )
+  const e0 = E[15] // all up
+  for (const spin of [1, 2]) {
+    const s = spinsOf(15)
+    s[spin] = -1 // breaks the two satisfied unit agree-wires at this spin, heals nothing
+    ok(
+      E[stateIndex(s)] - e0 === 4,
+      'oracle/wire-cost',
+      `flipping spin ${spin} (away from the disagree-wire) from all-up: ΔE = ${E[stateIndex(s)] - e0} = 2J + 2J`,
+    )
+  }
+  for (const spin of [0, 3]) {
+    const s = spinsOf(15)
+    s[spin] = -1 // breaks agree-wire, mends the anti-wire — the frustration slide
+    ok(
+      E[stateIndex(s)] - e0 === 0,
+      'oracle/frustration-slide',
+      `flipping spin ${spin} (an end of the disagree-wire) from all-up: ΔE = ${E[stateIndex(s)] - e0} — the violated wire changes address`,
+    )
+  }
 }
 
 {

@@ -147,12 +147,14 @@ toward zero as the wall keeps dreaming.
 The price is accuracy, and it is measured, not waved at. Against three
 specialists trained on the same data stream and budget, the shared
 kernel's per-level exact KL — the 4×4 oracle still holds everything on
-this page — comes out worse by a factor of 1.20 at the middle level, and
-by 4.0 and 7.5 at the ends. Sharing is nearly free exactly where the
-task is copy-like, and genuinely costly at the edges — with one asterisk
-the oracle insists on: at the noisiest level the target is broad enough
-that even an untrained kernel scores 0.90 by pure vagueness, and that
-level is honestly the shared kernel's weakest. The code itself carries
+this page — comes out worse by a factor of 1.20 at the middle level, 4.0
+at the gentle end, and 7.5 at the noisiest. The near-parity lives in the
+middle, not where the task is most copy-like: the gentle, nearly-copy
+level pays fourfold. And the noisiest level the oracle refuses to soften
+at all: there the trained shared kernel sits at KL 1.886 where an
+untrained one scores 0.896 by sheer vagueness — sharing did not just
+dilute that level, it made it worse than not training, and it is the
+schedule's honest weak point. The code itself carries
 real information: feed the kernel the wrong level's code and its KL rises
 by about 0.2 nats.
 
@@ -351,7 +353,8 @@ frame currently being consumed as clamped evidence wearing the
 no two closer than twenty pixels apart. The weights ship on credit one last
 time, and this time the debt settles by receipt rather than re-performance:
 the paint-box wall at 4×4 keeps the live training job, while this model
-trained offline in forty-five seconds, seven hundred epochs per level, and
+trained offline in about a minute on a laptop, seven hundred epochs per
+level, and
 the shipped constants match a fresh run of that stated recipe to five parts
 in a million — an identity this article's check harness re-verifies on
 every run.
@@ -437,18 +440,30 @@ watched dream — is a dot at 256 p-bits, about one-thousandth of the die.
 
 ## The billed wall of dreams
 
-The wall is back for the third and last time — the forty lattices that
-opened Part 1 wearing static, that closed it dreaming your painted glyph,
-and that opened this article with a bill it could not defend. It runs here
+The wall is back for the third and last time — forty lattices when it
+opened Part 1 wearing static and closed it dreaming your painted glyph;
+twenty chains since the dreams grew to sixty-four pixels, room being what
+glyphs that size cost — and it opened this article with a bill it could
+not defend. It runs here
 under the settled schedule: batched, conditioned, the sweep budget split
 evenly across levels because the allocation measurement said the levels do
 not yet care. Hold it against the opening figure and the first thing to
 check is what did not move: the dreams. The sample stream is bit-identical
 under both schedules — same seeds, same kernels, same sweeps — because
-reordering loops and sharing one flashed landscape changes when operations
-happen, never what they compute. The split-meter beside the wall says the
-same thing in its own language, panes matching Part 1's trained quality
-throughout. The schedule changes the bill, and only the bill.
+reordering loops changes when operations happen, never what they compute;
+the check harness holds all sixty finished dreams identical, bit for bit.
+One repair does not share that alibi. The wall dreams on the three
+specialists under both bills; actually swapping them for the one
+conditioned kernel would move the dreams — by the factors the 4×4 audit
+measured, 1.20 in the middle and 4.0 and 7.5 at the ends — and its line on
+the bill is the price of a swap this wall charges without performing. The
+witness row prints what the six-sweep budget honestly buys: dreams a mean
+11.4 pixels from the nearest family member, 30 of 60 within ten, fenced
+TV 0.398 — the lean end of its own sweep curve, not Part 1's trained
+polish. Which exposes the sharpest line on the bill: the sweeps are 0.16
+percent of it, so the one line item that decides the dreams' quality is
+very nearly free. The schedule this wall runs changes the bill, and only
+the bill.
 
 <BilledWall settled />
 
@@ -468,7 +483,12 @@ microjoules per dream at the papers' per-iteration estimate, roughly
 on the same canvas, everything the number leans on: modeled rates from
 verified constants, never hardware measurements; a browser running the
 chip's contract, not the chip; patches that wrap where the die runs short;
-a hero that ships pretrained.
+a hero that ships pretrained. One more idealization belongs on that list:
+every headline bill prices the article's canonical sixteen-pixel clamp
+while the wall's dreams hold sixty-four. Priced at the full sixty-four,
+the naive bill reads 119,218 iterations and 27,963 samples per joule, the
+amortization factor falls to about three, and the clamp floor climbs past
+97 percent — the same verdict, at a bigger constant.
 
 <Waypoint>
   One object, held three ways across three articles: a local rule that made

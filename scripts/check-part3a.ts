@@ -296,7 +296,7 @@ const klUntrained: number[] = []
   ok(
     klCond[1] / klSpec[1] < 1.5,
     'cond/near-parity-t2',
-    `middle level factor ${(klCond[1] / klSpec[1]).toFixed(2)}× — sharing nearly free where the task is copy-like`,
+    `middle level factor ${(klCond[1] / klSpec[1]).toFixed(2)}× — near-parity at the MIDDLE level (the copy-like gentle end pays ×4; F6, 2026-08-25)`,
   )
   // the τ code carries level information: querying level t with the wrong
   // code is measurably worse than the right one

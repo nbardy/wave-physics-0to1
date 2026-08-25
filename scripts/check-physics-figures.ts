@@ -17,6 +17,7 @@ import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { Stepper } from '../src/components/Sim'
+import { createBenchSetup, SETUP } from '../src/sims/physics/BenchSetup'
 import { createPhotonRain } from '../src/sims/physics/PhotonRain'
 import { createSlitSpread } from '../src/sims/physics/SlitSpread'
 import { createPhasorSum } from '../src/sims/physics/PhasorSum'
@@ -113,6 +114,62 @@ function render(name: string, h: number, make: () => Stepper, seconds = 0): Shot
       return n === 0 ? null : { x: sx / n, y: sy / n }
     },
   }
+}
+
+// ---------------------------------------------------------------------------
+// 0 · BenchSetup — the loupe must resolve the slit pair at its true geometry
+// (two openings, a wide, centres d apart, drawn at ONE scale so the 1:5 ratio
+// is real), and the screen must carry a pattern fringed at λL/d. Both are
+// measured off the pixels against the same BENCH constants the figure imports.
+// ---------------------------------------------------------------------------
+{
+  const shot = render('00-bench-setup', 320, () => createBenchSetup())
+  const ix = Math.round(SETUP.cardX * W + SETUP.loupeBarDx)
+
+  // openings = runs of no-wall-ink along the loupe card's centre column
+  const runs: Array<{ top: number; bot: number }> = []
+  for (let y = SETUP.loupeTop + 2; y < SETUP.loupeBot - 2; y++) {
+    if (shot.isInk(ix, y, PALETTE.wall)) continue
+    const last = runs[runs.length - 1]
+    if (last && last.bot === y - 1) last.bot = y
+    else runs.push({ top: y, bot: y })
+  }
+  ok(runs.length === 2, 'bench · the loupe resolves exactly two slits', `${runs.length} opening(s)`)
+  if (runs.length === 2) {
+    const aWant = BENCH.a * 1000 * SETUP.loupePxPerMm
+    const dWant = BENCH.d * 1000 * SETUP.loupePxPerMm
+    const aMeas = (runs[0].bot - runs[0].top + runs[1].bot - runs[1].top) / 2 + 1
+    const dMeas = (runs[1].top + runs[1].bot) / 2 - (runs[0].top + runs[0].bot) / 2
+    ok(
+      Math.abs(aMeas - aWant) <= 2,
+      'bench · slit width a at the loupe scale',
+      `${aMeas.toFixed(1)} px vs ${aWant.toFixed(1)} px for 0.04 mm`,
+    )
+    ok(
+      Math.abs(dMeas - dWant) <= 2,
+      'bench · separation d at the same scale (so the drawn ratio is the true 1:5)',
+      `${dMeas.toFixed(1)} px vs ${dWant.toFixed(1)} px for 0.20 mm`,
+    )
+  }
+
+  // the pattern on the screen: leftmost violet stroke pixel per row. The
+  // profile's own face line adds ~2 px at every row, so "dark" is small, not 0.
+  const face = SETUP.screenX * W - 3
+  const extent = (py: number) => {
+    for (let x = Math.round(face - 34); x < face; x++)
+      if (shot.isInk(x, py, PALETTE.pdf)) return face - x
+    return 0
+  }
+  const fringePx = fringeSpacing(BENCH) * 1000 * SETUP.pxPerMm
+  const peak0 = extent(SETUP.axisY)
+  const dark = extent(Math.round(SETUP.axisY - fringePx / 2))
+  const peak1 = extent(Math.round(SETUP.axisY - fringePx))
+  ok(peak0 > 24, 'bench · the pattern peaks on axis', `${peak0} px tall`)
+  ok(dark < 6, 'bench · dark half a fringe off axis', `${dark} px (want < 6)`)
+  ok(peak1 > 18, 'bench · next bright bar one fringe, λL/d, away', `${peak1} px at ${fringePx.toFixed(1)} px`)
+
+  const lampTip = Math.round(SETUP.lampX * W + 22)
+  ok(shot.isInk(lampTip, SETUP.axisY, PALETTE.hit), 'bench · the lamp aperture wears the photon ink', 'amber at the aperture')
 }
 
 // ---------------------------------------------------------------------------
