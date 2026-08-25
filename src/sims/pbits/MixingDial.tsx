@@ -102,9 +102,33 @@ const MEASURE_SWEEPS = 40_000
 const BURN_SWEEPS = 2_000
 const MAX_LAG = 1_500
 
+/** The IPS estimator itself, extracted (2026-08-25) so Part 3 can point the
+ *  same instrument at denoise chains: τ = 1 + 2·Σρ(t), summed to the first
+ *  non-positive ρ (the standard initial-positive-sequence window). Pure
+ *  refactor — the arithmetic and loop order are verbatim from measureMixing,
+ *  and check:part2 holds the τ values to their pre-refactor numbers. */
+export function integratedTau(series: Float64Array, maxLag = MAX_LAG): number {
+  let mean = 0
+  for (let i = 0; i < series.length; i++) mean += series[i]
+  mean /= series.length
+  let c0 = 0
+  for (let i = 0; i < series.length; i++) c0 += (series[i] - mean) ** 2
+  c0 /= series.length
+  if (c0 === 0) throw new Error('integratedTau: frozen chain — the series never moved')
+  let tau = 1
+  for (let lag = 1; lag <= maxLag; lag++) {
+    let c = 0
+    for (let i = 0; i + lag < series.length; i++) c += (series[i] - mean) * (series[i + lag] - mean)
+    c /= series.length - lag
+    const rho = c / c0
+    if (rho <= 0) break
+    tau += 2 * rho
+  }
+  return tau
+}
+
 /** Integrated autocorrelation time of the magnetization, from an actual
- *  sequential-Gibbs run: τ = 1 + 2·Σρ(t), summed to the first non-positive
- *  ρ (the standard initial-positive-sequence window). Deterministic seed. */
+ *  sequential-Gibbs run. Deterministic seed. */
 export function measureMixing(p: Float64Array, seed = 17): { tau: number; ess: number } {
   const m = modelOf(p)
   const s = freshSpins(m, seed)
@@ -117,22 +141,7 @@ export function measureMixing(p: Float64Array, seed = 17): { tau: number; ess: n
       series[t - BURN_SWEEPS - 1] = mag
     }
   }
-  let mean = 0
-  for (let i = 0; i < series.length; i++) mean += series[i]
-  mean /= series.length
-  let c0 = 0
-  for (let i = 0; i < series.length; i++) c0 += (series[i] - mean) ** 2
-  c0 /= series.length
-  if (c0 === 0) throw new Error('measureMixing: frozen chain — magnetization never moved')
-  let tau = 1
-  for (let lag = 1; lag <= MAX_LAG; lag++) {
-    let c = 0
-    for (let i = 0; i + lag < series.length; i++) c += (series[i] - mean) * (series[i + lag] - mean)
-    c /= series.length - lag
-    const rho = c / c0
-    if (rho <= 0) break
-    tau += 2 * rho
-  }
+  const tau = integratedTau(series)
   return { tau, ess: 1 / tau }
 }
 

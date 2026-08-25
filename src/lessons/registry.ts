@@ -7,6 +7,7 @@ import Maths01 from './maths-01-jacobian-hessian.mdx'
 import Physics01 from './physics-01-wave-particle.mdx'
 import Physics02 from './physics-02-pbits.mdx'
 import Physics03 from './physics-03-z1.mdx'
+import Thermo03 from './thermo-03-diffusion.mdx'
 import Cad01 from './cad-01-primitives.mdx'
 
 // Lesson lifecycle as a sum type — rendering dispatches on `kind`, no stray
@@ -154,6 +155,17 @@ export const lessons: Lesson[] = [
     tags: ['probability', 'simulation'],
     status: { kind: 'published' },
     Content: Physics03,
+  },
+  {
+    id: 'ebm-diffusion',
+    field: 'thermo',
+    order: 3,
+    title: 'Diffusion on a Dreaming Machine',
+    blurb:
+      'The finale: train and run a diffusion model under the chip’s actual economics. Every noise level is a kernel, every kernel a reflash, every sample a readout — and the wall of dreams returns with a bill you can read, cut, and defend.',
+    tags: ['probability', 'simulation'],
+    status: { kind: 'published' },
+    Content: Thermo03,
   },
   {
     id: 'navier-stokes',

@@ -70,6 +70,16 @@ export const PALETTE = {
   visit: '#fb923c', // visitation glow q(x) — the program's attention on an input
   hid: '#db2777', // hidden-role spins V_hid — free, summed out, never read
 
+  // Thermo T3, diffusion economics (articles/07-ebm-diffusion/PLAN.md
+  // §Palette) — the article's one new ink: the bill. Every iteration-
+  // equivalent bar, line item, and cost readout wears it. The PLAN asked for
+  // '#db2777' but `hid` took that hex at promotion; per the coordinator
+  // decision (PLAN §DECISIONS #2) the bill gets a distinct hex from the same
+  // family — rose-800, far enough from ferro's red and hid's pink that the
+  // headless ink-samplers (tol 40/channel) cannot confuse a cost bar with a
+  // violation or a hidden spin.
+  bill: '#9f1239', // the cost ink — Gibbs-iteration-equivalents, line items, totals
+
   // CAD C1, the primitives (articles/cad/01-cad-primitives/PLAN.md §Palette) —
   // the role-rhyme again: amber is the thing we watch and drag (the finite
   // coordinates), blue is the thing that acts (the basis, and the curve or

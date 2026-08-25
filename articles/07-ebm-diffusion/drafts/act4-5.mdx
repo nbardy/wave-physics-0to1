@@ -1,0 +1,237 @@
+import { FabricDream } from '../sims/pbits/FabricDream'
+import { CeilingChart } from '../sims/pbits/CeilingChart'
+import { BilledWall } from '../sims/pbits/BilledWall'
+
+{/* Part 3, Acts IV–V — the second half. Mounts after Act III's waypoint.
+    Every number below traces to check-part3a.ts / check-part3b.ts MEASURED
+    FACTS (2026-08-25). Imports written as if this file lived in src/lessons/. */}
+
+## Past the oracle's edge
+
+The obvious move is to add pixels, and it dies twice before anything runs.
+An 8×8 glyph is sixty-four spins, and sixty-four spins have $2^{64}$ states —
+the exact enumeration behind every <C k="ghost">gray ghost</C> since Part 1's
+atlas would need on the order of $10^{19}$ additions, and no figure will ever
+carry one again. The second death is quieter. A bigger picture needs richer
+conspiracies among its pixels, and the reflex is to wire pixels to pixels —
+denser couplings for a denser image. The fabric never offers the chance.
+
+Choose instead *which* sixty-four cells of a 16×16 fabric patch are the
+pixels, and take them all from one checkerboard color — the same one-color
+condition Part 2's layer figure quietly relied on. Then hang the rest of the
+patch from them by wiring distance, exactly the re-hang you have now watched
+twice as a curiosity. This time it is the model. The 256-cell patch falls
+into three banks — the 64 pixels, then 128 hidden cells one wire away, then
+64 more behind those — and all 2,048 wires of the patch land between
+adjacent banks. Part 1 called this hanging an architecture nobody designed.
+It has now designed ours: a deep, layered Boltzmann machine, its depth and
+widths dictated by nothing but where sixty-four squares sit on the die.
+
+And look at what the one-color choice did to the reflex we started with.
+Every wire in this fabric joins opposite checkerboard colors, and every
+pixel is the same color — so the number of pixel-to-pixel wires is exactly
+zero. Whatever makes two patches of ink agree across the glyph must route
+through the hidden banks, because no direct route exists. Part 1 showed
+pixels-that-cannot-conspire as a *failure* — the factorized dreams, half a
+box welded to half a checker — and the repair was a small hidden bank all
+pixels consult. The fabric turns that repair into the only grammar on
+offer: 192 hidden spins are not a design choice here, they are everything
+the patch contains that is not a pixel. Per noise level the model owns
+2,048 couplings on real wires, 256 biases, and 64 input wires — one held
+wire per pixel, carrying the evidence $x_t$ in — 2,368 numbers, three times
+over for the three levels.
+
+Here it is dreaming. Left, the patch itself: squares are pixels, faint dots
+the hidden banks, everything flickering under the same chromatic sweeps as
+always. Right, the filmstrip — coins at $x_3$, a glyph at $x_0$ — with the
+frame currently being consumed as clamped evidence wearing the
+<C k="held">green halo</C>. The glyph family is new, seven members at 8×8,
+no two closer than twenty pixels apart. The weights ship on credit one last
+time, and this time the debt settles by receipt rather than re-performance:
+the paint-box wall at 4×4 keeps the live training job, while this model
+trained offline in forty-five seconds, seven hundred epochs per level, and
+the shipped constants match a fresh run of that stated recipe to five parts
+in a million — an identity this article's check harness re-verifies on
+every run.
+
+<FabricDream />
+
+Where the ghost bars used to be, the canvas prints an epitaph instead:
+*joint oracle dead*. Part 1's last page promised what happens next — the
+oracle "degrades into a hierarchy of witnesses, each with a smaller
+jurisdiction" — and the meter row under the filmstrip is that promise doing
+its job. Three witnesses keep live tallies on the canvas as dreams finish;
+a fourth ticks offstage; and the shipped model's full audit — 250 dreams
+and a deeper probe set, run in the same harness that re-verifies the
+weights — puts a number on each. The **fenced conditional**: inside a 2×2
+pixel window with its surroundings held, the exact reverse conditional is
+still computable, and the trained model sits 0.053 from it in total
+variation at the gentlest level, 0.178 at the middle one — against 0.937
+untrained. The **pinned moments**: the pairwise correlations of the 250
+dreams miss the glyph family's by 0.117, versus 0.343 before training, with
+183 of the 250 landing within ten pixels of a family member and no glyph
+left undreamed. The **known-answer probe**: wreck a known glyph with the
+forward noise, run the descent on the wreck, and 15.63 pixels astray come
+back as 2.78. And the **autocorrelation clock**: the visible magnetization
+of the last level's chain decorrelates in 5.7 sweeps — the going rate, in
+Gibbs time, for one independent look at what this chain believes. No single
+one of these is the oracle. Together they are what trusting a sampler means
+at any size the world actually uses — and they still catch old crimes: run
+this same chain on the stale-field synchronous schedule and the moments
+witness moves by 0.063, the write-conflict offense from Part 1's big
+lattice convicted at a scale its meter never reached. One warranty from
+Part 2 rides along unchanged: the chain's drift still saturates at the
+depth-independent floor $\tilde\delta \le \bar\varepsilon/(1-\rho)$,
+because contraction never cared how many spins were doing the contracting.
+
+The knob deserves a farewell reading. At sixteen pixels, the allocation
+measurement came back a shrug — split the sweep budget any way you like,
+the dreams barely notice. At sixty-four, the shrug is gone: at four sweeps
+per level the finished dreams sit a mean 12.01 pixels from the nearest
+family member, at twenty-four they sit at 4.95. The coherence is bought
+with Gibbs time, the mixing tax finally presenting at figure scale — and
+each further notch of scale moves the sweep line of the bill the same
+direction, from rounding error toward rent.
+
+## The ceiling
+
+Fabric has been spent in this article before — the disjoint-region schedule
+bought its zero reflashes with 432 p-bits against the conditioned kernel's
+144. The model above spends 256, one patch, pixels and hidden banks
+included. The remaining question is what spending the *whole die* buys, and
+for one recipe the papers pin the answer to an anchor: a 16×16 field of
+8-bit pixels, embedded their way, costs about 14,000 p-bits.
+
+<Predict
+  question="A quarter-million p-bits is nearly eighteen of those 14,000-p-bit anchors. At 8 bits per pixel, how big an image fits?"
+  a="just short of 68 on a side — scale the anchor by area and take the square root"
+  b="somewhere in the 30s or 40s — the embedding gets hungrier as it grows"
+>
+  <CeilingChart />
+</Predict>
+
+Both answers are on the chart, and the distance between them is the honest
+finding. The curves scale the anchor naively — p-bits proportional to area
+times bit depth — and the 8-bit curve crosses the 250,000 ceiling at
+$16\sqrt{250000/14000} \approx 67.6$ on a side, computed live from the two
+verified constants and nothing else. The papers themselves claim 32×32 to
+48×48, the <C k="ghost">gray band</C>. The naive curve runs optimistic
+because its one assumption is flat overhead per pixel, and minor-embedding
+chains lengthen as fields grow; the band is the paper's own number. So the
+chart plots the band as the claim and the crossing as the arithmetic, and
+lets the gap between them stand as the measured price of that assumption.
+Two more readings from the same constants: at one bit per pixel the naive
+crossing runs to 191 on a side, and our entire 8×8 model — the one you just
+watched dream — is a dot at 256 p-bits, about one-thousandth of the die.
+
+<Waypoint>
+  Every part now exists separately: a priced schedule and its amortizations,
+  one conditioned kernel flashed once ever, a sweep budget measured rather
+  than guessed, a model placed on real fabric past the oracle's edge with
+  its witnesses standing over it, and a ceiling drawn by arithmetic. What
+  remains is assembly — and reading the number the first figure refused to
+  flatter.
+</Waypoint>
+
+## The billed wall of dreams
+
+The wall is back for the third and last time — the forty lattices that
+opened Part 1 wearing static, that closed it dreaming your painted glyph,
+and that opened this article with a bill it could not defend. It runs here
+under the settled schedule: batched, conditioned, the sweep budget split
+evenly across levels because the allocation measurement said the levels do
+not yet care. Hold it against the opening figure and the first thing to
+check is what did not move: the dreams. The sample stream is bit-identical
+under both schedules — same seeds, same kernels, same sweeps — because
+reordering loops and sharing one flashed landscape changes when operations
+happen, never what they compute. The split-meter beside the wall says the
+same thing in its own language, panes matching Part 1's trained quality
+throughout. The schedule changes the bill, and only the bill.
+
+<BilledWall settled />
+
+The bill it changes, it changes by 91,918 to 11,582 iteration-equivalents
+per dream — 7.9 times cheaper at a batch of sixty-four, 8.2 in the limit —
+and the composition bars show where the money went. The reflash item, 89
+percent of the opening's total, is gone to amortization: one flash, ever.
+What refused to leave is the floor: at the default budget the remaining
+bill is 92 percent clamps, and driving the sweeps a hundredfold higher only
+dilutes them to 79. Every reverse step must hold its evidence, holding is
+priced like flashing, and no schedule ever invented waives it — the
+amortizations did not abolish the bill, they stripped it down to the part
+that is the algorithm. In the corner where the opening printed its
+indefensible number, the settled figure prints the paid one: 3.47
+microjoules per dream at the papers' per-iteration estimate, roughly
+288,000 dreams per joule, up from roughly 36,000 — with a margin listing,
+on the same canvas, everything the number leans on: modeled rates from
+verified constants, never hardware measurements; a browser running the
+chip's contract, not the chip; patches that wrap where the die runs short;
+a hero that ships pretrained.
+
+<Waypoint>
+  One object, held three ways across three articles: a local rule that made
+  noise compute, a compiler that made one fixed graph speak for machines it
+  never contained, and a schedule that makes the price of the speaking
+  legible, line by line, floor included. You can now price a dream, amortize
+  what the schedule wastes, name the clamp floor no schedule waives, and
+  defend the number that remains with witnesses that outlive the oracle.
+</Waypoint>
+
+## Further Reading
+
+The Thermalizers paper (arXiv:2608.01615) supplied this article's spine
+twice over, and its appendices are the part to read now. Appendix K is the
+14,000-p-bit anchor's home — fixed-point registers assembled from chains of
+p-bits, a compiled Gaussian posterior held against exact inference — and
+Appendix B is the energy accounting every bill in this article modeled its
+rates from. Its most imitable habit is the one the cost strips borrowed: it
+keeps its estimates and its measurements in visibly different registers,
+and never lets one impersonate the other.
+
+The Torx paper (arXiv:2608.01612) carries the acknowledged ancestor of this
+finale: a discrete-diffusion chain on binary MNIST, run as τ-leaping over
+gate programs — independent bit-flip gates first, then coupled ones, with
+the coupling buying back a measured share of the quality the independent
+gates leave on the table. Their chain and ours differ in machinery and
+agree in thesis — a diffusion model for this hardware is a program of
+kernels, judged by what coupling buys — and reading their version after
+building this one is the fastest way to see which choices were forced and
+which were ours.
+
+THRML and the Torx toolkit remain the public, runnable half of the stack,
+and for this article's questions in particular they are the natural next
+instrument: every amortization staged above is, in the end, a loop you can
+reorder yourself, at sizes where the bill arrives as wall-clock time
+instead of a modeled strip.
+
+Sohl-Dickstein, Weiss, Maheswaranathan, and Ganguli's 2015 paper, *Deep
+Unsupervised Learning using Nonequilibrium Thermodynamics*, is where
+diffusion models began, and where they began is the point: the
+destroy-then-learn-the-undo loop this series trained three times was
+derived there from the statistical physics of diffusion itself, years
+before the architectures that made it famous. A decade of engineering
+later, this lesson ran the same loop on a machine whose native act is
+thermal relaxation. Read it last and the whole series folds into one
+sentence of history: the idea came from thermodynamics, went to the GPUs,
+and here it is being fitted for the trip home.
+
+## Final Words
+
+The wall dreaming at the top of Part 1 was forty distributions wearing
+static. The same wall, closing this page, reads three levels deep, one
+level per article: the Boltzmann law each
+lattice dwells in, the compiled program each descent executes, the bill
+each dream leaves behind. Nothing was added to the wall in three articles —
+layers of reading were.
+
+Pricing the dreams did not shrink them. The strays on the wall are still
+strays, the glyphs still condense out of static unannounced, and the one
+line of the bill that survives every amortization is the clamps — the cost
+of holding the evidence still while a picture forms around it.
+
+Somewhere right now a building of GPUs is dreaming pictures against a bill
+nobody prints; this page printed one, small and modeled and confessed line
+by line. Part 1 closed its atlas on a fact read at two scales — the local
+rule and the global law, one object. The series closes on that fact's
+sequel, one level up: the schedule and the bill are one object read twice,
+once by the fabric, which executes it, and once by whoever pays.
