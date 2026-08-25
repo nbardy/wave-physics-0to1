@@ -10,6 +10,7 @@ import { WriteConflict } from '../sims/pbits/WriteConflict'
 import { Race } from '../sims/pbits/Race'
 import { Dashboard } from '../sims/pbits/Dashboard'
 import { ChipFabric } from '../sims/pbits/ChipFabric'
+import { Z1Layers } from '../sims/pbits/Z1Layers'
 import { Microscope } from '../sims/pbits/Microscope'
 import { Manual } from '../sims/pbits/Manual'
 import { Triangle } from '../sims/pbits/Triangle'
@@ -493,14 +494,27 @@ its two-phase clock:
 
 <ChipFabric />
 
-One confession about the drawing: the wiring here is a stand-in built from the
-chip's published numbers — degree sixteen, sparse, two-colorable — not the die's
-actual routing, which is not public at the wire level. What the patch shows is
-faithful anyway, because it is the same three facts the whole section turned on:
-sixteen wires into the marked cell, count them; every ring red or black with no
-wire joining like to like; and the clock writing one whole color class per
-tick — 72 simultaneous cells, zero write conflicts, the same zero the
-freeze-frame printed.
+One confession about the drawing: this patch's wiring is a stand-in arranged
+from the chip's published numbers — degree sixteen, sparse, two-colorable.
+What it shows is faithful anyway, because it is the same three facts the
+whole section turned on: sixteen wires into the marked cell, count them;
+every ring red or black with no wire joining like to like; and the clock
+writing one whole color class per tick — 72 simultaneous cells, zero write
+conflicts, the same zero the freeze-frame printed.
+
+The connection rules themselves, though, are public — four offset moves,
+repeated at every cell — and drawing them exactly buys one more sight worth
+having. Below, the real fabric (wrapped at the edges, where the die itself
+simply runs short), with three cells chosen as the ones you read:
+
+<Z1Layers />
+
+Hang the whole graph by those three cells — every cell placed in a column by
+its wiring distance to the nearest readable one — and the flat die falls
+into layers, each bank wired only to its neighbors. Nobody designed that
+architecture; it is where the fabric hangs from whatever cells you decide
+to read. The readable cells are drawn from a single color class, and that
+choice is what keeps every wire between adjacent columns.
 
 <Waypoint>
   The discriminator is now yours: parallel updates are legal exactly when no
@@ -825,9 +839,13 @@ difference is the third row.
 <PhaseTrainer />
 
 For the first few seconds nothing trains, and the two strips disagree
-loudly — the dreams are static, the data is not. Then the trainer starts, and
-you can watch the disagreement curve fall as the dream strip creeps toward the
-data strip. That is the entire learning rule:
+loudly — the dreams are static, the data is not. Then the trainer starts. At
+the gentlest noise level the disagreement collapses from near one to a few
+hundredths as the dream strip creeps onto the data strip. Drag to the
+noisiest level and the same fall barely begins — half the pixels arrive as
+coin flips there, so most of the agreement the data ever carried is already
+gone, and the machine can only learn back what the noise left standing.
+Either way, the mechanism is the entire learning rule:
 
 $$\Delta U_{ij} \;\propto\; \langle x_i\, y_j\rangle^{+} \;-\; \langle x_i\, y_j\rangle^{-}$$
 

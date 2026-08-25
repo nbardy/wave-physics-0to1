@@ -4,6 +4,7 @@ import { ParityToggle } from '../sims/pbits/ParityToggle'
 import { Z1Layers } from '../sims/pbits/Z1Layers'
 import { AsymmetricLoop } from '../sims/pbits/AsymmetricLoop'
 import { PartitionFigure } from '../sims/pbits/PartitionFigure'
+import { SplitMeterTeach } from '../sims/pbits/SplitMeterTeach'
 import { WalkLeak } from '../sims/pbits/WalkLeak'
 import { WalkLadder } from '../sims/pbits/WalkLadder'
 import { WalkFloor } from '../sims/pbits/WalkFloor'
@@ -203,6 +204,17 @@ lives, <C k="ghost">exact law outlined</C>, compiled chain in
 <C k="ferro">red</C> bucket at the edge. Two panes because the two numbers can disagree — a
 kernel can hold every row of its table close while its chain drifts, and
 the reverse is coming — and neither pane alone is the truth.
+
+Here is the instrument by itself, on a throwaway kernel, with one knob:
+the depth the right pane is asked about.
+
+<SplitMeterTeach />
+
+Drag the knob end to end. The left pane never moves — per-step error does
+not mention depth anywhere in its definition — while the right pane climbs
+with every step the kernel is chained, the <C k="ferro">red</C> bucket
+filling as leaked mass compounds. The two panes ask different questions,
+and only one of them can hear the word "deep."
 
 One pane wears a color of its own. The warm
 wash behind the per-step bars is the *visitation glow*: how often the
