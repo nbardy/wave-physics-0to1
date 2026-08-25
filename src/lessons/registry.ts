@@ -141,7 +141,7 @@ export const lessons: Lesson[] = [
     blurb:
       'A chip that computes with the thermal noise every other chip fights. Build it from one flickering coin — and build the instrument that catches a fast sampler telling a confident lie.',
     tags: ['probability', 'simulation'],
-    status: { kind: 'draft' },
+    status: { kind: 'published' },
     Content: Physics02,
   },
   {
@@ -152,7 +152,7 @@ export const lessons: Lesson[] = [
     blurb:
       'The sequel to the noise computer: Extropic’s actual stack. Compile a stochastic program onto the real Z1 fabric and pay the three taxes — embedding, context, mixing — with every tax measured on an exact meter.',
     tags: ['probability', 'simulation'],
-    status: { kind: 'draft' },
+    status: { kind: 'published' },
     Content: Physics03,
   },
   {
@@ -194,7 +194,7 @@ export const lessons: Lesson[] = [
     order: 4,
     title: 'Teaching a Solver to Guess',
     blurb:
-      'A real neural network, trained on lesson 01’s solver and shipped in this repo, cuts two thirds of the work out of the pressure solve — and is worse than guessing zero by the only meter the solver takes. Both are true, and the gap is the whole architecture.',
+      'Two neural networks, trained on this site’s own solver, shipped with their weights. One warm-starts the pressure solve and reads worse than an empty grid on the solver’s own meter; the other repairs a starved grid and detonates until the solver is let into its loss. Which error, which baseline, which check — measured live.',
     tags: ['fluids', 'simulation', 'linear-algebra'],
     status: { kind: 'draft' },
     Content: Lesson04,

@@ -592,3 +592,25 @@ compiler away"; Part 3's ending must be its own).
    shipped in Part 2's figure) — if we refine here, Part 2's strip
    should follow at its assembly so the two articles never print
    different bills for the same act.
+
+## DECISIONS on the six open questions (coordinator, 2026-08-17 — binding)
+
+1. **GPU comparison: self-referential samples-per-joule** (the recommended
+   option). No external GPU J/sample research line — the article compares
+   the naive schedule's bill to the amortized one on the SAME modeled
+   substrate, and says so. Cross-vendor comparisons are a different genre.
+2. **Palette: `bill: '#db2777'` APPROVED** — but note `hid` already took
+   that hex at promotion; pick a distinct hex for `bill` at build time
+   (suggest '#be123c' family), register in palette.ts with role comment.
+   `visit`/`hid` promotions already landed.
+3. **Scale: 8×8 confirmed as the one notch; 6×6 pre-approved as the
+   confessed fallback** if training or mixing at 8×8 fails figure-scale.
+4. **Hero opening: absurd-but-computed** (the naive bill shown outright,
+   not withheld).
+5. **Registry: field `thermo`, order 3** (the field now exists — the
+   pending `computation` question is settled by the restructure).
+6. **Cost basis: keep the shipped flat constants** (readout 300, reflash
+   27,300 iteration-equivalents) — Parts 2 and 3 must print the same bill
+   for the same act; per-node refinement is a coordinated two-article
+   change, deferred and noted in RESEARCH. The flagged RESEARCH addendum
+   (does Appendix B carry a separate clamp-energy line?) rides with it.
