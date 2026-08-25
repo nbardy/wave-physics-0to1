@@ -430,4 +430,193 @@ ok(paramCount() === 809 && MANIFEST.params === 809, 'model size', `${paramCount(
   ok(far - near > 100, 'impulse · and it moves with the poke', `the well slides ${(far - near).toFixed(0)} px across the slider's range`)
 }
 
+
+// ===========================================================================
+//  Part 3 — the advection seam: two more weight sets, same obligations
+// ===========================================================================
+
+import {
+  ADVECT_HELD_OUT,
+  CNX as ACNX,
+  CNY as ACNY,
+  DT as ADT,
+  advectCorrection,
+  advectParamCount,
+  makeAdvectActs,
+  relErr as aRelErr,
+  slStep as aSlStep,
+} from '../src/sims/learned/advect'
+import { ADVECT_IN_THE_LOOP, ADVECT_MANIFEST, ADVECT_ONE_STEP } from '../src/sims/learned/advect_weights'
+import { CoarseLane, FineLane } from '../src/sims/learned/advectRun'
+import { createSmearRace } from '../src/sims/learned/SmearRace'
+import { createFluxRollout, ROLLOUT_CASES } from '../src/sims/learned/FluxRollout'
+import { createOneStepDrift } from '../src/sims/learned/OneStepDrift'
+
+ok(advectParamCount() === 954 && ADVECT_MANIFEST.params === 954, 'advect model size', `${advectParamCount()} parameters — the lesson says 954`)
+
+// ---- the manifest numbers the prose leans on
+{
+  const one = ADVECT_MANIFEST.oneStep.heldOut
+  const loop = ADVECT_MANIFEST.inTheLoop.heldOut
+  ok(one.corrErrEnd > 10 * one.plainErrEnd, 'one-step detonates', `held-out rollout ends at ${one.corrErrEnd.toFixed(1)} vs plain ${one.plainErrEnd.toFixed(3)}`)
+  ok(one.crossStep !== null && one.crossStep < 200, 'one-step wrecks inside two hundred steps', `meaningfully worse than plain at step ${one.crossStep} — prose says "inside two hundred"`)
+  ok(loop.corrErrEnd < 2 * loop.plainErrEnd, 'in-the-loop is bounded', `ends at ${loop.corrErrEnd.toFixed(3)} vs plain ${loop.plainErrEnd.toFixed(3)} — same order, no detonation`)
+  ok(one.corrErrEnd / loop.corrErrEnd > 20, 'the repair is the difference', `${(one.corrErrEnd / loop.corrErrEnd).toFixed(0)}× between the two losses at the horizon`)
+  const oodLoop = ADVECT_MANIFEST.inTheLoop.ood
+  ok(oodLoop.crossStep === null && oodLoop.corrErrEnd < oodLoop.plainErrEnd, 'out of distribution, the lead holds', `faster-than-trained swirl: ${oodLoop.corrErrEnd.toFixed(3)} vs plain ${oodLoop.plainErrEnd.toFixed(3)}, never crossed — the prose's measured surprise`)
+}
+
+// ---- conservation is architecture, not behavior: both models, real state
+{
+  const spec = ADVECT_HELD_OUT[1]
+  const fine = new FineLane(spec)
+  for (let t = 0; t < 40; t++) fine.step()
+  const state = new Float32Array(ACNX * ACNY)
+  fine.restrictInto(ACNX, ACNY, state)
+  const lane = new CoarseLane(spec, 4, null) as unknown as { u: Float32Array; v: Float32Array }
+  const post = new Float32Array(ACNX * ACNY)
+  aSlStep(ACNX, ACNY, lane.u, lane.v, ADT, state, post)
+  const corr = new Float32Array(ACNX * ACNY)
+  for (const [name, w] of [
+    ['one-step', ADVECT_ONE_STEP],
+    ['in-the-loop', ADVECT_IN_THE_LOOP],
+  ] as const) {
+    advectCorrection(w, post, lane.u, lane.v, corr, makeAdvectActs())
+    let sum = 0
+    let mass = 0
+    for (let k = 0; k < corr.length; k++) {
+      sum += corr[k]
+      mass += Math.abs(post[k])
+    }
+    ok(Math.abs(sum) < 1e-6 * mass, `flux form conserves · ${name}`, `Σcorrection = ${sum.toExponential(1)} against field mass ${mass.toFixed(1)}`)
+  }
+}
+
+// ---- the one-step exam cannot tell the two models apart (prose: "nearly tied, 1.4×")
+{
+  const spec = ADVECT_HELD_OUT[1]
+  const fine = new FineLane(spec)
+  const states: Float32Array[] = []
+  const s0 = new Float32Array(ACNX * ACNY)
+  fine.restrictInto(ACNX, ACNY, s0)
+  states.push(Float32Array.from(s0))
+  for (let t = 1; t <= 50; t++) {
+    fine.step()
+    const st = new Float32Array(ACNX * ACNY)
+    fine.restrictInto(ACNX, ACNY, st)
+    states.push(st)
+  }
+  const lane = new CoarseLane(spec, 4, null) as unknown as { u: Float32Array; v: Float32Array }
+  const post = new Float32Array(ACNX * ACNY)
+  const corr = new Float32Array(ACNX * ACNY)
+  const act = makeAdvectActs()
+  const mseOf = (w: typeof ADVECT_ONE_STEP) => {
+    let mse = 0
+    for (let t = 20; t < 50; t++) {
+      aSlStep(ACNX, ACNY, lane.u, lane.v, ADT, states[t], post)
+      advectCorrection(w, post, lane.u, lane.v, corr, act)
+      let e = 0
+      for (let k = 0; k < post.length; k++) e += (post[k] + corr[k] - states[t + 1][k]) ** 2
+      mse += e / post.length
+    }
+    return mse / 30
+  }
+  const ratio = mseOf(ADVECT_IN_THE_LOOP) / mseOf(ADVECT_ONE_STEP)
+  ok(ratio > 1 && ratio < 5, 'the one-step exam cannot separate them', `in-the-loop scores ${ratio.toFixed(1)}× the one-step model on its own exam — prose says "nearly tied, 1.4×" — while the rollout separates them ${(ADVECT_MANIFEST.oneStep.heldOut.corrErrEnd / ADVECT_MANIFEST.inTheLoop.heldOut.corrErrEnd).toFixed(0)}×`)
+}
+
+// ---- SmearRace's knob: error monotone in coarsening, on the case it shows
+{
+  const spec = ADVECT_HELD_OUT[0]
+  const errAt = (factor: number) => {
+    const fine = new FineLane(spec)
+    const c = new CoarseLane(spec, factor, null)
+    const g = new Float32Array(c.nx * c.ny)
+    for (let t = 0; t < 240; t++) {
+      fine.step()
+      c.step()
+    }
+    fine.restrictInto(c.nx, c.ny, g)
+    return aRelErr(c.dye, g)
+  }
+  const e2 = errAt(2)
+  const e4 = errAt(4)
+  const e8 = errAt(8)
+  ok(e4 > 1.4 * e2 && e8 > 1.02 * e4, 'smear grows with coarsening', `err@240: ${e2.toFixed(3)} (2×) → ${e4.toFixed(3)} (4×) → ${e8.toFixed(3)} (8×)`)
+}
+
+// ---- the live rollout the FluxRollout figure shows (ring, its default case)
+{
+  const spec = ADVECT_HELD_OUT[1]
+  const fine = new FineLane(spec)
+  const plain = new CoarseLane(spec, 4, null)
+  const corrected = new CoarseLane(spec, 4, ADVECT_IN_THE_LOOP)
+  const over = new CoarseLane(spec, 4, ADVECT_IN_THE_LOOP, 1.5)
+  const ghost = new Float32Array(ACNX * ACNY)
+  let e100p = 0
+  let e100c = 0
+  let overMin = 0
+  for (let t = 1; t <= 380; t++) {
+    fine.step()
+    plain.step()
+    corrected.step()
+    over.step()
+    for (let k = 0; k < over.dye.length; k++) overMin = Math.min(overMin, over.dye[k])
+    if (t === 100) {
+      fine.restrictInto(ACNX, ACNY, ghost)
+      e100p = aRelErr(plain.dye, ghost)
+      e100c = aRelErr(corrected.dye, ghost)
+    }
+  }
+  fine.restrictInto(ACNX, ACNY, ghost)
+  const endP = aRelErr(plain.dye, ghost)
+  const endC = aRelErr(corrected.dye, ghost)
+  const endOver = aRelErr(over.dye, ghost)
+  ok(e100c < 0.8 * e100p, 'the correction leads early', `step 100 on the ring: ${(e100c * 100).toFixed(0)}% vs plain ${(e100p * 100).toFixed(0)}% — prose says about twice the accuracy`)
+  ok(endC < 1.7 * endP, 'and never detonates', `step 380: ${(endC * 100).toFixed(0)}% vs plain ${(endP * 100).toFixed(0)}%`)
+  ok(endOver > endP && endOver > endC, 'overdrive is worse than no correction', `150% strength ends at ${(endOver * 100).toFixed(0)}% — the knob reaches the regime the prose needs`)
+  ok(overMin < -0.2, 'overdrive mints impossible ink', `deepest negative dye ${overMin.toFixed(2)} — the violet is real`)
+  ok(plain.massDrift() < -0.15 && plain.massDrift() > -0.6, 'the workhorse leaks', `plain lane mass drift ${(plain.massDrift() * 100).toFixed(0)}% — semi-Lagrangian is not conservative, as the prose now owns`)
+}
+
+// ---- pixels: the three advection figures paint what they teach
+{
+  const r = { current: 8 }
+  const shot = render('smear-race-8', 260, () => createSmearRace(r), 8)
+  ok(shot.countInk(40, 20, 350, 220, PALETTE.dye, 40) > 400, 'smear · the fine pane carries dye', `${shot.countInk(40, 20, 350, 220, PALETTE.dye, 40)} amber pixels`)
+  ok(shot.countInk(370, 20, 700, 220, PALETTE.dye, 40) > 200, 'smear · so does the coarse pane', `${shot.countInk(370, 20, 700, 220, PALETTE.dye, 40)} amber pixels at 12×8`)
+}
+{
+  const shot = render('drift-both', 330, () => createOneStepDrift('both'), 11)
+  const oneStepPane = shot.countInk(8, 20, 230, 175, PALETTE.div, 40)
+  ok(oneStepPane > 300, 'drift · the one-step pane is visibly wrecked', `${oneStepPane} violet pixels of impossible ink in its pane`)
+  const topHalf = shot.countInk(40, 180, 700, 215, PALETTE.div, 30)
+  ok(topHalf > 30, 'drift · the violet curve detonates on the plot', `${topHalf} violet pixels in the plot's upper band`)
+}
+{
+  const cr = { current: ROLLOUT_CASES[0].id }
+  const sr = { current: 100 }
+  // Render at ~100 steps, where the correction's lead is at its widest — by the
+  // end of the window the panes have converged and a pixel comparison proves
+  // nothing either way.
+  const shot = render('flux-rollout', 330, () => createFluxRollout({ caseRef: cr, strengthRef: sr }), 3.4)
+  const box = (n: number) => [10 + n * 240, 25, 10 + n * 240 + 220, 170] as const
+  const diff = (p: readonly [number, number, number, number], q: readonly [number, number, number, number]) => {
+    let sum = 0
+    let n = 0
+    for (let y = 0; y < p[3] - p[1]; y += 2) {
+      for (let x = 0; x < p[2] - p[0]; x += 2) {
+        const a = shot.rgba(p[0] + x, p[1] + y)
+        const b = shot.rgba(q[0] + x, q[1] + y)
+        sum += Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) + Math.abs(a[2] - b[2])
+        n++
+      }
+    }
+    return sum / n
+  }
+  const corrVsGhost = diff(box(1), box(2))
+  const plainVsGhost = diff(box(0), box(2))
+  ok(corrVsGhost < 0.85 * plainVsGhost, 'rollout · the corrected pane sits closer to the ghost', `mean pixel gap ${corrVsGhost.toFixed(1)} vs plain's ${plainVsGhost.toFixed(1)} at step ~100`)
+}
+
 done()

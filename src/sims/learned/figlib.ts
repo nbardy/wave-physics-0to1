@@ -65,7 +65,7 @@ const WALL = hexRgb(PALETTE.wall)
 const PROP = hexRgb(PALETTE.dye)
 
 /** `signed` ramps cyan→white→red about zero; `magnitude` ramps white→ink. */
-export type FieldMode = 'pressure' | 'divergence' | 'proposal'
+export type FieldMode = 'pressure' | 'divergence' | 'proposal' | 'dye'
 
 export class FieldPainter {
   private off: HTMLCanvasElement
@@ -115,6 +115,15 @@ export class FieldPainter {
       const t = Math.max(-1, Math.min(1, f[k] * inv))
       if (mode === 'pressure') {
         const c = t >= 0 ? P_HI : P_LO
+        const a = Math.abs(t)
+        d[o] = 250 + (c[0] - 250) * a
+        d[o + 1] = 250 + (c[1] - 250) * a
+        d[o + 2] = 252 + (c[2] - 252) * a
+      } else if (mode === 'dye') {
+        // dye is amber, as everywhere in the series — and NEGATIVE dye, which
+        // cannot exist, is violet: the same confession AdvectionSchemes wears
+        // when a scheme invents impossible ink
+        const c = t >= 0 ? PROP : DIV
         const a = Math.abs(t)
         d[o] = 250 + (c[0] - 250) * a
         d[o + 1] = 250 + (c[1] - 250) * a

@@ -207,22 +207,24 @@ branches.
     recorded numbers, not against itself. Voice pass, reader-ToM review, and a
     mobile pass are the remaining work →
     `articles/cad/01-cad-primitives/HANDOFF.md`.
-  - **Lesson 04** (learned solver — *Teaching a Solver to Guess*): BUILT end-to-end
-    2026-08-20 (`draft`) from an external visual storyboard Nick supplied as a zip
-    (preserved verbatim under `articles/08-learned-solver/source/`). ~4,300 words,
-    9 figure slots from 7 live components, and the repo's first genuinely TRAINED
-    model: 809 parameters that warm-start the pressure projection, trained by
-    `scripts/train-pressure-net.ts` on the lesson-01 solver's own divergence
-    fields, shipped as `src/sims/learned/weights.ts` with its measurement manifest.
-    50 assertions green via `bun run check:learned` — which guards the prose's
-    numbers, not just the pixels. Browser QA and mobile pass NOT done (the preview
-    pane was visibility-hidden all session, which suspends rAF and blanks every
-    canvas) → `articles/08-learned-solver/HANDOFF.md`. Two repo-wide changes rode
-    along: `remark-gfm` + table styling (first tables in the repo), and
-    `lazyStepper` in `sims/learned/figlib.ts` for lessons whose figures are
-    expensive to construct. **Ordering note:** it took waves `order: 4`, which the
-    banked drag/turbulence concept below had informally claimed; if drag ships
-    first, this becomes 05 and only `registry.ts` changes.
+  - **Lesson 04** (learned solver — *Teaching a Solver to Guess*): v2 BUILT
+    end-to-end 2026-08-25 (`draft`) from Nick's storyboard zip (preserved under
+    `articles/08-learned-solver/source/`). ~6,050 words, 13 figure slots from 10
+    components, THREE trained weight sets shipped with manifests: the 809-param
+    pressure warm start, and two 954-param advection flux corrections — one-step
+    (detonates on rollout, on purpose kept) and solver-in-the-loop (K=16 through
+    the exact SL adjoint; bounded). Spine: a tour of checks in descending
+    strength — residual acquits, conservation only convicts, closure/surrogate
+    have no in-loop meter. ~80 assertions green via `bun run check:learned`,
+    which guards the prose's numbers, not just pixels. v2 prose written on Fable
+    after the voice docs (v1 was drafted on Opus without them — process memory
+    `voice-docs-before-prose`). Browser QA and mobile pass STILL not done (the
+    preview pane was visibility-hidden across both sessions, which suspends rAF)
+    → `articles/08-learned-solver/HANDOFF.md`. Repo-wide riders from v1:
+    `remark-gfm` + table styling, `lazyStepper` in `sims/learned/figlib.ts`.
+    **Ordering note:** it took waves `order: 4`, which the banked drag/turbulence
+    concept below had informally claimed; if drag ships first, this becomes 05
+    and only `registry.ts` changes.
   - **Lesson 04-or-05** (drag & turbulence, ordering unclaimed): CONCEPT banked
     2026-07-06 — 3D wind-tunnel hero (car + offset colored streamtubes; where
     lesson 01's "flows here are two dimensional" confession flips into the

@@ -3,17 +3,20 @@
 Seeded by an external visual proposal (`source/VISUAL_STORYBOARD.md`, delivered
 2026-08-19 as a zip: four static diagram scaffolds plus a full story spine under
 the working title *The Learned Solver*). The storyboard's spine, palette
-discipline, and figure-audit obligations are adopted. Its scope is not: it asked
-for eight learned figures across four insertion points, including a learned
-closure and a whole-solver surrogate. This article learns **one** thing, and
-learns it for real.
+discipline, and figure-audit obligations are adopted. v1 built one seam for real;
+Nick's verdict (2026-08-25) was that the storyboard's MAP — every insertion point,
+explained — is half the commission. v2 keeps the do-it-for-real rule and doubles
+the experiments: two seams trained honestly, every other seam mapped honestly.
 
 ## Thesis
 
 A neural network can make this fluid solver faster. It does — measurably, in the
 reader's browser, from weights that live in the repository. The article is about
 what that sentence is worth once you insist on naming the baseline it beat and
-the meter that proved it.
+the meter that proved it — and its spine, found during the v2 build, is a **tour
+of checks in descending strength**: the residual can acquit (pressure seam, first
+experiment); conservation can only convict (advection seam, second experiment);
+the closure and surrogate seams have no in-loop meter at all (mapped, not faked).
 
 ## The hook
 

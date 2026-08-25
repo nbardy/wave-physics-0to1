@@ -6,6 +6,9 @@ import { FourWays } from '../sims/learned/FourWays'
 import { ImpulseResponse } from '../sims/learned/ImpulseResponse'
 import { UngatedRollout } from '../sims/learned/UngatedRollout'
 import { SabotageGate } from '../sims/learned/SabotageGate'
+import { SmearRace } from '../sims/learned/SmearRace'
+import { OneStepDrift } from '../sims/learned/OneStepDrift'
+import { FluxRollout } from '../sims/learned/FluxRollout'
 
 # Teaching a Solver to Guess
 
@@ -26,20 +29,21 @@ into places that are already full. Lesson 01 called that
 
 The middle pane and the right pane are both solving the same problem: find the
 <C k="pHi">pressure</C> field whose gradient cancels that defect. The middle one
-starts from nothing and sweeps. The right one starts from what the network proposed —
-and I will use <C k="dye">amber</C> for that proposal throughout this lesson and for
-nothing else, so a color always answers *who said this*. In every other lesson in this
-series amber is the thing we watch. Here it is the thing we do not trust.
+starts from nothing and sweeps. The right one starts from what the network proposed,
+and the proposal wears <C k="dye">amber</C> — in this series amber marks the thing we
+watch, and in this lesson the thing we watch is the network's word. Anything a
+network computed also sits behind a dashed border, so even where color is busy doing
+other work, the line style answers *who said this*.
 
-Watch the first frame. The middle pane is blank; the right pane already has a
-pressure field in it, and the field is nearly correct. Now read the two meters
-underneath. The blank pane has a residual of 1.000. The pane with a nearly correct
-answer in it has a residual of 2.42.
+In the first frame, the middle pane is blank and the right pane already holds a
+nearly correct pressure field. The meters underneath disagree about which is which:
+the blank pane reads a residual of 1.000, and the pane with most of the answer in it
+reads 2.42 — by the number the solver steers by, the good guess is worse than an
+empty grid.
 
-Nothing is broken. The residual is telling the truth. So is the picture. Getting those
-two facts to sit in the same head is most of what there is to learn here, and once
-they do, the question *where should a neural network go inside a physics simulation*
-answers itself.
+Nothing is broken. The meter is honest and so is the picture, and the distance
+between them is where a neural network can live inside a physics solver — and where
+it had better not.
 
 ## The Seam
 
@@ -61,12 +65,11 @@ all the way across the grid. On a 96 × 64 channel that is six thousand equation
 six thousand unknowns, and the solver has to answer them again before the next frame.
 
 That is the seam. Three of those moves are local formulas with no notion of being
-finished, and the fourth is a question with a checkable answer. You can hand the solver a
-pressure field — any pressure field, from anywhere, computed by anything — and it can
-tell you in one pass over the grid how wrong that field is. Nothing else in the
-timestep has that property.
-
-Hold onto it. It is going to turn out to be the entire safety argument.
+finished, and the fourth is a question with a checkable answer. You can hand the
+solver a pressure field — any pressure field, from anywhere, computed by anything —
+and one pass over the grid says how wrong it is. Nothing else in the timestep can be
+audited that cheaply, and the audit is indifferent to where the field came from.
+That indifference is the property everything below leans on.
 
 ## The Debt in the Timestep
 
@@ -87,15 +90,14 @@ forty sweeps, is about a fifth of it — two hundred times the <C k="visc">gate<
 rest of this lesson will use, and the solver crosses that gate on precisely zero of
 its timesteps.
 
-Drag the budget down to four sweeps and the flow visibly changes: the streaks stop
-mixing, the wake thins, the fluid gets stiffer and more obedient than any real fluid
-is. Drag it up to two hundred and the defect falls, slowly, and the frame rate falls
-with it. Nowhere on that slider does the trace touch the gate.
+At four sweeps the flow visibly changes character: the streaks stop mixing, the
+wake thins, the fluid turns stiffer and more obedient than any real fluid is. At two
+hundred, the defect falls — slowly — and the frame rate falls with it. Nowhere on
+that slider does the trace touch the gate.
 
-This is worth sitting with, because it is the honest starting position for everything
-that follows. The simulation in lesson 01 is not converged. It was never converged.
-It looks like a fluid because the leftover defect is smooth and small and gets
-partially cancelled next step, not because the pressure equation was solved.
+So the honest starting position: the simulation in lesson 01 is not converged, and
+never was. It looks like a fluid because the leftover defect is smooth, small, and
+partially cancelled on the next step — not because the pressure equation was solved.
 
 ## Five Ways to Be Wrong
 
@@ -103,22 +105,20 @@ Before asking whether learning improves a solver, name the error it is supposed 
 reduce. There are five, they are genuinely different, and a technique that shrinks one
 of them can be completely silent about the other four.
 
-| the error | what it means | what fixes it |
-|---|---|---|
-| **model-form** | the equations leave out a real stress, flux, or phase | better physics; a closure that supplies the missing term |
-| **discretization** | the grid and the timestep approximate the continuum badly | finer mesh, better stencils, higher-order fluxes |
-| **iterative** | the linear system was not solved tightly enough | more sweeps, a better solver, a better initial guess |
-| **input / state** | the geometry, the forcing, the initial condition are wrong | measurement, data assimilation, inverse modelling |
-| **tail / decision** | the mean is fine and the rare event is what mattered | ensembles, uncertainty, calibration |
+| the error | what it means | what a network would learn | what fixes it classically |
+|---|---|---|---|
+| **model-form** | the equations leave out a real stress, flux, or phase | a turbulence closure, a constitutive response, a discrepancy term | better physics |
+| **discretization** | the grid and the timestep approximate the continuum badly | a stencil, a limiter, a coarse-grid correction | finer mesh, better schemes |
+| **iterative** | the linear system was not solved tightly enough | a warm start, a preconditioner | more sweeps, a better solver |
+| **input / state** | the geometry, the forcing, the initial condition are wrong | data assimilation, hidden-state inference | measurement |
+| **tail / decision** | the mean is fine and the rare event is what mattered | error models, out-of-distribution detection | ensembles, calibration |
 
-The trace you just watched is the third row and only the third row. A neural network
-that helps with it will not make the physics more correct, will not fix a coarse
-grid, and will not tell you that your inflow speed was measured wrong. It will make
-the machine reach the answer it was already going to reach, sooner.
-
-That is a much smaller claim than "deep learning improves the simulation." It is also
-the only one in the table with a meter attached, which is why it is the one this
-lesson can actually settle.
+The trace above is the third row and only the third row. A network that helps with it
+will not make the physics more correct, will not fix a coarse grid, and will not
+reveal that the inflow speed was measured wrong. It will make the machine reach the
+answer it was already going to reach, sooner — a much smaller claim than "deep
+learning improves the simulation," and the only row whose claim a single pass over
+the grid can certify.
 
 <Waypoint>
 The pressure projection is a linear system the solver never finishes, and the amount
@@ -239,18 +239,15 @@ relative residual of $10^{-3}$ falls from 2330 to 840. The network saves 64% of 
 work, and the two paths agree on the answer to about a quarter of a percent of peak
 pressure.
 
-The gate buttons are worth a minute on their own, because they show where the headline
-number comes from. Loosen the gate to $10^{-2}$ and the speedup climbs above eight
-times. Tighten it to $10^{-4}$ and it falls to about two. The reason is not subtle: a
-warm start is a head start, and the further away the finish line is, the less a head
-start is worth. Any speedup quoted for a technique like this is a function of how much
-correctness you were willing to stop short of, and quoting it without the tolerance is
-quoting nothing.
+The gate buttons show where the headline number comes from. At a gate of $10^{-2}$
+the speedup climbs above eight times; at $10^{-4}$ it falls to about two. The reason
+is not subtle: a warm start is a head start, and the further away the finish line,
+the less a head start is worth. A speedup only means something next to the tolerance
+it stopped at.
 
-Watch the agreement number as you loosen the gate too. At $10^{-3}$ the two accepted
-answers differ by 0.24% of peak pressure; at $10^{-2}$ they differ by 6%. The gate is
-not a formality attached to the end of the pipeline. It *is* the contract, and its
-number is the strength of the contract.
+The agreement number moves with the gate too. At $10^{-3}$ the two accepted answers
+differ by 0.24% of peak pressure; at $10^{-2}$, by 6%. The gate is the contract
+between the two paths, and its number is the contract's strength.
 
 The last three cases are out of distribution — an airfoil at 14°, two discs, an open
 channel with no obstacle at all. The speedup drops to about 1.6×. Notice what does
@@ -296,9 +293,9 @@ Applied to the better solver, the network is worth 1.1×.
 
 None of that makes the 3.4× a lie. It makes it an answer to a question about
 Gauss–Seidel. "Our neural accelerator makes this solver 3.4× faster" and "a 1952
-algorithm makes it 6.4× faster, and the accelerator then adds 11% on top of that" are
-the same afternoon of measurements, on the same field, to the same tolerance. Only one
-of them tells you what to do on Monday.
+algorithm makes it 6.4× faster, and the accelerator then adds 11% on top" are the
+same afternoon of measurements on the same field to the same tolerance — and only the
+second one names the solver worth building on.
 
 <Waypoint>
 The network genuinely removes most of the smooth error, and so does a good classical
@@ -310,8 +307,9 @@ against the one you happened to have.
 ## What It Actually Learned
 
 There is a temptation, once something works, to describe it as having learned the
-operator: *the network learned to solve Poisson's equation*. It is easy to check
-whether that is true. Poke the divergence field in one place and look at the response.
+operator: *the network learned to solve Poisson's equation*. The claim is checkable.
+Poke the divergence field in exactly one place, and the response says what was
+actually learned.
 
 <ImpulseResponse height={330} />
 
@@ -326,10 +324,9 @@ on, and it is 40 to 45% wrong depending on where you put the poke — against 11
 wake fields it was trained on.
 
 So the honest description is narrower and more useful: it learned what the pressure
-around a wake in this channel tends to look like. It is a very good prior and it is
-not an operator. That single sentence predicts the out-of-distribution numbers from
-the previous section before you measure them, which is the test of whether a
-description of a model is worth anything.
+around a wake in this channel tends to look like. That is a prior, not an operator —
+and the sentence predicts the out-of-distribution numbers from the previous section
+before the cases run.
 
 ## The Gate Is the Architecture
 
@@ -376,37 +373,195 @@ the network at all. It is set by the gate. Both fields were swept until the same
 residual test passed, so the most they can differ by is what a residual of $10^{-3}$
 permits, whatever put them in the neighbourhood.
 
-That is the trade, stated as sharply as this article knows how to state it. **Behind a
-verifiable gate, a learned component can spend your time and cannot spend your
-correctness.** Every claim in this lesson — the 2.8×, the 1.1×, the out-of-distribution
-degradation, the failure of the impulse response — is a claim about the clock. Not one
-of them is a claim about whether the answer is right, because the answer's correctness
-was never delegated.
+That is the trade. **Behind a verifiable gate, a learned component can spend your
+time and cannot spend your correctness.** Every number in the pressure story — the
+2.8×, the 1.1×, the out-of-distribution slowdown, the failed impulse response — is a
+claim about the clock, because the answer was never delegated.
 
-## The Seams Without Gates
+## The Map of the Machine
 
-The pressure solve is the friendliest seam in a fluid solver, and it is fair to ask
-what happens at the others. Two are worth naming, because they are where most of the
-field's real work is, and because both give up the property this whole article rests
-on.
+The projection is one move out of four, and everything that made it safe — the
+linear system, the residual, the one-pass audit — belongs to the move, not to the
+machine. Here is the rest of the machine at the same magnification: what a network
+would hold at each seam, and what would catch it lying.
 
-**Learned closure.** A coarse grid cannot resolve small eddies, so their effect on the
-resolved flow — a stress, a flux, a drag — has to be supplied from outside. That is
-the *model-form* row of the table, the first row, and it is the row where learning has
-the most to offer: the missing term is genuinely unknown, and there is data. It is
-also a row with no residual. You cannot hand a closure's output to a one-pass check
-and ask whether it is right; you find out by running the simulation and comparing
-against a finer one, which is a verification loop measured in hours rather than
-microseconds.
+| seam | a network would learn | error row | what checks it, in the loop |
+|---|---|---|---|
+| the state coming in | fill the gaps between sensors; infer what wasn't measured | input / state | held-out sensors — real, but outside the loop |
+| the forces | unresolved forcing, roughness, control response | input / state | nothing local |
+| diffuse | the drag of eddies the grid can't hold — a turbulence closure | model-form | nothing in the loop; hours against a finer run |
+| advect | a flux, a limiter, a correction for what the grid loses | discretization | conservation — one pass, and it can only convict |
+| boundaries | where the interface sits, how it breaks | discretization, model-form | geometry invariants, partial |
+| **project** | a warm start, a preconditioner | iterative | **the residual — one pass, and it can acquit** |
+| the whole step at once | a surrogate for the entire solver | every row at once | nothing — the checker was replaced with everything else |
 
-**Whole-solver surrogates.** Wrap the entire timestep — geometry and forcing in, future
-flow field out. The speedups are enormous and so is the exposure, because now nothing
-in the pipeline is classical and there is no residual left to gate on. What you saw in
-the ungated pane is the mildest possible version of this failure mode, produced by a
-model that was 89% right.
+None of these seams exist in Navier–Stokes. The equation has no advection step, no
+sweep budget, no grid; refine the mesh and the equation sits unchanged while every
+seam moves closer to it. A seam is a property of the machine, not of the physics —
+which is why each one has its own error, its own learnable piece, and its own kind
+of check.
 
-The same shape appears in four fields, which is the argument that this is
-architecture rather than a fluids trick:
+The last column is the load-bearing one, and it is a ladder. The residual, on the
+top rung, is an audit in the strict sense: pass it and the answer is right to
+tolerance no matter what produced it — the fact the sabotage slider spent all of
+last section demonstrating. Conservation, one rung down, is a law rather than an
+audit. True motion always obeys it, but so do infinitely many wrong motions, so it
+can convict a scheme of inventing mass and can never acquit one of being wrong. And
+from the closure seam on down there is no meter in the loop at all — a learned
+closure is graded by running the whole simulation against a finer one, hours per
+verdict, and a whole-solver surrogate absorbs the very machinery that would have
+done the grading.
+
+The pressure seam sat on the top rung, which is why its story stayed safe even with
+its network sabotaged into noise. One rung down: advection.
+
+## What Averaging Steals
+
+<SmearRace height={260} />
+
+Two runs of the scheme lesson 01 taught — trace backward, interpolate — in the same
+swirl, seeded with the same <C k="dye">dye</C>. The left pane spends 6,144 cells.
+The right one spends what the buttons allow, and its meter reads the distance from
+the standard, measured on its own grid, so blockiness alone scores nothing. What it
+is charged for is the smear.
+
+The thief is the interpolation. Every backtrace lands between cells; every landing
+blends four neighbours; every blend is a small blur — the price of unconditional
+stability, disclosed when lesson 01 bought it. On the fine grid the blur is a
+fraction of a cell and the dye can afford it. At 24 × 16 each blur is four times
+wider, and a few hundred steps dissolve the disc into fog. Nothing is unstable,
+nothing explodes; the coarse lane is just steadily less true. That is the
+discretization row of the error table, running live.
+
+The classical exit is to pay: sixteen times the cells, sixteen times the arithmetic
+per step, and on most schemes a finer timestep on top. The learned lane on this row
+proposes the opposite trade — keep the budget, learn what the averaging steals.
+
+## A Correction That Cannot Cheat
+
+The network for this seam is 954 parameters, and its architecture is mostly a list
+of things it is forbidden to do.
+
+It does not output dye. It outputs *fluxes* — one number per face between
+neighbouring cells, how much dye to slide across — and the correction is what the
+slides add up to. Whatever leaves a cell lands in its neighbour, the wall faces are
+pinned at zero, and the total is untouched by any setting of any weight.
+Conservation is not in the training data; it is in the plumbing — the same move the
+pressure net made with scale symmetry, applied to a law instead. Each flux is
+capped at a fraction of the local dye scale, so one step can move at most a sliver
+of a cell's contents, and the input is normalized by the dye's own magnitude, so a
+brighter blob cannot surprise it.
+
+The data is the same recipe as before. The fine solver manufactures truth — six
+swirls, 240 steps each, every state averaged down to 24 × 16, 1,440 pairs — and the
+loss asks the corrected coarse step to land on the next true state. Adam, six
+thousand steps, the gradient checked against finite differences before the first
+one. The training loss settles around 10⁻⁶; the corrected step matches the true
+next state almost to the pixel. By every number the training run can see, the
+problem is solved.
+
+<OneStepDrift mode="failure" height={300} />
+
+Run free, it wrecks the flow inside two hundred steps.
+
+The cause is bookkeeping, not bad luck. Every pair in that training set begins from
+truth — a restricted fine state. The model has never once seen its own work. Run
+free, its input is its previous output carrying its previous error, a distribution
+no training pair ever drew from, and its response to that unfamiliar error is, on
+average, a slightly larger error. Recall the ungated pressure rollout: mostly
+right, every step, compounding. Same disease — except this seam has its meter, and
+the meter has nothing to say. The correction's mass ledger reads zero on every step
+of the detonation, because the flux form cannot do otherwise; the one part of the
+lane the check could ever have convicted is the one part provably innocent.
+
+The loss was never allowed to watch the machine it lives in. So let it watch the
+machine.
+
+## The Solver in the Loss
+
+The repair is to make training look like deployment. Unroll: the model takes
+sixteen consecutive steps riding its own outputs, every step is scored against
+truth, and the gradient is carried backward through the whole chain — through the
+network sixteen times, and through the *solver* sixteen times. That last part
+sounds expensive and is not: with the swirl frozen, a semi-Lagrangian step is a
+fixed table of gathers, and a fixed gather has an exact adjoint. The literature
+calls this *solver-in-the-loop* training, and the paper that named it is in Further
+Reading. One further nudge: each training window starts from a slightly perturbed
+state, so the model earns points only by pulling errors in — including errors it
+did not make.
+
+<OneStepDrift mode="both" height={330} />
+
+Same 954 parameters, same data, same optimizer; the only change is what the loss
+could see. By the end of the window the
+one-step lane's error is measured in multiples of the entire field; the in-the-loop
+lane sits at 50% against the plain solver's 47% — an identical opportunity to
+detonate, declined at every step. And the number that should worry every benchmark
+table: rescored on the one-step test, the very exam the first model was trained to
+ace, the two models come out nearly tied — 1.4× apart. The property that separates
+wreckage from an instrument is invisible at one step. It lives a few hundred steps
+deep, and only a rollout can see it.
+
+<FluxRollout height={330} />
+
+Across held-out swirls the corrected lane runs ahead of plain for its first two to
+three hundred steps — cutting the error by a third around step 100 on the ring —
+and then the lanes trade places, case by case, with nothing detonating. On the swirl
+half again faster than anything in training, the lead holds through the whole
+window: the faster the flow, the more each backtrace smears, and the more a
+smear-repairer has to do. The ceiling deserves equal billing. A plain run at
+48 × 32 still beats every 24 × 16 lane on this page — 954 parameters buy back
+roughly a third of the distance to a grid twice as fine, early, and less of it
+late. The serious version of this seam, Kochkov's in Further Reading, spends far
+more network on far more solver for its eight-to-ten-fold claims; what scales is
+the shape of the trade, not this toy's numbers.
+
+The strength slider is where this seam's meter finally shows its grade. A sharpener
+overshoots — flecks of impossible <C k="div">violet</C> ink are the standing price
+of anti-diffusion, and at 100% the error curves say the price is worth paying. Past
+100% the overshoot compounds: the ringing deepens, the violet spreads, and the
+error curve climbs over the lane with no correction at all. Through every bit of
+it, the correction's mass ledger holds at zero. Wrong fluid, clean ledger.
+
+The mass meters under the other two panes complete the indictment from the other
+side. Both lanes *leak* — a third to nearly half of the dye over this window — because
+backtrace-and-interpolate was never a conservative scheme; it blurs mass into
+walls and clamps it at edges, a defect lesson 01 never mentioned because nothing
+there measured it. So on this seam the one-pass meter convicts the honest
+workhorse and has nothing on the vandal. That is what a necessary check is: real,
+cheap, and one full rung below sufficient.
+
+One more honesty item, and it is the one that matters. Every error curve in these
+figures leans on the ghost, and the ghost costs sixteen times the lane it grades.
+In production, the ghost is the run you were trying to avoid. What you can afford
+on every step is the conservation meter — and the conservation meter cannot acquit.
+On this seam, a clean bill of health means only that nothing has been caught yet.
+
+## The Rungs Below
+
+Below advection, the meters run out entirely.
+
+The closure seam is the biggest prize on the map and the most exposed. A coarse
+grid cannot resolve small eddies, so their drag on the resolved flow has to be
+supplied from outside — the model-form row, the row where learning has genuinely
+unknown physics to offer. It is also the row where the ghost stops being a teaching
+aid and becomes the only judge there is: a closure is graded by running the whole
+simulation against a finer one, hours per verdict, and its failure modes are
+rollout-shaped — exactly the kind the one-step story just rehearsed.
+
+The whole-step surrogate keeps the geometry and the forcing and replaces everything
+else. The speedups are the largest on offer and the exposure is total: when the
+entire solver is learned, there is no residual left to gate on, because the thing
+that computed residuals was replaced too. The ungated pressure pane — which wrecked
+a flow using a model that was 89% right — was the mild version of this, contained
+to one stage of one timestep.
+
+And above the whole map sits a quieter seam, the controller: which mesh, which
+timestep, which fidelity, when to escalate to the expensive model. Decisions rather
+than fields, graded only in calibration across many runs — the last row of the
+error table.
+
+The same map is being drawn in every field that simulates:
 
 | field | structure kept fixed | the map that is learned | what verifies it |
 |---|---|---|---|
@@ -416,16 +571,23 @@ architecture rather than a fluids trick:
 | solids | balance laws, finite-element equilibrium | the constitutive law, plasticity, damage | thermodynamic admissibility, load paths, failure tests |
 
 Every row keeps a different thing fixed and learns a different missing map. What
-separates the good rows from the exciting ones is whether the fourth column can be
-evaluated in the loop or only in a paper.
+sorts the quiet wins from the loud headlines is the seam table's last column,
+applied field by field: whether the check runs in the loop, or in a paper.
 
 ## Further Reading
 
 Jonathan Tompson, Kristofer Schlachter, Pablo Sprechmann and Ken Perlin's
 [*Accelerating Eulerian Fluid Simulation With Convolutional Networks*](https://arxiv.org/abs/1607.03597)
-(ICML 2017) is the paper this article's demonstration is a small, honest
+(ICML 2017) is the paper the pressure demonstration is a small, honest
 descendant of — a network trained to supply the pressure field, with the
 divergence and long-rollout discussion that motivated the ungated pane above.
+
+Dmitrii Kochkov and colleagues'
+[*Machine Learning–Accelerated Computational Fluid Dynamics*](https://www.pnas.org/doi/10.1073/pnas.2101784118)
+(PNAS 2021) is the grown-up version of this article's second seam: learned
+corrections inside a classical Navier–Stokes solver, matching a grid roughly eight
+to ten times finer in each direction — with conservation carried, as here, by the
+flux form rather than by hope.
 
 Ayano Kaneda and colleagues' [*A Deep Conjugate Direction Method for Iteratively
 Solving Linear Systems*](https://arxiv.org/abs/2205.10763) (ICML 2023) is the
@@ -434,8 +596,10 @@ supplies search directions *inside* a Krylov method, so it has to compete with
 conjugate gradients rather than with a sweep counter.
 
 Kiwon Um and colleagues' [*Solver-in-the-Loop*](https://arxiv.org/abs/2007.00016)
-(NeurIPS 2020) is the cleanest statement of why a model trained on single steps
-behaves badly over a rollout, and what training it inside the solver does about it.
+(NeurIPS 2020) is the paper whose central experiment the second seam re-runs at toy
+scale: models trained on single steps drift when rolled out, and letting the
+differentiable solver into the loss is the repair. Everything about the in-the-loop
+model above is their move, shrunk until it fits in a browser tab.
 
 Jonathan Shewchuk's [*An Introduction to the Conjugate Gradient Method Without the
 Agonizing Pain*](https://www.cs.cmu.edu/~quake-papers/painless-conjugate-gradient.pdf)
@@ -452,21 +616,21 @@ or not it says so, competing with it.
 
 ## Final Words
 
-The interesting thing about the network in this article is not that it works. Small
-networks trained on their own solver's output have been supplying warm starts for the
-better part of a decade, and 809 parameters buying 64% of a Poisson solve is a
-pleasant result, not a surprising one.
+Two networks live in this lesson — 809 parameters and 954 — and between them they
+know nothing about fluids. One holds an opinion about what pressure near a wake
+looks like, the other about what averaging steals from a moving edge, and every
+true thing either one produces is made true by the machinery around it: sweeps that
+finish a guess, a flux form that cannot mint dye, a residual that defines done, a
+fine run that defined true.
 
-The interesting thing is the shape of what it is allowed to do. It never touches the
-equation. It never touches the answer. It offers an opinion, the opinion is checked
-by arithmetic that predates it by seventy years, and the check is cheap enough to run
-every single time. Break the network and you get a slower simulation of the same
-fluid. There is no setting of that slider, no field it has never seen, no failure of
-generalization that turns into a wrong flow — because the part that decides what is
-right was never the part that learned.
+I keep coming back to how old the load-bearing parts are. The gate that held while
+a network was sabotaged into noise is a sum and a comparison. The repair that saved
+the second model was not a bigger network — it was a solver from 1999 allowed into
+the loss function. The newest instruments in computing, held honest by some of the
+oldest.
 
-I do not think that is a limitation to be engineered away. I think it is the design.
-The seams in a physics solver worth putting a model into are the ones where being
-wrong is expensive and *detectable*, and the field's hard problem is not building
-bigger models for the other seams. It is finding, for each of them, something a
-solver can check in one pass over the grid.
+The next time a headline says a neural network simulates physics a thousand times
+faster, the number is probably real. Three questions give it its meaning: which of
+the five errors it reduces, which baseline it beat, and what checks the answer once
+the inputs drift from home. Fields with a cheap third answer are about to get very
+fast. The rest are waiting for something better than a ghost.
