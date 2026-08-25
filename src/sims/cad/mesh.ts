@@ -170,6 +170,61 @@ export function cubeCage(): Mesh {
   }
 }
 
+/**
+ * The hero's cage: a plate with a through-hole, 32 vertices, 32 quads.
+ *
+ * Eight stations around the outline; at each, four cross-section corners —
+ * outer-top, outer-bottom, inner-bottom, inner-top. Faces are emitted
+ * station-major, so face `k*4 + j` belongs to cross-section strip `j`, and
+ * `j = faceIndex % 4` names the strip: 0 = outer wall, 1 = bottom, 2 = bore
+ * wall, 3 = top. That residue is how `OneObject` recovers the plate's four
+ * B-rep faces from any refinement level.
+ *
+ * Two properties are the reason this object exists (the argument that retired
+ * the cube hero lives in articles/cad/01-cad-primitives/STORY_CANDIDATES.md,
+ * decision 2026-08-18):
+ *
+ *  - Every vertex touches exactly 4 faces, so the Catmull–Clark limit is a
+ *    bicubic B-spline surface EVERYWHERE — no extraordinary points, no
+ *    asterisk. Only a genus-1 object can pull this off: Euler–Poincaré makes
+ *    an all-valence-4 closed quad mesh force V − E + F = 0.
+ *  - The outline runs through both octagon corners and edge midpoints of a
+ *    square, so the limit is a rounded-square plate with a rounded hole — a
+ *    filleted part, born filleted, with no fillet operation anywhere.
+ *
+ * `scripts/check-cad.ts` asserts both.
+ */
+export function plateCage(): Mesh {
+  const STATIONS = 8
+  const R_OUT = 1.0
+  const R_IN = 0.42
+  const T = 0.22
+  const vertices: Vec3[] = []
+  for (let k = 0; k < STATIONS; k += 1) {
+    const a = (2 * Math.PI * k) / STATIONS
+    const c = Math.cos(a)
+    const s = Math.sin(a)
+    // square-normalised direction: corners land on (±1, ±1), midpoints on axes
+    const m = Math.max(Math.abs(c), Math.abs(s))
+    const ux = c / m
+    const uz = s / m
+    vertices.push(
+      [ux * R_OUT, T, uz * R_OUT],
+      [ux * R_OUT, -T, uz * R_OUT],
+      [ux * R_IN, -T, uz * R_IN],
+      [ux * R_IN, T, uz * R_IN],
+    )
+  }
+  const idx = (k: number, j: number) => (k % STATIONS) * 4 + (j % 4)
+  const faces: number[][] = []
+  for (let k = 0; k < STATIONS; k += 1) {
+    for (let j = 0; j < 4; j += 1) {
+      faces.push([idx(k, j), idx(k + 1, j), idx(k + 1, j + 1), idx(k, j + 1)])
+    }
+  }
+  return { vertices, faces }
+}
+
 /** Move one cage vertex, returning a fresh mesh (the stepper never mutates its cage in place). */
 export function movedVertex(mesh: Mesh, index: number, to: Vec3): Mesh {
   return { vertices: mesh.vertices.map((v, i) => (i === index ? to : v)), faces: mesh.faces }

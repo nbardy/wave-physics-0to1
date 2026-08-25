@@ -20,50 +20,50 @@ only one. It changes which description is drawing:
 
 <OneObject />
 
-At the left end you see a <C k="ctrl">cage</C> — eight points and the quads
-between them, the thing a person actually edits. In the middle the cage is gone
-and the <C k="curve">surface</C> it converges to is all that remains. At the
-right end the surface is cut by <C k="topo">red boundaries</C> into six named
-faces. Nothing about the object changed across that slide. Its cage, its surface,
-and its face structure were true simultaneously the whole time.
-
-The rest of this lesson takes those layers apart one at a time and puts a meter
-on each.
+It opens mid-slide: a <C k="curve">surface</C> — a plate with a hole straight
+through it, every edge already rounded, and nothing rounded them. Drag the slider
+left and the surface vanishes into its <C k="ctrl">cage</C>, thirty-two points
+and the quads between them, the thing a person actually edits. Drag it right and
+<C k="topo">red wires</C> cut the surface into four named faces, two of them
+doing nothing but circling the hole. Nothing about the object changed across
+that slide. Its cage, its surface, and its face structure were true
+simultaneously the whole time.
 
 ## The Basis Is the Whole Story
 
-Start with the one everybody has heard of and almost nobody has been shown. A
-B-spline curve is written
-
-$$
-C(u) = \sum_{i=0}^{n} N_{i,p}(u)\, P_i ,
-$$
-
-which is a weighted average of points. The <C k="ctrl">$P_i$</C> are the
-control points. The <C k="basis">$N_{i,p}$</C> are the basis functions, and they
-carry every property the curve has. They are nonnegative. They sum to one at
-every parameter value. And — the part that matters commercially — each of them is
-zero outside a short interval.
-
-Drag a control point in the left pane and watch what the right pane says about
-it:
+Start with the one everybody has heard of and almost nobody has been shown.
+Below, ten <C k="ctrl">control points</C> and the <C k="curve">curve</C> they
+pull into shape. Drag any point and watch how much of the curve answers:
 
 <BasisLocality />
 
 The <C k="ghost">gray curve</C> is where the curve was before you touched
 anything. Outside the shaded band, the live curve lies exactly on top of it — not
-approximately, exactly, because the basis function belonging to the point you are
-dragging is *identically zero* there. The band is that function's support, and the
-meter under the left pane prints its endpoints. Move the point a mile; the far end
-of the curve does not learn about it.
+approximately, exactly. Move the point a mile; the far end of the curve does not
+learn about it.
 
-That is the property that makes splines usable on parts with thousands of control
+The basis plot is the machinery behind that. Each <C k="basis">violet hump</C>
+is one basis function $N_{i,p}$, one per control point — the amber one belongs to
+the point you dragged — and the curve is their weighted average:
+
+$$
+C(u) = \sum_{i=0}^{n} N_{i,p}(u)\, P_i .
+$$
+
+The basis functions carry every property the curve has. They are nonnegative.
+They sum to one at every parameter — the $\Sigma N$ meter reads 1.00 wherever
+you put the evaluation line. And, the property the whole industry leans on: each
+is zero outside a short interval. The shaded band is that interval for the
+dragged point's function, the amber meter in the curve pane prints its endpoints,
+and the far end of the curve stayed put because its coefficient there is
+*identically zero*, not merely small.
+
+That locality is what makes splines usable on parts with thousands of control
 points. A designer nudges a fillet and the software re-evaluates a handful of
 polynomial spans, not the model.
 
-Where do the functions come from? A recursion, due to Cox and de Boor, that
-starts from indicator functions on the knot spans and climbs one degree at a
-time:
+The functions come from a recursion, due to Cox and de Boor, that starts from
+indicator functions on the knot spans and climbs one degree at a time:
 
 $$
 N_{i,p}(u) = \frac{u - u_i}{u_{i+p} - u_i} N_{i,p-1}(u) + \frac{u_{i+p+1} - u}{u_{i+p+1} - u_{i+1}} N_{i+1,p-1}(u) ,
@@ -125,31 +125,18 @@ and it must vanish. Over the reals that forces $a_d = b_d = 0$, contradicting
 $d \ge 1$. So the only polynomial curves on the unit circle are the constant
 ones.
 
-The fix is to divide. Attach a positive weight $w_i$ to each control point and
-normalize:
-
-$$
-C(u) = \frac{\sum_i N_{i,p}(u)\, w_i\, P_i}{\sum_i N_{i,p}(u)\, w_i} .
-$$
-
-That is a NURBS — a non-uniform rational B-spline. The basis is the same Cox–de
-Boor basis; what changed is that the coefficients multiplying the control points
-are now $N_i w_i / \sum_j N_j w_j$, which still sum to one, so the curve is still
-an average of its control points and still lives in their convex hull.
+The fix is to divide. Give every control point a positive weight — drawn below
+as the point's size — multiply it into the average, and normalize by the total:
 
 <WeightPull />
 
-The left pane holds one set of control points read two ways. With every weight at
-1 the rational curve sits exactly on the polynomial one, one stroke; the readout
+Two curves share one set of control points, read two ways. With every weight at
+1 the weighted curve sits exactly on the polynomial one, one stroke; the readout
 says so. Push a weight up and the curve leans toward that point. Push it toward
-zero and the point loses its vote. A weight is not "importance" in any loose
-sense — it is a coordinate in one dimension higher. Evaluate an ordinary
-B-spline through the homogeneous points $\tilde{P_i} = (w_i P_i,\, w_i)$ in
-$\mathbb{R}^3$, then divide by the last coordinate to come back down. The
-division is the whole mechanism.
+zero and the point loses its vote.
 
-The right pane is the payoff. Three control points, degree two, weights
-$(1, \tfrac{\sqrt2}{2}, 1)$, and the <C k="curve">rational curve</C> lands on the
+The quarter circle is the payoff. Three control points, degree two, weights
+$(1, \tfrac{\sqrt2}{2}, 1)$, and the <C k="curve">weighted curve</C> lands on the
 unit circle to $10^{-16}$ — the meter measures $\max\,\bigl|\,\lVert C(u)\rVert -
 1\,\bigr|$ against a circle drawn from $\cos$ and $\sin$. The
 <C k="hole">dashed curve</C> is the polynomial through the identical three points.
@@ -157,6 +144,22 @@ It is a parabola arc, it misses by about $6 \times 10^{-2}$, and no amount of
 degree elevation will ever fix it, per the two-line argument above. Drag the
 middle weight off $\sqrt2/2$ and watch the exactness go: the value is not a
 tuning parameter, it is $\cos$ of the half-angle, and only that number works.
+
+Written out, the division is
+
+$$
+C(u) = \frac{\sum_i N_{i,p}(u)\, w_i\, P_i}{\sum_i N_{i,p}(u)\, w_i} ,
+$$
+
+and that fraction is a NURBS — a non-uniform rational B-spline. The basis is the
+same Cox–de Boor basis; the coefficients multiplying the control points are now
+$N_i w_i / \sum_j N_j w_j$, which still sum to one, so the curve is still an
+average of its control points and still lives in their convex hull. A weight is
+not "importance" in any loose sense — it is a coordinate in one dimension
+higher. Evaluate an ordinary B-spline through the homogeneous points
+$\tilde{P_i} = (w_i P_i,\, w_i)$ in $\mathbb{R}^3$, then divide by the last
+coordinate to come back down. The division is the whole mechanism, and it is
+exactly what lets a finite basis hold a conic.
 
 ## What the Grid Charges for a Local Edit
 
@@ -178,11 +181,11 @@ most of them in places nobody wanted more control.
 
 <RefineLocal />
 
-Both panes receive the same edit request. The left is a tensor grid: the new
-<C k="knot">knot line</C> crosses, and the counter charges you six control points.
-The right is a T-mesh, which permits a line to terminate at a
-<C k="topo">T-junction</C>, and the same edit costs two. Slide the strip to full
-length and the right pane becomes the left pane — a tensor grid is the T-mesh in
+Both panes receive the same edit request. The tensor grid must run the new
+<C k="knot">knot line</C> all the way across, and its counter charges six control
+points. The T-mesh lets the line stop at a <C k="topo">T-junction</C>, and the
+same edit costs two. Slide the strip to full length and the two panes become the
+same pane — a tensor grid is the T-mesh in
 which every line happens to run the whole way, which is why T-splines generalize
 NURBS rather than replacing them.
 
@@ -194,8 +197,8 @@ immediately, and gets a small support. The <C k="hole">cyan anchor</C> is above
 the T-junction, never meets that line, and reaches further. Same grid, two
 different local knot vectors, inferred from the mesh.
 
-That flexibility is not free, and this figure is honest about being a diagram of
-support rather than a surface evaluator. Arbitrary T-junction arrangements do not
+That flexibility is not free — and the panel above deliberately draws support
+structure, not an evaluated surface. Arbitrary T-junction arrangements do not
 automatically preserve linear independence, partition of unity, or nestedness
 under refinement — the properties everything above quietly depended on.
 "Analysis-suitable" T-splines are the subclass where the combinatorics have been
@@ -208,40 +211,57 @@ Everything so far has been a formula you evaluate. Subdivision surfaces take a
 different route: define the surface as the *limit* of refining a mesh, and never
 write down a closed form at all.
 
-Catmull–Clark refinement replaces every face with quads. New points appear at
-face centres and on edges, and every old vertex moves:
+Catmull–Clark refinement replaces every face of the cage with quads: a new
+point at each face's centre, a new point on each edge, every old vertex nudged
+toward its neighbourhood's average. Then the same again to the result, and the
+surface is wherever that process is heading:
+
+<CageLimit />
+
+The <C k="ctrl">cage</C> stays drawn over the <C k="curve">limit surface</C> at
+every level, so you can watch the surface pull inside its own control mesh — the
+convex-hull guarantee again, one dimension up. The counter multiplies by four
+per level: 26 vertices and 24 quads after one step on a cube, 1,538 and 1,536
+after four. Turn on the construction toggle and one step lays its parts on the
+table — <C k="basis">face points</C> at the centres, <C k="knot">edge points</C>
+on the edges, both about to be absorbed into the next cage.
+
+The rule that moves an old vertex is
 
 $$
 P' = \frac{\bar F + 2\bar E + (n-3)\,P}{n} ,
 $$
 
-where $n$ is the vertex's valence, $\bar F$ averages the new face points of the
-faces around it, and $\bar E$ averages the midpoints of its edges. Repeat.
-
-<CageLimit />
-
-The <C k="ctrl">cage</C> stays drawn over the <C k="curve">limit surface</C> at
-every level, so you can watch the surface pull inside its own control mesh —
-another partition-of-unity fact wearing different clothes. The counter multiplies
-by four per level: 26 vertices and 24 quads after one step on a cube, 1,538 and
-1,536 after four. Turn on the construction toggle to see one step's
-<C k="basis">face points</C> and <C k="knot">edge points</C> before they are
-absorbed.
+where $n$ is the vertex's valence — how many faces meet there — $\bar F$ the
+average of the surrounding <C k="basis">face points</C>, and $\bar E$ the
+average of its edge midpoints. The coefficients sum to one: it is a weighted
+average, obeying the same partition-of-unity invariant the spline basis and the
+rational weights obeyed.
 
 The reason this exists alongside NURBS is topology. A tensor-product patch is a
 rectangle; anything that is not a rectangle has to be assembled from trimmed
 patches with continuity enforced across the seams by hand. A subdivision cage can
-be any polygon mesh at all. The price shows in the meter: on a cube, every vertex
-has valence 3, and the article's own vocabulary calls that *extraordinary*. At
-valence 4 — the regular case — Catmull–Clark reproduces a uniform bicubic
-B-spline surface exactly, formula and all. Away from valence 4 there is no such
-formula; smoothness has to be established by studying the eigenstructure of the
-subdivision matrix, and the surface is only defined as a limit. Lift the corner
-and the limit follows, smoothly, with no patch layout and no seam conditions
-anywhere.
+be any polygon mesh at all. The price shows in the meter: on a cube, three
+faces meet at every corner — valence 3 — and a vertex whose valence is anything
+but 4 is called *extraordinary*. At valence 4, the regular case, Catmull–Clark
+reproduces a uniform bicubic B-spline surface exactly, formula and all. Away
+from valence 4 there is no such formula; smoothness has to be established from
+the eigenstructure of the subdivision matrix, and the surface is only defined as
+a limit. Lift the corner and the limit follows, smoothly, with no patch layout
+and no seam conditions anywhere.
 
-That is the trade in one sentence: subdivision buys arbitrary mesh topology by
-giving up the closed form.
+The plate that opened this article ducks that asterisk entirely. Its cage has
+thirty-two vertices and every one has valence 4, so its skin is a bicubic
+B-spline *everywhere* — the middle stop of the lens is not approximately a
+spline surface, it is one. Most shapes are not offered that deal: a closed quad
+cage with every vertex regular forces $V - E + F = 0$, and the only closed
+surface with that balance is a torus. The one object that can be all-regular is
+an object with a hole straight through it. This is also where the opening's
+rounded edges came from — the limit rounds the cage's corners on its own, which
+is why the plate arrived filleted with no fillet operation in sight.
+
+The trade is exact: subdivision buys arbitrary cage topology and pays with the
+closed form.
 
 <Waypoint>
 Three bases, then. B-spline: polynomial, local, exactly refinable. NURBS: the same
@@ -280,13 +300,14 @@ $$
 V - E + F - R = 2\,(S - G) ,
 $$
 
-with $R$ the number of inner loops, $S$ the shells, $G$ the genus. This plate is a
-torus, so the right side is zero, and it stays zero as you drag. The naive
+with $R$ the number of inner loops, $S$ the shells, $G$ the genus. This plate is
+a torus — the same $V - E + F = 0$ balance that let the opening cage go
+all-regular — so the right side is zero, and it stays zero as you drag. The naive
 $V - E + F = 2$ would miss the hole entirely: the hole does not live in the counts
 of faces and edges, it lives in the loop structure, which is exactly the
 information a mesh throws away.
 
-This is also the honest answer to why boolean operations are hard. Subtracting one
+It is also why boolean operations are hard. Subtracting one
 solid from another means intersecting the support surfaces, constructing the
 intersection curves, splitting faces and edges along them, classifying each
 fragment as inside or outside, rebuilding shells from the survivors, and verifying
@@ -315,12 +336,36 @@ here, and it is the only one of the five that can answer whether a point is insi
 the part.
 
 The question "should I use NURBS or SubD" is answerable. The question "should I
-use NURBS or B-rep" is not a question — the part in the first figure had a cage,
+use NURBS or B-rep" is not a question — the plate in the first figure had a cage,
 a surface, and a boundary the entire time you were sliding.
+
+A modelling session runs the whole stack in every frame. Click a face and
+topology answers. The highlight it paints is evaluated from a basis. The drag
+that follows edits a cage some limit process is quietly chasing. Three
+descriptions of one piece of metal, running at once, disagreeing about
+nothing — and that agreement, renegotiated sixty times a second, is all a CAD
+kernel is.
 
 ## Where This Comes From
 
-- Carl de Boor, [*B(asic)-Spline Basics*](https://ftp.cs.wisc.edu/Approx/paper.pdf) — the recurrence, the insertion algorithm, and the reasons for both.
-- Sederberg et al., [*T-splines and T-NURCCs*](https://dl.acm.org/doi/10.1145/882262.882295) — the original T-mesh construction.
-- Catmull and Clark, [*Recursively generated B-spline surfaces on arbitrary topological meshes*](https://people.eecs.berkeley.edu/~sequin/CS284/PAPERS/CatmullClark_SDSurf.pdf) — three pages, 1978.
-- Open CASCADE, [*BRep format and topology*](https://dev.opencascade.org/doc/overview/html/specification__brep_format.html) — a production kernel's own account of the entity hierarchy.
+Carl de Boor's [*B(asic)-Spline Basics*](https://ftp.cs.wisc.edu/Approx/paper.pdf)
+is the recurrence, the insertion algorithm, and the reasons for both, written by
+the man the recurrence is half named after. Everything in this article's first
+two sections is a page in it, done properly.
+
+Sederberg, Zheng, Bakenov, and Nasri's
+[*T-splines and T-NURCCs*](https://dl.acm.org/doi/10.1145/882262.882295) is the
+paper that first let a knot line stop. The analysis-suitability literature that
+grew around it is the fine print behind this article's caveat about T-junction
+combinatorics.
+
+Catmull and Clark's
+[*Recursively generated B-spline surfaces on arbitrary topological meshes*](https://people.eecs.berkeley.edu/~sequin/CS284/PAPERS/CatmullClark_SDSurf.pdf)
+is three pages from 1978, its rules running unchanged in the figures above; its
+authors went on to found Pixar and Silicon Graphics, respectively.
+
+Open CASCADE's
+[*BRep format specification*](https://dev.opencascade.org/doc/overview/html/specification__brep_format.html)
+is a production kernel describing its own entity hierarchy — the same
+solid-to-vertex chain as the last figure, plus the tolerance model that lets it
+survive real geometry.

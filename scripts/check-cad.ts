@@ -28,7 +28,7 @@ import {
   type Spline,
   type Vec2,
 } from '../src/sims/cad/spline'
-import { catmullClark, cubeCage, subdivide } from '../src/sims/cad/mesh'
+import { catmullClark, cubeCage, plateCage, subdivide } from '../src/sims/cad/mesh'
 import { counts, plate } from '../src/sims/cad/brep'
 import { createBasisLocality, freshBasisState } from '../src/sims/cad/BasisLocality'
 import { createKnotInsert, freshKnotState, refineOnce } from '../src/sims/cad/KnotInsert'
@@ -36,7 +36,7 @@ import { createWeightPull, freshWeightState } from '../src/sims/cad/WeightPull'
 import { createRefineLocal, freshRefineState } from '../src/sims/cad/RefineLocal'
 import { createCageLimit, freshCageState } from '../src/sims/cad/CageLimit'
 import { createBrepStack, freshBrepState } from '../src/sims/cad/BrepStack'
-import { ancestor, createOneObject, freshOneObjectState } from '../src/sims/cad/OneObject'
+import { ancestor, createOneObject, freshOneObjectState, heroFace } from '../src/sims/cad/OneObject'
 import { isStacked } from '../src/sims/cad/layout'
 
 const OUT = join(dirname(fileURLToPath(import.meta.url)), '..', '_figure_check')
@@ -230,6 +230,66 @@ for (const degree of [2, 3, 4]) {
   }
   // 12 cage edges, each split into 2^LEVEL pieces
   ok(cross === 12 * 2 ** LEVEL, 'subd/face-groups-meet-on-cage-edges', `${cross} cross-group edges, expected ${12 * 2 ** LEVEL}`)
+}
+
+// --- the hero's plate ------------------------------------------------------
+
+{
+  // The properties that retired the cube hero (STORY_CANDIDATES.md, 2026-08-18):
+  // the plate is genus 1 and every vertex is regular, so its limit is bicubic
+  // B-spline EVERYWHERE — the claim the article's opening now rests on.
+  const cage = plateCage()
+  const V = cage.vertices.length
+  const F = cage.faces.length
+  const E = new Set(
+    cage.faces.flatMap((f) => f.map((v, i) => [v, f[(i + 1) % f.length]].sort((a, b) => a - b).join(':'))),
+  ).size
+  ok(V - E + F === 0, 'plate/genus-one', `V−E+F = ${V - E + F} (0 = torus)`)
+  const one = catmullClark(cage)
+  ok(
+    one.construction.valence.every((v) => v === 4),
+    'plate/all-regular',
+    `valence min ${Math.min(...one.construction.valence)} max ${Math.max(...one.construction.valence)} — no extraordinary points`,
+  )
+  const HERO_LEVEL = 3
+  const limit = subdivide(cage, HERO_LEVEL).mesh
+  ok(
+    limit.vertices.length === 2048 && limit.faces.length === 2048,
+    'plate/level-3-counts',
+    `${limit.vertices.length} verts, ${limit.faces.length} quads (V = F because χ = 0)`,
+  )
+  const minR = Math.min(...limit.vertices.map((v) => Math.hypot(v[0], v[2])))
+  ok(minR > 0.05, 'plate/hole-survives-refinement', `bore radius ${minR.toFixed(3)} at level 3`)
+
+  // The four wires: independently re-derived, not read from heroFace — each of
+  // the cage's 4 strip boundaries is 8 edges around, each split 2^3 ways.
+  const owner = new Map<string, number[]>()
+  limit.faces.forEach((face, fi) => {
+    for (let i = 0; i < face.length; i += 1) {
+      const a = face[i]
+      const b = face[(i + 1) % face.length]
+      const k = a < b ? `${a}:${b}` : `${b}:${a}`
+      const list = owner.get(k)
+      if (list) list.push(fi)
+      else owner.set(k, [fi])
+    }
+  })
+  let wireSegments = 0
+  const wirePairs = new Set<string>()
+  for (const fis of owner.values()) {
+    if (fis.length !== 2) continue
+    const [ga, gb] = [heroFace(fis[0]), heroFace(fis[1])]
+    if (ga === gb) continue
+    wireSegments += 1
+    wirePairs.add(ga < gb ? `${ga}:${gb}` : `${gb}:${ga}`)
+  }
+  const expected = 4 * 8 * 2 ** HERO_LEVEL
+  ok(wireSegments === expected, 'plate/four-wires', `${wireSegments} wire segments, expected ${expected}`)
+  ok(
+    wirePairs.size === 4 && !wirePairs.has('0:2') && !wirePairs.has('1:3'),
+    'plate/wires-are-adjacent-strips',
+    `strip adjacencies ${[...wirePairs].sort().join(', ')} — top never meets bottom, outer never meets bore`,
+  )
 }
 
 // --- boundary representation ---------------------------------------------

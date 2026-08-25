@@ -2,9 +2,9 @@ import { useRef, useState } from 'react'
 import { Sim, type Stepper } from '../../components/Sim'
 import { PALETTE } from '../lib/palette'
 import { paneFrame, clipPane, FONT_LABEL, FONT_METER, type Rect } from '../lib/chrome'
-import { cubeCage, facing, paintOrder, project, subdivide, type Camera, type Mesh } from './mesh'
+import { facing, paintOrder, plateCage, project, subdivide, type Camera, type Mesh } from './mesh'
 
-// CAD C1 hero — the same object under three descriptions.
+// CAD C1 hero — one part under three descriptions.
 //
 // The lens does not switch between three models. There is one model: a cage,
 // the limit surface its refinement converges to, and a partition of that surface
@@ -12,11 +12,19 @@ import { cubeCage, facing, paintOrder, project, subdivide, type Camera, type Mes
 // drawing, and the object underneath never changes — which is the article's
 // whole argument, made before a word of it is claimed.
 //
-// The face partition is not decoration. Catmull–Clark emits each original face's
-// children as a contiguous block of 4^k quads (see `catmullClark`), so quad
-// `i` descends from cage face `i >> 2k`. The red strokes are exactly the
-// boundaries between those blocks — the wires a B-rep would record if this
-// surface were handed to a kernel.
+// The object is `plateCage()`: a filleted plate with a through-hole, chosen to
+// replace a cube hero (decision recorded in the article's STORY_CANDIDATES.md,
+// 2026-08-18) because every one of its vertices is regular — the surface layer
+// is bicubic B-spline everywhere, no asterisk — and because its topology layer
+// is not vacuous: two of the four red wires circle the hole, the thing only
+// topology records.
+//
+// The face partition is not decoration. Catmull–Clark emits each original
+// face's children as a contiguous block of 4^k quads (see `catmullClark`), so
+// quad `i` descends from cage face `ancestor(i)`, and `ancestor(i) % 4` is the
+// cage's cross-section strip — outer wall, bottom, bore, top (see `plateCage`).
+// The red strokes are the boundaries between those four strips: the four wires
+// a B-rep of this plate would record, two of them inner wires around the bore.
 
 const LEVEL = 3
 
@@ -46,13 +54,18 @@ function lighten(hex: string, t: number): string {
   return `rgb(${mix(r)},${mix(g)},${mix(b)})`
 }
 
-const CAGE: Mesh = cubeCage()
+const CAGE: Mesh = plateCage()
 const LIMIT: Mesh = subdivide(CAGE, LEVEL).mesh
+
+/** Which of the plate's four B-rep faces quad `i`'s ancestry assigns it to. */
+export function heroFace(i: number): number {
+  return ancestor(i, LEVEL) % 4
+}
 
 function layerName(lens: number): string {
   if (lens < 0.66) return 'control structure — a cage a designer edits'
   if (lens < 1.4) return 'surface geometry — the limit the rule converges to'
-  return 'boundary topology — the same surface, cut into named faces'
+  return 'boundary topology — four faces, two wires circling the hole'
 }
 
 export function createOneObject(sharedRef: { current: Shared }): Stepper {
@@ -64,7 +77,9 @@ export function createOneObject(sharedRef: { current: Shared }): Stepper {
       const cam: Camera = {
         yaw: s.yaw,
         pitch: s.pitch,
-        scale: Math.min(r.w, r.h) * 0.31,
+        // the plate is wide and flat — a cube-era min(w,h) scale leaves it
+        // small in a wide pane, so let the width share the vote
+        scale: Math.min(r.h * 0.42, r.w * 0.24),
         cx: r.x + r.w / 2,
         cy: r.y + r.h / 2,
       }
@@ -89,9 +104,9 @@ export function createOneObject(sharedRef: { current: Shared }): Stepper {
             else ctx.lineTo(p.x, p.y)
           })
           ctx.closePath()
-          // alternate group tint only once the topology layer is fading in, so
+          // alternate strip tint only once the topology layer is fading in, so
           // the surface layer reads as one continuous skin until it is cut
-          const group = ancestor(fi, LEVEL)
+          const group = heroFace(fi)
           const tint = 0.15 + 0.42 * (1 - towards) + (aWires > 0 && group % 2 === 1 ? 0.12 : 0)
           ctx.fillStyle = lighten(PALETTE.curve, Math.min(0.92, tint))
           ctx.fill()
@@ -100,7 +115,8 @@ export function createOneObject(sharedRef: { current: Shared }): Stepper {
       }
 
       if (aWires > 0.01) {
-        // the cuts: an edge of the limit mesh whose two quads have different ancestors
+        // the wires: an edge of the limit mesh whose two quads belong to
+        // different B-rep faces of the plate
         ctx.globalAlpha = aWires
         ctx.strokeStyle = PALETTE.topo
         ctx.lineWidth = 2.4
@@ -117,7 +133,7 @@ export function createOneObject(sharedRef: { current: Shared }): Stepper {
         })
         for (const [key, fis] of owner) {
           if (fis.length < 2) continue
-          if (ancestor(fis[0], LEVEL) === ancestor(fis[1], LEVEL)) continue
+          if (heroFace(fis[0]) === heroFace(fis[1])) continue
           const [a, b] = key.split(':').map(Number)
           const pa = project(cam, LIMIT.vertices[a])
           const pb = project(cam, LIMIT.vertices[b])

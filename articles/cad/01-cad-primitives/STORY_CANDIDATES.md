@@ -262,3 +262,30 @@ questions:
    body-figure changes. (The `BrepStack` "forget the wires" toggle from
    candidate 4 is a separate, hours-scale figure upgrade — approve or decline
    independently.)
+
+
+---
+
+## DECIDED 2026-08-18 (Claude, on Nick's delegation; revisable)
+
+Nick's reply to the checkpoint was "answer it yourself" — per the standing
+"no preference means decide" rule, the call was made and recorded rather than
+re-asked.
+
+1. **The cube dies.** Grounds are the two structural failures above (vacuous
+   topology layer; all-extraordinary surface layer), both machine-verified, not
+   the familiarity rule alone.
+2. **Candidate 1 ships — the pierced plate.** One correction to the write-up:
+   the cage needs **32 vertices** (8 stations × 4 cross-section corners), not
+   16 — a 4×4 torus cage is all-regular but reads as a donut, not a plate.
+   Verified before building: χ = 0, every vertex valence 4, hole survives
+   refinement, limit stays inside the cage.
+3. **Scope held.** Hero object + opening-adjacent prose + the SubD clincher
+   paragraph + the Euler callback. The BrepStack wire-heal toggle stays banked.
+   The Stage-4 voice pass ran in the same session (voice docs read first, in
+   the AGENTS.md order).
+
+Build receipts: `plateCage()` in `src/sims/cad/mesh.ts`; `OneObject` now
+renders the plate with `heroFace = ancestor % 4` wires; six new `plate/*`
+assertions in `scripts/check-cad.ts` (genus, regularity, counts, hole
+survival, wire count 256, strip adjacency).

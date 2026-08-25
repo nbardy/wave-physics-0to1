@@ -35,8 +35,10 @@ contract. What was ported is the mathematics and the pedagogy:
 | six WebGPU scenes | seven Canvas-2D `Stepper` figures in `src/sims/cad/` |
 | `scripts/check.mjs` | `scripts/check-cad.ts` (`bun run check:cad`) — 65 assertions: math, pixels, and both layouts |
 
-Figures, in article order: `OneObject` (hero), `BasisLocality`, `KnotInsert`,
-`WeightPull`, `RefineLocal`, `CageLimit`, `BrepStack`.
+Figures, in article order: `OneObject` (hero — the pierced plate since
+2026-08-18), `BasisLocality`, `KnotInsert`, `WeightPull`, `RefineLocal`,
+`CageLimit` (keeps the cube deliberately: it is the extraordinary-vertex
+specimen the plate is contrasted against), `BrepStack`.
 
 ## Where things stand
 
@@ -53,18 +55,35 @@ Figures, in article order: `OneObject` (hero), `BasisLocality`, `KnotInsert`,
 
 ## Remaining work
 
-1. **Voice pass (METHODOLOGY stages 4–5).** The prose is clear and the maths is
-   honest, but it has not been through a slop scan or a rhythm pass, and it has
-   not been read against `NICKS_VOICE.md`. This is the main thing standing
-   between `draft` and `published`.
-2. **Reader-ToM review.** Nothing has simulated a reader through this yet.
-3. **Hook check.** IN PROGRESS 2026-08-17 — a hero-candidate pass is running
-   against the suspicion that the cube hero is an anti-hook (a subdividing cube
-   may be the most familiar image in computer graphics; Nick's rule is that
-   "everyone has seen X" kills a candidate). Output lands in
-   `STORY_CANDIDATES.md` beside this file and ends at a checkpoint — **a hero
-   swap is Nick's call, not the agent's.** Do the voice pass AFTER this
-   resolves; a swap would rewrite the opening the prose is built around.
+1. **Reader-ToM review.** Nothing has simulated a felt reader through this yet
+   (the 4-stage chain: journey → moves → slop → redraft). The main remaining
+   gate before proposing `published`.
+2. **Nick's read.** The hero swap and voice pass were decided and executed on
+   his delegation ("answer it yourself") — he has not yet read the result. Both
+   are revisable on his verdict.
+
+## Resolved
+
+- **Hook check → hero swap, 2026-08-18.** The cube hero died on two verified
+  structural grounds (its topology layer was the trivial case of the article's
+  own Euler meter; its surface layer was weakest on an all-extraordinary cage),
+  plus the recorded familiarity rule. Replaced by the pierced plate
+  (`plateCage()`, 32 vertices, all valence 4, genus 1): the one shape whose
+  Catmull–Clark skin is bicubic B-spline everywhere, which turned the hero from
+  the thesis's weakest specimen into its strongest. Decision record and
+  candidate postmortems: `STORY_CANDIDATES.md`.
+- **Voice pass (Stage 4), 2026-08-18.** Run AFTER the four voice docs were read
+  in the AGENTS.md order, same session as the swap. What changed: the three
+  equation-before-figure violations reordered (B-spline sum, rational division,
+  CC vertex rule now each arrive as the formalization of a figure already
+  touched); the reading-itinerary line cut; "this figure is honest about being"
+  and "the article's own vocabulary" de-metaed (SLOP family 18); one decorative
+  question declarativized; pane references made position-neutral so stacked
+  mobile layouts don't contradict the prose; a coda added with a different
+  shape from lesson 01's ending (sibling audit); references expanded to earned
+  specific praise. The opening now plants "nothing rounded them" as a flat
+  debt, paid in the SubD section by the all-regular clincher, which itself
+  plants the Euler balance, cashed in the B-rep section — the ring closes.
 
 ## Done since the port
 
