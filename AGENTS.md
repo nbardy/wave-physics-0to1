@@ -64,10 +64,14 @@ forward from our own intuition and taste with guiding principles.
 ## The repo
 
 Vite + React + TS · MDX lessons with KaTeX (`$…$`, `$$…$$`) · Canvas-2D sims ·
-Cloudflare Pages. `<Sim>` and `<TeX>` are available in MDX without imports.
+GitHub Pages. `<Sim>` and `<TeX>` are available in MDX without imports.
 `bun run dev` / `bun run typecheck` / `bun run build` / `bun run check:figures`
 (per-lesson check scripts: `check:figures` `check:pbits` `check:z1` `check:part2`
 `check:cad` `check:learned` — there is no aggregate).
+**Deploy is `bun run deploy`** (README §Deploy): local build pushed to the
+`gh-pages` branch — no CI, no Actions, no Cloudflare, so *the working tree is
+what ships*; check `git status` for other sessions' uncommitted edits before
+deploying, and push `main` alongside so the site never runs ahead of history.
 **Display math stays on one line** — remark-math needs the closing `$$` at a
 line start, so a two-line `$$eq … eq$$` silently swallows the rest of the
 document (measured: it truncated two sections of physics-02, 2026-08-05).
@@ -199,13 +203,15 @@ branches.
   - **CAD C1** (Basis, Cage, and Boundary — first lesson of the `cad` field,
     opened 2026-08-16): PORTED end-to-end (`draft`) from an external
     standalone explainer (vanilla ES modules + raw WebGPU) delivered as a zip.
-    ~2,900 words, 7 figures, the maths rebuilt in `src/sims/cad/`
+    ~3,100 words, 7 figures, the maths rebuilt in `src/sims/cad/`
     (Cox–de Boor, Boehm insertion, rational NURBS, Catmull–Clark, a B-rep plate
     with its Euler–Poincaré balance); 54 assertions green via `bun run check:cad`.
     The original project is preserved verbatim under
     `articles/cad/01-cad-primitives/source/` and the port is checked against ITS
-    recorded numbers, not against itself. Voice pass, reader-ToM review, and a
-    mobile pass are the remaining work →
+    recorded numbers, not against itself. Mobile pass done 2026-08-17; hero
+    swapped cube → pierced plate (all-regular, genus 1) and Stage-4 voice pass
+    run 2026-08-18 on Nick's delegation, decision recorded in its
+    STORY_CANDIDATES.md. Remaining: reader-ToM review, Nick's read →
     `articles/cad/01-cad-primitives/HANDOFF.md`.
   - **Lesson 04** (learned solver — *Teaching a Solver to Guess*): v2 BUILT
     end-to-end 2026-08-25 (`draft`) from Nick's storyboard zip (preserved under
