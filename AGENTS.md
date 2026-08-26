@@ -19,12 +19,15 @@ Before writing anything, read in this order:
 3. **`SLOP.md`** — the detector: the slop families and the four tests (topic-swap,
    delete, who's-talking, the Nick test). Judgment calls, never grep gates. (Count
    deliberately not stated here — it grows; the doc is canonical.)
-4. **`METHODOLOGY.md`** — the essence inverted into our five-stage process:
+4. **`INTROS.md`** — opening-paragraph law: the three-move shape (familiar side
+   measured → inversion → thesis last), the ranked constitution, and the worked
+   p-bits example with Nick's pick. Openings → this doc wins.
+5. **`METHODOLOGY.md`** — the essence inverted into our five-stage process:
    concept → skeleton → blocked content → final draft → polished post. Includes our
    four standing deviations (we cash out the math; prediction before reveal; waypoints;
    named solvers).
-5. **`articles/01-navier-stokes/PLAN.md`** — the full-length plan for lesson 01.
-6. **`articles/02-fiber-bundles/PLAN.md`** — the full-length plan for lesson 02 (waves as sections
+6. **`articles/01-navier-stokes/PLAN.md`** — the full-length plan for lesson 01.
+7. **`articles/02-fiber-bundles/PLAN.md`** — the full-length plan for lesson 02 (waves as sections
    of bundles; the connection as the universal medium; seeded by the Weinstein tweet
    quoted at its top). Its subject-matter grounding — what the tweet technically
    refers to, the papers, the 1858→1986 history — is **`articles/02-fiber-bundles/RESEARCH.md`**;
@@ -39,7 +42,8 @@ hero from scratch.
 
 **Each doc owns one thing; principles live in exactly one home.** AGENTS = repo
 mechanics, doc map, cross-thread state. METHODOLOGY = the process and its audits.
-ESSENCE / NICKS_VOICE / SLOP = the voice poles and the detector. HANDOFF = per-article
+ESSENCE / NICKS_VOICE / SLOP = the voice poles and the detector. INTROS = opening-
+paragraph law. HANDOFF = per-article
 state (canonical — never duplicate it here). If two docs disagree on a principle,
 METHODOLOGY wins and the other doc becomes a pointer. And the anti-accretion rule,
 which applies to these docs as much as to prose: **a new rule should usually replace

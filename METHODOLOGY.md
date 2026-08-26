@@ -109,7 +109,10 @@ Now — and only now — the voice pass. Three source documents govern it:
 `NICKS_VOICE.md` for the *prose temperature* (the blend rule lives in AGENTS.md:
 structure → ESSENCE wins, temperature → NICKS_VOICE wins), and `SLOP.md` as the
 detector to read the result against — the slop families and the four tests; judge
-with the tests, never grep for the families.
+with the tests, never grep for the families. The opening paragraph has its own
+law: `INTROS.md` — the three-move shape, the ranked constitution, and the worked
+example. Draft the intro to that doc, and audit it there before the general
+SLOP pass.
 
 **The pastiche guard, first.** The Essence doc is a measurement of one author's
 converged fingerprint. A phrasing is a *signature* when one author converges on it
