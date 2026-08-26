@@ -205,6 +205,25 @@ device, it went canned. Count is evidence, not verdict — two identical caption
 frames can already be a template, and seven crime-scene beats might survive if each
 advances the case; judge whether instance N still surprises anyone.
 
+**20. The trailer register (manufactured drama).** Flagged 2026-08-26 on the
+published p-bits opening, two tells in one paragraph pair. First, stakes
+dressed as conflict narrative: "Every computer you own is at war with noise…
+A chip exists now that surrenders it instead." Nick: "some weird hand wavey
+attempt to be intellectually edgy and emotional… flat and un interesting,
+and says nothing." The move inflates a mechanism into a war story — epic
+vocabulary (*at war, surrender, battle, revolution*) carrying emotion the
+physics was never shown earning. Second, the demonstrative reveal of an
+abstraction: "Here is the surrender, running." Nick: "Dumb llm trope we
+should never use." The "Here is the X" flourish presents a *concept* as if
+unveiling it on stage — pure presentation, zero content; delete it and the
+figure it introduced loses nothing. Distinct from family 5 (adjectives
+asserting awe) and family 17 (staged suspense): this is *register* borrowed
+from movie trailers, and it reads as an LLM reaching for gravitas. The rule:
+**open cold on the concrete thing; drama belongs to the phenomenon.**
+Boundary: "Here is/are" pointing at a concrete object the reader is about to
+touch ("Here are two p-bits side by side") is a camera move and survives;
+"Here is the [abstraction], [verb]-ing" does not.
+
 ---
 
 ## Where the enforcement lives

@@ -321,7 +321,21 @@ from the dial") until it hardened into a caption format. Nick: kill the "canned
 cornism." A coined device gets one full-strength deployment, one echo if the echo is
 a payoff, then it retires. SLOP.md family 19 carries the test.
 
-The full taxonomy — 19 slop families, the four detection tests, and the real
+Fourth incident (2026-08-26), flagged on the published p-bits opening:
+
+- ✗ "Every computer you own is at war with noise" — "some weird hand wavey
+  attempt to be intellectually edgy and emotional, and is just short and flat
+  and un rhymtic linguistics flat and un interesting, and says nothing"
+- ✗ "Here is the surrender" — "Dumb llm trope we should never use"
+
+**The rule extracted: no trailer register.** Stakes dressed as conflict
+narrative ("at war," "surrenders") and the demonstrative reveal of an
+abstraction ("Here is the X, running") both perform significance instead of
+showing a mechanism. Open cold on the concrete thing. "Here is/are" survives
+only pointing at a concrete object the reader is about to touch. SLOP.md
+family 20 carries the tests.
+
+The full taxonomy — 20 slop families, the four detection tests, and the real
 before/after pairs from this repo's de-slop commits — lives in **`SLOP.md`**.
 
 ---
