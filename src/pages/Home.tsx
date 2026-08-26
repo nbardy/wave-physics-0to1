@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { FIELDS, lessons } from '../lessons/registry'
+import { FIELDS, lessons, SERIES } from '../lessons/registry'
 import { TocList } from '../components/Toc'
 
 export default function Home() {
@@ -21,7 +21,9 @@ export default function Home() {
       {FIELDS.map(({ field, label, blurb }) => {
         const items = lessons.filter((l) => l.field === field).sort((a, b) => a.order - b.order)
         if (items.length === 0) return null
-        return <TocList key={field} label={label} blurb={blurb} items={items} />
+        const series = SERIES.find((s) => s.field === field)
+        const more = series && { to: `/series/${series.id}`, label: 'Read it as a series →' }
+        return <TocList key={field} label={label} blurb={blurb} more={more} items={items} />
       })}
     </div>
   )

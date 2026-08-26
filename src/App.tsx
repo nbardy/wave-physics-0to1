@@ -4,6 +4,7 @@ import Layout from './components/Layout'
 import Home from './pages/Home'
 import All from './pages/All'
 import LessonView from './pages/LessonView'
+import SeriesPage from './pages/SeriesPage'
 import StackCheck from './pages/StackCheck'
 import { Sim } from './components/Sim'
 import { TeX } from './components/TeX'
@@ -20,6 +21,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/all" element={<All />} />
           <Route path="/lesson/:id" element={<LessonView />} />
+          <Route path="/series/:id" element={<SeriesPage />} />
           <Route path="/stack-check" element={<StackCheck />} />
           <Route path="*" element={<Home />} />
         </Routes>

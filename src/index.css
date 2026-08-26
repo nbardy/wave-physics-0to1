@@ -289,6 +289,72 @@ a:hover {
   max-width: 62ch;
   margin: 0.5rem 0 0;
 }
+.toc-eyebrow-more {
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  margin: 0.5rem 0 0;
+}
+
+/* series — the banner over a part, the next-part footer, the series page */
+.series-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 0.7rem;
+  margin: 0 0 2.2rem;
+}
+.series-banner a {
+  white-space: nowrap;
+}
+.series-next {
+  margin-top: 3.2rem;
+  border-top: 1px solid var(--rule-strong);
+  padding-top: 1.4rem;
+}
+.series-next-link {
+  display: block;
+  color: var(--ink);
+}
+.series-next-link:hover {
+  text-decoration: none;
+}
+.series-next-link:hover .series-next-title {
+  color: var(--accent);
+}
+.series-next-eyebrow {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 0.35rem;
+}
+.series-next-title {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.series-inspiration {
+  font-family: var(--font-prose);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  max-width: 62ch;
+  margin: 1.4rem 0 0;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--rule);
+}
 
 /* tags — lowercase, unboxed, the same weight as a caption. They are metadata,
    never the loudest thing in a row. */

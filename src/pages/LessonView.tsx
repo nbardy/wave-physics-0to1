@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom'
 import { lessonById } from '../lessons/registry'
+import { SeriesBanner, SeriesNext } from '../components/SeriesNav'
 
 export default function LessonView() {
   const { id } = useParams<{ id: string }>()
@@ -19,7 +20,9 @@ export default function LessonView() {
   const { Content } = lesson
   return (
     <article className="prose lesson">
+      <SeriesBanner lessonId={lesson.id} />
       <Content />
+      <SeriesNext lessonId={lesson.id} />
     </article>
   )
 }

@@ -39,10 +39,12 @@ function TagRow({ tags }: { tags: readonly Tag[] }) {
 export function TocList({
   label,
   blurb,
+  more,
   items,
 }: {
   label: string
   blurb?: string
+  more?: { to: string; label: string }
   items: Lesson[]
 }) {
   return (
@@ -50,6 +52,11 @@ export function TocList({
       <div className="toc-head-block">
         <p className="toc-eyebrow">{label}</p>
         {blurb && <p className="toc-eyebrow-blurb">{blurb}</p>}
+        {more && (
+          <p className="toc-eyebrow-more">
+            <Link to={more.to}>{more.label}</Link>
+          </p>
+        )}
       </div>
       <ol className="toc-list">
         {items.map((l) => (

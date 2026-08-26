@@ -235,6 +235,54 @@ export const lessons: Lesson[] = [
   },
 ]
 
+// ---------------------------------------------------------------------------
+// Series — an ordered run of lessons meant to be read as one arc. Membership
+// is declared here rather than inferred from `field`, so a field can later
+// hold standalone lessons beside a series without the navigation lying.
+// ---------------------------------------------------------------------------
+
+export interface Series {
+  id: string
+  field: Field
+  title: string
+  lede: string
+  inspiration: { name: string; url: string; note: string }
+  lessonIds: readonly string[]
+}
+
+export const SERIES: readonly Series[] = [
+  {
+    id: 'thermo',
+    field: 'thermo',
+    title: 'Thermodynamic Computing — the trilogy',
+    lede:
+      'One machine, held three ways: a chip that computes with the thermal noise every other chip fights, the compiler that makes its one fixed graph speak for machines it never contained, and the bill a diffusion model runs up when it dreams on real fabric. Each part stands alone; read in order, they are one derivation — from a single flickering coin to a priced dream.',
+    inspiration: {
+      name: 'Extropic',
+      url: 'https://extropic.ai',
+      note:
+        'This series was inspired by Extropic, the company building the Z1 — a quarter-million-p-bit chip whose native act is Gibbs sampling driven by thermal noise — and by the two papers documenting its stack: Torx (arXiv:2608.01612) and Thermalizers (arXiv:2608.01615). The lessons are independent and unaffiliated: everything here was rebuilt from the papers at sizes an exact oracle can audit.',
+    },
+    lessonIds: ['pbits', 'z1-compiler', 'ebm-diffusion'],
+  },
+]
+
+// Absence is meaningful for both lookups (unknown URL id; lesson outside any
+// series), so Option is honest.
+export function seriesById(id: string): Series | undefined {
+  return SERIES.find((s) => s.id === id)
+}
+
+export function seriesForLesson(
+  lessonId: string,
+): { series: Series; index: number } | undefined {
+  for (const series of SERIES) {
+    const index = series.lessonIds.indexOf(lessonId)
+    if (index !== -1) return { series, index }
+  }
+  return undefined
+}
+
 // Absence is meaningful here (unknown lesson id from the URL), so Option is honest.
 export function lessonById(id: string): Lesson | undefined {
   return lessons.find((l) => l.id === id)
