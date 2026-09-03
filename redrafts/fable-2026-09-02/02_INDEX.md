@@ -35,7 +35,7 @@ revise, and sibling stages were the overspend.
 | learned-solver | WarmStartRace kept | keeps | the most Nick-proof intro here: three measurements that cannot all be true | judge failed a number ("scores above 2"); check against the shipped manifests |
 | jacobian-hessian | "Unstir": Newton's method finding a target's preimage under a stirring map, hops on a meter | swaps to the agreed "Newton's One Idea" direction | good; ~170 words, a little long | NEW figure; per the July postmortem, a hero swap here needs an explicit checkpoint before any build |
 | cad-primitives | the pierced plate, thirty-two points and a rule | keeps hero, replaces the five-thing tour with a rule-fails chain | good; thesis as a full sentence | none |
-| photonics (P1) | a 4×4 MZI block: six crossings, four drains, six crossings | new (no article existed) | reads as facts | "sixteen dials" is a matrix-entry count, not how an SVD mesh is parameterized (12 MZIs × 2 phases + 4 attenuators); verify against RESEARCH.md before this ships anywhere |
+| photonics (P1) | a 4×4 MZI block: six crossings, four drains, six crossings | new (no article existed) | reads as facts | "sixteen dials" is correct for a REAL matrix (6 Givens rotations + 4 attenuators + 6 rotations = 16 = N²); the prose must say the block does real matrices, since a complex mesh needs two phases per crossing. Earlier draft of this index flagged it as wrong; that flag was mine and mistaken |
 
 ## Sibling audit, by eye (the agent never ran)
 
@@ -55,6 +55,6 @@ revise, and sibling stages were the overspend.
    accept. Three are spine swaps that need his explicit yes: navier-stokes,
    navier-stokes-history, jacobian-hessian.
 2. The main loop fixes the flagged physics lines by hand (wave-particle plate
-   angle, pbits number order, photonics dial count). No agents.
+   angle, pbits number order, photonics "real matrix" qualifier). No agents.
 3. Only for accepted spines: one revise agent per article with its judge notes
    where they exist. Eleven agents at most, and only on request.

@@ -596,7 +596,7 @@ ok(g3.lead - g2.lead > 3 * (g4.lead - g3.lead), 'closing · the lead stops growi
 }
 
 {
-  const shot = render('slow-modes', 250, () => createSlowModes({ current: 14 }), 2.5)
+  const shot = render('slow-modes', 250, () => createSlowModes({ current: 14 }, { showMeter: true }), 2.5)
   // The plot lives right of centre. The ripple (red) must reach the floor while
   // the bulge (cyan) is still in the top third; the meter (violet) is low with it.
   const floor = (hex: string) => shot.countInk(320, 170, 700, 200, hex, 30)

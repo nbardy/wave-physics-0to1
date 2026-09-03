@@ -10,7 +10,7 @@ number the prose prints or a contrast a figure has to show.
 the story a tour. v3 is a rewrite from the outline in
 `redrafts/fable-2026-09-02/learned-solver/REIMAGINE.md` Part 2, under the sentence
 law of `redrafts/fable-2026-09-02/00_VOICE_DOCS_CRITIQUE.md` §4. The v2 article is
-preserved at `redrafts/fable-2026-09-02/learned-solver/lesson-04-v2-previous.mdx`
+preserved at `src/lessons/lesson-04-learned-solver.I.mdx` (version I on the page; v3 is version II)
 (and in git at 4ed3ad5). The second network — the advection flux correction, its
 one-step detonation and its solver-in-the-loop repair — is CUT from this article
 and banked as its own future article in `articles/CONCEPT_BANK.md` ("The advection

@@ -2,7 +2,8 @@ import type { ComponentType } from 'react'
 import Lesson01 from './lesson-01-navier-stokes.mdx'
 import Lesson02 from './lesson-02-fiber-bundles.mdx'
 import Lesson03 from './lesson-03-navier-stokes-history.mdx'
-import Lesson04 from './lesson-04-learned-solver.mdx'
+import Lesson04I from './lesson-04-learned-solver.I.mdx'
+import Lesson04II from './lesson-04-learned-solver.II.mdx'
 import Maths01 from './maths-01-jacobian-hessian.mdx'
 import Physics01 from './physics-01-wave-particle.mdx'
 import Physics02 from './physics-02-pbits.mdx'
@@ -111,6 +112,31 @@ export const TAG_LABEL: Record<Tag, string> = {
   simulation: 'simulation',
 }
 
+// ---------------------------------------------------------------------------
+// Versions — one lesson can carry several complete drafts side by side so
+// they can be read against each other (baseline vs. rewrites). The first
+// entry is what the site shows by default; the rest are reached from the
+// switch above the article (`?v=II`). Labels are the Roman numerals a
+// reader sees. To add one: drop `<name>.<label>.mdx` beside the others and
+// append an entry here — nothing else changes.
+// ---------------------------------------------------------------------------
+
+export interface LessonVersion {
+  label: string
+  author: string
+  note: string
+  Content: ComponentType
+}
+
+// A lesson always has at least one version, so the type says so and no
+// reader of `versions[0]` needs a guard.
+export type LessonVersions = readonly [LessonVersion, ...LessonVersion[]]
+
+/** The single-version case, which is every lesson until a rewrite lands. */
+function sole(Content: ComponentType): LessonVersions {
+  return [{ label: 'I', author: 'baseline', note: 'the only version', Content }]
+}
+
 export interface Lesson {
   id: string
   field: Field
@@ -119,7 +145,7 @@ export interface Lesson {
   blurb: string
   tags: readonly Tag[]
   status: LessonStatus
-  Content: ComponentType
+  versions: LessonVersions
 }
 
 export const lessons: Lesson[] = [
@@ -132,7 +158,7 @@ export const lessons: Lesson[] = [
       'It cannot be both. It is both. Send photons through two slits one at a time, watch the contradiction assemble itself, and find the rule that makes a paradox compute.',
     tags: ['quantum', 'optics', 'waves', 'probability'],
     status: { kind: 'draft' },
-    Content: Physics01,
+    versions: sole(Physics01),
   },
   {
     id: 'pbits',
@@ -143,7 +169,7 @@ export const lessons: Lesson[] = [
       'A chip that computes with the thermal noise every other chip fights. Build it from one flickering coin — and build the instrument that catches a fast sampler telling a confident lie.',
     tags: ['probability', 'simulation'],
     status: { kind: 'published' },
-    Content: Physics02,
+    versions: sole(Physics02),
   },
   {
     id: 'z1-compiler',
@@ -154,7 +180,7 @@ export const lessons: Lesson[] = [
       'The sequel to the noise computer: Extropic’s actual stack. Compile a stochastic program onto the real Z1 fabric and pay the three taxes — embedding, context, mixing — with every tax measured on an exact meter.',
     tags: ['probability', 'simulation'],
     status: { kind: 'published' },
-    Content: Physics03,
+    versions: sole(Physics03),
   },
   {
     id: 'ebm-diffusion',
@@ -165,7 +191,7 @@ export const lessons: Lesson[] = [
       'The finale: train and run a diffusion model under the chip’s actual economics. Every noise level is a kernel, every kernel a reflash, every sample a readout — and the wall of dreams returns with a bill you can read, cut, and defend.',
     tags: ['probability', 'simulation'],
     status: { kind: 'published' },
-    Content: Thermo03,
+    versions: sole(Thermo03),
   },
   {
     id: 'navier-stokes',
@@ -176,7 +202,7 @@ export const lessons: Lesson[] = [
       'Meet each piece of fluid motion on its own, see why it alone falls short, then assemble the equation and run it live.',
     tags: ['fluids', 'pde', 'simulation'],
     status: { kind: 'published' },
-    Content: Lesson01,
+    versions: sole(Lesson01),
   },
   {
     id: 'fiber-bundles',
@@ -187,7 +213,7 @@ export const lessons: Lesson[] = [
       'Light waves in no substance ever found. Build the geometric object that is its true medium — and earn the derivative that makes it move.',
     tags: ['geometry', 'waves', 'electromagnetism'],
     status: { kind: 'draft' },
-    Content: Lesson02,
+    versions: sole(Lesson02),
   },
   {
     id: 'navier-stokes-history',
@@ -198,7 +224,7 @@ export const lessons: Lesson[] = [
       'The partner to lesson 01: the same equation, built again — this time by history. Five discoveries, two strangers in the name, a 152-year paradox, and a million-dollar question still open.',
     tags: ['fluids', 'history', 'pde'],
     status: { kind: 'draft' },
-    Content: Lesson03,
+    versions: sole(Lesson03),
   },
   {
     id: 'learned-solver',
@@ -209,7 +235,20 @@ export const lessons: Lesson[] = [
       'A network of 809 weights, trained on this site’s own solver, writes the pressure field before the first sweep: nine tenths right, and worse than an empty grid on the meter the solve stops by. The sweeps that start from it win anyway. Why the meter cannot see what the guess got right, why the guess cannot move the answer, and the 1952 algorithm that beats it.',
     tags: ['fluids', 'simulation', 'linear-algebra'],
     status: { kind: 'draft' },
-    Content: Lesson04,
+    versions: [
+      {
+        label: 'I',
+        author: 'baseline',
+        note: 'v2 as built 2026-08-25: two networks, the map act, ~6,050 words',
+        Content: Lesson04I,
+      },
+      {
+        label: 'II',
+        author: 'Fable',
+        note: 'v3 rewritten from scratch 2026-09-02: one network, one failure chain, ~2,650 words',
+        Content: Lesson04II,
+      },
+    ],
   },
   {
     id: 'jacobian-hessian',
@@ -220,7 +259,7 @@ export const lessons: Lesson[] = [
       'Zoom into any smooth map and a parallelogram lattice appears — four numbers per point. The Jacobian is that lattice; the Hessian is the same zoom aimed at the gradient.',
     tags: ['calculus', 'linear-algebra', 'geometry'],
     status: { kind: 'draft' },
-    Content: Maths01,
+    versions: sole(Maths01),
   },
   {
     id: 'cad-primitives',
@@ -231,7 +270,7 @@ export const lessons: Lesson[] = [
       'B-splines, NURBS, T-splines, SubD, and B-rep are not five ways to draw the same surface. Three are bases, one is an authoring mesh, one is topology — and one part carries all of them at once.',
     tags: ['geometry', 'linear-algebra', 'simulation'],
     status: { kind: 'draft' },
-    Content: Cad01,
+    versions: sole(Cad01),
   },
 ]
 
@@ -286,6 +325,16 @@ export function seriesForLesson(
 // Absence is meaningful here (unknown lesson id from the URL), so Option is honest.
 export function lessonById(id: string): Lesson | undefined {
   return lessons.find((l) => l.id === id)
+}
+
+/** The version the site shows when the URL names none. */
+export function defaultVersion(lesson: Lesson): LessonVersion {
+  return lesson.versions[0]
+}
+
+// Absence is meaningful (a `?v=` label no version carries), so Option is honest.
+export function versionOf(lesson: Lesson, label: string): LessonVersion | undefined {
+  return lesson.versions.find((v) => v.label === label)
 }
 
 /** Lesson number as it is printed: `P1`, `02`, `M1`. */

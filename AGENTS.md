@@ -83,6 +83,15 @@ document (measured: it truncated two sections of physics-02, 2026-08-05).
 - A lesson is `src/lessons/<field>-NN-slug.mdx`, registered in `src/lessons/registry.ts`
   (status is a sum type: `planned → draft → published`; `field` and `tags` are closed
   unions). `/` groups by field, `/all` filters by tag.
+- **Versions (A/B reading).** A lesson carries `versions: LessonVersions` — one or
+  more complete drafts, the first being what the site shows by default; the rest
+  are reached from the I · II · III switch above the article (`/lesson/<id>?v=II`).
+  A single-version lesson keeps `<name>.mdx` and `versions: sole(Content)`. When a
+  rewrite lands, the files become `<name>.I.mdx` (baseline) and `<name>.II.mdx`,
+  and the registry entry lists both with an author and a one-line note. Adding a
+  third is one file plus one entry. Versions share the sim components, so a sim
+  edit made for one draft shows in all of them — keep such edits additive (new
+  props defaulting to the old behaviour). First use: lesson 04, 2026-09-03.
 - A figure is a `Stepper` — `step(dt)` / `draw(ctx, w, h)` — handed to
   `<Sim create={…}>`. The stepper owns its state; the shell owns the RAF loop and
   Play/Pause/Reset. Figure-specific controls are bespoke JSX passed as `<Sim>` children

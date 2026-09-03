@@ -295,6 +295,65 @@ a:hover {
   margin: 0.5rem 0 0;
 }
 
+/* versions — the switch above a lesson that carries more than one draft */
+.version-switch {
+  margin: 0 0 2.2rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid var(--rule);
+}
+.version-switch-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.version-switch-eyebrow {
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-right: 0.5rem;
+}
+.version-pill {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  min-width: 2.2rem;
+  text-align: center;
+  padding: 0.22rem 0.6rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: 999px;
+  color: var(--ink-soft);
+  text-decoration: none;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.version-pill:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+  text-decoration: none;
+}
+.version-pill--active {
+  color: var(--bg);
+  background: var(--ink);
+  border-color: var(--ink);
+}
+.version-pill:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.version-switch-note {
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  margin: 0.55rem 0 0;
+}
+.version-switch-author {
+  color: var(--ink);
+  font-weight: 600;
+}
+
 /* series — the banner over a part, the next-part footer, the series page */
 .series-banner {
   display: flex;

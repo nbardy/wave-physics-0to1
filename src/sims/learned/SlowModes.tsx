@@ -55,7 +55,10 @@ function amplitude(f: Float32Array, basis: Float32Array): number {
   return den === 0 ? 0 : num / den
 }
 
-export function createSlowModes(roughRef: { current: number }): Stepper {
+// `meter` adds the third curve — the residual ‖A e‖ in violet, with its reading —
+// on top of the two error curves. Off by default so the baseline draft's figure
+// stays the figure its prose describes; the v3 draft turns it on.
+export function createSlowModes(roughRef: { current: number }, { showMeter = false }: { showMeter?: boolean } = {}): Stepper {
   const grid: Grid = { nx: NX, ny: NY, solid: new Uint8Array(NX * NY) }
   const zero = new Float32Array(NX * NY)
   const smooth = new Float32Array(NX * NY)
@@ -187,7 +190,7 @@ export function createSlowModes(roughRef: { current: number }): Stepper {
       }
       curve(smoothTrace, PALETTE.pLo, 2.2)
       curve(roughTrace, PALETTE.pHi, 2.2)
-      curve(resTrace, PALETTE.div, 2.2, [5, 3])
+      if (showMeter) curve(resTrace, PALETTE.div, 2.2, [5, 3])
 
       ctx.font = FONT_LABEL
       ctx.textAlign = 'right'
@@ -197,8 +200,10 @@ export function createSlowModes(roughRef: { current: number }): Stepper {
       ctx.fillText(`rough mode, k = ${k}`, plot.x + plot.w - 4, plot.y + 12)
       ctx.fillStyle = PALETTE.pLo
       ctx.fillText('smooth mode, k = 1', plot.x + plot.w - 4, plot.y + 26)
-      ctx.fillStyle = PALETTE.div
-      ctx.fillText('the meter  ‖A e‖', plot.x + plot.w - 4, plot.y + 40)
+      if (showMeter) {
+        ctx.fillStyle = PALETTE.div
+        ctx.fillText('the meter  ‖A e‖', plot.x + plot.w - 4, plot.y + 40)
+      }
 
       // ---- the number
       const tr = tenth(roughTrace)
@@ -216,8 +221,10 @@ export function createSlowModes(roughRef: { current: number }): Stepper {
       let e2 = 0
       for (let i = 0; i < err.length; i++) e2 += err[i] * err[i]
       const errLeft = Math.sqrt(e2 / e0sq)
-      ctx.fillStyle = PALETTE.div
-      ctx.fillText(`the meter reads ${(resTrace[resTrace.length - 1] * 100).toFixed(1)}% of its start`, 0, my2)
+      if (showMeter) {
+        ctx.fillStyle = PALETTE.div
+        ctx.fillText(`the meter reads ${(resTrace[resTrace.length - 1] * 100).toFixed(1)}% of its start`, 0, my2)
+      }
       ctx.fillStyle = INK
       ctx.fillText(`error still in the field: ${(errLeft * 100).toFixed(0)}%`, plot.x, my2)
       meter(ctx, w, my2, `${sweeps} sweeps`, INK, 'right')
@@ -225,12 +232,12 @@ export function createSlowModes(roughRef: { current: number }): Stepper {
   }
 }
 
-export function SlowModes({ height = 240 }: { height?: number }) {
+export function SlowModes({ height = 240, meter = false }: { height?: number; meter?: boolean }) {
   const [k, setK] = useState(14)
   const kRef = useRef(k)
   kRef.current = k
   return (
-    <Sim height={height} create={() => lazyStepper(() => createSlowModes(kRef))}>
+    <Sim height={height} create={() => lazyStepper(() => createSlowModes(kRef, { showMeter: meter }))}>
       <label className="sim-slider">
         <span>3</span>
         <input type="range" min={3} max={28} step={1} value={k} onChange={(e) => setK(Number(e.target.value))} />
