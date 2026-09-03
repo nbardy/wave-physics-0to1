@@ -4,7 +4,7 @@ import { PALETTE } from '../lib/palette'
 import { FONT_LABEL, FONT_METER, INK } from '../lib/chrome'
 import { HELD_OUT_CASES } from './cases'
 import { NX, NY, makeActivations, propose, zeroWeights, type NetWeights } from './net'
-import { relResidual, solveCG, solveToTolerance, type Grid } from './poisson'
+import { applyLaplacian, relResidual, solveCG, solveToTolerance, type Grid } from './poisson'
 import { WEIGHTS } from './weights'
 import { caseFor, FieldPainter, gateChip, lazyStepper, maxAbs, meter, paneBorder, paneLabel, relFieldError, solidCoarseFor, type Pane } from './figlib'
 
@@ -68,6 +68,11 @@ export interface SabotageReading {
   coldSweeps: number
   /** How far the ACCEPTED answer moved, relative to a pure cold-start solve. */
   acceptedError: number
+  /**
+   * Rayleigh quotient of that difference, ⟨d, −A d⟩/⟨d, d⟩ — which pattern the
+   * two accepted answers disagree along. Near λ_min means the smoothest one.
+   */
+  rayleigh: number
 }
 
 /**
@@ -89,7 +94,20 @@ export function sabotageReading(sigmaPercent: number): SabotageReading {
   propose(g, w, fields.b, solidCoarse, p, makeActivations())
   const proposalError = relFieldError(g, p, star)
   const sweeps = solveToTolerance(g, p, fields.b, TOL, MAX_SWEEPS).sweeps
-  return { proposalError, sweeps, coldSweeps, acceptedError: relFieldError(g, p, cold) }
+  const d = new Float32Array(NX * NY)
+  for (let k = 0; k < d.length; k++) d[k] = g.solid[k] ? 0 : p[k] - cold[k]
+  const ad = new Float32Array(NX * NY)
+  applyLaplacian(g, d, ad)
+  let dd = 0
+  let dad = 0
+  for (let j = 1; j < NY - 1; j++)
+    for (let i = 1; i < NX - 1; i++) {
+      const k = i + j * NX
+      if (g.solid[k]) continue
+      dd += d[k] * d[k]
+      dad -= d[k] * ad[k]
+    }
+  return { proposalError, sweeps, coldSweeps, acceptedError: relFieldError(g, p, cold), rayleigh: dd === 0 ? 0 : dad / dd }
 }
 
 export function createSabotageGate(sigmaRef: { current: number }): Stepper {

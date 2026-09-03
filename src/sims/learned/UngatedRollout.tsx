@@ -33,15 +33,15 @@ import { fmtRes, lazyStepper, paneBorder, paneLabel, type Pane } from './figlib'
 
 const FIXED_DT = 1 / 40
 const DYE_ROWS = [8, 16, 24, 32, 40, 48, 56]
-const WARM = 120
-const GATED_SWEEPS = 40
+export const WARM = 120
+export const GATED_SWEEPS = 40
 // A healthy 40-sweep channel sits near 0.43 on the divergence meter. The
 // ungated one is called dead at 3 — seven times healthy — rather than at the
 // hundreds it reaches a moment later, because the point of the figure is to be
 // watched: let it run to saturation and every frame is the same flat violet,
 // which reads as "the demo is broken" instead of "the flow is coming apart".
 // The collapse takes about eight timesteps either way.
-const RUINED = 3
+export const RUINED = 3
 const LINGER = 1.2
 // Five frames per timestep. The failure is genuinely this fast — eight steps —
 // and at full rate it happens between one glance and the next, so the figure

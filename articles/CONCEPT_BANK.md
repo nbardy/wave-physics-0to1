@@ -145,3 +145,62 @@ lesson 04's palette work and that any hybrid-architecture figure can steal —
 colour keeps meaning *what physical thing is this?*, and line style answers
 *who computed it?* (solid = classical operation, dashed = learned proposal,
 violet = residual or failure, green = accepted). Do not give "AI" its own hue.
+
+## The advection seam — a correction that cannot cheat (cut from lesson 04 v3, 2026-09-02)
+
+Built and measured in lesson 04 v2 (2026-08-25), cut from v3 for a structural
+reason, not a quality one: grafted onto the pressure article it was a second
+"then we look at" with no failure driving into it, and its own five sentences
+are a different article's. Everything is still on disk and trained; nothing
+here needs rebuilding, only writing.
+
+**Hero, ready-made:** `OneStepDrift` in `failure` mode — a 954-weight flux
+correction for coarse (24 × 16) semi-Lagrangian advection whose training loss
+settles at 1.4 × 10⁻⁶, matching the next true state almost to the pixel, and
+which wrecks the flow inside two hundred steps when run on its own outputs
+(held-out error 57× the field at step 300; meaningfully worse than the plain
+coarse solver from step 93). The training number says solved; the rollout says
+detonated; nothing on the page yet says why.
+
+**Thesis:** a model trained on states it never produced is graded on a
+distribution it never sees in deployment; error along a rollout compounds, and
+the only meter that separates a repair from wreckage is the rollout itself —
+the one-step exam scores the two models within 1.4× of each other while the
+rollout separates them 117×.
+
+**Five sentences, sketched:** (1) the coarse lane smears — `SmearRace`, error
+monotone in the coarsening, 2× → 4× → 8×; (2) the obvious fix is a learned
+correction trained to land on the next true state, and it fails on screen: the
+detonation above; (3) the repair is to let the solver into the loss —
+`OneStepDrift` `both`: sixteen steps riding its own outputs, gradients through
+the exact semi-Lagrangian adjoint (a frozen gather has an exact scatter), plus
+2% start-state noise; bounded (0.49 vs plain 0.375 at step 300 held out; leads
+plain for the first ~200–300 steps; on the faster-than-trained swirl the lead
+holds the whole window, 0.42 vs 0.56) and creates the next failure: the
+conservation meter cannot grade it — the flux form's mass ledger reads zero
+whatever the weights, trained or wrecked (`FluxRollout` past 100% strength
+mints impossible negative dye with a clean ledger), while the plain workhorse
+LEAKS 35–46% of its mass and the same meter convicts it; (4) the ceiling: a
+plain 48 × 32 run beats every corrected 24 × 16 lane, the correction buys back
+about a third of the distance to one grid-doubling, early, less late; (5) the
+hero re-read: the two models re-scored on the one-step exam are nearly tied —
+the property that separates them lives a few hundred steps deep.
+
+**On disk:** `src/sims/learned/advect.ts` (SL as a frozen gather with exact
+adjoint, divergence-free swirls, the flux net), `advectRun.ts` (lane runtime),
+`advect_weights.ts` (GENERATED: `ADVECT_ONE_STEP`, `ADVECT_IN_THE_LOOP`,
+`ADVECT_MANIFEST`), the figures `SmearRace` / `OneStepDrift` / `FluxRollout`,
+and `scripts/train-advect-net.ts` (~1h40 on a laptop; the K-curriculum phase
+dominates). The v2 prose for these sections is in git at 4ed3ad5
+(`src/lessons/lesson-04-learned-solver.mdx` L418–575) and in
+`redrafts/fable-2026-09-02/learned-solver/lesson-04-v2-previous.mdx`. The
+harness assertions that guarded them (Part 3 of `scripts/check-learned.ts` at
+4ed3ad5: manifest numbers, flux-form conservation on real state, the one-step
+tie, the SmearRace monotonicity, the ring rollout, the three pixel checks) were
+removed from lesson 04's check on 2026-09-02 and should be restored into this
+article's own script when it is built. Further Reading to carry over: Um et
+al., *Solver-in-the-Loop* (NeurIPS 2020) and Kochkov et al., *Machine
+Learning–Accelerated Computational Fluid Dynamics* (PNAS 2021). Hard-won notes
+(K = 6 is not enough; finite differences through six chained float32 steps are
+rounding-dominated; the mass leak) are in `articles/08-learned-solver/HANDOFF.md`
+under "Non-obvious things this build learned the hard way".

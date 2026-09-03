@@ -3,7 +3,7 @@ import { Sim, type Stepper } from '../../components/Sim'
 import { PALETTE } from '../lib/palette'
 import { FONT_LABEL, FONT_METER, INK } from '../lib/chrome'
 import { NX, NY } from './net'
-import { sweep, type Grid } from './poisson'
+import { applyLaplacian, sweep, type Grid } from './poisson'
 import { FieldPainter, lazyStepper, meter, paneBorder, paneLabel, type Pane } from './figlib'
 
 // Why sweeping is slow — the fact the whole article turns on.
@@ -17,6 +17,14 @@ import { FieldPainter, lazyStepper, meter, paneBorder, paneLabel, type Pane } fr
 // The pane and the plot say the same thing twice on purpose. The pane is the
 // felt version — a noisy field becoming a clean blob that then refuses to leave.
 // The plot is the measured version, and it is the one that carries the number.
+//
+// The third curve is the meter. The exact answer is zero, so the residual is
+// ‖A e‖ outright; plotted relative to its start, it falls two orders of
+// magnitude in the sweeps that kill the ripple and then flattens while the
+// bulge — two thirds of the error — is still on screen. That is the article's
+// central fact drawn on one axis: the meter reads nearly done, the field is
+// mostly error. Inks: the two modes wear pressure's red and cyan because they
+// are errors IN pressure; the meter wears violet, as every residual here does.
 
 const SWEEP_MAX = 600
 const PER_FRAME = 5
@@ -63,6 +71,16 @@ export function createSlowModes(roughRef: { current: number }): Stepper {
   // ghosts only crowded the corner the legend wanted.
   const smoothTrace: number[] = []
   const roughTrace: number[] = []
+  const resTrace: number[] = []
+  const ae = new Float32Array(NX * NY)
+  /** ‖A e‖ over the interior — the residual meter with b = 0. */
+  const resNorm = () => {
+    applyLaplacian(grid, err, ae)
+    let s = 0
+    for (let j = 1; j < NY - 1; j++) for (let i = 1; i < NX - 1; i++) s += ae[i + j * NX] ** 2
+    return Math.sqrt(s)
+  }
+  let r0 = 1
 
   const reseed = () => {
     k = roughRef.current
@@ -73,12 +91,17 @@ export function createSlowModes(roughRef: { current: number }): Stepper {
     hold = 0
     smoothTrace.length = 0
     roughTrace.length = 0
+    resTrace.length = 0
     smoothTrace.push(1)
     roughTrace.push(1)
+    resTrace.push(1)
+    r0 = resNorm()
   }
   reseed()
   const a0s = amplitude(err, smooth)
   const a0r = amplitude(err, rough)
+  let e0sq = 0
+  for (let i = 0; i < err.length; i++) e0sq += err[i] * err[i]
 
   /** First sweep count at which a trace is under 10% of where it started. */
   const tenth = (trace: number[]) => {
@@ -102,6 +125,7 @@ export function createSlowModes(roughRef: { current: number }): Stepper {
         sweeps++
         smoothTrace.push(Math.abs(amplitude(err, smooth) / a0s))
         roughTrace.push(Math.abs(amplitude(err, rough) / a0r))
+        resTrace.push(resNorm() / r0)
       }
     },
 
@@ -109,7 +133,7 @@ export function createSlowModes(roughRef: { current: number }): Stepper {
       ctx.clearRect(0, 0, w, h)
       const gap = 18
       const labelH = 16
-      const meterH = 40
+      const meterH = 56
       const availH = h - labelH - meterH
       const fieldW = Math.min(w * 0.42, (availH * NX) / NY)
       const fh = (fieldW * NY) / NX
@@ -162,29 +186,41 @@ export function createSlowModes(roughRef: { current: number }): Stepper {
         ctx.restore()
       }
       curve(smoothTrace, PALETTE.pLo, 2.2)
-      curve(roughTrace, PALETTE.div, 2.2)
+      curve(roughTrace, PALETTE.pHi, 2.2)
+      curve(resTrace, PALETTE.div, 2.2, [5, 3])
 
       ctx.font = FONT_LABEL
       ctx.textAlign = 'right'
       ctx.fillStyle = PALETTE.wall
       ctx.fillText('sweeps →', plot.x + plot.w - 4, plot.y + plot.h - 5)
-      ctx.fillStyle = PALETTE.div
+      ctx.fillStyle = PALETTE.pHi
       ctx.fillText(`rough mode, k = ${k}`, plot.x + plot.w - 4, plot.y + 12)
       ctx.fillStyle = PALETTE.pLo
       ctx.fillText('smooth mode, k = 1', plot.x + plot.w - 4, plot.y + 26)
+      ctx.fillStyle = PALETTE.div
+      ctx.fillText('the meter  ‖A e‖', plot.x + plot.w - 4, plot.y + 40)
 
       // ---- the number
       const tr = tenth(roughTrace)
       const ts = tenth(smoothTrace)
-      const my = labelH + availH + 20
+      const my = labelH + availH + 18
+      const my2 = my + 17
       ctx.font = FONT_METER
       ctx.textAlign = 'left'
-      ctx.fillStyle = PALETTE.div
+      ctx.fillStyle = PALETTE.pHi
       ctx.fillText(`rough: 90% gone in ${tr < 0 ? '—' : tr} sweeps`, 0, my)
       ctx.fillStyle = PALETTE.pLo
       const smoothTxt = ts < 0 ? `still ${(smoothTrace[smoothTrace.length - 1] * 100).toFixed(0)}% there after ${sweeps}` : `${ts}`
       ctx.fillText(`smooth: ${ts < 0 ? smoothTxt : `90% gone in ${ts} sweeps`}`, plot.x, my)
-      meter(ctx, w, my, `${sweeps} sweeps`, INK, 'right')
+      // The reading that matters: the meter against the error actually left.
+      let e2 = 0
+      for (let i = 0; i < err.length; i++) e2 += err[i] * err[i]
+      const errLeft = Math.sqrt(e2 / e0sq)
+      ctx.fillStyle = PALETTE.div
+      ctx.fillText(`the meter reads ${(resTrace[resTrace.length - 1] * 100).toFixed(1)}% of its start`, 0, my2)
+      ctx.fillStyle = INK
+      ctx.fillText(`error still in the field: ${(errLeft * 100).toFixed(0)}%`, plot.x, my2)
+      meter(ctx, w, my2, `${sweeps} sweeps`, INK, 'right')
     },
   }
 }

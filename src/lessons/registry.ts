@@ -206,7 +206,7 @@ export const lessons: Lesson[] = [
     order: 4,
     title: 'Teaching a Solver to Guess',
     blurb:
-      'Two neural networks, trained on this site’s own solver, shipped with their weights. One warm-starts the pressure solve and reads worse than an empty grid on the solver’s own meter; the other repairs a starved grid and detonates until the solver is let into its loss. Which error, which baseline, which check — measured live.',
+      'A network of 809 weights, trained on this site’s own solver, writes the pressure field before the first sweep: nine tenths right, and worse than an empty grid on the meter the solve stops by. The sweeps that start from it win anyway. Why the meter cannot see what the guess got right, why the guess cannot move the answer, and the 1952 algorithm that beats it.',
     tags: ['fluids', 'simulation', 'linear-algebra'],
     status: { kind: 'draft' },
     Content: Lesson04,

@@ -36,6 +36,30 @@ const DYE_ROWS = [10, 18, 26, 34, 44, 54, 62, 70, 78]
 const TRACE = 220
 const GATE = 1e-3
 
+/**
+ * Headless probe for `scripts/check-learned.ts`: the same solver, the same
+ * warm-up, `steps` more timesteps at a fixed budget, and the leftover defect
+ * averaged over the second half of them — so the prose's "a quarter of the
+ * defect survives forty sweeps" is a number the build recomputes.
+ */
+export function solveDebtReading(iters: number, steps = 200): { mean: number; min: number; max: number } {
+  const solver = new FluidSolver(NX, NY, INFLOW, VISC)
+  solver.addDisc(Math.round(NX * 0.26), Math.round(NY * 0.5) + 1, DISC_R)
+  const grid: Grid = { nx: NX, ny: NY, solid: solver.solid }
+  for (let k = 0; k < 260; k++) {
+    solver.injectDyeStripe(DYE_ROWS, 1)
+    solver.step(FIXED_DT)
+  }
+  solver.pressureIters = iters
+  const tail: number[] = []
+  for (let k = 0; k < steps; k++) {
+    solver.injectDyeStripe(DYE_ROWS, 1)
+    solver.step(FIXED_DT)
+    if (k >= steps / 2) tail.push(relResidual(grid, solver.p, solver.div))
+  }
+  return { mean: tail.reduce((a, b) => a + b, 0) / tail.length, min: Math.min(...tail), max: Math.max(...tail) }
+}
+
 export function createSolveDebt(itersRef: { current: number }): Stepper {
   const solver = new FluidSolver(NX, NY, INFLOW, VISC)
   solver.addDisc(Math.round(NX * 0.26), Math.round(NY * 0.5) + 1, DISC_R)

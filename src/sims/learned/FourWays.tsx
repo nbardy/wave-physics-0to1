@@ -22,7 +22,7 @@ import { caseFor, fmtRes, lazyStepper, solidCoarseFor } from './figlib'
 // network's 2.8× is real. It is also smaller than the gap between the solver we
 // have and the solver a library would have handed us.
 
-const CG_PASS_COST = 3
+export const CG_PASS_COST = 3
 const TOL = 1e-3
 const TARGET_FRAMES = 200
 const HOLD = 3.5
