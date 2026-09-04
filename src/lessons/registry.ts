@@ -4,7 +4,7 @@ import Lesson02 from './lesson-02-fiber-bundles.mdx'
 import Lesson03 from './lesson-03-navier-stokes-history.mdx'
 import Lesson04I from './lesson-04-learned-solver.I.mdx'
 import Lesson04II from './lesson-04-learned-solver.II.mdx'
-import Lesson04III from './lesson-04-learned-solver.III.mdx'
+import Lesson05 from './lesson-05-where-simulation-is-wrong.mdx'
 import Maths01 from './maths-01-jacobian-hessian.mdx'
 import Physics01 from './physics-01-wave-particle.mdx'
 import Physics02 from './physics-02-pbits.mdx'
@@ -249,13 +249,18 @@ export const lessons: Lesson[] = [
         note: 'v3 rewritten from scratch 2026-09-02: one network, one failure chain, ~2,650 words',
         Content: Lesson04II,
       },
-      {
-        label: 'III',
-        author: 'Fable',
-        note: 'the map, 2026-09-04: where a simulation is wrong and what a network may touch, ordered by what can check it; ~6,000 words',
-        Content: Lesson04III,
-      },
     ],
+  },
+  {
+    id: 'where-the-simulation-is-wrong',
+    field: 'waves',
+    order: 5,
+    title: 'Where the Simulation Is Wrong',
+    blurb:
+      'Five places a fluid or wave model is wrong, and every way a network is now used to fix them, ordered by what can still check it: a residual that acquits, a conservation law that only convicts, a finer run, an observation, or nothing. The gain grows down the ladder and the checks vanish.',
+    tags: ['fluids', 'simulation', 'waves'],
+    status: { kind: 'draft' },
+    versions: sole(Lesson05),
   },
   {
     id: 'jacobian-hessian',
