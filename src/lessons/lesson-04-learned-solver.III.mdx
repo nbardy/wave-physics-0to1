@@ -1,0 +1,555 @@
+import { WarmStartRace } from '../sims/learned/WarmStartRace'
+import { SolveDebt } from '../sims/learned/SolveDebt'
+import { SlowModes } from '../sims/learned/SlowModes'
+import { UngatedRollout } from '../sims/learned/UngatedRollout'
+import { SabotageGate } from '../sims/learned/SabotageGate'
+import { FourWays } from '../sims/learned/FourWays'
+import { SmearRace } from '../sims/learned/SmearRace'
+import { OneStepDrift } from '../sims/learned/OneStepDrift'
+import { FluxRollout } from '../sims/learned/FluxRollout'
+
+# Where the Simulation Is Wrong, and What a Network May Touch
+
+The fluid solver in lesson 01 stops its pressure solve after forty sweeps with 28% of
+the divergence still in the field, and its advection step loses between a third and a
+half of a dye's mass over the length of one figure. Both errors have meters that run
+inside the loop: the residual of the linear system, and the integral of the dye. The
+error larger than either has no meter. In every cell of every turbulent simulation
+run this year, the stress from motions smaller than the grid is filled in by a formula
+whose constant was fit in 1963, and nothing in the run reports when the formula is
+wrong. Networks are now trained to replace that formula, the solver's arithmetic, the
+grid's smearing, the forecast's inputs, and, at the two largest weather centres since
+2025, the whole simulation at once. Below, the smallest of those replacements that
+this site can run honestly: a coarse advection step, the same step with a 954-weight
+correction riding it, and the fine run both are trying to be.
+
+<FluxRollout height={330} />
+
+Three lanes from one seed. The left lane is the semi-Lagrangian scheme of lesson 01
+on a 24 × 16 grid. The middle lane is the same scheme with a trained correction
+applied every step. The right lane is the reference, run at 96 × 64 and averaged down
+to 24 × 16, so the two coarse lanes are scored against a target on their own grid. The
+plot under them is the error of each coarse lane against that target, per step, and
+the <C k="dye">corrected curve</C> runs below the plain one for the first two to three
+hundred steps and then crosses above it. Under the panes, two mass meters: the plain
+lane and the reference both lose dye, because the scheme was never conservative, while
+the corrected lane's own ledger reads zero on every step, including the steps where it
+is the wrong lane. A learned component made this simulation more right for two hundred
+steps, then less right, and the only meter that runs inside the loop could not tell the
+two periods apart. The rest of this article is the map of where such components can
+go, ordered by what can still check them.
+
+## Five things a model is
+
+A running fluid or wave simulation is five separable objects, and error enters at each
+one. The equations: incompressible Navier–Stokes for one fluid, two-phase Navier–Stokes
+with surface tension for a breaking wave, the wave-action balance for a spectral wave
+model. Each is exact for what it describes and silent about what it omits. The
+representation: a grid, a mesh, a set of particles, or a set of spectral bins, at a
+spacing Δx and a step Δt, below which nothing exists in the run. The closure: the rule
+for what the unrepresented scales do to the represented ones, which in every
+operational model is a formula with tuned constants. The inputs: the initial state,
+the boundaries, the forcing, the geometry, measured incompletely or not at all. The
+solver: the arithmetic that advances the representation one step, each piece with its
+own numerical error and its own stopping rule.
+
+"Deep learning makes the model better" is five claims with five different tests. The
+test that decides whether a learned part is trustworthy is what can check it while it
+runs, and the checks form a ladder.
+
+| what checks it | the verdict it can give | which learned parts have it |
+|---|---|---|
+| the residual of a linear system | acquits: the answer is right to tolerance, whatever produced it | warm starts, preconditioners, learned search directions |
+| conservation of mass, momentum, energy, action | convicts only: a violation proves wrong; obedience proves nothing | flux-form corrections, antisymmetric exchange terms |
+| statistics against a finer run | offline, hours per verdict | closures, discretization corrections |
+| observations | offline, sparse, and uncertain themselves | assimilation, whole-model surrogates |
+| nothing | the checker was replaced along with the physics | whole-model surrogates |
+
+The lanes at the top sit on the second rung. The sections below climb down the
+ladder from the top, and at each rung the learned part buys more and is checked less.
+
+## The solver stops early
+
+The pressure projection is a linear system, $A\,p = b$, with $A$ the five-point
+stencil and $b$ the divergence the rest of the timestep left behind. Lesson 01 solves
+it by sweeping, each cell set to the mean of its neighbours minus a quarter of the
+local defect, and stops after forty sweeps without measuring anything. The figure
+below runs that solver on lesson 01's own cylinder, with one meter added: after each
+projection, one pass over the grid reads the divergence left uncancelled as a fraction
+of the divergence the projection was handed, on a log axis, with a gate of one part in
+a thousand drawn as a line.
+
+<SolveDebt height={250} />
+
+At forty sweeps the trace sits at 0.28, and at four sweeps three quarters of the defect
+survives and the wake changes shape. At 240 sweeps, the right end of the slider, the
+trace reads 0.087, still 87 times the gate, because the sweeps remove the rough part of
+the error in a dozen passes and the smooth part in thousands. That meter, the residual
+$\|b - A p\| / \|b\|$, is the one check in this article that can acquit. Any field that
+brings it under the gate is the answer to that tolerance, and it does not matter what
+produced the field.
+
+A network of 809 weights, trained on this solver's own divergence fields, proposes a
+pressure field before the first sweep. On the field below it is about nine tenths of
+the converged answer, and the residual meter scores it 2.42 where an empty grid scores
+1.00.
+
+<WarmStartRace height={250} gate />
+
+Both panes sweep to the gate. The pane that opened at 2.42 crosses it in 792 sweeps;
+the pane that opened at 1.00 crosses in 2,679; the two accepted fields differ by 0.24%
+of peak pressure. The meter reads the error through the operator $A$, which scales a
+pattern by roughly the square of its wavenumber, so it hears a seam between cells about
+two thousand times louder than a channel-wide bulge. The network supplies the bulge,
+which costs the sweeps a thousand passes, and invents seams, which cost a dozen, and
+the meter reports the seams. The figure below separates the two on a system whose
+exact answer is zero, so that everything in the field is error.
+
+<SlowModes height={250} meter />
+
+At the default roughness, nine tenths of the ripple is gone in twelve sweeps and nine
+tenths of the bulge in 1,287, and the <C k="div">violet trace</C>, the meter, follows
+the ripple. After thirty sweeps it reads under one percent of its start with two thirds
+of the error still in the field.
+
+The obvious economy is to skip the meter and take the network's field as the pressure.
+That is the arrangement of Tompson, Schlachter, Sprechmann, and Perlin's 2017 paper,
+with a far larger network. Below, two channels warmed up for 120 timesteps; on the
+left the network's field is then accepted as it stands, on the right it is swept a
+fixed number of times first.
+
+<UngatedRollout height={300} />
+
+The left channel's divergence reads 0.70 after one step, then 0.90, 1.35, 2.6, 6.5, 17,
+45, and 84 after eight, while the right channel holds at 0.43. The wreckage is blocks
+eight cells across, the network's own seams, fed back into the velocity every step.
+With the gate kept, the same weights can be destroyed and the answer does not move.
+
+<SabotageGate height={300} />
+
+The slider adds noise to all 809 weights. At the right end the network's field is 258%
+wrong, the sweeps to the gate are 3,059 against the cold start's 2,679, and the
+accepted field differs from the cold start's by seven millionths. The worst
+disagreement anywhere on the slider is 1.24%, at 20% noise, and that number is set by
+the gate and the operator alone: two fields that both satisfy $\|b - A p\| < \varepsilon\|b\|$
+differ by at most $2\varepsilon\|b\|/\lambda_{\min}$, and on this grid at
+$\varepsilon = 10^{-3}$ that bound is 1.24%, from an inequality with no weights in it.
+
+So at this rung a network can move only the sweep count, and a sweep count is a ratio
+whose denominator matters. The plot below races four runners to the same gate on the
+same field: sweeps from zero, sweeps from the network, conjugate gradients from zero,
+conjugate gradients from the network.
+
+<Predict
+  question="Cold conjugate gradients against the network-warmed sweeps: which crosses the gate first?"
+  a="the warm sweeps: the network is worth more than a better algorithm"
+  b="cold conjugate gradients: the better algorithm is worth more than the network"
+>
+  <FourWays height={300} />
+</Predict>
+
+In passes over the grid: sweeps from zero 2,679, sweeps from the network 792, conjugate
+gradients from zero 420, conjugate gradients from the network 378. Hestenes and
+Stiefel published conjugate gradients in 1952; its cost is set by the square root of
+the operator's condition number where the sweeps' cost is set by the condition number
+itself, and that square root is why it is already good at the bulge. The network is
+worth 3.4× against the runner worst at the bulge and 1.1× against a runner good at it,
+and a coarse-grid method without any training set, Brandt's multigrid of 1977, reaches
+the gate in a handful of cycles. This rung is closed classically. A learned
+preconditioner or a learned search direction under a residual, the constructions of
+Li and colleagues and Kaneda and colleagues in 2023, cannot corrupt the state, and
+cannot buy anything but time.
+
+## The grid smears
+
+One rung down, the representation. The figure below runs the advection step of lesson
+01, trace each cell backward and interpolate, in the same swirl at two resolutions,
+seeded with the same dye. The left pane spends 6,144 cells. The right pane spends what
+the buttons allow, and its meter reads the distance from the fine run averaged onto its
+own grid, so blockiness alone scores nothing.
+
+<SmearRace height={260} />
+
+Every backtrace lands between cells, every landing blends four neighbours, and every
+blend is a small blur. On the fine grid the blur is a fraction of a cell. At 24 × 16
+each blur is four times wider, and a few hundred steps dissolve the disc into fog with
+nothing unstable anywhere. The classical exit is to pay: sixteen times the cells,
+sixteen times the arithmetic per step, and on most schemes a finer timestep on top.
+
+The learned exit keeps the coarse grid and learns what the averaging steals, and this
+rung has a clean teacher: the target is the gap between the coarse and fine runs of the
+same equations, which is the one place in this article where the target is known to be
+the truth. Kochkov and colleagues (PNAS 2021) put a network inside the convective flux
+of a finite-volume solver, kept the pressure projection and the conservative form, and
+trained it through 32 unrolled steps of the solver on 2D turbulence at Re = 1000 with a
+2048² reference. The result runs on a 64 × 64 grid as accurately as the same solver at
+eight to ten times finer resolution in each direction, which is 40 to 80 times less
+compute, generalized to a doubled domain and to Re = 4000, and stayed stable over tens
+of thousands of steps. All of it is two-dimensional, periodic, one forcing family, one
+solver. Um, Brand, Fei, Holl, and Thuerey (NeurIPS 2020) measured where the gain comes
+from on a cylinder wake: the uncorrected coarse solver has mean error 0.146 against a
+fine reference, a correction trained on precomputed pairs brings it to 0.049, and the
+same network trained with the solver in the loop for 32 steps brings it to 0.013. On a
+randomly forced Burgers equation the in-the-loop training gains nothing, and the
+authors say why: a correction can only anticipate what the state determines.
+
+## A correction that cannot cheat
+
+The network for this site's version of that seam has 954 weights, and its architecture
+is mostly a list of things it is forbidden to do. It does not output dye. It outputs
+fluxes, one number per face between neighbouring cells, and the correction is what the
+fluxes add up to: whatever leaves a cell lands in its neighbour, the wall faces are
+pinned at zero, and the total is untouched by any setting of any weight. Each flux is
+capped at a fraction of the local dye scale, so one step can move at most a sliver of a
+cell's contents, and the input is normalized by the dye's own magnitude, so conservation
+holds in the plumbing before any training data is seen.
+
+The data is six swirls from the fine solver, 240 steps each, every state averaged down
+to 24 × 16, and the loss asks the corrected coarse step to land on the next true state.
+The training loss settles near $10^{-6}$; the corrected step matches the true next
+state almost to the pixel.
+
+<OneStepDrift mode="failure" height={300} />
+
+Run free, that model wrecks the flow inside two hundred steps. Every pair in its
+training set began from truth, so the model has never seen its own work; run free, its
+input is its previous output carrying its previous error, a distribution no training
+pair drew from, and its response to that error is, on average, a slightly larger
+error. The mass ledger under the pane reads zero on every step of the detonation,
+because the flux form cannot do otherwise. Conservation is the check this rung has,
+and it convicts only: it can catch a scheme inventing mass and it has nothing to say
+about a scheme inventing motion.
+
+## The solver in the loss
+
+The repair is to make training look like deployment. The model takes sixteen
+consecutive steps riding its own outputs, every step is scored against truth, and the
+gradient is carried backward through the network sixteen times and through the solver
+sixteen times; with the swirl frozen, a semi-Lagrangian step is a fixed table of
+gathers, and a fixed gather has an exact adjoint. Each training window starts from a
+slightly perturbed state, so the model earns credit only by pulling errors in.
+
+<OneStepDrift mode="both" height={330} />
+
+Same weights, same data, same optimizer, and the only change is what the loss could
+see. The one-step lane's error ends the window in multiples of the entire field; the
+in-the-loop lane stays in the plain solver's neighbourhood the whole way. Rescored on
+the one-step exam the first model was trained to ace, the two models come out 1.4×
+apart; on the rollout they are 117× apart. The property that separates wreckage from
+an instrument is invisible at one step.
+
+That is the model in the opening figure, and the opening figure carries its limits.
+Across held-out swirls the corrected lane leads the plain one for two to three hundred
+steps and then trades places with it, case by case. On the swirl half again faster
+than anything in training, the lead holds through the whole window, because a faster
+flow smears more per step and gives a smear-repairer more to repair: 0.42 against the
+plain lane's 0.56 at the end. A plain run at 48 × 32 beats every corrected 24 × 16 lane
+on this page, so 954 weights buy back roughly a third of the distance to a grid twice
+as fine, early, and less of it late. Past 100% on the strength slider the correction
+overshoots, flecks of impossible <C k="div">violet</C> ink appear, and the error curve
+climbs over the lane with no correction at all, while the mass ledger holds at zero
+through every step of the wrong fluid.
+
+Every rollout in the literature is a recurrence trained one step at a time and tested
+on a distribution it never saw, its own errors, and the three fixes that recur are all
+ways of showing the model its mistakes: noise added to the training inputs
+(Sanchez-Gonzalez and colleagues, 2020, at a standard deviation of $3 \times 10^{-4}$),
+training on the model's own prediction with the gradient stopped through the earlier
+step (Brandstetter, Worrall, and Welling, 2022), and diffusion-style refinement passes
+that restore the high-frequency content a mean-squared loss neglects (Lippe and
+colleagues, 2023, at about four times the cost per step). Those buy tens of percent in
+how long the model stays correlated with the truth, not factors.
+
+One test this article did not run separates a discretization correction from a
+surrogate wearing one's clothes: hold the weights fixed and refine the grid. A
+correction for discretization error must shrink as the grid does, at the scheme's own
+order; a correction that does not shrink has learned something else, and on the
+swirls above the something else is rollout stabilization at the training resolution.
+The manifest already reports which lane wins at step 300, and the sweep would report
+why.
+
+## The closure has no meter
+
+The rung below is the one this site cannot show, and the reason is worth one sentence.
+The wake behind the cylinder at Reynolds numbers below 400 is laminar and periodic,
+the fine run resolves it, and the whole gap between the coarse and fine lanes above is
+numerical diffusion. Nothing in that channel is physically sub-grid, so a network
+trained on the gap and called a closure would be a discretization correction in
+costume. The closure bin needs a flow with a cascade, and the smallest honest testbed
+is a periodic box with forcing, run against a spectral reference, which is not on this
+site.
+
+The bin is the largest. Resolving turbulence directly needs a number of grid points
+that grows as roughly Re to the 9/4, so every engineering and geophysical flow is
+under-resolved by orders of magnitude and stays that way as computers grow. The missing
+scales drain energy from the resolved ones and, intermittently, hand it back. The
+algebraic closures that stand in for them, Smagorinsky's eddy viscosity in large-eddy
+simulation and the k–ε and SST models in Reynolds-averaged simulation, fail in
+separation, adverse pressure gradients, rotation, and transition, which are the regimes
+the simulations are run to predict.
+
+The form of a closure is constrained by a theorem. The Mori–Zwanzig projection writes
+the exact effect of the unresolved scales on the resolved ones as a term in the current
+resolved state, plus a memory integral over the resolved history, plus a noise term
+orthogonal to the resolved state. A closure that is a deterministic function of the
+current, local, resolved state, which is every classical closure and most learned
+ones, has dropped two of the three terms, and parameters added to a wrong form move
+the fit rather than the ceiling. The three questions to ask of any learned closure are
+what history it sees, what neighbourhood it sees, and whether it is stochastic.
+
+The record of learned closures is a record of the gap between fitting the term offline
+and surviving inside the solver. Beck, Flad, and Munz (2019) trained networks on
+filtered direct simulations to reproduce the exact closure terms, reached a
+cross-correlation of 47%, and found the models "lack long-term stability as high
+frequency errors accumulate" when used directly; the stable model they ship uses the
+network only to set an eddy viscosity. Frezat and colleagues (2022) report the same on
+quasi-geostrophic turbulence: closures trained on the offline target drift or blow up
+online, and closures trained end to end through a differentiable solver are stable and
+match the reference spectra. Ross, Li, Perezhogin, Fernandez-Granda, and Zanna (2023)
+benchmarked 148 closures with 19 online metrics in a two-layer ocean model and found
+that every physics-constrained network is stable in the regime it was trained in, that
+every one generalizes poorly to a new regime, and that a symbolic closure found by
+regression and genetic programming performs on par in-domain and better out of it.
+
+Two learned closures have run inside production models. Guillaumin and Zanna's network
+predicts both the mean and the standard deviation of the sub-grid momentum forcing,
+which makes it stochastic; placed in the MOM6 ocean model it ran stably, injected
+energy as backscatter, and weakened as resolution improved, which is what a closure
+should do, and it needed depth-dependent tuning and did worse near boundaries.
+NeuralGCM (Kochkov and colleagues, 2024) keeps a classical, differentiable atmospheric
+core and learns only the column physics, trained end to end through the core on
+reanalysis; it ties GraphCast at one to three days, tracks global temperature for
+decades with prescribed sea surface, and 15 of its 37 forty-year runs crashed, with
+drift at four degrees of warming that its authors attribute to processes too subtle at
+weather timescales for the training signal to see.
+
+What the record says a closure must be forbidden to do, by construction rather than by
+penalty: create energy (every term written as an exchange between the resolved field
+and an account of sub-grid energy carried with the flow, so that the resolved energy
+plus the account changes only by forcing and molecular loss); return energy from an
+empty account; depend on the frame (inputs are velocity differences and gradient
+invariants, never velocities); forget (a memory carried with the fluid rather than
+fixed to a cell); and be deterministic where the exact term is not (a noise term whose
+amplitude is paid from the account and whose correlation time is learned). The
+energy account exists hand-built, in Jansen and Held's 2014 backscatter scheme, and
+the learned stochastic closure exists unbounded, in Perezhogin and colleagues' 2023
+model, whose runaway eddies its authors attribute to exactly the missing bound. The
+two have not been joined, and the check that a joined closure would carry is an
+identity: the two-account budget, every step, which convicts a violation and acquits
+nothing.
+
+## The inputs were never right
+
+For real forecasting the largest error is not in the equations, the grid, or the
+closure. In weather the initial-condition error dominates, and chaos amplifies it to
+the predictability limit of about two weeks. In wave forecasting the wind is the
+dominant error, and a wave model given the wrong wind cannot be corrected by anything
+downstream of the wind. Most of the skill gained in forty years of operational
+forecasting came from assimilation, the blending of model and observation.
+
+A network can be trained on observations with no physics model as teacher, and in 2025
+two were. Aardvark Weather (Allen and colleagues, Nature) ingests raw satellite
+radiances, scatterometer backscatter, and station, ship, and radiosonde reports, about
+8% of what an operational centre assimilates, and produces a global forecast in about
+one second on four GPUs against roughly a thousand node-hours for the operational
+system; it beats the American global model on surface temperature at all leads and
+trails it on upper-air height through day eight, and its encoder is pretrained with a
+physics-based reanalysis as the target, so the physics model remains the teacher even
+though none runs at inference. GraphDOP (ECMWF, 2024) removes that too and trains
+only on observations, with reported skill to five days. The check at every stage is
+observations, which are sparse and uncertain themselves.
+
+The rule for what a learned part may supply at this rung is observability. An
+observation operator sees some directions of the state and not others: a dye image
+fixes the velocity across its contours and says nothing about the velocity along
+them; the sea surface fixes the shallow bottom and not the deep one. A network
+confined to the directions the data cannot see can never contradict an observation,
+and a network allowed into the directions the data can see is overriding data with a
+prior.
+
+## The whole machine replaced
+
+At the bottom rung the network replaces the solver, the grid, the closure, and the
+checker together, and since 2023 this rung has been measured as carefully as any.
+
+| model | trained on | headline, with its condition | where it loses |
+|---|---|---|---|
+| Pangu-Weather (Bi et al., Nature 2023) | 43 years of ERA5 reanalysis | lower error than the operational European model on every reported variable to seven days | effective resolution 500–700 km; no butterfly effect |
+| GraphCast (Lam et al., Science 2023) | ERA5 1979–2017 | beats the European model on 90% of 1,380 targets; a ten-day forecast in under a minute | loses short-wavelength power; under-forecasts peak storm winds |
+| GenCast (Price et al., Nature 2024) | ERA5 1979–2018 | a 50-member diffusion ensemble beats the European ensemble on 97% of targets and keeps the spectrum | initial conditions still from physics-based assimilation |
+| NeuralGCM (Kochkov et al., Nature 2024) | classical core, learned physics, ERA5 rollouts | competitive with the European ensemble to fifteen days; runs for decades | 15 of 37 forty-year runs crashed; drift at +4 K |
+| AIFS (ECMWF, operational February 2025) | ERA5, then operational analyses | up to 20% better on measures including cyclone tracks at a thousandth of the energy | initialized from the physics model's assimilation; the physics model kept |
+| AIGFS (NOAA, operational December 2025) | GraphCast fine-tuned on NOAA analyses | about 10% lower height error than the American model at day ten | larger error than the physics model inside two days |
+
+Three independent tests measured what these models contain. Bonavita (2024) computed
+Pangu-Weather's spectra and found its wind and mass fields "increasingly dynamically
+inconsistent with one another" as the forecast runs. Selz and Craig (2023) shrank the
+initial-condition perturbations to a thousandth of their operational size: the physics
+model's error grew fast at small scales and saturated, which is the butterfly effect,
+and the learned model's error barely changed, which would indicate an atmosphere with
+unlimited predictability. Charlton-Perez and colleagues (2024) ran four learned models
+on Storm Ciarán, and all four placed the pressure minimum within a few hectopascals of
+the analysis and forecast peak winds of 25 to 26 metres per second against 34 in the
+analysis, missing the intensification after hour thirty; forecasts from the reanalysis
+system itself do not have that bias, so the training data are not the cause. The
+models encode the balanced dynamics of their training distribution and lack the
+small-scale, unbalanced, fast physics, which is where a mean-squared loss puts no
+weight.
+
+Every model in the table is trained on the output of a physics model, and every one is
+initialized by a physics model's assimilation. The physics model was not replaced. Its
+job moved: it is the teacher and the source of the initial state, and the learned model
+is the student that is cheaper to run inside the distribution it was taught.
+
+## Structure instead of parameters
+
+Everything in this section removes a degree of freedom from the network, and each
+removal is a check that runs for free. Ling, Kurzawski, and Templeton (2016) write a
+turbulent stress as a combination of the ten basis tensors of the resolved gradient,
+so Galilean invariance holds by construction. Greydanus and colleagues (2019) learn a
+scalar energy and take its symplectic gradient, so energy cannot drift. Mohan and
+colleagues (2020) predict a vector potential and take its curl, so the velocity is
+divergence-free to machine precision. Beucler and colleagues (2021) build conservation
+layers that hold column energy and mass exactly, and report that a soft penalty on the
+same quantities does not. The control group is the soft constraint: physics-informed
+networks put the equation's residual in the loss, and Chuang and Barba (2022) ran one
+on the cylinder at Re = 200, where it converged to a steady flow with no vortex
+shedding, and on a Taylor–Green vortex, where it took about 32 hours of training to
+match a 16 × 16 finite-difference run that took under twenty seconds.
+
+The most generalizable learned closure in the record is one a person can read. Zanna
+and Bolton's eddy closure was found by sparse regression with conservation in its form;
+Cranmer and colleagues fit symbolic expressions to a graph network's messages and found
+the expressions generalized further than the network; Ross and colleagues' symbolic
+closure transferred between ocean regimes where the networks did not. When a closure
+can be written down, the written form generalizes further than the network that found
+it.
+
+## Waves
+
+Every operational spectral wave model computes the four-wave nonlinear transfer, the
+term that shapes the whole spectrum, with the discrete interaction approximation of
+Hasselmann and colleagues (1985), because the exact integral costs 100 to 140 times
+more. The first learned emulator of the exact term, Tolman, Krasnopolsky, and Chalikov
+(2005), reached 4.7 times the approximation's accuracy on spectra of the kind it was
+trained on and then, inside the model, could not reproduce consistent wave growth and
+lost directional symmetry within three hours, because "modeled wave spectra can be
+expected to include features not found in the training data set." Two emulators
+reported stable integration in 2026. NLML (Ikuyajolu, Van Roekel, Brus, and Thomas)
+is trained on 3.2 million spectra from twin global runs, one with the approximation and
+one with the exact term, ran a year of 2020 from a cold start with no fallback, cut the
+global significant-wave-height error from 0.17 m to 0.07 m, and costs 1.04 times the
+approximation on a GPU; its authors report low offline skill in low-wind regions and
+instability unless the spectrum is converted to frequency space before the network
+sees it. Both 2026 emulators are locked to their spectral grid, and neither has been
+checked against a buoy. No learned dissipation, wind-input, or bottom-friction term
+runs inside any spectral model.
+
+The one learned component in operational wave forecasting is a whole-model surrogate.
+ECMWF's AIFS has carried waves since May 2026, trained on a hindcast of its own physics
+wave model from 1979 to 2025; it holds ten fields per point in place of the more than
+1,200 spectral components the physics model carries, gains about 10% in medium-range
+wave-height error, and loses skill at the sea-ice edge and on the strongest winds, and
+the physics model it was trained on still runs beside it.
+
+In phase-resolving breaking the bottleneck is the teacher. Mostert, Popinet, and Deike
+(2022) ran two-phase Navier–Stokes with surface tension at adaptive resolution
+equivalent to 2048³, 181 million cells and about half a million CPU-hours for one run,
+matched the laboratory's bubble size distribution and the 70% of wave energy a
+plunging breaker dissipates, and did not converge the droplets: many have radii of
+about the smallest cell, the low-Bond-number case produces fewer than a hundred of
+them, and the next refinement level "is not feasible to run currently." Against that
+reference the learned parts are three, and none ships in a released solver. Eeltink and
+colleagues (2022) attached a recurrent network to a nonlinear Schrödinger envelope
+equation, trained on 438 wave-tank trajectories, and on held-out breaking cases cut the
+error against the tank by about an order of magnitude, where the uncorrected equation
+predicts no loss and the tank loses about 30% of a focused group's energy; by its
+authors' account it cannot extrapolate from one wave type to another and has no
+stability guarantee. The learned interface operators inside two-phase solvers, trained
+on synthetic circles, "outperform conventional methods on coarser grids but diverge
+with grid refinement" (Önder and Liu, 2023), and the one that recovers convergence does
+so by gating: a classifier hands coarse interfaces to the network and fine ones to the
+conventional reconstruction. The learned particle solvers have the best-measured
+free-surface failure: on a 2D dam break the twenty-step error is $3 \times 10^{-5}$ and
+the full-trajectory error is 0.19, four orders of magnitude of growth, as the fluid
+compresses to 1.4 times its reference density and particles detach from the surface.
+No learned particle solver has been run on a breaker, and there is no published neural
+surrogate of a breaking-wave simulation.
+
+## What more parameters buy
+
+More parameters help only where there is signal to fit them to and where the model's
+form can express the answer. In the closure bin there is a true target, so capacity
+helps up to the data, and a stateless local net has the wrong form, so its ceiling is
+set by form; history, neighbourhood, and a stochastic term move the ceiling and
+parameters do not. In the discretization bin the target is small and known, capacity is
+rarely the limit, and every stability fix in the record is a change to the training
+procedure. In the whole-operator bin error falls as a power law in size and data
+in-distribution, Aurora at 1.3 billion parameters reports no ceiling reached, and out of
+distribution the benefit decays with distance from the training range, which is
+NeuralGCM's drift at climate scale in another form. In the input bin the limit is
+observations. In the solver bin the tolerance is fixed by the residual and parameters
+change the speed of acquittal, not the verdict. So "with more parameters" is answered
+yes in one bin, the closure, and only after the closure's inputs are right.
+
+## The ladder, read on the first figure
+
+The opening figure is the ladder in one frame. The corrected lane is a learned part
+at the conservation rung: it cannot invent mass, its ledger says so on every step, and
+the ledger says nothing about the two hundred steps where it is the better lane or the
+steps after where it is the worse one. The pressure figures above it sit at the
+residual rung, where a network can be sabotaged into noise and the answer moves by
+seven millionths, and where the gain is a sweep count that a 1952 algorithm beats. The
+closure, the inputs, and the whole-model surrogate sit below the conservation rung,
+where the only checks are offline or are observations, and where the learned parts
+that survived did so because something was forbidden to them by construction and
+because they were trained inside the solver they live in.
+
+What no learned component can be allowed to do, at any rung, is replace the thing that
+checks it. The pressure network is the top of the ladder and buys the least; the
+closure is the bottom and buys the most; and the tools to replace Smagorinsky's
+constant have arrived first for the arithmetic around it, then for the grid it sits
+on, and not yet for the formula itself.
+
+## Further Reading
+
+Dmitrii Kochkov and colleagues, [*Machine learning–accelerated computational fluid
+dynamics*](https://www.pnas.org/doi/10.1073/pnas.2101784118) (PNAS 2021), is the
+discretization-correction result at full strength: the network inside the flux, the
+solver in the loop, the 8–10× at Re = 1000, and the caveat that all of it is periodic
+two-dimensional turbulence.
+
+Kiwon Um, Robert Brand, Yun Fei, Philipp Holl, and Nils Thuerey, [*Solver-in-the-Loop*](https://arxiv.org/abs/2007.00016)
+(NeurIPS 2020), measured how much of that gain comes from training through the solver,
+and named the method the opening figure's model was trained by.
+
+Dmitrii Kochkov and colleagues, [*Neural general circulation models for weather and
+climate*](https://www.nature.com/articles/s41586-024-07744-y) (Nature 2024), is the
+hybrid exemplar: a classical differentiable core, learned column physics, decades of
+stable rollout, and the most specific failure list in the field.
+
+Andrew Ross, Ziwei Li, Pavel Perezhogin, Carlos Fernandez-Granda, and Laure Zanna,
+[*Benchmarking of machine learning ocean subgrid parameterizations in an idealized
+model*](https://agupubs.onlinelibrary.wiley.com/doi/10.1029/2022MS003258) (JAMES 2023),
+is 148 learned closures scored online, and the finding that the readable one
+generalized.
+
+Bas Sanderse, Panos Stinis, Romit Maulik, and Shady Ahmed, [*Scientific machine
+learning for closure models in multiscale problems*](https://arxiv.org/abs/2403.02913)
+(2024), organizes the closure literature around the offline–online gap, the
+Mori–Zwanzig memory argument, and structure preservation.
+
+Hendrik Tolman, Vladimir Krasnopolsky, and Dmitry Chalikov, *Neural network
+approximations for nonlinear interactions in wind wave spectra* (Ocean Modelling 2005),
+is the failure in the authors' own words, and Ikuyajolu and colleagues' NLML (JGR:
+Machine Learning and Computation 2026) is the emulator that survived a year.
+
+Wouter Mostert, Stéphane Popinet, and Luc Deike, [*High-resolution direct simulation
+of deep water breaking waves*](https://doi.org/10.1017/jfm.2022.330) (JFM 2022), is
+the breaking-wave reference and its own statement of what it does not converge.
+
+Massimo Bonavita, [*On some limitations of current machine learning weather prediction
+models*](https://doi.org/10.1029/2023GL107377) (GRL 2024), and Tobias Selz and George
+Craig, [*Can artificial intelligence-based weather prediction models simulate the
+butterfly effect?*](https://doi.org/10.1029/2023GL105747) (GRL 2023), are the two
+measurements of what the whole-model surrogates leave out.

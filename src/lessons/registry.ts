@@ -4,6 +4,7 @@ import Lesson02 from './lesson-02-fiber-bundles.mdx'
 import Lesson03 from './lesson-03-navier-stokes-history.mdx'
 import Lesson04I from './lesson-04-learned-solver.I.mdx'
 import Lesson04II from './lesson-04-learned-solver.II.mdx'
+import Lesson04III from './lesson-04-learned-solver.III.mdx'
 import Maths01 from './maths-01-jacobian-hessian.mdx'
 import Physics01 from './physics-01-wave-particle.mdx'
 import Physics02 from './physics-02-pbits.mdx'
@@ -247,6 +248,12 @@ export const lessons: Lesson[] = [
         author: 'Fable',
         note: 'v3 rewritten from scratch 2026-09-02: one network, one failure chain, ~2,650 words',
         Content: Lesson04II,
+      },
+      {
+        label: 'III',
+        author: 'Fable',
+        note: 'the map, 2026-09-04: where a simulation is wrong and what a network may touch, ordered by what can check it; ~6,000 words',
+        Content: Lesson04III,
       },
     ],
   },
