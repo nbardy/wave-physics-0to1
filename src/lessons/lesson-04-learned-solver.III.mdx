@@ -425,56 +425,95 @@ closure transferred between ocean regimes where the networks did not. When a clo
 can be written down, the written form generalizes further than the network that found
 it.
 
-## Waves
+## Waves, by scale
 
-Every operational spectral wave model computes the four-wave nonlinear transfer, the
-term that shapes the whole spectrum, with the discrete interaction approximation of
-Hasselmann and colleagues (1985), because the exact integral costs 100 to 140 times
-more. The first learned emulator of the exact term, Tolman, Krasnopolsky, and Chalikov
-(2005), reached 4.7 times the approximation's accuracy on spectra of the kind it was
-trained on and then, inside the model, could not reproduce consistent wave growth and
-lost directional symmetry within three hours, because "modeled wave spectra can be
-expected to include features not found in the training data set." Two emulators
-reported stable integration in 2026. NLML (Ikuyajolu, Van Roekel, Brus, and Thomas)
-is trained on 3.2 million spectra from twin global runs, one with the approximation and
-one with the exact term, ran a year of 2020 from a cold start with no fallback, cut the
-global significant-wave-height error from 0.17 m to 0.07 m, and costs 1.04 times the
-approximation on a GPU; its authors report low offline skill in low-wind regions and
-instability unless the spectrum is converted to frequency space before the network
-sees it. Both 2026 emulators are locked to their spectral grid, and neither has been
-checked against a buoy. No learned dissipation, wind-input, or bottom-friction term
-runs inside any spectral model.
+Nothing in the table above resolves a wave. The wave models sit at four scales, and the
+learned record thins by an order of magnitude at each step down.
 
-The one learned component in operational wave forecasting is a whole-model surrogate.
-ECMWF's AIFS has carried waves since May 2026, trained on a hindcast of its own physics
-wave model from 1979 to 2025; it holds ten fields per point in place of the more than
-1,200 spectral components the physics model carries, gains about 10% in medium-range
-wave-height error, and loses skill at the sea-ice edge and on the strongest winds, and
-the physics model it was trained on still runs beside it.
+**The sea state, in kilometres and hours.** A spectral wave model carries no waves at
+all, only the energy spectrum at each grid point, and advances it with source terms
+for wind input, dissipation, and the four-wave nonlinear transfer that shapes the whole
+spectrum. Every operational model computes that transfer with the discrete interaction
+approximation of Hasselmann and colleagues (1985), because the exact integral costs
+100 to 140 times more. The first learned emulator of the exact term, Tolman,
+Krasnopolsky, and Chalikov (2005), reached 4.7 times the approximation's accuracy on
+spectra of the kind it was trained on and then, inside the model, could not reproduce
+consistent wave growth and lost directional symmetry within three hours, because
+"modeled wave spectra can be expected to include features not found in the training
+data set." Two emulators reported stable integration in 2026. NLML (Ikuyajolu, Van
+Roekel, Brus, and Thomas) is trained on 3.2 million spectra from twin global runs, one
+with the approximation and one with the exact term, ran a year of 2020 from a cold
+start with no fallback, cut the global significant-wave-height error from 0.17 m to
+0.07 m, and costs 1.04 times the approximation on a GPU; its authors report low
+offline skill in low-wind regions and instability unless the spectrum is converted to
+frequency space before the network sees it. Both 2026 emulators are locked to their
+spectral grid and neither has been checked against a buoy. No learned dissipation,
+wind-input, or bottom-friction term runs inside any spectral model. The one learned
+component in operational wave forecasting is a whole-model surrogate: ECMWF's AIFS has
+carried waves since May 2026, trained on a hindcast of its own physics wave model from
+1979 to 2025, holding ten fields per point in place of the more than 1,200 spectral
+components the physics model carries, gaining about 10% in medium-range wave-height
+error, losing skill at the sea-ice edge and on the strongest winds, with the physics
+model it was trained on still running beside it. This is the scale a surf forecast is
+built from, and it is the weather record's scale with a different state variable.
 
-In phase-resolving breaking the bottleneck is the teacher. Mostert, Popinet, and Deike
-(2022) ran two-phase Navier–Stokes with surface tension at adaptive resolution
-equivalent to 2048³, 181 million cells and about half a million CPU-hours for one run,
-matched the laboratory's bubble size distribution and the 70% of wave energy a
-plunging breaker dissipates, and did not converge the droplets: many have radii of
-about the smallest cell, the low-Bond-number case produces fewer than a hundred of
-them, and the next refinement level "is not feasible to run currently." Against that
-reference the learned parts are three, and none ships in a released solver. Eeltink and
-colleagues (2022) attached a recurrent network to a nonlinear Schrödinger envelope
-equation, trained on 438 wave-tank trajectories, and on held-out breaking cases cut the
-error against the tank by about an order of magnitude, where the uncorrected equation
-predicts no loss and the tank loses about 30% of a focused group's energy; by its
-authors' account it cannot extrapolate from one wave type to another and has no
-stability guarantee. The learned interface operators inside two-phase solvers, trained
-on synthetic circles, "outperform conventional methods on coarser grids but diverge
-with grid refinement" (Önder and Liu, 2023), and the one that recovers convergence does
-so by gating: a classifier hands coarse interfaces to the network and fine ones to the
-conventional reconstruction. The learned particle solvers have the best-measured
-free-surface failure: on a 2D dam break the twenty-step error is $3 \times 10^{-5}$ and
-the full-trajectory error is 0.19, four orders of magnitude of growth, as the fluid
-compresses to 1.4 times its reference density and particles detach from the surface.
-No learned particle solver has been run on a breaker, and there is no published neural
-surrogate of a breaking-wave simulation.
+**Individual waves, in metres and seconds, before they break.** Phase-resolving
+models, Boussinesq-type equations in shallow water and potential-flow or envelope
+equations in deep water, carry the surface elevation itself and resolve each wave's
+shoaling, refraction, and steepening. They cannot resolve breaking, so breaking enters
+as two closures: an onset criterion and a dissipation rate applied once the criterion
+trips. The criterion in current use is the ratio of crest speed to wave speed
+crossing about 0.85 (Barthélémy and colleagues, 2018; Derakhti, Banner, and Kirby,
+2020), and there is no learned version of it. The one learned dissipation is Eeltink
+and colleagues (2022), a recurrent network with 369,728 parameters attached to a
+nonlinear Schrödinger envelope equation and trained on 438 wave-tank trajectories; on
+held-out breaking cases it cuts the error against the tank by about an order of
+magnitude, where the uncorrected equation predicts no loss and the tank loses about
+30% of a focused group's energy, and by its authors' account it cannot extrapolate
+from one wave type to another, runs only at the training step size, and has no
+stability guarantee. Its teacher is the tank, not a simulation.
+
+**The breaker itself, in centimetres and milliseconds.** The reference is two-phase
+Navier–Stokes with surface tension. Mostert, Popinet, and Deike (2022) ran it at
+adaptive resolution equivalent to 2048³, 181 million cells and about half a million
+CPU-hours for one run, matched the laboratory's bubble size distribution and the 70%
+of wave energy a plunging breaker dissipates, and did not converge the droplets: many
+have radii of about the smallest cell, the low-Bond-number case produces fewer than a
+hundred of them, and the next refinement level "is not feasible to run currently."
+The teacher at this scale is under-resolved where most of the bubbles are, and it
+costs more than any training run would. Against that reference the learned parts
+inside two-phase solvers are interface operators trained on synthetic circles, which
+"outperform conventional methods on coarser grids but diverge with grid refinement"
+(Önder and Liu, 2023); the one that recovers convergence does so by gating, a
+classifier handing coarse interfaces to the network and fine ones to the conventional
+reconstruction. None has been run on a breaking wave. There is no learned closure for
+the air entrained below the surface, and no published neural surrogate of a
+breaking-wave simulation.
+
+**The breaker as particles.** Smoothed-particle and hybrid particle-grid methods are
+the graphics-grade route to the same flow, and learned particle solvers have the
+best-measured free-surface failure in the record: on a 2D dam break the twenty-step
+position error of a graph-network simulator is $3 \times 10^{-5}$ and its
+full-trajectory error is 0.19, four orders of magnitude of growth, as the fluid
+compresses to 1.4 times its reference density, particles detach from the free surface
+after about fifty steps, and the front stalls "as if a virtual wall exists"; the fix
+that works reinserts classical relaxation steps at 1.4 times the cost (Toshev and
+colleagues, 2024). No learned particle solver has been run on a breaker.
+
+What crosses from the weather record to the breaker is not a model. It is four rules
+that held at every scale where they were tested: a closure's offline fit does not
+predict whether it survives inside the solver, and the ones that survived were trained
+inside it; a learned part that conserves by construction can still be wrong, and one
+that does not conserve by construction will eventually be caught being wrong; the
+teacher's error is the student's ceiling, and at the breaker's scale the teacher is a
+tank or an unconverged simulation; and the network that replaces the checker cannot be
+checked. The scale where a learned component could make a breaking-wave simulation
+more right, rather than cheaper, is the closure for what happens below the surface,
+and the honest statement of that closure's requirements is the same as for turbulence:
+an energy account for what the grid cannot hold, exchange terms that cannot create
+energy, inputs that cannot see the frame, and a noise term paid from the account.
+Nobody has built it, and the measurement that would grade it, the bubble size
+distribution and the dissipated fraction against a tank, already exists.
 
 ## What more parameters buy
 
