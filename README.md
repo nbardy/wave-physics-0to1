@@ -77,6 +77,7 @@ Live at **https://nbardy.github.io/wave-physics-0to1/**.
 
 ```bash
 bun run deploy   # build + publish to the gh-pages branch
+bun run ship     # commit + push main, then deploy (one command; optional message arg)
 ```
 
 The build output is committed to `gh-pages`; `main` stays free of bundles. There is no CI —

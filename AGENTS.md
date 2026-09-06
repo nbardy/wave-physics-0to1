@@ -78,10 +78,15 @@ GitHub Pages. `<Sim>` and `<TeX>` are available in MDX without imports.
 `bun run dev` / `bun run typecheck` / `bun run build` / `bun run check:figures`
 (per-lesson check scripts: `check:figures` `check:pbits` `check:z1` `check:part2`
 `check:cad` `check:learned` — there is no aggregate).
-**Deploy is `bun run deploy`** (README §Deploy): local build pushed to the
-`gh-pages` branch — no CI, no Actions, no Cloudflare, so *the working tree is
-what ships*; check `git status` for other sessions' uncommitted edits before
-deploying, and push `main` alongside so the site never runs ahead of history.
+**Ship with `bun run ship`** (scripts/ship.sh, README §Deploy): commit + push
+`main`, then build and publish the `gh-pages` branch — no CI, no Actions, no
+Cloudflare, so *the working tree is what ships*. Run it for each commit, and
+commit the whole tree every time — no selective leftovers. When unrelated
+areas share the tree, commit in chunks first (one chunk per area, e.g. the
+lesson, then the sims, then the docs), then let `ship` deploy the result;
+its printed file list is the last look before it all goes public. Check `git
+status` for other sessions' uncommitted edits before shipping — a chunk that
+is theirs ships only on their OK.
 **Display math stays on one line** — remark-math needs the closing `$$` at a
 line start, so a two-line `$$eq … eq$$` silently swallows the rest of the
 document (measured: it truncated two sections of physics-02, 2026-08-05).
