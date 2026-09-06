@@ -17,7 +17,8 @@
     "check:learned": "bun run scripts/check-learned.ts",
     "check:photonics": "bun run scripts/check-photonics-spike.ts",
     "check:hero": "bun run scripts/check-learningwall.ts",
-    "deploy": "bash scripts/deploy-pages.sh"
+    "deploy": "bash scripts/deploy-pages.sh",
+    "ship": "bash scripts/ship.sh"
   },
   "dependencies": {
     "@mdx-js/react": "^3.1.0",
