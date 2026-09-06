@@ -10,8 +10,11 @@ below are feasibility estimates, never quotas.
 Intros are DRAFT PROSE at Stage-1/2 fidelity — written to set register and
 hook, expecting revision when their hero figures exist. Each uses a different
 hook move than its siblings (p-bits P1: regime contrast; learned-solver:
-specimen-below-this-paragraph; these three: watch-the-object, world-anchor,
-double-fact).
+specimen-below-this-paragraph; these three: watch-the-object,
+trained-artifact, double-fact). P2's first intro draft (streetlight-curtain
+staging) was flagged by Nick 2026-08-26 — "the corniest fucking metaphors" —
+and is the founding incident of SLOP family 21 (the greeting card); the
+replacement below opens cold on the trained plates.
 
 Series-level engineering risks, in order: (1) the WebGPU FDTD core (P1's
 workhorse; de-risk with a bench spike + double-slit fringe check λL/d before
@@ -93,20 +96,29 @@ Predict moment (committed guess before the reveal): the mesh doubles from
 4×4 to 8×8 — what happens to the transit-time readout? Then the reveal: the
 time readout barely moves (the path got a few layers deeper) while the
 multiply count quadrupled. The claim stated exactly: time follows the *depth*
-of the block, picoseconds per millimeter; the work inside a transit follows
-N². Numbers as dessert, each bound to a ledger line: ~1 ps/mm; a 128×128
-commercial core at 3 ns per cycle (Hua et al., Nature 640). Then the bills,
-one figure each:
+of the block — honestly O(N), growing by picoseconds per row where a
+systolic array grows a thousandfold faster; the work inside a transit
+follows N². Numbers as dessert, each bound to a ledger line: ~1 ps/mm; a
+shipping 64×64 core cycling at 5 ns demonstrated / 3 ns projected,
+round-trip including its electronics (Hua et al./Lightelligence, Nature
+640 — an incoherent architecture, cited for timing only, never for
+interference). Then the bills, one figure each:
 1. **Silicon**: N-slider drives mesh area O(N²) on screen while the time
-   readout holds; N(N−1)/2 MZIs, ~10⁴ μm² each.
-2. **Loss**: brightness decays layer by layer (~0.25 dB each; ≈13 dB by
-   16×16) — the deep-mesh precision ceiling arrives visually.
-3. **The slow knob**: thermal phase shifters at kHz–ms against GHz data — a
-   two-clock figure; the weight-stationary conclusion (load once, stream
-   forever) stated as what the physics permits, not as a design choice.
+   readout crawls; N(N−1)/2 MZIs (per-MZI area/power figures pending
+   their own sources — ledger GAP 7); McMahon's countable gap: a 64×64
+   does >100× too few parallel ops to compete on throughput.
+2. **Loss**: brightness decays layer by layer — the deep-mesh precision
+   ceiling arrives visually (specific dB numbers pending ledger GAP 7).
+3. **The slow knob**: weights load 100× slower than data streams —
+   1 GHz data modulators against 10 MHz weight modulators on one chip
+   (Hua) — a two-clock figure; the weight-stationary conclusion (load
+   once, stream forever) stated as what the physics permits, not as a
+   design choice.
 4. **The edges**: the energy bar split into optics vs DAC/ADC conversion —
-   edges dominate by up to ~10×. The speed-of-light debunk lands here,
-   flat.
+   in a Transformer-scale analysis the light is under 1% of the total
+   (McMahon citing Anderson). The speed-of-light debunk lands here,
+   flat, with its sharpest number: light in a silicon waveguide (0.4c)
+   is slower than a signal on a PCB trace (0.43c).
 Waypoint 2. Effective precision (4–8 bits, shot-noise floor) closes the act.
 
 **Act IV — Sixty years of this, and where the money went.**
@@ -114,8 +126,11 @@ Shen 2017 as the restart: 56 MZIs, a 4×4 unitary, vowel recognition — and the
 teachable gap, 76.7% on the chip vs 91.7% in its own simulation; our mesh
 reproduces the *mechanism* of that gap with injected phase noise (our sim,
 their numbers quoted as theirs). The arc compressed: 2017 → tensor cores 2021
-→ on-chip backprop 2023 → Taichi 2024 → the two Lightmatter Nature papers
-2025 (ABFP: <1% task-accuracy loss vs FP32 — never "32-bit precision").
+→ on-chip backprop 2023 → Taichi 2024 → the Nature 640 pair 2025
+(Lightelligence's PACE hardware + Lightmatter's quad-core systems paper;
+"near-electronic precision for many workloads" is the honest wording —
+never "32-bit precision," and no per-model digits until the paywalled
+paper is read).
 Then the landscape, honest: the copper wall, ~30% of cluster energy in data
 movement, co-packaged optics shipping (Broadcom, NVIDIA — PRESS-level details
 kept coarse), Celestial→Marvell, and Lightmatter selling interconnect while
@@ -151,8 +166,8 @@ constants, not scripted).
 > both panes agree.
 >
 > The stopwatch under the field pane is the strange part. It reads the
-> transit in picoseconds, and it is the one number on this page that does not
-> care how big the matrix is. Make the matrix four times larger and the mesh
+> transit in picoseconds, and it is the number on this page that the size
+> of the matrix barely touches. Make the matrix four times larger and the mesh
 > grows to hold it — more glass, more junctions, a slightly longer walk for
 > the light — but the count of multiplications inside one walk grows sixteen
 > times faster than the walk does. Chip companies compress this into a
@@ -200,13 +215,15 @@ identity M₃M₂M₁ = M.
 
 ## Act ladder
 
-**Act I — The curtain and the lens.** World-anchor open (below). Field-pane
-representation carries over from P1 (re-taught in two figures, not linked).
-The reader plays inverse-solver: given a target — focus this beam — they
-paint a phase mask by hand and fail informatively; the mask that works is
-quadratic, and it is a lens. The focal plane holds the input's Fourier
-transform, demonstrated on patterns with knowable spectra (a grid, a slit,
-the curtain's weave). Failure out: a lens computes only the one transform.
+**Act I — The lens, built by hand.** Cold open on the trained plates (below).
+Field-pane representation carries over from P1 (re-taught in two figures, not
+linked). The reader plays inverse-solver: given a target — focus this beam —
+they paint a phase mask by hand and fail informatively; the mask that works
+is quadratic, and it is a lens. The focal plane holds the input's Fourier
+transform, demonstrated on patterns with knowable spectra (a grid, a slit, a
+woven mesh — and the one-sentence world check, stated flat: a streetlight
+seen through sheer curtain fabric spikes into the weave's transform).
+Failure out: a lens computes only the one transform.
 **Act II — The 4f machine.** Two lenses back to back; a mask between them
 multiplies the spectrum — convolution by glass. Reader swaps kernels
 (edge-finder, blur, matched filter) and watches a live image convolved at
@@ -227,37 +244,37 @@ power-hungry; hard to cascade), measurement feedback. Verdict: today's deep
 optical networks are hybrids — optics gifts the linear layer, electronics
 tolls the nonlinear one.
 **Ending jobs**: the trained stack returns, now legible mask by mask;
-re-enchant through the world-anchor — the curtain, the squint, out-of-focus
-lights: passive computers everywhere, running whether or not anyone reads
-the output. Further Reading: Goodman, Lin 2018, Pai 2023, Wetzstein 2020.
+re-enchant on the passive-computation fact stated cold — the diffraction
+patterns in everyday optics are this article's figures running unattended.
+Further Reading: Goodman, Lin 2018, Pai 2023, Wetzstein 2020.
 
 **Scale estimate.** ~5,000–6,500 words, ~18–22 figures. Engineering gate:
 WGSL FFT or FD-BPM; check targets: lens-FT of a Gaussian (analytic width),
 Parseval energy balance, adjoint test ⟨Ax,y⟩=⟨x,A†y⟩ to tolerance,
 linear-collapse equivalence to machine precision.
 
-## P2 intro (draft prose)
+## P2 intro (draft prose — rewrite 2, after the family-21 flag)
 
-> Some evening, look at a distant streetlight through a sheer curtain. The
-> point of light spreads into a neat cross of spikes — one arm for each
-> thread direction of the weave, spaced wider the finer the fabric. The
-> curtain is not decorating the light. It is transforming it: that cross is
-> the two-dimensional Fourier transform of the curtain's own weave, computed
-> by nothing but propagation, finished before the light crosses the room.
+> The three plates in the figure below were trained by gradient descent,
+> and that was the last computation anyone will ever run on them. You can
+> sketch a digit in the left pane; the wave crosses the plates and arrives
+> with its energy piled onto one of ten patches, and that patch is the
+> stack's answer. Nothing executed. There are no weights to fetch and no
+> multiplies to schedule, because the weights are the thicknesses of the
+> glass, and the multiply happened when light went through it.
 >
-> The figure below runs the same physics with more ambition. Sketch a digit
-> — any of the ten — in the left pane. The field passes through three plates
-> that look like frosted noise, and by the right pane its energy has piled
-> onto one of ten patches: the stack's answer. At run time nothing computes;
-> the classification is over the moment the light lands. The plates earned
-> their frost — they were trained, by gradient descent, and before this
-> article ends you train a stack like them yourself.
+> One mechanism carries everything here: glass delays the phase of a wave
+> in proportion to its thickness, and propagation turns patterns of phase
+> into patterns of arrival. A lens is the special case with a quadratic
+> profile — the one optical computer everyone already owns. The machines
+> that convolved images optically in the 1960s were the general case,
+> designed by hand; the plates above are the general case, found by
+> training. What none of them can be is deep. The obstruction is
+> structural, not an engineering gap, and the demonstration — three
+> trained plates failing in exactly the way a single plate fails — is the
+> last act's job.
 >
-> Between the curtain and the classifier there is one mechanism: glass
-> changes the phase of light in proportion to its thickness, and propagation
-> turns patterns of phase into patterns of arrival. Everything in this
-> article — the lens, the sixty-year-old convolution machine, the trained
-> plates, and the one thing none of them can do — is that sentence, rearranged.
+> The lens comes first, built by hand.
 
 ---
 
@@ -267,9 +284,13 @@ linear-collapse equivalence to machine precision.
 of two phases — a spin, decided by noise. Couple two thousand of them and the
 collective settling minimizes an Ising energy: the photonic sibling of the
 p-bit machine, with quantum noise where the p-bit had heat. And the machine
-carries its own cautionary tale: a GPU simulating the machine's equations
-beat the machine, which sharpens — not spoils — what a physical annealer
-must be for.
+carries its own cautionary tale, twice over: two independent GPUs — one
+running textbook annealing, one simulating the loop's own equations —
+matched or beat it on its own benchmarks, because the expensive step, the
+matrix–vector multiply, is digital in the physical machine too. The
+electrical edges eat the advantage here exactly as they do in P1 — the
+same law, in an unrelated architecture — which sharpens, not spoils, what
+a physical annealer must be for.
 
 **Hero figure.** The loop: pulses circulating as dots on a ring, each
 colored by its phase choice, a coupling matrix on one side and the Ising
@@ -297,42 +318,61 @@ pump ramp. No new formalism beyond T1's.
 through threshold; the phase settles 0 or π, rerun lands the other way.
 The p-bit sits beside it flipping thermally — two coins, two noises.
 **Act II — The loop.** Time-multiplexing: thousands of spins as pulses in
-one fiber, coupled by measure-multiply-feedback (the FPGA in the loop shown
-honestly — the coupling is electronic, and that matters later). The machine
-anneals the held max-cut instance; energy trace falls; Inagaki 2016 as
-dessert: 2,048 pulses, a 2000-node cut in under a tenth of a millisecond.
-**Act III — The audit.** The double fact from the intro paid in full:
-Tiunov 2019 simulated the loop's own equations on a GPU and got better cuts,
-faster. Demonstrated in-page: our third solver IS the simulation, and it
-wins on the held instance. What survives the audit, stated as a verdict:
-the loop's claim to the future rests on physics the simulation must pay for
-in FLOPs (optical bandwidth, energy per pulse) and on problem classes where
-the noise is the feature — and as of the ledger's sources, that case is
-open, not closed. Ending jobs: the held instance solved three ways side by
-side; re-enchant on the two-noises observation — heat and quantum
-fluctuation, both drafted into arithmetic; the series' machines differ in
-everything but their faith in noise. Further Reading: Inagaki 2016, Tiunov
-2019, the 2025 CIM survey, the photonic p-bits paper (s42005-025-01953-1).
+one fiber, coupled by measure-multiply-feedback — and the multiply is the
+FPGA's, shown honestly: the coupling arithmetic is electronic, and 2,808
+of the cavity's 5,056 pulse slots exist solely to stall while it computes
+(the plant for Act III). The machine anneals the held max-cut instance;
+energy trace falls; Inagaki 2016 as dessert: 2,048 pulses, a 1-km cavity,
+a 2000-node cut in 5.0 milliseconds — with its authors' own disclosures
+attached (timing excludes data transfer; success rates post-selected).
+**Act III — The audit.** The triple fact from the intro paid in full,
+in order: King 2018 (plain mean-field annealing, equal cuts, ~20×
+faster), then Tiunov 2019 (SimCIM — the loop's equations minus the
+nonlinear loss — better cuts at comparable speed; "comparable" is their
+own word and the honest one). The mechanism named flat: the optics
+stores spins and adds noise; it never multiplies — and the 1 ns FPGA
+deadline forces couplings to 0 and ±1, so the hardware is less
+expressive than its own simulator. Demonstrated in-page: our third
+solver IS the simulation, and it wins on the held instance. Then the
+2026-grade energy accounting: the measurement-feedback machine spends
+10.45 of its 15.69 watts on converters and transceivers while an
+all-digital solver does everything on 4.09 — the conversion tax alone
+outweighs the whole rival. What survives, stated as a verdict: the
+fully-optical variant's estimated ~100× time-to-solution edge is a
+prefactor, not a scaling law, at toy sizes, on a machine that does not
+yet exist at scale — and the field's own critics conclude the fix is
+more optics, not less. Ending jobs: the held instance solved three ways
+side by side; re-enchant on the two-noises observation — heat and
+quantum fluctuation, both drafted into arithmetic; the series' machines
+differ in everything but their faith in noise. Further Reading: Inagaki
+2016, King 2018, Tiunov 2019, Khosravi et al. 2025 (the
+Langevin-reframe energy audit), the photonic p-bits paper
+(s42005-025-01953-1). Gate: read Leleu 2021 (chaotic amplitude control
+— the CIM camp's strongest live counter) before this act's prose ships.
 
 **Scale estimate.** ~4,000–5,000 words, ~12–15 figures, all ODE/CPU-scale.
 Check targets: pitchfork bifurcation point vs analytic threshold, energy
 trace monotonicity under zero-noise anneal, cut-value agreement between loop
 sim and direct Ising evaluation.
 
-## P3 intro (draft prose)
+## P3 intro (draft prose — rev. 2, corrected against full-read pass 2)
 
-> In 2016, a loop of optical fiber cut a two-thousand-node graph into two
-> halves — a good cut, found in less than a tenth of a millisecond — using
-> nothing but two thousand pulses of light, an amplifier, and a measuring
-> device that nudged each pulse according to what the others were doing. In
-> 2019, a graphics card running a plain simulation of that same loop — its
-> equations, unchanged — found better cuts, faster.
+> In 2016, a kilometre-long loop of optical fiber cut a two-thousand-node
+> graph into two good halves in five milliseconds. Its spins were two
+> thousand pulses of light circulating the loop, each pinned to one of
+> two phases; a measuring instrument read them out each lap, and a
+> processor nudged every pulse according to what the others were doing.
+> In 2018, a graphics card running textbook annealing matched the
+> machine's cuts on its own benchmark graphs, twenty times faster. In
+> 2019, a second graphics card — this one simulating the loop's own
+> equations of motion — beat its solution quality outright.
 >
-> Both results are real, both are in the ledgered record, and neither one
-> cancels the other. Between them sits most of what is worth knowing about
-> machines that compute by settling, and this article holds both ends: it
-> builds the loop, runs it, and then stages the rematch on this page — loop
-> against its own simulation, on the same problem, where you can watch.
+> Every one of those results is real, and none of them cancels the
+> others. Between them sits most of what is worth knowing about machines
+> that compute by settling, and this article holds both ends: it builds
+> the loop, runs it, and then stages the rematch on this page — the loop
+> against a simulation of itself, on the same problem, where you can
+> watch.
 >
 > The pulse itself comes first, because the loop's whole trick is inside
 > one of them: light in a pumped amplifier that is forced, as the pump

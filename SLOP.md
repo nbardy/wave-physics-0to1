@@ -305,6 +305,35 @@ fix:
 > you just drew is [formula]"
 > ✓ "Notice that the curve follows a formula: [formula]"
 
+**24. The coined maxim (the "oh wow" sentence).** Flagged 2026-09-06 on the
+p-bits opening, the sentence after the hero setup: "Randomness is the one
+output the eye cannot audit." Nick: "just a weird silly and unnecessary
+sentence … we want to remove unnecessary 'o wow intentioned' filler slop like
+this." The move: a freshly minted aphorism — abstract subject, copula, an
+exclusive or superlative frame ("the one X that…", "X is what Y is for",
+"every X is secretly a Y") — set down as a standalone truth so the reader
+feels the author has seen something deep. It fronts a paragraph as its thesis,
+but the concrete sentences after it carry all the content; the maxim is a bid
+for admiration placed before the evidence. Tells: the subject is an
+abstraction (randomness, noise, truth, time, error); the sentence is built to
+be quotable on its own — that is its purpose; it is not checkable (what would
+"the eye auditing an output" fail to look like?); and deleting it costs
+nothing — the paragraph usually opens *better*, because it now opens on the
+concrete case. Distinct from family 5 (awe by adjective — this has none),
+family 12 (wisdom-fragment cadence is a rhythm across sentences; this is one
+sentence's ambition), family 16 ("X is just Y" deflates; "X is the one Y"
+inflates), and families 20–21 (register borrowed from trailers or cards; this
+is home-grown profundity). Rule: **no sentence exists to be quoted.** Test:
+is it a claim about the subject that a later sentence *uses*, or a claim about
+how much the author understands? Run the delete test with the sentence after
+it; if the paragraph opens better cold, it was a maxim.
+
+> ✗ "Randomness is the one output the eye cannot audit. Two streams of flicker
+> look identical when one of them is right and the other is confidently,
+> permanently wrong…"
+> ✓ "Two streams of flicker look identical when one of them is right and the
+> other is confidently, permanently wrong…"
+
 ---
 
 ## Where the enforcement lives

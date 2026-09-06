@@ -1,0 +1,1523 @@
+                                                                        Coherent Ising Machines: The Good, The Bad, The Ugly
+
+                                                                  Farhad Khosravi,1 Martin Perreault,1 Artur Scherer,2 and Pooya Ronagh1, 2, 3, 4, ∗
+                                                                                             1
+                                                                                               Irrevresible Inc., Sherbrooke, QC, Canada
+                                                                               2
+                                                                                   1QB Information Technologies (1QBit), Vancouver, BC, Canada
+                                                                       3
+                                                                         Institute for Quantum Computing, University of Waterloo, Waterloo, ON, Canada
+                                                                                4
+                                                                                  Perimeter Institute for Theoretical Physics, Waterloo, ON, Canada
+                                                                                                          (Dated: July 22, 2025)
+                                                                  Analog computing using bosonic computational states is a leading approach to surpassing the
+                                                               computational speed and energy limitations of von Neumann architectures. But the challenges
+                                                               of manufacturing large-scale photonic integrated circuits (PIC) has led to hybrid solutions that
+                                                               integrate optical analog and electronic digital components. A notable example is the coherent Ising
+
+
+
+
+arXiv:2507.14489v1 [physics.optics] 19 Jul 2025
+                                                               machine (CIM), that was primarily invented for solving quadratic binary optimization problems.
+                                                               In this paper, we focus on a mean-field interpretation of the dynamics of optical pulses in the
+                                                               CIM as solutions to Langevin dynamics, a stochastic differential equation (SDE) that plays a key
+                                                               role in non-convex optimization and generative AI. This interpretation establishes a computational
+                                                               framework for understanding the system’s operation, the computational role of each component, and
+                                                               its performance, strengths, and limitations. We then infer that the CIM is inherently a continuous
+                                                               state machine, capable of integrating a broad range of SDEs, in particular for solving a continuous
+                                                               global (or mildly constrained) optimization problems. Nevertheless, we observe that the iterative
+                                                               digital-to-analog and analog-to-digital conversions within the protocol create a bottleneck for the low
+                                                               power and high speed of optics to shine. This observation underscores the need for major advances
+                                                               in PIC technologies as we envision that fully analog opto-electronic realizations of such experiments
+                                                               can open doors for broader applications, and orders of magnitude improvements in speed and energy
+                                                               consumption.
+
+
+                                                                  I.     INTRODUCTION                               While the fully optical DL-CIM can take advantage of
+                                                                                                                    fast optical clock speeds, it is difficult to scale up for
+                                                     In recent years, the design of special-purpose bosonic         arbitrarily structured optimization problems with all-to-
+                                                  computing architectures for optimization [1, 2] and ma-           all connectivity. In addition, the types of optimization
+                                                  chine learning [3, 4] has gained increasing attention. This       problems solved using DL-CIM are limited by the opti-
+                                                  notably includes coherent optical networks [5, 6], optical        cal interactions available. Since higher-order interactions
+                                                  neural networks [7, 8], and networks of light-matter par-         are difficult to optically implement, solving higher-order
+                                                  ticles [9], which compete against physics-inspired heuris-        optimization problems has appeared challenging. Indeed,
+                                                  tics such as thermal (and simulated) annealing [10, 11],          solving optimization problems using DL-CIM has been
+                                                  open system quantum dynamics such as quantum an-                  limited to small problems with quadratic objective func-
+                                                  nealing [12–15], conventional local heuristic search algo-        tions.
+                                                  rithms [16, 17], and high-performance spin-based Monte
+                                                  Carlo simulations [18–20]. Among these technologies, the             The MF-CIM, on the other hand, alleviates the chal-
+                                                  coherent Ising machine has achieved impressively large            lenges with connectivity and higher-order optimization
+                                                  experimental scales, solving Ising problems with hundreds         problems by replacing the required complicated optical
+                                                  of thousands of variables [21–26], however, the existence         circuits with a digital processor which performs all the
+                                                  of a genuine computation time or energy consumption               arithmetic subroutines. The MF-CIM has been used to
+                                                  advantage has remained shrouded in doubt.                         solve optimization problems with thousands of variables
+                                                     The well-known time-multiplexed coherent Ising ma-             using a single FPGA [30]. Although greatly beneficial in
+                                                  chine (CIM) consists of a network of degenerate optical           reducing the complexity and improving the scalability of
+                                                  parametric oscillators (degenerate OPO, or DOPO) that             the device, the digital processor acts as a bottleneck, pre-
+                                                  are injected into a ring cavity and gradually pumped at           venting the full advantage of faster clock speed and lower
+                                                  a rate well above the bifurcation threshold [5, 6]. Such          energy consumption of optics to shine. This is one of the
+                                                  coherent optical networks can be realized either fully op-        main themes of investigation in this paper. Moreover, the
+                                                  tically using optical delay lines (DL-CIM) [27, 28], or           mainstream focus on binary, and even more restrictively
+                                                  with the assistance of a digital processing device, e.g.,         quadratic, optimization problems means that realistic
+                                                  a field-programmable gate array (FPGA), in an itera-              optimization problems (e.g., those comprising continu-
+                                                  tive measurement-feedback procedure (MF-CIM) [22, 29].            ous variables) require costly recasting and discretizations.
+                                                                                                                    This results in very large Ising reformulations with ill-
+                                                                                                                    behaved energy landscapes that are difficult to optimize.
+                                                                                                                    These challenges have hindered the practical applicability
+                                                  ∗ Corresponding author: pooya.ronagh@1qbit.com
+                                                                                                                    of the CIM technology despite over a decade of commer-
+                                                                                                                    cial efforts. A broader (and more classical) view to the
+                                                                                                                               2
+
+computational mechanisms of the operation of CIM is the             ences between the CIM and OLD dynamics, and use our
+second theme in our exposition. We do not consider the              observations to refute a critical need for preparing coher-
+apparent absence of quantum computational means in our              ent cat states of light, casting doubts on ‘quantumness’
+picture as a drawback of the CIM. On the contrary, we               of the computation performed by CIMs (“the bad”). On
+leverage this semi-classical interpretation both to pinpoint        the other hand, by analyzing the energy consumption
+the important role of non-linear optics in this scheme, and         of the CIMs compared against digitally implemented de-
+to envision alternative high-value applications for it.             vices, we show that hybrid optical-digital devices cannot
+   When solving binary optimization problems, CIMs be-              perform better than digitally implemented OLD due to
+gin an optimization process that produces classical com-            the bottleneck of digital data processing. We, therefore,
+putational states from the quantum states of light [31]. In         conclude that the true advantage of optical acceleration
+a low signal-loss setting, a product of coherent cat states         of the computation will only be unlocked when the digital
+of the form |α⟩ + | − α⟩ is generated at slightly above the         processor is removed from the architecture (“the ugly”).
+bifurcation threshold [32]. Iterative weak measurements                This paper is organized as follows. In Section II, we
+then result in a gradual collapse of the coherent product           show the SDEs governing the common CIMs and com-
+state into a product of classical bits representing a low-          pare them with the OLD and its modified variants. In
+energy state of the optimization problem. This quantum-             Section III, we compare the performance of the CIMs
+to-classical transition has been named an “exponential              against OLD, and other heuristic binary solvers, when
+amplification” of the low-energy states and superior to the         solving a simple non-convex optimization problem. In
+“linear amplitude amplification” of Grover’s search [31].           Section IV, we look at the time-to-solution (TTS) metric
+However, one cannot consider the mere collapse of the               for three types of hardware (fully digital OLD solver, hy-
+coherent product state as quantum amplification. In what            brid optical-digital MF-CIM, and fully optical DL-CIM)
+follows, we instead focus on the Langevin equations (the            and compare their performance against each other. In
+diffusion SDE) of the CIM [33, 34], as the mechanism                Section V, we look at TTS and energy-to-solution (ETS)
+responsible for solving optimization problems. The CIM              for these three types of hardware and investigate the mer-
+evolves its state according to a diffusion process generated        its of using analog optical devices for solving SDEs. We
+by the iterative noise injection of its nonlinear crystal and       conclude with a brief discussion and an outlook on future
+the measurement process. Langevin dynamics is known                 research in Section VI.
+to mix into low-energy states of the dynamical system’s
+potential when the dynamical system possesses detailed
+balance [35–39]. However, in the Langevin SDE of the                     II.   SEMI-CLASSICAL CIM DYNAMICS
+CIM, the drift term deviates from the gradient of the
+objective function. This discrepancy, along with the non-              In the continuous-time model of the DL-CIM [27, 28], a
+convex landscape of the optimization problem, prevent               system of SDEs describe the full quantum dynamics of the
+the CIM from always succeeding in finding the global                amplitudes of the DOPO pulses inside a cavity. This is an
+optimum even within the Ising solutions. Moreover, the              accurate quantum model of the CIM at least in the limit
+diffusion coefficients can be manipulated in a way that             of high-finesse optical cavities, i.e., with low optical loss
+the dynamical system under simulation violates physical             compared to the lifetime of the photons in the system [41].
+dissipation-fluctuation relations.                                  In the positive P-representation, the random variables ci
+   In order to assess whether CIM’s deviations from the             and si representing the in-phase and quadrature-phase
+simpler overdamped Langevin dynamics (OLD) plays any                components of the signal field [42] evolve according to the
+role in its performance as an optimizer, we demonstrate             following SDEs:
+the on par asymptotic effectiveness of both dynamics
+in solving binary-variable (BV) optimization problems.                       dci = −1 + p − c2i − s2i ci − λ∂i f (c) dt
+                                                                                                                   
+Viewing the CIM as an energy-efficient and fast approxi-                                  r
+mate integrator of Langevin dynamics opens doors for its                             ζ(t)                 1
+                                                                                   +        c2i + s2i + dWi1 ,
+usage in solving continuous non-convex optimization prob-                             As                  2
+                                                                                                2     2
+                                                                                                                            (1)
+lems and generative AI inference (“the good”). Indeed,                      dsi = −1 − p − ci − si si − λ∂i f (s) dt
+being intrinsically continuous, the analog amplitudes of                                    r
+the DOPO pulses can be used to represent the continu-                                   1                   1
+                                                                                   +            c2i + s2i + dWi2 .
+ous variables of a continuous-variable (CV) optimization                             ζ(t)As                 2
+problem below the saturation threshold. The continuous
+readout of CIM solutions1 was first explored in [40]. In            Here the Wiener increments dWi1 and dWi2 are in-
+this paper, we further study the similarities and differ-           dependently
+                                                                             √ sampled from an identical distribution,
+                                                                    dWim ∼ dt N (0, 1), hence injecting Gaussian noise of
+                                                                    mean zero and variance of dt into the dynamics. The
+                                                                    value As = (γp γs /2κ2 )1/2 is determined via the signal and
+1 While the coherent optical network used to solve the CV opti-     pump decay rates, γs and γp , respectively. The parameter
+  mization problem is not solving an Ising problem, we still call   κ represents the parametric gain due to the second-order
+  such device a CIM.                                                susceptibility of the nonlinear crystal. The parameter
+                                                                                                                                       3
+
+ζ(t) controls the variance of the injected noise during the                                                       Gaussian
+computation, and is implemented by continually inject-                                                             Pulse
+                                                                   Pump
+ing a squeezed vacuum state into the open port of the
+beamsplitter that out-couples the optical pulses from the          Pulse                            OPA
+cavity into the delay-line network [30]. The first drift
+term represents three physical processes: the constant −1
+represents a photon loss rate that is normalized to that of
+the optical cavity; the parameter p represents the strength
+of the external pump field (e.g., a laser), normalized to
+the photon decay rate at the signal frequency γs , inducing                         Open Port
+                                                                                                    Optical           Open Port
+an amplification of field strengths in the cavity during the                      (Vacuum State)                    (Vacuum State)
+process; and the term c2i + s2i results from the nonlinear
+                                                                                                    Cavity
+self-interaction induced by a nonlinear crystal (e.g., a
+periodically poled lithium niobate crystal (PPLN)) [5].
+                                                                           Injection                                         Output
+   The goal is to optimize the differentiable real-valued
+function f : Rn → R. We use ∂i to denote the i-th                          Coupler                                           Coupler
+                                                                                                    Coupling
+partial   derivative ∂i = ∂/∂ci . For example, if f (c) =
+P                                                                                                    Term
+   i,j=1,...,N ξij ci cj is a quadratic function, then the i-th
+                                             PN
+drift term is proportional to ∂i f (c) = 2 j=1 ξij cj , which
+may be realized physically via two-mode interactions. We
+note that the drift term in Eq. (1) may not be experimen-
+                                                                  FIG. 1: Schematic of the architecture of common CIMs. Squeezed
+tally realizable for arbitrary differentiable functions f as      coherent states of light are generated and amplified using an OPA
+it requires implementing higher-order optical interactions,       element that inclues a nonlinear crystal pumped by a laser that,
+                                                                  together with a ring cavity, constitutes a DOPO. Information is
+which is a challenge being tackled in current research [43].      encoded in time-multiplexed oscillations of the resonator, which are
+Therefore, at least for the fully optical implementation          coherently amplified each time they pass through the OPA element.
+                                                                  The coupling term is implemented by taking a portion of each pulse
+of the CIM, we shall restrict our attention to the case           using an output coupler, calculating the gradient of the objective
+of quadratic functions, as two-mode interactions of pro-          function using either a delay-line or measurement-feedback scheme, and
+grammable strength can be realized using optical delay            feeding the result into each optical pulse using an injection coupler.
+                                                                  These couplers, in general, can be variable beam splitters.
+lines and beam splitters. With this in mind, we refer to
+the system of SDEs (1) as DL-CIM dynamics.
+   In the MF-CIM, assuming the DOPO pulses maintain                 The DL-CIM and MF-CIM dynamics described above
+a Gaussian distribution throughout the evolution [22, 29],        are both Langevin equations of dissipative physical sys-
+the associated mean values (µi ) and variances (σi ) follow       tems of the general form
+the slightly different set of SDEs [44]
+                                                                            dx = b(x, t) dt − ∇f (x) dt + σ(x, t) dW,                (4)
+    dµi = −(1 + j) + p − g 2 µ2i µi dt
+                                   
+                               p                                  where x represents either of the quantum or mean-field
+             − λ∂i f (µ̃) dt + j(σi − 1/2)dWi ,
+                                                            (2)   degrees of freedom (c, s) or (µ, σ). Here b(x, t) is a
+     dσi =2 −(1 + j) + p − 3g 2 µ2i σi dt
+                                      
+                                                                  component-wise external force driving the dynamics of
+             − 2j(σi − 1/2)2 dt + (1 + j) + 2g 2 µ2i dt.
+                                                                each DOPO controlled by the DOPO pump rate. The
+                                                                  variable W is a standard Wiener process realized by weak
+Here, j is the normalized continuous measurement                  measurements of the optical modes either via photon loss
+strength, and g is the normalized second-order nonlin-            in a highly dissipative cavity, particularly in a DL-CIM,
+earity coefficient. We refer to this system of SDEs as            or via out-coupling and homodyne detection in a MF-
+MF-CIM dynamics. Note that, unlike in the previous                CIM. Finally, σ(x, t) represents the diffusion rate, and is
+systems of SDEs, the gradient field of f defined by Eq. (2)       determined by the cavity finesse and optical nonlinearity
+is evaluated at a measured mean-field amplitude vector µ̃         of the DL-CIM, or by controlling the out-coupling rate of
+which differs from the instantaneous mean-field amplitude         beam splitters in the MF-CIM.
+within the cavity by a random vector representative of the           To explore the dynamics of CIMs as heuristics for the
+uncertainty of the continuous quantum measurements:               global optimization of f , we compare their performance
+                             r                                    against simpler Langevin equations with well-understood
+                                1 dW                              convergence properties. The first equation is the over-
+                    µ̃ = µ +           .                (3)
+                               4j dt                              damped Langevin dynamics (OLD),
+The MF-CIM scheme can be realized experimentally for                                 dc = −λ∇f (c) dt + σdW,                         (5)
+arbitrary differentiable functions f , since the feedback
+term −λ∂i f (µ̃) is calculated via a digital processor, for ex-   the convergence rate of which to the Gibbs state ∝
+ample, an FPGA, GPU, an application-specific integrated           exp(−βf ) with β = 2λ/σ 2 has been thoroughly stud-
+circuit (ASIC), or perhaps via on-chip photonics.                 ied in mathematics and computer science [36, 45, 46]. To
+                                                                                                                                4
+
+incorporate the effect of the pump field, we may consider         not physical, the dynamics converges to σi = 1/2 and the
+the following modification of OLD,                                surviving µ dynamics converges asymptotically to
+
+     dci = (−1 + p − c2i )ci dt − λ∂i f (c) dt + σdWi ,     (6)                dµi = −(1 + j)µi dt − λ∂i f (µ̃) dt           (10)
+which mixes into the Gibbs state of a perturbed potential
+                                                                  or equivalently,
+                            1−pX            1X
+             c 7→ f (c) +           c2i +           c4i .   (7)           dµi = − (1 + j)µi dt − λ∂i f (µ) dt
+                            2   i
+                                            4   i
+                                                                                                           1 d 2 Wi          (11)
+                                                                                          r            r
+                                                                                             1
+                                                                                + (1 + j)      dWi +                dt.
+Reference [40] refers to Eq. (6) as the pumped Langevin                                     4j            4j dt2
+dynamics. Note that in both Eqs. (5) and (6) the drift
+and diffusion coefficients σ and λ may vary through the           This stochastic process includes not only the Wiener in-
+evolution time toward their long-time final values σ(T )          crement but also the time-derivative of white noise which
+and λ(T ) for large T ≫ 0.                                        cannot be interpreted in the usual Itô sense but it can be
+   Fig. 1 shows the general experimental scheme used to           rigorously studied using the theory of generalized stochas-
+implement the DL- and MF-CIMs [6]. Unconventionally,              tic processes [47]. In this framework, Eq. (11) means
+the device may operate below the saturation threshold.            that for every real-valued compactly supported test func-
+The key element of the architecture is a DOPO consisting          tion φ(t) we expect the following integral equation to be
+of an optical resonator in the form of a ring cavity along        satisfied:
+with a nonlinear optical crystal pumped by a laser. The             Z ∞                    Z ∞                              
+computational state of the machine is stored in the time-                µi (t) φ̇(t) dt =      φ(t) (1 + j) µi + λ ∂i f (µ̃) dt
+multiplexed oscillations of this resonator. Squeezed states          −∞                      −∞
+are generated and continually amplified using optical para-                                        r
+                                                                                                     1
+                                                                                                       Z ∞
+metric amplification (OPA) based on spontaneous para-                                    + (1 + j)            W (t)φ̇(t) dt
+                                                                                                     4j −∞
+metric down-conversion. The resulting time-multiplexed                                     r     Z ∞
+pulses are coherently and iteratively coupled with the                                        1
+                                                                                         −            W (t)φ̈(t) dt.
+gradient of the objective function, providing a descent                                       4j −∞
+direction for the dynamics. The gradient can be imple-                                                                        (12)
+mented by either a delay-line or measurement-feedback
+scheme. The diffusion process is realized by the injec-           Similar to white noise, its derivative is a (generalized)
+tion of quantum noise during the OPA process, as well             Gaussian process. However, the covariance operator of
+as the quantum measurement process in the case of the             white noise is the identity:
+MF-CIM.
+                                                                         h            i Z
+                                                                        E Ẇ (φ)Ẇ (ψ) =  φ(t) ψ(t) dt = ⟨φ, ψ⟩,             (13)
+                                                                                              R
+        A.     Ablation of the nonlinear crystal
+                                                                  consistent with the martingale properties of the Wiener
+   If the nonlinear crystal is removed from the experiment        process, while the covariance operator of the derivative is
+of Fig. 1, the in-phase and quadrature-phase components           −d2 /dt2 :
+ci and si in Eq. (1) are decoupled and the dynamics
+                                                                                                                d2
+                                                                                          Z                            
+reduces to                                                            h            i
+                                                                    E Ẅ (φ)Ẅ (ψ) = − φ̈(t) ψ(t) dt = − 2 φ, ψ .
+                               2                                                          R                   dt
+                                x                                                                                        (14)
+                dxi = − λ∂i i + f (x) dt               (8)
+                                2λ                                This means that the noise of process (11) does not have
+                                                                  locally independent increments as expected from white
+in the case of the DL-CIM, a simple and deterministic             noise. Further details can be found in Appendix A.
+gradient descent on a regularized landscape deviating
+                                                                    We name an MF-CIM that is lacking the nonlinear
+from the desired potential f itself. However, interestingly,
+                                                                  crystal a linear MF-CIM, and abbreviate it as LMF-
+in the case of MF-CIM, the removal of the OPA will result
+                                                                  CIM. In summary, the absence of the nonlinear crystal
+in
+                                                                  completely eliminates the source of noise in the fully
+             dµi = − (1 + j)µi dt − λ∂i f (µ̃) dt                 optical DL-CIM, but, interestingly, in the case of MF-
+                     p                                            CIM, the ablated experiment is still stochastic despite the
+                   + j(σi − 1/2)dWi ,                       (9)   variance of the signal field converging to a steady value.
+             dσi =(σi − 1/2)(−2 − j − 2jσi )dt.                   Note that since the spurious second-order noise discussed
+                                                                  here is caused by homodyne detections, it is present even
+Since σi = 1/2 and σi = −1/j − 1/2 < 0 are the only               in the MF-CIMs that include the nonlinear crystal (see
+steady state solutions of σi and the negative solution is         Eq. (2)).
+                                                                                                                                                            5
+
+                                             1.0                                                 each pair of solvers. These results clearly indicate a large
+                                                         ccorr =0.807                            correlation (a Pearson correlation coefficients of greater
+
+
+
+
+         Success Probability for CV MF-CIM
+                                                                                                 than ∼ 0.8) between various CIMs and OLD variants
+                                             0.8                                                 indicative of the similarities between the two dynamics.
+                                                                                                 More specifically, Fig. 3a shows the correlations in the suc-
+                                                                                                 cess probabilities when solving the CV BoxQP problem
+                                             0.6
+                                                                                                 using the CV-OLD versus the CV-MF-CIM solver. Next,
+                                                                                                 Fig. 3b compares the CV-MF-CIM solver against CV-
+                                             0.4                                                 LMF-CIM following the dynamics of Eq. (11), and Fig. 3c
+                                                                                                 compares the performance of CV-LMF-CIM against a
+                                                                                                 simple gradient descent with random initialization. Fur-
+                                             0.2                                                 thermore, for the task of binary optimization on the same
+                                                                                                 problem instances, we have shown the correlation be-
+                                                                                                 tween simulated annealing (SA) [10], the BV readout of
+                                             0.0                                                 OLD (BV-OLD), BV-MF-CIM, and the steepest descent
+                                                   0.0       0.2     0.4      0.6    0.8   1.0   (SD) [53] algorithms in Figs. 3d to 3f, respectively.
+                                                         Success Probability for BV MF-CIM
+                                                                                                    Another interesting observation is that both CV-OLD
+FIG. 2: Correlation plot comparing MF-CIM’s performance with CV                                  and CV-MF-CIM only slightly outperform the CV-LMF-
+and BV readouts when solving the CV BoxQP problem instances. This                                CIM solver, while CV-LMF-CIM is still by far better than
+shows that a significant number of problem instances in the benchmark
+set require CV readouts for success even within the 0.1% optimality
+                                                                                                 (the deterministic) gradient descent. On the one hand,
+gap.                                                                                             this shows that the shot noise of homodyne detection in
+                                                                                                 the fully linear optical setup is already a good source for
+                                                                                                 stochastic exploration of the optimization landscape. But
+     III.                                    PROSPECTS FOR BROAD UTILITY                         nonetheless, the shot-noise driven dynamics of Eq. (11)
+                                                   (THE GOOD)                                    appears to be less favourable than the nonlinear optical
+                                                                                                 setting of Eq. (2). We leave it to future studies to inves-
+   We now compare the performance of various CIMs                                                tigate which factors among the time correlations in the
+against classical heuristics in solving a prototypical                                           derivative of white noise, the rigid dynamics of the signal
+non-convex optimization problem, known as the box-                                               variance, and the LMF-CIM’s inability to compensate for
+constrained quadratic programming (BoxQP) problem [40,                                           photon and measurement losses contribute most to this
+48]. This is the simplest non-convex optimization problem                                        inferior performance.
+one can tackle, yet it is NP-hard [49] and no reasonably                                            Small correlation values of about 0.5 between the BV-
+efficient classical algorithms for solving it exist [50–52].                                     OLD or BV-MF-CIM solvers against both SA and steepest
+Further information about the BoxQP problem, our con-                                            descent algorithms, as shown in Figs. 3d and 3f, also attest
+struction of the benchmark instances, and how they are                                           that dynamics of MF-CIM and OLD are fundamentally
+solved using the dynamics of CIMs are provided in Ap-                                            different from both the Metropolis-Hastings rejection sam-
+pendix B.                                                                                        pling and the deterministic steepest descent algorithms
+                                                                                                 (see also Appendix B 4 for additional experiments). These
+   We study the BV and CV cases of the same problem by
+                                                                                                 results show that while ingenious quantum engineering
+simply converting the original continuous variables into
+                                                                                                 plays an important role in the architecture of the CIMs,
+binary ones. In what follows we use BV- and CV- prefixes
+                                                                                                 they ultimately realize classical computing schemes that
+to indicate a solver with continuous or binary readouts.
+                                                                                                 approximately integrate the OLD and can solve generic
+The BV solvers are identical to their CV counterparts with
+                                                                                                 BV and CV non-convex optimization problems with per-
+the difference that the final results are rounded to binary
+                                                                                                 formance similar to that of OLD.
+values 0 and 1 in post-processing. Figure 2 compares
+                                                                                                    As a practical application, we can leverage our obser-
+the performances of CV-MF-CIM and BV-MF-CIM when
+                                                                                                 vations to boost the performance of MF-CIM over the
+solving the CV BoxQP problem instances. That is, if
+                                                                                                 basic OLD depending on the geometry of the optimization
+the solution is fractional the BV-MF-CIM fails. This
+                                                                                                 landscape. A schematic of the various types of optimiza-
+test probes how many of our generated instances require
+                                                                                                 tion landscapes is shown in Fig. 4. To this end, we vary
+fractional readout despite the tolerated optimality gap.
+                                                                                                 the pump value of the MF-CIM when solving BoxQP
+The better performance of CV-MF-CIM indicates that
+                                                                                                 problems as shown in Fig. 5. The pump p in Eq. (2) is
+MF-CIMs are capable of solving CV problems natively.
+                                                                                                 written as p = p0 (t/T ) + (1 + j) + g 2 µ̃2i , yielding
+   Figure 3 shows the correlations between MF-CIM vari-
+ants, the OLD, and simple gradient and steepest descent                                                       t                        p
+algorithms. The correlation plots in Fig. 3 are ordered by                                         dµi ≈ p0     µi dt − λ∂i f (µ̃) dt + j(σi − 1/2)dWi , (15)
+                                                                                                              T
+decreasing solver performance from left to right, both for
+the CV (top row) and the BV (bottom row) solvers. The                                            for the SDE of the mean field amplitudes in MF-CIM.
+slope of the linear regression with the intercept fixed at                                       Therefore, in Fig. 5 the TTS for different values of p0 are
+the origin (green dashed) serves as a visual comparator for                                      shown. Each curve represents a group of randomly gen-
+                                                                                                                                                                                                                                                                                             6
+
+    a                                                                                                 b                                                                                       c
+
+                                                  1.0         ccorr =0.936                                                                1.0         ccorr =0.925                                                                       1.0       ccorr =0.778
+
+
+
+
+                                                                                                                                                                                              Success Probability for CV Linear MF-CIM
+    Success Probability for CV OLD                                                                    Success Probability for CV MF-CIM
+                                                  0.8                                                                                     0.8                                                                                            0.8
+
+
+                                                  0.6                                                                                     0.6                                                                                            0.6
+
+
+                                                  0.4                                                                                     0.4                                                                                            0.4
+
+
+                                                  0.2                                                                                     0.2                                                                                            0.2
+
+
+                                                  0.0                                                                                     0.0                                                                                            0.0
+                                                        0.0       0.2     0.4      0.6    0.8   1.0                                             0.0     0.2    0.4       0.6   0.8    1.0                                                       0.0    0.2     0.4      0.6    0.8    1.0
+                                                              Success Probability for CV MF-CIM                                                 Success Probability for CV Linear MF-CIM                                                       Success Probability for CV Gradient Descent
+    d                                                                                                 e                                                                                       f
+
+                                                  1.0                                                                                     1.0                                                                                            1.0
+
+
+
+
+    Success Probability for Simulated Annealing
+                                                              ccorr =0.483                                                                            ccorr =0.929                                                                                 ccorr =0.319
+
+
+
+
+                                                                                                      Success Probability for BV OLD                                                          Success Probability for BV MF-CIM
+                                                  0.8                                                                                     0.8                                                                                            0.8
+
+
+                                                  0.6                                                                                     0.6                                                                                            0.6
+
+
+                                                  0.4                                                                                     0.4                                                                                            0.4
+
+
+                                                  0.2                                                                                     0.2                                                                                            0.2
+
+
+                                                  0.0                                                                                     0.0                                                                                            0.0
+                                                        0.0      0.2     0.4      0.6    0.8  1.0                                               0.0       0.2     0.4      0.6    0.8   1.0                                                    0.0    0.2    0.4       0.6     0.8    1.0
+                                                               Success Probability for BV OLD                                                         Success Probability for BV MF-CIM                                                         Success Probability for Steepest Descent
+
+FIG. 3: Correlations between MF-CIM and classical heuristics when solving 50 BoxQP problem instances of size 70. (a) CV-OLD against the CV
+implementation of MF-CIM, (b) CV-MF-CIM (with the nonlinear crystal) versus CV-LMF-CIM (no nonlinear crystal), and (c) CV-LMF-CIM
+versus CV gradient descent method with random initialization. Overall CV-OLD outperforms CV-MF-CIM, which outperforms CV-LMF-CIM,
+which in turn outperforms gradient descent. (d) Simulated annealing (SA) versus BV-OLD, (e) BV-OLD against BV-MF-CIM, and (f) BV-MF-CIM
+versus the steepest descent solver. The CV BoxQP problem was solved for (a), (b), and (c), whereas the BV problem with the same objective
+function was solved for (d), (e), and (f). The dashed green line is a linear regression of the data points intercepting the origin providing a
+quantitative aid for comparing pairs of solvers. The Pearson correlation coefficient of each pair of solvers is indicated as ccorr . An iteration number
+of 4000 was used for all the OLD and MF-CIM methods and no post-processing steepest descents were performed. The success probabilities shown
+here indicate the results that are within 0.1% gap of the optimum solutions found using a global optimizer (see Section IV).
+
+
+
+erated instances with varying degrees of convexity. The                                                                                                               tional solutions (r = 0.357 and 0.732), a positive pump,
+parameter r is defined as the average number of fractional                                                                                                            which repels the pulse amplitudes away from the origin
+values in the solution vector of the problem instances                                                                                                                encourages a fast descent to the global minimum. These
+divided by the problem size. A value of r = 1.0 indi-                                                                                                                 results provide intuitions on how to modulate the pump
+cates that all components of the solutions are fractional,                                                                                                            of the CIM to encourage exploration versus exploitation
+while a value of r = 0.0 means that all variables attain                                                                                                              depending on the features of the optimization problem at
+their extreme values (binary solutions). The method for                                                                                                               hand. Moreover, interestingly, the “more convex” problem
+generating these instances is described in Appendix B 3.                                                                                                              instances require fewer number of iterations and perform
+                                                                                                                                                                      better with smaller or zero pump value, implying that
+   As can be seen in Fig. 5, for instances with the major-                                                                                                            they can be solved with lower energy consumption.
+ity of solutions being binary (r = 0.0 and r = 0.009 in-
+stances), negative pump values of −2.0 and −1.7 (marked
+by black diamond points on the curves) provides the best
+TTS. This can be explained by noting that since majority                                                                                                                IV.     NON-EVIDENT QUANTUM ADVANTAGE
+of axes of these problem instances are concave with solu-                                                                                                                                (THE BAD)
+tions at the boundaries, attracting the pulse amplitudes
+to the origin with a negative pump value encourages the                                                                                                                 As the results of the previous section suggest, although
+solver to hill climbing over the concave landscape to im-                                                                                                             CIMs can offer improvements over simple OLD, they do
+prove the chance of escaping the local minima. On the                                                                                                                 not perform fundamentally more efficient than OLD when
+other hand, for instances with higher numbers of frac-                                                                                                                solving non-convex optimization problems. We now study
+                                                                                                                                                            7
+
+     (a) z = x2 + y 2 − 0.25x − 0.25y                                      (b) z = x2 − y 2 − 0.25x − 0.25y             (c) z = −x2 − y 2 − 0.25x − 0.25y
+
+
+
+
+                                                                          1                                             0
+    2
+z                                                                  z      0                                        z
+                                                                         −1                                            −2
+    0
+    −1                                                   −1              −1                                   −1       −1                               −1
+                   0                          0                                       0               0                         0               0
+          x                       1 1             y                               x       1 1             y                 x         1 1           y
+
+FIG. 4: Example BoxQP optimization landscapes in two variables x and y. The global minimum of each optimization problem is shown via a red
+dot. (a) A convex surface with both x and y optimal values being fractional, r = 1.0. (b) A saddle surface, showing an extreme optimal value and a
+fractional one, r = 0.5. And (c) a concave surface with extreme optimal values in both variables, r = 0.0.
+
+
+
+the TTS scaling of our introduced solvers with respect to                                       based OLD (Fig. 6a) and the MF-CIM (Fig. 6b). The
+the problem size. Fig. 6 shows the TTS curves for BoxQP                                         MF-CIM solver has a slightly worse overall TTS scaling
+problems generated using the method of Appendix B 3.                                            compared to both OLD and DL-CIM with an exponential
+   Figure 6 displays the TTS median curves and interquar-                                       TTS growth law of slopes 0.043–0.063 for optimality gap
+tile range (IQR) regions for finding an approximate solu-                                       targets decreasing from 10% to 0.1%. But DL-CIM with
+tion that is correct up to a multiplicative error (i.e., opti-                                  an exponential TTS growth law of slope 0.029–0.042 is
+mality gap). The OLD algorithm is implemented on an                                             not statistically superior to the FPGA-based OLD with
+AMD Virtex UltraScale+ FPGA [54] with a clock speed                                             the slopes ranging in 0.029–0.049. This, together with
+of 300 MHz (Fig. 6a). For the DL-CIM and MF-CIM,                                                the correlation studies performed in Section III suggests
+the physical optical device delays are estimated based on                                       that, while the fully optical DL-CIM takes advantage of
+the experimentally motivated specifications detailed in                                         the larger bandwidth in optics to perform computations
+Appendix C 1.                                                                                   faster than electronic and hybrid opto-electronic devices,
+   We observe that DL-CIM (Fig. 6c) achieves about two                                          it does not present a fundamental algorithmic advantage
+orders of magnitude superior TTS than both the FPGA-                                            over the OLD as both attain similar asymptotic scaling
+                                                                                                laws with respect to the problem size.
+                                                                                                   While CIMs are theoretically shown to exhibit quantum
+                           100                                                                  effects, stringent conditions are placed on the parameters
+                                                                                                of the device (e.g. loss or coupling rate) for generating
+                                                                                                entangled states [55]. This severely limits the capability
+                                                                                                to perform quantum parallel search by using quantum
+                                                                                                entanglement or quantum superposition, the effects that
+
+
+
+          TTS (seconds)
+                          10−1                                                                  are nevertheless destroyed through processes such as con-
+                                                                                                tinuous measurement or photon loss across numerous
+                                                                                                delay line channels. It is therefore plausible to conclude
+                                      r = 0.0                                                   that both DL-CIM and MF-CIM essentially perform ap-
+                                      r = 0.009
+                                                                                                proximate and slightly biased variants of the classical
+                                      r = 0.046
+                          10−2                                                                  overdamped Langevin dynamics.
+                                      r = 0.123
+                                      r = 0.246
+                                      r = 0.357
+                                      r = 0.732                                                  V.   NO LEEWAY FOR DIGITAL SHORTCUTS
+                                 −2.0 −1.5 −1.0 −0.5   0.0   0.5   1.0    1.5   2.0                            (THE UGLY)
+                                                       p0
+                                                                                                  As previously shown in Fig. 6, the FPGA-based im-
+FIG. 5: TTS versus pump value for random instances with different
+degrees of convexity solved using the MF-CIM dynamics. The ratio r is
+                                                                                                plementation of OLD slightly outperforms MF-CIM in
+here defined as the average number of fractional values in the solution                         TTS scaling. Having assumed almost identical FPGA
+vector of the generated problems instances divided by the problem size.                         architectures for both solvers in our benchmarks suggests
+An r value of 0.0 means that all the solutions are at the boundaries of
+the box while r = 1.0 indicates a solution vector with only fractional                          that the fast optics of MF-CIM (a pulse rate of 5 GHz) is
+values. Note that here the pump p written in Eq. (2) is defined as                              bottlenecked by the slow digital processor. In this section
+p = p0 (t/T ) + (1 + j) + g 2 µ̃2i . This means that for p0 = 0 in the figure,
+the effect of the extra drift term due to the nonlinear crystal is                              we further investigate this inferior performance in Fig. 7.
+approximately cancelled out and the dynamics resemble those of the                              As shown in Fig. 7a, the FPGA-based CV-OLD slightly
+OLD.
+                                                                                                outperforms MF-CIM in scaling, while DL-CIM achieves
+                                                                                                                                                                                                                                           8
+
+                                a                                                                                         b                                                           c
+                                                      1                                                                                          1
+                                                 10                                                                                         10                                                         101
+                                                 100                                                                                        100                                                        100
+
+
+
+
+                                TTS (seconds)                                                                              TTS (seconds)                                              TTS (seconds)
+                                                     −1                                                                                         −1
+                                                10                                                                                         10                                                         10−1
+                                                10−2                                                                                       10−2                                                       10−2
+                                                10−3                                                                                       10−3                                                       10−3
+                                                10−4                     0.1% gap                   10.0% gap                              10−4                                                       10−4
+                                                                         1.0% gap                   (median)
+                                                10−5                     5.0% gap
+                                                                                                                                           10−5                                                       10−5
+                                                                                                    (IQR)
+                                                     −6                                                                                         −6
+                                                10                                                                                         10                                                         10−6
+                                                          20        30        40    50                   60       70                                 20   30      40   50   60   70                          20   30   40   50   60   70
+                                                                     Problem Size N                                                                            Problem Size N                                      Problem Size N
+
+FIG. 6: Estimated TTS for (a) the CV-OLD solver implemented on FPGA, (b) the CV-MF-CIM, and (c) the CV-DL-CIM solvers. For each solver,
+several TTS curves are displayed for achieving various optimality gap targets. Solid curves show the TTS median values and the shaded regions
+show the IQR corresponding to the 25th and 75th percentile of the solved instances up to the specified optimality gap.
+
+
+
+two orders of magnitude faster TTS as a prefactor.                                                                                                                 none of which are needed in the FPGA-based OLD (see
+   The main differentiating factor between MF-CIM and                                                                                                              Appendix C 2). Here again, the true merit of optical infor-
+FPGA-based OLD is the optical production of Wiener                                                                                                                 mation processing is observed in the ETS scaling curve of
+increments through continuous weak measurements, as                                                                                                                the DL-CIM, revealing that fully optical computational
+opposed to generating pseudo-random number inside the                                                                                                              devices can substantially reduce energy consumption be-
+FPGA. However, in practice digital pseudo-random num-                                                                                                              side the computation time.
+ber generation is not the most expensive subroutine of                                                                                                                For example, in the FPGA-only implementation of
+OLD. Moreover, the digital latency of pseudo-random                                                                                                                OLD, the total power consumed by the FPGA board for a
+number generation can be easily optimized by appropriate                                                                                                           problem of size 70 is about 4.09 W. About 6.5% (264 mW)
+parallel processing within the FPGA (see Appendix D).                                                                                                              of this amount is used for random number generation,
+   The drawbacks of the hybrid digital-optical scheme in                                                                                                           43% (1.76 W) for matrix-vector multiplication (MVM)
+MF-CIM is further evidenced by the ETS scaling results                                                                                                             and other mathematical operations, and the rest (2.08
+in Fig. 7b. Interestingly, the MF-CIM has an even larger                                                                                                           W) is the static power to run the FPGA, board, and the
+energy consumption compared to an FPGA-only imple-                                                                                                                 clocking components. On the other hand, for the FPGA
+mentation of OLD. This is due to the presence of analog-                                                                                                           of the MF-CIM system, the total power consumed by
+to-digital (ADC) and digital-to-analog (DAC) convertors,                                                                                                           the FPGA board is about 15.69 W. From this amount,
+as well as transceivers on the FPGA in the MF-CIM,                                                                                                                 about 12.4% (1.94 W) is consumed for MVM and other
+                                                                                                                                                                   mathematical operations, 21.06% (3.3 W) for the static
+a                                                                                   b                                                                              power to run the FPGA, the board, and the clocking
+                                                                                                                                                                   circuits, and the rest (10.45 W) to run the transceivers
+                  101                                                                               103
+                                         FPGA                                                                     FPGA                                             on the FPGA (for connectivity between the internal and
+                       0                                                                            102
+                  10                     MF-CCVM
+                                         DL-CCVM                                                         1
+                                                                                                                  MF-CCVM
+                                                                                                                  DL-CCVM
+                                                                                                                                                                   external modules of the FPGA) as well as the DAC and
+                                                                                                    10
+                 10−1                                                                                                                                              ADC modules. Therefore the advantage of absence of
+                                                                                                    100
+
+
+ TTS (seconds)                                                                      ETS (joules)
+                 10−2                                                                              10−1
+                                                                                                                                                                   digital random number generation in the MF-CIM device
+                                                                                                   10−2
+                                                                                                                                                                   is completely lost due to the high power consumption of
+                 10−3
+                                                                                                   10−3
+                                                                                                                                                                   the DAC, ADC, and other transceiver operations required
+                 10−4
+                                                                                                   10−4                                                            to convert between optical pulses and digital signals.
+                 10−5
+                                                                                                   10−5                                                              In this benchmark, both FPGAs used for the FPGA-
+                      −6
+                 10                                                                                10−6                                                            based OLD and for the MF-CIM implementations use
+                           20            30           40       50        60    70                            20   30      40               50        60   70
+                                                 Problem Size N                                                        Problem Size N
+                                                                                                                                                                   the smallest unit of MVM which is a single multiplication
+FIG. 7: (a) Estimated TTS and (b) ETS metrics for the three types of                                                                                               and addition at a time (see Appendix D). This serial
+hardware studied here: FPGA-based OLD, CV-MF-CIM, and                                                                                                              implementation provides a smooth TTS and ETS scaling
+CV-DL-CIM. For each solver the median and the IQR range is
+presented and a common 0.1% target optimality gap is assumed. The
+                                                                                                                                                                   curves for comparing digital and optical hardware as the
+FPGAs in the full FPGA implementation (green curve) and the hybrid                                                                                                 computational units and random access memory (RAM)
+FPGA-optics implementation of MF-CIM (orange curve) are designed                                                                                                   can be assumed to increase proportionally with respect
+such that they have the smallest unit of vector-matrix multiplication.
+We call this implementation serial and it provides a realistic                                                                                                     to problem sizes. While it is possible to improve the TTS
+performance curve for the FPGA and MF-CIM as the FPGA                                                                                                              and ETS metrics of the MF-CIM using parallelization
+architecture is scalable for arbitrarily large problem sizes, assuming a
+scalable random access memory. We have assumed that the FPGAs in                                                                                                   and multiple FPGA hardware units [26], the same tricks
+both of these designs to be from the AMD Kintex UltraScale+ family                                                                                                 can be applied to the FPGA-based OLD implementation,
+for the purposes of energy consumption calculations [54].
+                                                                                                                                                                   again eliminating the chance of any significant advan-
+                                                                                                                         9
+
+tage from optics in hybrid electronic-optical CIMs (see        and low energy consumption are the main advantages of
+Appendix D). The advantage of optical random number            optics in solving SDEs. The challenge, however, remains
+generation indeed becomes more apparent when using a           to be the implementation of efficient and reliable nonlinear
+parallel MVM implementation within the FPGA. In this           interactions without resorting to digital electronics.
+case, the power consumed for random number generation
+is about 50% of the total power consumption. Neverthe-
+less, the hybrid system still incurs a large DAC and ADC                       DATA AVAILABILITY
+power consumption, about twice as large as the power con-
+sumed for digital random number generation (see Fig. 9).
+                                                                 The datasets generated and analyzed as part of
+These observations show that analog optical computation
+                                                               our study are available from the corresponding au-
+is only truly beneficial when no DAC, digital processing,
+                                                               thor upon request.    Our simulators of continuous
+and ADC units are used, encouraging research towards
+                                                               variable CIM machines are publicly available as an
+fully analog and scalable optical information processing.
+                                                               open source Python package at https://github.com/
+                                                               1QB-Information-Technologies/ccvm/.
+                 VI.    CONCLUSION
+                                                                              ACKNOWLEDGEMENT
+   We have presented the advantages and limitations of
+the coherent Ising machines (CIM) through a case study
+                                                                  The authors thank Yoshihisa Yamamoto, Edwin Ng,
+of the box-constrained quadratic programming (BoxQP)
+                                                               Satoshi Kako, Sam Reifenstein, Davide Ventureli, Robin
+problem, the simplest NP-hard optimization problem that
+                                                               Brown, and David Bernal for helpful discussions, as well
+can be studied in the context of both binary and con-
+                                                               as Mehmet Canturk for providing valuable feedback. We
+tinuous optimization. We have shown that CIMs are
+                                                               thank our editor, Marko Bucyk, for his careful review and
+intrinsically analog devices, that is, information is en-
+                                                               editing of the manuscript. The authors acknowledge the
+coded in analog signals and processed by manipulating
+                                                               financial support received through the NSF’s CIM Expe-
+these signals continuously in time. These devices perform
+                                                               ditions award (CCF-1918549). P. R. acknowledges the
+an approximate integration of the overdamped Langevin
+                                                               financial support of Mike and Ophelia Lazaridis, Innova-
+dynamics (OLD). This is true whether the problem solved
+                                                               tion, Science and Economic Development Canada (ISED),
+is a binary-variable (BV) or a continuous-variable (CV)
+                                                               and the Perimeter Institute for Theoretical Physics. Re-
+optimization problem. Viewing CIMs as analog CV op-
+                                                               search at the Perimeter Institute is supported in part by
+timizers allows us to avoid the overheads of digital (i.e.,
+                                                               the Government of Canada through ISED and by the
+binary) information encoding, discretizations and problem
+                                                               Province of Ontario through the Ministry of Colleges and
+reformulations in practical applications.
+                                                               Universities.
+   We have further shown that the CIMs do not present
+any fundamental computation advantage over OLD. While
+these devices are smartly quantum engineered to gen-
+erate squeezed states of light, quantum computational                      AUTHOR CONTRIBUTIONS
+effects such as entanglement and superposition are sup-
+pressed by continuous loss and measurement processes             Under the guidance of A. S. and P. R., F. K. and M. P.
+present in these devices. Additionally, we have argued         conducted the numerical experiments involved in this
+that the hybrid optical-digital MF-CIM is limited by an        work. F. K., A. S., and P. R. co-wrote the manuscript. All
+analog-digital conversion bottleneck and therefore shows       authors contributed to ideation throughout the research
+no significant advantage over digital-only devices such as     process. P. R. led the overall efforts of this work.
+FPGAs. In fact, we observed that MF-CIM consumed
+even more energy than an FPGA-only implementation
+of OLD. Our benchmarking study demonstrated that                            COMPETING INTERESTS
+fully optical CIMs can solve non-convex continuous opti-
+mization problems around two orders of magnitude faster
+                                                                 The authors declare no competing interests.
+than classical and hybrid optical-digital heuristic solvers.
+Therefore we expect that the true merit of fast optics is
+in devices that avoid digital information conversions and
+operate fully in the analog regime.                                                  APPENDIX
+   Finally, we note that performant fully optical CIMs can
+have broader applications beyond quadratic optimization.       Appendix A: Second derivative of Wiener processes
+Variants of these devices can be beneficial in all classical             and the MF-CIM dynamics
+computational tasks that require solving stochastic differ-
+ential equations (SDE). Generating high-quality random           Equation (11) for the Linear MF-CIM (LMF-CIM)
+numbers and integrating SDEs at extremely high speeds          involves the second derivative of the Wiener process, or
+                                                                                                                                  10
+
+the first derivative of white noise Ẇ = dW/dt:                       where the last equality follows from two integration by
+                                                                      parts. In other words, the covariance operator C satisfying
+          dµi = − (1 + j)µi dt − λ∂i f (µ) dt
+                                                                                          E[Xφ Xψ ] = ⟨Cφ, ψ⟩                  (A8)
+                                                              (A1)
+                         r              r
+                             1              1
+                + (1 + j)      Ẇi dt +       Ẅi dt .                is identity C = I. Since identity is identical to convolution
+                            4j             4j
+                                                                      with the δ function, the covariance kernel function of this
+Unlike Ẇ , the second derivative η = Ẅ is “too singular”            process is δ(s − t).
+to be integrable as an Itô process. Nevertheless, we can                Now, we can define the derivative of white noise, Ẅ ,
+make sense of it using the theory of generalized stochastic           via two integration by parts as
+processes [47, 56] as briefly introduced below.
+                                                                                           ⟨Ẅ , φ⟩ := ⟨W, φ̈⟩.                (A9)
+   Given a probability space (Ω, F, P), one approach for
+defining a generalized process η on it distributionally is by         Note that similar to Ẇ , the second derivative Ẅ is also a
+determining what η does on a family of time-dependent                 (generalized) Gaussian process. A generalized Gaussian
+test functions. Typically the set D = Cc∞ (R) of smooth               random process η is one for which any random vector
+compactly supported functions is used. This means asso-               formed by testing against N functions is (multivariate)
+ciating an ordinary random variable                                   Gaussian, that is, if
+                  Xφ := η(φ) := ⟨η, φ⟩ : Ω → R                (A2)          Xφ1 :φN = [⟨η, φ1 ⟩, . . . , ⟨η, φN ⟩]T ∈ RN ,    (A10)
+
+for any test function φ. If the mapping φ 7→ Xφ from                  is Gaussian for every choice of test functions φi . Then,
+D to the space of random variables L0 (Ω) is linear and               Gaussianity follows from the definitions in Eqs. (A3)
+continuous, then η is called a generalized stochastic pro-            and (A9).
+cess. Note that the bracket is merely a formal notation                  The mean of Ẅ is also zero since ⟨E[Ẅ ], φ⟩ =
+and not necessarily an inner product since η is not gen-              ⟨E[W ], φ̈⟩ = 0. However, Ẅ is still a different process.
+erally an integrable
+                 R function. However, the usual inner                 For example, the covariance kernel is not the same as
+product ⟨η, φ⟩ = η dφ satisfies this definition when η is             δ(s − t). We have
+integrable.                                                                            ZZ ∞
+   For example, white noise, ξ = Ẇ , acts on every com-                   E[Xφ Xψ ] =       min(s, t) φ̈(s)ψ̈(t) ds dt
+pactly supported test function ϕ via                                                      −∞
+                                                                                         Z ∞                              (A11)
+                    Xφ = ⟨Ẇ , φ⟩ = −⟨W, φ̇⟩                  (A3)                    =−      φ̈(t) ψ(t) dt = ⟨Cφ, ψ⟩.
+                                                                                             −∞
+
+using the usual L2 inner products. Indeed, given that                 Thus the covariance operator is −d2 /dt2 , and the covari-
+W (t) is almost surely continuous and φ is smooth with                ance kernel function is −δ ′′ (s − t).
+compact support, after integration by parts we have:                     Returning to the LMF-CIM equation Eq. (A1), we can
+   Z                  h          i∞   Z                               make sense of this stochastic process, by observing its
+      Ẇ (t) φ(t) dt = φ(t) W (t)   −    W (t) φ̇(t)dt.               effect on any test function φ(t) as follows:
+      R                                  −∞      R                    Z ∞                     Z ∞
+                                            (A4)
+                                                                                                                                 
+                                                                            φ(t) µ̇i (t) dt =      φ(t) − (1 + j) µi − λ ∂i f (µ̃) dt
+The boundary term vanishes away from the compact                       −∞                       −∞
+support and therefore,                                                                                r    Z ∞
+                                                                                                        1
+                       Z                                                                    + (1 + j)            φ(t)Ẇ (t) dt
+                                                                                                        4j −∞
+            Xϕ (ω) = − W (t, ω) φ̇(t) dt,   (A5)                                              r     Z ∞
+                                    R                                                            1
+                                                                                            +            φ(t)Ẅ (t) dt
+for all ω ∈ Ω. We can indeed recover the usual properties                                        4j −∞
+of white noise. For example,                                                                                                   (A12)
+                       Z                                              Integrating by parts for the derivative terms yields
+          E[Xφ (ω)] = − E[W (t, ω)] φ̇(t) dt = 0,   (A6)               Z ∞                    Z ∞                              
+                                R
+                                                                            µi (t) φ̇(t) dt =      φ(t) (1 + j) µi + λ ∂i f (µ̃) dt
+                                                                        −∞                      −∞
+and                                                                                                   r   Z ∞
+                                                                                                        1
+                                                                                            + (1 + j)            W (t)φ̇(t) dt
+                         ZZ
+E[Xφ (ω)Xψ (ω)] =              E[W (s, ω)W (t, ω)] φ̇(s)ψ̇(t) ds dt                                     4j −∞
+                                                                                              r     Z ∞
+                         ZZ                                                                      1
+                     =         min(s, t) φ̇(s)ψ̇(t) ds dt                                   −            W (t)φ̈(t) dt.
+                                                                                                 4j −∞
+                         Z                                                                                                     (A13)
+                     =        φ(t) ψ(t) dt,
+                          R                                           This distributional identity must hold for all test functions
+                                                              (A7)    φ ∈ Cc∞ (R).
+                                                                                                                                   11
+
+ Appendix B: Solving BoxQP problems using CIMs                      becomes [40]:
+                                                                                          N                 V
+  In this section, we follow the framework introduced in                                  XQij        1 cj        i
+                                                                         −∂i f (c) = −                     +1 − .                 (B3)
+[40] for solving continuous variable problems using the                                j=1
+                                                                                           2s         2 s       2s
+CIM. We introduce the box-constrained quadratic prob-
+lems (BoxQP) problem, our approach for implementing                   In the MF-CIM scheme, we use a similar encoding to
+and solving them using CIMs, and a new method for                   that of the DL-CIM,
+generating random BoxQP instances.                                                                
+                                                                                           1 µ̃i
+                                                                                     xi 7→       +1 ,               (B4)
+                                                                                           2 s
+    1.    Box-constrained quadratic programming
+                  (BoxQP) problems                                  to map the problem, which results in the drift term
+                                                                                          N                     
+                                                                                          X Qik 1 µ̃k                      Vi
+  The BoxQP problem can be formulated as follows:                        −∂i f (µ̃) = −                      +1        −      .   (B5)
+                                                                                                2s   2   s                 2s
+                                                                                          k=1
+                              N                N
+                          1 X                 X
+                                                                    Here, s is a hyperparameter
+    maximize    f (x) =           Qij xi xj +     V i xi ,                                      p that represents a saturation
+                          2 i,j=1             i=1
+                                                             (B1)   bound [40]. As long as s < p − (1 + j)/g near the end of
+                                                                    the evolution, it is tuned to obtain the best performance.
+   subject to ℓi ≤ xi ≤ ui        ∀i ∈ {1, . . . , N },
+
+where Q ∈ RN ×N is a symmetric matrix, V ∈ RN is                         3.   Randomly generated BoxQP instances
+a real N -dimensional vector, and the lower and upper
+bounds ℓi ∈ R and ui ∈ R specify the box constraints.
+                                                                       We have tested the performance of the various solvers
+Here, for simplicity, we will assume all ℓi = 0 and ui =
+                                                                    introduced in this paper on randomly generated BoxQP
+1 and refer the reader to [40] for a thorough study of
+                                                                    problem instances. As opposed to the older meth-
+these problems. In this paper, e.g., in Fig. 3, we have
+                                                                    ods [40, 57], our new approach provides us control over
+solved both binary-variable (BV) and continuous-variable
+                                                                    the hardness of the problem instances and the number of
+(CV) versions of the BoxQP problem. As shown above,
+                                                                    fractional values in the corresponding optimal solutions.
+the BoxQP problem is originally a CV problem. To
+                                                                    For simplicity, all variables are assumed to be constrained
+convert it to a BV problem, we replace the box constraints
+                                                                    to the domain [0, 1] by setting ℓi = 0 and ui = 1 for
+with binary variable constraints, xi ∈ {0, 1} for all i ∈
+                                                                    all i ∈ {1, . . . , N }. The global maxima of the generated
+{1, · · · , N }. This restriction may or may not change the
+                                                                    instances were found using Gurobi 9.5 [58]. Appendix E
+optimal solution of the problem (see Fig. 5).
+                                                                    further demonstrates the time-evolution of the dynamics
+                                                                    of the DL-CIM and MF-CIM solvers for two example
+                                                                    BoxQP problem instances.
+     2.   Mapping BoxQP problems on the CIM                            The previous problem generation method used in Refs.
+                                                                    [40, 57] relies on constructing random Q matrices and V
+   CIMs can be operated below the saturation threshold              vectors whose elements are sampled from a symmetric dis-
+to solve CV optimization problems. In this case, the                tribution centered around zero. The disadvantage of this
+amplitude and phase of the pulses represent the value               method is that the solution vector for the instances con-
+and the sign of the variables of the problem. By prop-              tains values that are mostly at the boundaries of the box
+erly pumping the optical pulses, the CV variables of the            constraints. In other words, there are very few fractional
+BoxQP problem are encoded into the analog pulse ampli-              values between 0 and 1 in the optimal solutions. Since
+tudes natively. Furthermore, the box constraint is either           only the negative eigenvalues of Q (in a maximization
+implemented using a digital processor, as in the case of            problem) can give rise to fractional solutions, the ratio
+the MF-CIM, or by exploiting the saturation feature of              between the elements of V and the negative eigenvalues
+the nonlinear crystal in the case of the DL-CIM [40].               of Q determine whether the solution along a given axis is
+   Specifically, in the DL-CIM scheme, the following                fractional. With this ratio being itself a random number,
+change of variable is performed,                                    the majority of the optimal values are at the boundaries
+                                                                    of the box constraints. In fact, many of the instances
+                            1  ci                                 generated using this method do not contain any fractional
+                    xi 7→          +1 ,                      (B2)   optimal values.
+                            2 s
+            √                                                          To mitigate this issue, we consider biasing the eigen-
+where s ≃ p0 − 1 is the approximate saturation ampli-               values of the Q matrix to contain more positive values.
+tude for all the DOPO pulses. Here p0 is the pump value             While, with proper setting of the range of values for the
+at the end of the evolution process. Therefore, the drift           V vectors, this can lead to more fractional values in the
+term in the SDEs of the DL-CIM described by Eq. (1)                 solution, this would lead to easier problem instances. This
+                                                                                                                                     12
+
+is because majorities of the axes of the generated instance                     104
+are convex and a simple gradient descent approach can                                                               0.1% gap
+find most of the values of the solution vector.                                                                     1.0% gap
+                                                                                103
+   To maintain the difficulty of the instances, we generate
+a random diagonal matrix D representing the eigenvalues
+of the Q matrix, and a random C vector representing                             102
+the V vector before performing a rotation, with elements                  R99
+sampled from a uniform distribution between −50 and                             101
++50 for both D and C. We then generate random N × N
+rotation matrices R by performing 2D rotations repeatedly                       100
+on randomly selected pairs of axes of an identity matrix
+until all the elements of the rotation matrix R are non-
+zero. We then use this rotation matrix to produce the Q                       10−1
+                                                                                      20    30      40     50      60     70
+matrix and the V vector according to Q = R · D · RT and                                       Problem Size N
+V = R · C. Since the box constraint is still imposed in
+the new coordinates, the solution of the instance becomes        FIG. 8: The effect of the noise in the DL-CIM method (solid lines) as
+intractable through the rotation process. The maximum            compared to solving the instances using a simple Euler gradient descent
+                                                                 method with constraint enforcement at each step (dotted lines), when
+angle for the random 2D rotations ϕmax is a determining          solving the generated random BoxQP instances. The smaller values for
+factor for the characteristics of the randomly generated         R99 of the DL-CIM indicates that the noise in the process helps in
+                                                                 escaping local minima and finding the optimum solutions of the
+instances. For small ϕmax , there are more fractional values     problem instances. The R99 value for the gap percentages of equal to
+in the solution but the instances are easier to solve as         or larger than 5.0% is equal to 1.0 for both methods and all instance
+                                                                 sizes.
+they are closer to the original diagonal problem. Larger
+values of ϕmax , however, lead to harder problem instances
+but with less fractional values. In this paper, we have set
+ϕmax = π/2 for generating the random instances used to           compared to the DL-CIM method for problem sizes 30
+evaluate the Langevin and CIM solvers. For each problem          and 50. These results show that, due to the presence of
+size, we have generated 50 random problem instances.             local minima in the landscape of the instances, the noise
+   For generating the random instances with different de-        helps the solver to escape the local minima and find the
+gree of convexity in Fig. 5, the random eigenvalues of the       optimum solution. Similar observations are made for the
+diagonal D matrix were sampled from a uniform distribu-          other solvers studied in this paper.
+tion from the range −50 + c0 and +50 + c0 , where c0 > 0
+offsets the eigenvalues towards positive values, making
+the instances more concave (in a maximization problem),                     Appendix C: Benchmarking metrics
+while c0 < 0 pushes the eigenvalues towards negative
+values, making the problems convex along more of the                          1.   Time-to-solution calculations
+axes. The factor r in Fig. 5 is the ratio of fractional values
+in the solution of the problem instances to the number              Here, we provide more details for estimating the TTS
+of variables, averaged over all the instances. Values of         of the optical devices with the dynamics introduced in
+c0 = +50, +25, +12.5, 0, −12.5, −25, −50 have led to r           Section II. TTS is a useful metric for comparing the
+values of 0.0, 0.009, 0.046, 0.123, 0.246, 0.357, and 0.732,     performance of different hardware when solving a given
+respectively, in Fig. 5. For r = +50, for example, all           optimization problem [40]. Table I shows the parameters
+eigenvalues of the Q matrix are positive and thus all the        of the solvers used for generating the results in Figs. 6,
+solutions lie on the boundary of the box when maximizing         7 and 10. For the OLD, PDL, and DL-CIM solvers, the
+the objective function constrained to the box. We also                                t
+                                                                 pump field p(t) = Tmax   p0 follows a linear schedule, while
+have set ϕmax = 0.1π for the instances used to generate          for the MF-CIM it was set to p(t) = Tmax  t
+                                                                                                             p0 + 1 + j(t) to
+the results in Fig. 5.                                           compensate for the measurement loss and background
+                                                                 loss. On theother hand, the measurement strength is
+                                                                                     t
+                                                                 j(t) = j0 exp −α Tmax , where α is an arbitrary parame-
+       4.   Significance of CIM’s noise injection
+                                                                 ter. For the DL-CIM
+                                                                                       solver,
+                                                                                             the injected noise parameter
+                                                                                         t
+  Fig. 8 shows the effectiveness of the noise when solving       is r(t) = r0 exp −β Tmax , where β is an arbitrary pa-
+the randomly generated instances. We have compared the           rameter [40].
+performance of the DL-CIM method (solid lines) against             For the DL-CIM solver, the time for a single trial is
+a simple Euler gradient descent method (with no noise)           estimated as Tmax = niter · N · Tpulse , where Tpulse =
+with constraint enforcement at each step. For the 0.1%           1/flaser is the time delay between two individual pulses
+gap (blue curves), the Euler gradient descent method fails       within the cavity and flaser is the pulse rate of the laser
+to find a solution for more than 50% of the instances            source; for our benchmarking study, we have used the
+for problem sizes 40, 60, and 70, and it under-performs          value flaser = 100 GHz or Tpulse = 10 picoseconds [24].
+                                                                                                                                  13
+
+                           Parameter                 Variable     OLD        PLD      DL-CIM        MF-CIM
+                      Number of Iterations             niter   500 − 1500 500 − 1500 103 − 104 300 − 4000
+                        Laser Pulse Rate               flaser       -          -      100 GHz        5 GHz
+                    Normalized Pump Field               p0          -         2.0         8.0           0.0
+                  Normalized Time Increment              dt      0.002      0.002        0.001       0.0025
+                      Diffusion Parameter                σ         0.5        0.5          -             -
+                   Injected Noise Parameters          (r0 , β)      -          -        (10, 3)          -
+          Normalized Optical Non-linearity in DL-CIM    As          -          -         √10             -
+                     Saturation Parameter                s          -          -     1.2 p0 − 1        20.0
+              Measurement Strength Parameters         (j0 , α)      -          -           -          (5, 3)
+                                                                                             t
+                  Gradient Function Strength             λ         1.0        1.0   50 + Tmax   100   4000
+          Normalized Optical Non-linearity in MF-CIM     g          -          -           -          0.001
+
+                              TABLE I: Parameters for the OLD, PLD, DL-CIM, and MF-CIM solvers.
+
+
+
+While in practice the size of the device’s optical cavity           Problem Size    20    30    40   50     60   70
+is typically fixed, for our benchmarking study we have             OLD on FPGA
+                                                                                   1.37 3.04 5.37 8.37 12.03 16.37
+assumed that the length of the optical cavity is optimally           serial (µs)
+adjusted to fit the exact number of the optical pulses             OLD on FPGA
+                                                                                  0.053 0.053 0.057 0.057 0.057 0.06
+representing the number of variables in a given problem             parallel (µs)
+instance in order to obtain the optimal TTS. In the case         FPGA in MF-CCVM
+                                                                                   1.43 3.1 5.43 8.43 12.1 16.43
+                                                                     serial (µs)
+of the MF-CIM solver, the single trial time is estimated
+                                                                 FGPA in MF-CCVM
+as Tmax = niter (TFPGA + Tbuffer ). Here TFPGA is the time                        0.093 0.093 0.097 0.097 0.097 0.1
+                                                                    parallel (µs)
+required by the FPGA to compute the feedback term at
+every round trip. This time is accounted for in the optical     TABLE II: Latency of the FPGA when implementing the OLD (first
+cavity by increasing the length of the coil in between the      two rows) and the latency of the FPGA together with that of the ADC
+                                                                and DAC in the MF-CIM (second two rows) for the serial and parallel
+two couplers depicted in Fig. 1. The term Tbuffer is a small    implementations. These values are for a single Euler method iteration
+additional latency needed for the pulses to be amplified by     in the FPGA implementation or a single round-trip time in the
+                                                                MF-CIM.
+the OPA before their arrival at the output coupler prior
+to the next round trip. In the MF-CIM, flaser = 5 GHz to
+match with the speed of commercially available DACs and
+ADCs [59]. The number of iterations used for solving each                  2.    Energy consumption estimates
+problem size using the DL-CIM and MF-CIM methods
+were found by tuning niter (Appendix F).                           In this section, we present our approach for estimating
+                                                                the ETS for three solvers implemented on five different
+   Table II shows the latencies of the FPGA and its sup-        hardware: OLD implemented on FPGA, CPU, and GPU;
+porting components for each problem size studied. For           DL-CIM; and MF-CIM. ETS is a metric that quanti-
+the OLD solver, which is implemented on the FPGA using          fies the energy consumption of a given hardware device
+a basic arithmetic approach based on the Euler method,          in implementing a specified solver for a given BoxQP
+the FPGA time for each iteration is measured using the          instance. Similarly to the way we define the TTS, we
+available FPGA metrics. For the FPGA implemented                define ETS = R99 · Emax , where R99 is the number of
+as part of the MF-CIM solver, the FPGA times are es-            trials needed to solve a given problem instance with a
+timated by multiplying the total number of clock cycles         99% success rate at least once and Emax is the estimated
+required for evaluating the feedback term (for ADC, DAC,        maximum energy consumption for a single run of a given
+and the FPGA computations) by the clock duration at a           solver. Here, Emax = Pmax · Tmax , where Pmax is the
+clock frequency of 300 MHz.                                     power consumed by the entire device. Note that here
+                                                                Pmax may have contributions from different elements in a
+   Since the solutions of the problem instances are contin-     given device which may not be running continuously all
+uous numbers, the proposed stochastic solvers typically         at the same time. While this is a valid assumption, we
+yield approximate solutions in close proximity to the op-       ignore such considerations in order to find an upper limit
+timum solutions due to the presence of noise. To address        on the energy consumption of a device.
+this issue, we performed a short post-processing step for          Fig. 9 shows the power consumption of the FPGA and
+all solvers where the solution found by the solver was used     its supporting circuitry for the OLD implemented on the
+as the initial value for a simple Euler gradient descent        FPGA (“full FPGA”) and the MF-CIM (“MF-CIM”) for
+method with constraint enforcement at each step. For            different problem sizes and for the serial (Fig. 9a) and
+each solver, the number of iterations chosen for this post-     parallel (Fig. 9b) implementations (see Appendices C 3
+processing step was 1% of the total number of iterations        and D). These values are obtained using metrics avail-
+used by the solver in solving a given problem instance.         able for the FGPA. The total energy consumption of the
+                                                                                                                                                                 14
+
+ a                                                                                               Here, the first term is the power required to generate the
+                          20.0                                                                   optical pulses, the second term is the power required to
+
+
+
+
+  Power Consumption (W)
+                          17.5         RNG                                                       run the two amplitude and phase modulators placed on
+                          15.0
+                                       MVM                MF-CIM                                 each of the (N − 1) delay paths in the delay network, Psq
+                                       Static                                                    is the power required to generate the injected squeezed
+                          12.5         DAC & ADC
+                                                                                          10.4   state, Pelec is the power consumed by the electronics to
+                          10.0                    10.5         10.5    10.5       10.5
+                                      10.4                                                       prepare the device for each round trip, and the last term
+                           7.5                                                                   is the power consumed by an OPA placed in the delay-line
+                           5.0                         full
+                                                      FPGA                         3.2    3.3    network (not shown in Fig. 1) to amplify the optical pulses
+                                                                           3.2
+                           2.5        3.1         3.1       3.1
+                                                                                                 before sending them through the delay lines [28]. Table III
+                                      0.5         0.7       0.9            1.4     1.5    1.9
+                           0.0                                                                   shows the parameters used for this power consumption
+                                  20          30           40         50         60      70
+                                                         Problem Size                            estimation.
+ b                                                                                                        Term Popt     Pmod   Psq    POPA
+                                                                                                          Value 1.2 mW 10 mW 180 mW 222.2 mW
+
+
+
+
+  Power Consumption (W)
+                          50       RNG
+                                   MVM
+                                                                                                 TABLE III: The values used for the sources of power consumption in
+                          40       Static
+                                                                                          31.3   DL-CIM according to Eq. (C1).
+                                   DAC & ADC             MF-CIM
+                          30
+                                                                                  20.9
+                                                      full             20.9                         For the type of PPLN used in CIMs, the threshold
+                          20                         FPGA 20.9                            7.3    power is around 270 µW [30]. To obtain this power from
+                                                                                  5.6
+                          10      10.4        10.5                     5.2                       the output of a second-harmonic generation (SHG) pro-
+                                                           4.8                            14.5
+                                  3.2         3.4
+                                                           5.1         7.7        10.7           cess with around 30% efficiency, an input power of 900 µW
+                                  1.6          3
+                           0                                                                     is needed. We have added another 300 µW of power to
+                                 20          30           40          50         60      70
+                                                         Problem Size                            this value for Popt to account for extra laser source power
+                                                                                                 requirements such as homodyne detection or phase or
+FIG. 9: The power consumption of the FPGA and the surrounding                                    amplitude modulators. Pmod is estimated based on am-
+circuits for a single iteration of the Euler method in the OLD
+implemented on FPGA (“full FPGA”) as well as the single calculation
+                                                                                                 plitude and phase modulators that can have a Vπ of 1 V
+of the feedback term in MF-CIM (“MF-CIM”). (a) Serial                                            for a 50 Ω input impedance. This is the voltage required
+implementation based on Fig. 11b and (b) parallel implementation                                 to generate a full-range intensity or phase modulation.
+based on Fig. 11c. In the full FPGA implementation, the power is
+divided between RNG, MVM, and static power, while in the MF-CIM                                  Modulators based on thin-film lithium niobate are capable
+implementation the power is divided between MVM, DAC & ADC, and                                  of generating such low power modulations [62]. Psq is
+static power.
+                                                                                                 estimated to be the power required for generating a maxi-
+                                                                                                 mum anti-squeezing of 24.7 dB [63]. An OPA is placed at
+FPGA for a single run of the OLD solver can then be                                              the input of the delay-line network to amplify the optical
+found by multiplying these power consumption values by                                           pulses so that there is enough optical power going into
+the latencies introduced in Table II. Similarly, in the case                                     each optical delay line to pass through the modulators.
+of the OLD implemented on a GPU, the power consump-                                              Assuming 1 mW power required at each optical line, the
+tion can be obtained from the metrics available by the                                           output of the OPA needs to provide (N − 1) × 1 mW
+card for an Nvidia T4 GPU [60]. We measured a power                                              of power. Assuming a conversion efficiency of 0.015 [64],
+consumption ranging from 28.93 watts to 32.28 watts for                                          and taking into account the SHG process required before
+various problem sizes, with an idling power of about 9.96                                        the OPA, the value POPA = 222.2 mW is estimated.
+watts. In the case of the OLD solved on a CPU, the power
+consumption is estimated for the dynamics implemented
+                                                                                                            3.   Further benchmarking analysis
+on MacBook Pro laptop with an Apple M1 chip [61].
+   For the MF-CIM device, the total power consumption
+can be written as Pmax = Popt + PFPGA (N ), where Popt                                              In this section, DL-CIM and MF-CIM are treated as
+is the power required to generate the optical pulses, while                                      solvers that can be implemented on both standard dig-
+PFPGA (N ) is the power required by the FPGA to generate                                         ital and analog optical devices. Fig. 10 shows further
+the feedback terms for a given problem size N . Taking                                           benchmarking comparison of the estimated physical TTS
+into account the power required for second-harmonic gen-                                         for the optics-based implementations of DL-CIM and
+eration and parametric down-conversion in a coherent                                             MF-CIM, the TTS for all four solvers introduced in Sec-
+optical network [30], we take Popt ≈ 1 mW. To find the                                           tion II implemented on conventional digital devices (i.e.,
+energy consumption, this power consumption is multiplied                                         those based on electronics, not optics), and the TTS
+by the solutions times found for MF-CIM in Appendix C 3.                                         for the quadratically constrained quadratic programming
+   The power consumption for the DL-CIM can be written                                           (QCQP) solver [65], a general heuristic solver for quadratic
+as:                                                                                              programming problems. Our CV implementation of MF-
+                                                                                                 CIM and fully FPGA-based implementations incorporate
+ Pmax = Popt + 2Pmod (N − 1) + Psq + POPA (N − 1) (C1)                                           parallelization in the design of the FPGA in this case. In
+                                                                                                                                                                                15
+
+                           a                                                                             b
+                                             103                                                                         101
+                                                  2
+                                             10
+                                                                                                                         100
+                                             101
+
+                                             100                                                                        10−1
+
+
+
+                            TTS (seconds)                                                                ETS (joules)
+                                                 −1
+                                            10
+                                                                                                                        10−2
+                                            10−2
+
+                                            10−3
+                                                                                                                        10−3
+                                            10−4
+
+                                            10−5                                                                        10−4
+
+                                            10−6
+                                                      20        30          40   50     60       70
+                                                                                                                        10−5
+                                                                     Problem Size N                                            20      30       40    50         60       70
+                                                           QCQP (CPU)            pumped Langevin (GPU)                                       Problem Size N
+                                                           FPGA                  MF-CCVM (physical)                                 FPGA                   MF-CCVM (physical)
+                                                           Langevin (GPU)        DL-CCVM (physical)                                 Langevin (GPU)         DL-CCVM (physical)
+
+
+FIG. 10: (a) Wall-clock TTS for optics-based CV impelemntations of CIM (dashed–dotted curves) in comparison with the wall-clock TTS for
+various classical solvers implemented on conventional digital devices (solid curves). The latter were computed based on the implementation time on
+the CPU, GPU, and FPGA, while the former were calculated using the parameters of the corresponding physical device. The FPGAs in the full
+FPGA (green curve) and MF-CIM (orange curve) schemes are designed using a parallel implementation to solve multiple instances during the same
+run of the device. (b) Estimated ETS for optics-based CV implementations of CIM (dashed–dotted curves) in comparison with the ETS measured
+on various digital devices (solid curves). The fully optical DL-CIM implementation has the lowest energy consumption due to the absence of
+digital-electronic components. The plot also shows that the smaller problem instances presented here can benefit from parallelization on FPGA in
+the FPGA and MF-CIM schemes.
+
+
+
+the MF-CIM, due to the lower speed of the FPGA com-                                                         of the DL-CIM and the replacement of the clamp func-
+pared to the optics, the large latency of the FPGA can                                                      tion with the implementation of the box constraint using
+be compensated for by performing certain computations                                                       the saturation functionality of the nonlinear crystal in
+in parallel and solving multiple problems simultaneously.                                                   the DL-CIM. Furthermore, to improve the quality of the
+Calling this a parallel implementation, this scheme solves                                                  results of all solvers, a simple post-processing step on a
+multiple instances of a problem during the same run of                                                      CPU is implemented (see Appendix C 1). Although this
+the device. Although this can lead to a larger FPGA de-                                                     step does not have a significant effect on the FPGA and
+sign with higher power consumption, it can significantly                                                    MF-CIM implementations, it can degrade the TTS of the
+improve the TTS and ETS metrics (see Appendix D).                                                           DL-CIM by one order of magnitude. Additionally, the DL-
+Note that the parallel implementation in the FPGA and                                                       CIM only incorporates a single hardware designed for the
+MF-CIM architectures as well as the GPU results are not                                                     given problem size, whereas the parallel implementation
+scalable for arbitrarily large problem sizes as the compu-                                                  of the FPGA and MF-CIM features a specific design for
+tation resources scale with problem sizes and it becomes                                                    each problem size. These observations indicate that the
+physically infeasible to implement such hardware for much                                                   true merits of a fully optical device would become more
+larger problem sizes. Therefore, the parallel implemen-                                                     evident for larger problem sizes and for computational
+tation results in Fig. 10 should only be viewed for the                                                     tasks that are closer in nature to the SDEs of a fully
+problem sizes studied and not for analyzing the scaling                                                     optical device. In addition, having comparable results
+of different types hardware. Figure 10b shows the ETS                                                       for the parallel implementations of the OLD on FPGA
+found for the OLD solvers implemented on three digital                                                      and the MF-CIM shows that the advantage of parallel
+electronic hardware devices, an FPGA, a CPU, and a                                                          implementation originates in the parallelization in the
+GPU, as well as the estimated ETS values for the DL-                                                        digital processor and not the use of optics in MF-CIM.
+CIM and MF-CIM architectures, incorporating a parallel
+scheme for the FPGA and MF-CIM implementations.                                                                Together with the results in Section V, these results
+                                                                                                            encourage research into further parallelization for per-
+   As shown in Fig. 10, incorporating a parallel implemen-                                                  forming MVM operations in a fully analog optical device,
+tation in FPGA and MF-CIM improves the TTS and ETS                                                          as opposed to time-multiplexed MVM in CIM, to further
+to be comparable to the DL-CIM scheme. Although a                                                           improve TTS and as a consequence ETS metrics of a
+fully optical device is generally expected to outperform a                                                  fully optical device. In addition, having reliable, energy-
+hybrid optical-digital or a fully digital device, there are a                                               efficient, and fully analog nonlinear function units can
+few factors contributing to this comparable performance.                                                    greatly improve the performance of an optical solver when
+The DL-CIM scheme in Eq. (1) provides lower quality                                                         implementing nonlinear functions such as the box con-
+solutions compared to the OLD Eq. (4) or the MF-CIM                                                         straint implemented in this paper. Various architectures
+scheme Eq. (2) due to the extra terms present the SDEs                                                      have been proposed for implementing nonlinear functions
+                                                                                                                                                     16
+
+in optics [66–68].                                                 a
+
+
+                                                                                                   Matrix
+
+      Appendix D: Parallelization in the FPGA
+
+    In this paper, we have investigated two possible imple-
+ mentations for the FPGA in the OLD and the FPGA in                              Vector                                    size             Vector
+
+ the MF-CIM. The serial implementation uses the smallest
+ computation unit for performing a single multiplication
+ and addition at a time. Although in practice multiple
+ operations can be performed simultaneously on FPGA,                                                   size
+
+ this approach provides realistic curves for the TTS and
+ ETS that are applicable to large problem sizes.               b
+    Here, we have also investigated a parallel implemen-               Clock
+ tation of the FPGA which can lead to improvements in
+ the TTS and ETS of the OLD implemented on FPGA
+ and the MF-CIM. In the MF-CIM, the latency due to the
+ FPGA and the ADC and DAC is the main bottleneck in                                                                        size          size
+
+ the computation of the drift term during each iteration,
+                                                               c
+ due to the clock speed of the FPGA (here being 300 MHz)
+ being much lower than the pulse rate of the laser (here
+ being 5 GHz). As a consequence, the optical components                  Clock
+ idle while waiting for the FPGA to generate the drift
+ amplitudes and, additionally, only parts of the FPGA
+will be actively used to perform the computation at a
+ given time, leading to the FPGA idle at some points and
+ consequently having larger TTS and ETS in MF-CIM.
+To take advantage of the full FPGA architecture at all
+ times, similar to the GPU implementation, we can solve
+ multiple instances of a given problem simultaneously. In
+ this case, the pulse train would be multiplied to represent
+ multiple copies of the variables in order to solve the same
+ problem instance many times simultaneously. The num-
+ ber of times a given instance would be solved at a given
+ run of the machine is denoted by the batch size.
+    Fig. 11 shows the FPGA MVM design for the serial and                                                                            e
+                                                                                                                                  Si z
+ parallel implementations. Fig. 11a shows the variables
+ and the parameters used in an MVM operation. Fig. 11b                                    Mutipliers          Adder tree
+
+ shows the architecture of the FPGA for the serial im-                                                    latency
+
+ plementation. This structure consist of having a single
+“compute unit” which sequentially multiplies and accumu-
+ lates the result of each column of the given matrix and        FIG. 11: The design of the FPGA used for the TTS and ETS
+ provides the result after the operation is completed. This     estimations in this paper: (a) The variables used in the process of
+                                                                MVM, (b) serial implementation of MVM using a single “compute
+ implementation uses fewer resources but takes more time        unit”, and (c) parallel implementation of the FPGA using multiple
+ to complete. Fig. 11c shows the architecture of the FPGA      “compute units” simultaneously.
+ for the parallel implementation. Leveraging both row and
+ column parallelism, the computation is highly optimized
+ by simultaneously processing multiple elements. Row           of row and column parallelism ensures that the entire
+ parallelism involves distributing each row of the matrix      MVM is completed in a fraction of the time it would take
+ across different processing units, allowing for simultane-    with the serial implementation.
+ ous multiplication of all the elements in a row by their         Fig. 12 shows the TTS and ETS for the MF-CIM as
+ corresponding vector elements. Column parallelism, on         a function of the batch size for different instance sizes
+ the other hand, distributes the vector across processors      when implementing the parallel scheme. Evidently, both
+ so that each element of the vector is multiplied with ev-     metrics improve with increasing the batch size, up to the
+ ery element of a matrix column at the same time. This         batch size of 29 where the values reach a plateau. This is
+ dual approach maximizes the use of available hardware         the point where the batch size is equal to number of cycles
+ resources, significantly speeding up the computation by       of the FPGA’s latency. At this point, all of the FPGA
+ performing many operations in parallel. The combination       is being used to perform calculations simultaneously and
+                                                                                                                                                                                                                                                      17
+
+a                                                                    b                                                                   a                                                       b
+                 100                                                                 101                                                                     6                                                       6
+                                      N = 20             N = 50                                           N = 20             N = 50
+                10   −1
+                                      N = 30             N = 60                      10   0
+                                                                                                          N = 30             N = 60                          4                                                       4
+
+
+
+
+                                                                                                                                         Amplitude (a.u.)                                        Amplitude (a.u.)
+                                      N = 40             N = 70                                           N = 40             N = 70
+                10−2                                                                10−1                                                                     2                                                       2
+
+
+TTS (seconds)                                                        ETS (joules)
+                10−3                                                                10−2                                                                     0                                                       0
+
+                10   −4
+                                                                                    10   −3                                                                 −2                                                      −2
+
+                     −5                                                                                                                                     −4                                                      −4
+                10                                                                  10−4
+                                   Batch Size = FPGA Latency Cyles                                     Batch Size = FPGA Latency Cyles
+                                                                                                                                                            −6                                                      −6
+                10−6                                                                10−5                                                                          0   20    40   60   80   100                               0   20    40   60   80   100
+                          0   10      20      30    40   50     60                            0   10      20      30    40   50     60
+                                           Batch Size                                                          Batch Size                                             Time Evolution (%)                                         Time Evolution (%)
+                                                                                                                                         c                                                       d
+FIG. 12: The results for the MF-CIM versus the batch size for (a)
+physical TTS and (b) ETS, plotted for problem sizes 20 to 70. TTS
+and ETS improve with increasing the batch size up to the batch size of                                                                                       20                                                      20
+29; this is the value where the number of times an instance is solved
+
+
+
+
+                                                                                                                                         Amplitude (a.u.)                                        Amplitude (a.u.)
+simultaneously is equal to the latency cycles of the FPGA, maximizing                                                                                        10                                                      10
+the use of its architecture.
+                                                                                                                                                              0                                                          0
+
+                                                                                                                                                            −10                                                     −10
+
+                                                                                                                                                            −20                                                     −20
+no parts of it are idling. This approach is used for the
+                                                                                                                                                                  0    20   40   60   80   100                               0    20   40   60   80   100
+parallel implementation of the OLD on the FPGA as well.                                                                                                               Time Evolution (%)                                         Time Evolution (%)
+The ETS and TTS values shown in Fig. 10 are evaluated
+using this method. Note that the values presented for                                                                                    FIG. 13: Time evolution of the DOPO pulses’ amplitudes for four
+the parallel implementations are only applicable to the                                                                                  randomly generated BoxQP problem instances. A problem of size (a)
+                                                                                                                                         20 and (b) 30 solved using CV readout of the DL-CIM, and the same
+problem sizes implemented here and should not be used                                                                                    problems of size (c) 20 and (d) 30 solved using CV readout of the
+to estimate the TTS and ETS for larger problem sizes                                                                                     MF-CIM. The heavy black dashed lines in panels (a) and (b) indicate
+                                                                                                                                         the values −s and s, at which the amplitudes are clamped prior to
+as the computational resources become limited when the                                                                                   computing the objective function. In panels (c) and (d) for the
+problem size increases.                                                                                                                  MF-CIM, the value at which the pulses are clamped at each round trip
+                                                                                                                                         is linearly scheduled to reach s = 20 at the end of the evolution process.
+                                                                                                                                         For both solvers, the objective function is calculated after the
+                                                                                                                                         substitution xi = 12 (ci /s + 1) in the DL-CIM or xi = 12 (µ̃i /s + 1) in
+                                                                                                                                         the MF-CIM, to satisfy the box constraint in Eq. (B1), with li = 0 and
+                                                                                                                                         ui = 1 for all i ∈ {1, . . . , N }. Note that, for each of the problem
+                                                                                                                                         instances, the majority of the amplitudes have an optimal value at the
+                                                                                                                                         boundary of the box constraint, while only some of the amplitudes
+                                                                                                                                         converge to fractional values.
+ Appendix E: Time evolution of the CIM dynamics
+
+                                                                                                                                                            Appendix F: Choosing the number of iterations
+   Fig. 13 shows the time evolution of the DOPO pulses’
+amplitudes for the DL-CIM and MF-CIM dynamics (see                                                                                          Fig. 14 shows the dependency of the TTS on the number
+Eqs. (1) and (2)). The heavy dashed lines in Figs. 13a                                                                                   of iterations for each solver. For each problem size, there
+and 13b indicate the values −s and s at which the am-                                                                                    is an niter that gives the lowest TTS. This is because for
+plitudes are clamped at the end of the process in the                                                                                    niter larger than a certain value, the success probability
+DL-CIM. Since the clamping is applied at the end of the                                                                                  does not significantly improve but TTS gets larger due to
+evolution, it can be considered a post-processing step that                                                                              the increase in the number of round-trips. We have used
+is performed on a classical computer. In the MF-CIM                                                                                      the curves in Fig. 14 to find the optimum niter for each
+time evolution plots in Figs. 13c and 13d, the values at                                                                                 problem size for each solver and plot the TTS and ETS
+which each pulse is clamped at each round trip is linearly                                                                               plots in the main body of the paper.
+scheduled to reach a value of 20 at the end of the process.
+The system parameters, including the pump value, are
+optimized for the highest success probability through pa-
+rameter tuning. Their ranges are shown in Table I. At
+the end of the evolution process, the pulse amplitudes
+are plugged into the equation xi = 12 (yi /s + 1), where
+yi = ci for the DL-CIM and yi = µ̃i for the MF-CIM,
+to obtain the problem variables in order to implement
+the box constraint 0 ≤ xi ≤ 1. It is evident that, for the
+solutions of the problems, the majority of the variables
+are found to be at the edges of the box constraint at
+xi = 0 or xi = 1, as explained in Appendices B 3 and C 3.
+                                                                                                                         18
+
+a                                                             b
+                 102                                                           102
+                                      N = 20       N = 50                                         N = 20        N = 50
+                 101                  N = 30       N = 60                      101                N = 30        N = 60
+                                      N = 40       N = 70                                         N = 40        N = 70
+
+
+
+
+TTS (seconds)                                                 TTS (seconds)
+                 100                                                           100
+                10−1                                                          10−1
+                10−2                                                          10−2
+                     −3
+                10                                                            10−3
+                     −4
+                10                                                            10−4
+                     −5
+                10                                                            10−5 2
+                          102 102.5 103 103.5 104 104.5 105                      10 102.5 103 103.5 104 104.5 105
+                              Number of Iterations                                       Number of Iterations
+c                                                             d
+                 102                                                           102
+                                      N = 20      N = 50                                 N = 20        N = 50
+                                      N = 30      N = 60                       101       N = 30        N = 60
+                 101
+                                      N = 40      N = 70                                 N = 40        N = 70
+
+
+
+
+TTS (seconds)                                                 TTS (seconds)
+                                                                               100
+                 100                                                          10−1
+
+                10−1                                                          10−2
+                                                                              10−3
+                10−2
+                                                                              10−4
+                     −3
+                10                                                            10−5
+                      102 102.5 103 103.5 104 104.5 105                              102 102.5 103 103.5 104 104.5 105
+                              Number of Iterations                                       Number of Iterations
+
+FIG. 14: TTS versus number of iterations for different problem sizes
+for (a) OLD, (b) PLD, (c) DL-CIM, and (d) MF-CIM.
+                                                                                                                             19
+
+
+
+
+ [1] N. Mohseni, P. L. McMahon, and T. Byrnes, Ising ma-                 glasses: The good, the bad, and the ugly, Physical Review
+     chines as hardware solvers of combinatorial optimization            X 5, 031026 (2015).
+     problems, Nature Reviews Physics 4, 363 (2022).                [19] M. Aramon, G. Rosenberg, E. Valiante, T. Miyazawa,
+ [2] N. Stroev and N. Berloff, Analog photonics computing                H. Tamura, and H. G. Katzgraber, Physics-inspired op-
+     for information processing, inference, and optimization,            timization for quadratic unconstrained problems using a
+     Advances in Quantum Technologies 6, 2300055 (2023).                 digital annealer, Frontiers in Physics 7, 48 (2019).
+ [3] B. J. Shastri, A. N. Tait, T. Ferreira de Lima, W. H. P.       [20] T. Takemoto, M. Hayashi, C. Yoshimura, and M. Ya-
+     Pernice, H. Bhaskaran, C. D. Wright, and P. R. Pruc-                maoka, 2.6 A 2× 30k-spin Multichip Scalable Annealing
+     nal, Photonics for artificial intelligence and neuromorphic         Processor based on a Processing-In-Memory Approach for
+     computing, Nature Photonics 15, 102 (2021).                         Solving Large-Scale Combinatorial Optimization Prob-
+ [4] T. Inagaki, K. Inaba, Y. Yamada, T. Honjo, T. Ikuta,                lems, in 2019 IEEE International Solid-State Circuits
+     Y. Yonezu, T. Kazama, K. Enbutsu, T. Umeki, R. Kasa-                Conference-(ISSCC) (IEEE, 2019) pp. 52–54.
+     hara, et al., Information processing with large-scale net-     [21] R. Hamerly, T. Inagaki, P. L. McMahon, D. Venturelli,
+     work of optical oscillators, in AI and Optical Data Sciences        A. Marandi, T. Onodera, E. Ng, C. Langrock, K. Inaba,
+     VI (SPIE, 2025) p. PC133751E.                                       T. Honjo, et al., Experimental investigation of perfor-
+ [5] Z. Wang, A. Marandi, K. Wen, R. L. Byer, and Y. Ya-                 mance differences between coherent Ising machines and a
+     mamoto, Coherent Ising machine based on degenerate                  quantum annealer, Science Advances 5, eaau0823 (2019).
+     optical parametric oscillators, Phys. Rev. A 88, 063853        [22] T. Leleu, Y. Yamamoto, P. L. McMahon, and K. Aihara,
+     (2013).                                                             Destabilization of local minima in analog spin systems by
+ [6] Y. Yamamoto, K. Aihara, T. Leleu, K.-i. Kawarabayashi,              correction of amplitude heterogeneity, Physical Review
+     S. Kako, M. Fejer, K. Inoue, and H. Takesue, Coherent               Letters 122, 040607 (2019).
+     Ising machines—optical neural networks operating at the        [23] T. Leleu, F. Khoyratee, T. Levi, R. Hamerly, T. Kohno,
+     quantum limit, npj Quantum Information 3, 49 (2017).                and K. Aihara, Scaling advantage of chaotic amplitude
+ [7] R. Hamerly, L. Bernstein, A. Sludds, M. Soljačić, and             control for high-performance combinatorial optimization,
+     D. Englund, Large-scale optical neural networks based               Communications Physics 4, 266 (2021).
+     on photoelectric multiplication, Phys. Rev. X 9, 021032        [24] S. Reifenstein, S. Kako, F. Khoyratee, T. Leleu, and
+     (2019).                                                             Y. Yamamoto, Coherent Ising Machines with optical Error
+ [8] X. Xiao, M. B. On, T. Van Vaerenbergh, D. Liang,                    Correction Circuits, Adv. Quantum Technol. 4, 2100077
+     R. G. Beausoleil, and S. J. B. Yoo, Large-scale and                 (2021).
+     energy-efficient tensorized optical neural networks on         [25] K. Sankar, A. Scherer, S. Kako, S. Reifenstein, N. Gha-
+     III–V-on-silicon MOSCAP platform, APL Photonics                     dermarzy, W. B. Krayenhoff, Y. Inui, E. Ng, T. Onodera,
+     6, 126107 (2021), https://pubs.aip.org/aip/app/article-             P. Ronagh, et al., Benchmark study of quantum algo-
+     pdf/doi/10.1063/5.0070913/14056095/126107 1 online.pdf.             rithms for combinatorial optimization: unitary versus
+ [9] K. Kalinin and N. Berloff, Networks of non-equilibrium              dissipative, arXiv:2105.03528 (2021).
+     condensates for global optimization, New Journal of            [26] T. Honjo, T. Sonobe, K. Inaba, T. Inagaki,
+     Physics 20, 113023 (2018).                                          T. Ikuta, Y. Yamada, T. Kazama, K. Enbutsu,
+[10] S. Kirkpatric, Optimization by simulated annealing, Sci-            T. Umeki, R. Kasahara, K. ichi Kawarabayashi,
+     ence 220, 671 (1983).                                               and H. Takesue, 100,000-spin coherent ising ma-
+[11] D. S. Johnson, C. R. Aragon, L. A. McGeoch, and                     chine, Science Advances 7, eabh0952 (2021),
+     C. Schevon, Optimization by simulated annealing: An                 https://www.science.org/doi/pdf/10.1126/sciadv.abh0952.
+     experimental evaluation; part I, graph partitioning, Oper-     [27] K. Takata, A. Marandi, and Y. Yamamoto, Quantum
+     ations Research 37, 865 (1989).                                     correlation in degenerate optical parametric oscillators
+[12] D. de Falco, B. Apolloni, and N. Cesa-Bianchi, A numeri-            with mutual injections, Phys. Rev. A 92, 043821 (2015).
+     cal implementation of quantum annealing (1988).                [28] D. Maruo, S. Utsunomiya, and Y. Yamamoto, Truncated
+[13] B. Apolloni, C. Carvalho, and D. de Falco, Quantum                  Wigner theory of coherent Ising machines based on de-
+     stochastic optimization, Stochastic Processes and their             generate optical parametric oscillator network, Physica
+     Applications 33, 233 (1989).                                        Scripta 91, 083010 (2016).
+[14] T. Kadowaki and H. Nishimori, Quantum annealing in             [29] S. Kako, T. Leleu, Y. Inui, F. Khoyratee, S. Reifenstein,
+     the transverse Ising model, Phys. Rev. E 58, 5355 (1998).           and Y. Yamamoto, Coherent ising machines with error
+[15] J. Brooke, D. Bitko, G. Aeppli, et al., Quantum annealing           correction feedback, Advanced Quantum Technologies 3,
+     of a disordered magnet, Science 284, 779 (1999).                    2000045 (2020).
+[16] U. Benlic, E. K. Burke, and J. R. Woodward, Breakout lo-       [30] P. L. McMahon, A. Marandi, Y. Haribara, R. Hamerly,
+     cal search for the multi-objective gate allocation problem,         C. Langrock, S. Tamate, T. Inagaki, H. Takesue,
+     Computers & Operations Research 78, 80 (2017).                      S. Utsunomiya, K. Aihara, R. L. Byer, M. M.
+[17] V. K. Prajapati, M. Jain, and L. Chouhan, Tabu search               Fejer, H. Mabuchi, and Y. Yamamoto, A fully
+     algorithm (TSA): A comprehensive survey, in 2020 3rd                programmable 100-spin coherent Ising machine
+     International Conference on Emerging Technologies in                with all-to-all connections, Science 354, 614 (2016),
+     Computer Engineering: Machine Learning and Internet                 https://www.science.org/doi/pdf/10.1126/science.aah5178.
+     of Things (ICETCE) (IEEE, 2020) pp. 1–8.                       [31] Y. Yamamoto, T. Leleu, S. Ganguli, and H. Mabuchi,
+[18] H. G. Katzgraber, F. Hamze, Z. Zhu, A. J. Ochoa, and                Coherent Ising machines—quantum optics and neural
+     H. Munoz-Bauza, Seeking quantum speedup through spin                network perspectives, Applied Physics Letters 117, 160501
+                                                                                                                              20
+
+     (2020), https://doi.org/10.1063/5.0016140.                   [49] K. G. Murty and S. N. Kabadi, Some NP-complete prob-
+[32] S. Kiesewetter and P. D. Drummond, Coherent ising ma-             lems in quadratic and nonlinear programming, Tech. Rep.
+     chine with quantum feedback: The total and conditional            (1985).
+     master equation methods, Phys. Rev. A 106, 022409            [50] S. Burer and D. Vandenbussche, Globally solving
+     (2022).                                                           box-constrained nonconvex quadratic programs with
+[33] M. Lax, Quantum noise. iv. quantum theory of noise                semidefinite-based finite branch-and-bound, Computa-
+     sources, Physical Review 145, 110 (1966).                         tional Optimization and Applications 43, 181 (2009).
+[34] M. Lax and W. Louisell, Quantum noise. xii. density-         [51] P. Bonami, O. Günlük, and J. Linderoth, Globally solving
+     operator treatment of field and population fluctuations,          nonconvex quadratic programming problems with box
+     Physical Review 185, 568 (1969).                                  constraints via integer programming methods, Mathemat-
+[35] T.-S. Chiang, C.-R. Hwang, and S. J. Sheu, Dif-                   ical Programming Computation 10, 333 (2018).
+     fusion for global optimization in Rn , SIAM Jour-            [52] S. de Vries and B. Perscheid, Tight compact extended
+     nal on Control and Optimization 25, 737 (1987),                   relaxations for nonconvex quadratic programming prob-
+     https://doi.org/10.1137/0325042.                                  lems with box constraints, Journal of Global Optimization
+[36] P. Xu, J. Chen, D. Zou, and Q. Gu, Global convergence             (2022).
+     of Langevin dynamics based algorithms for nonconvex          [53] J. Fliege and B. F. Svaiter, Steepest descent methods
+     optimization, arXiv:1707.06618 (2017).                            for multicriteria optimization, Mathematical Methods of
+[37] J. Kurchan, Fluctuation theorem for stochastic dynamics,          Operations Research 51, 479 (2000).
+     Journal of Physics A: Mathematical and General 31, 3719      [54] AMD Virtex, AMD Virtex UltraScale+ FPGA (2024).
+     (1998).                                                      [55] Z.-Y. Zhou, C. Gneiting, J. Q. You, and F. Nori, Gener-
+[38] S. Dal Cengio, D. Levis, and I. Pagonabarraga,                    ating and detecting entangled cat states in dissipatively
+     Fluctuation–dissipation relations in the absence of de-           coupled degenerate optical parametric oscillators, Phys.
+     tailed balance: formalism and applications to active mat-         Rev. A 104, 013715 (2021).
+     ter, Journal of Statistical Mechanics: Theory and Experi-    [56] I. M. Gel’fand and N. Y. Vilenkin, Generalized functions:
+     ment 2021, 043201 (2021).                                         Applications of harmonic analysis, Vol. 4 (Academic press,
+[39] F. Ritort, Fluctuation theorems, brownian motors and              2014).
+     thermodynamics of small systems, in Statistical and Non-     [57] D. Vandenbussche and G. L. Nemhauser, A branch-and-
+     linear Physics (Springer, 2022) pp. 477–494.                      cut algorithm for nonconvex quadratic programs with box
+[40] F. Khosravi, U. Yildiz, A. Scherer, and P. Ronagh, Non-           constraints, Mathematical Programming 102, 559 (2005).
+     convex quadratic programming using coherent optical          [58] Gurobi Optimization, LLC, Gurobi Optimizer Reference
+     networks, arXiv preprint arXiv:2209.04415 (2022).                 Manual (2022).
+[41] E. Ng, T. Onodera, S. Kako, P. L. McMahon, H. Mabuchi,       [59] Texas Instruments, High-Speed ADCs (2024).
+     and Y. Yamamoto, Efficient sampling of ground and low-       [60] Nvidia, Nvidia t4 (2023).
+     energy ising spin configurations with a coherent ising       [61] Wikipedia, Apple m1 (2020).
+     machine, Phys. Rev. Res. 4, 013009 (2022).                   [62] M. Xu, Y. Zhu, F. Pittalà, J. Tang, M. He, W. C. Ng,
+[42] A. Marandi, Z. Wang, K. Takata, R. L. Byer, and Y. Ya-            J. Wang, Z. Ruan, X. Tang, M. Kuschnerov, L. Liu, S. Yu,
+     mamoto, Network of time-multiplexed optical parametric            B. Zheng, and X. Cai, Dual-polarization thin-film lithium
+     oscillators as a coherent ising machine, Nature Photonics         niobate in-phase quadrature modulators for terabit-per-
+     8, 937 (2014).                                                    second transmission, Optica 9, 61 (2022).
+[43] R. Yanagimoto, T. Onodera, E. Ng, L. G. Wright, P. L.        [63] S. Shi, Y. Wang, W. Yang, Y. Zheng, and K. Peng, Detec-
+     McMahon, and H. Mabuchi, Engineering a Kerr-based                 tion and perfect fitting of 13.2 dB squeezed vacuum states
+     deterministic cubic phase gate via Gaussian operations,           by considering green-light-induced infrared absorption,
+     Physical Review Letters 124, 240503 (2020).                       Opt. Lett. 43, 5411 (2018).
+[44] T. Shoji, K. Aihara, and Y. Yamamoto, Quantum model          [64] APE, Avus optical parametric amplifier (2019).
+     for coherent Ising machines: Stochastic differential equa-   [65] J. Park and S. Boyd, General heuristics for noncon-
+     tions with replicator dynamics, Phys. Rev. A 96, 053833           vex quadratically constrained quadratic programming,
+     (2017).                                                           arXiv:1703.07870 (2017).
+[45] G. O. Roberts and R. L. Tweedie, Exponential conver-         [66] Z. Xu, B. Tang, X. Zhang, J. F. Leong, J. Pan, S. Hooda,
+     gence of Langevin distributions and their discrete approx-        E. Zamburg, and A. V.-Y. Thean, Reconfigurable non-
+     imations, Bernoulli (1996).                                       linear photonic activation function for photonic neural
+[46] M. Raginsky, A. Rakhlin, and M. Telgarsky, Non-convex             network based on non-volatile opto-resistive ram switch,
+     learning via stochastic gradient Langevin dynamics: A             Light: Science & Applications 11, 288 (2022).
+     nonasymptotic analysis, in Conference on Learning The-       [67] G. Mourgias-Alexandris, A. Tsakyridis, N. Passalis,
+     ory (PMLR, 2017) pp. 1674–1703.                                   A. Tefas, K. Vyrsokinos, and N. Pleros, An all-optical
+[47] T. Hida and T. Hida, Brownian motion (Springer, 1980).            neuron with sigmoid activation function, Opt. Express
+[48] P. L. D. Angelis, P. M. Pardalos, and G. Toraldo,                 27, 9620 (2019).
+     Quadratic programming with box constraints, in Develop-      [68] G. H. Li, R. Sekine, R. Nehra, R. M. Gray, L. Ledezma,
+     ments in global optimization (Springer, 1997) pp. 73–93.          Q. Guo, and A. Marandi, All-optical ultrafast relu func-
+                                                                       tion for energy-efficient nanophotonic deep learning,
+                                                                       Nanophotonics 12, 847 (2023).
+

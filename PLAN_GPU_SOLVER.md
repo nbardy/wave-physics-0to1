@@ -69,7 +69,7 @@ at t≈15 s (Re 250), 1.4% at the hero's default Re 90; Strouhal ≈ 0.15–0.17
 
 ## Open items
 
-- Other solver sims (TermToggle, SolverXray, JacobiRelax, PressureFix) stay CPU
+- Other solver sims (TermToggle, SolverXray, GaussSeidelRelax, PressureFix) stay CPU
   on purpose: they are low-res pedagogical X-rays; `FluidSolverGPU` matches the
   `FluidSolver` surface if that ever changes.
 - `DyeRendererGPU` implements overlays `none | divergence` (what CylinderFlow

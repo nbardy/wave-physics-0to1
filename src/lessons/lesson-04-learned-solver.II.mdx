@@ -38,8 +38,9 @@ projection has no meter. It stops at forty.
 
 ## Forty sweeps
 
-Lesson 01 ran the sweeps on a small grid, said a few dozen of them left the
-divergence gone, and called them Jacobi iterations. The code updates each cell in
+Lesson 01 runs the sweeps on a small grid; its §10 used to say a few dozen of
+them left the divergence gone (forty leave a fifth on the figure's own field),
+and called them Jacobi iterations. The code updates each cell in
 place, reading the neighbours already updated on the same pass, which is
 Gauss–Seidel: about twice as fast as Jacobi and otherwise the same negotiation.
 `project` runs forty of them and stops. Nothing is checked. Whatever divergence the

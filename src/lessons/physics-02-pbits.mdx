@@ -1,4 +1,5 @@
 import { MosaicHero } from '../sims/pbits/MosaicHero'
+import { LearningWall } from '../sims/pbits/LearningWall'
 import { BitFlicker } from '../sims/pbits/BitFlicker'
 import { DisplayTeach } from '../sims/pbits/DisplayTeach'
 import { PairCoupler } from '../sims/pbits/PairCoupler'
@@ -39,19 +40,29 @@ is permanently wrong, and a fast, plausible-looking sampler can sit half a
 distribution from the right answer while every energy readout reads normal.
 Catching it lying takes a second instrument.
 
-Forty tiles, sixteen cells each. Every tile starts as static, sixteen fair
-coins, and every cell is tossed again eleven times a second with odds set by
-a trained table of weights. Three rounds of that pull the static toward one
-of six pictures the weights were trained on: a bar, a cross, a box, an X, a
-checker, a corner. A finished tile holds its picture for a second or two,
-then goes back to static and starts over. Watch one tile through a whole
-cycle before you take in the wall.
+Twenty tiles, sixty-four cells each. Every tile starts as static, sixty-four
+fair coins. Under each tile sits a patch of the chip, 256 p-bits: the
+sixty-four you see are the pixels, the rest are hidden and never read. Every
+p-bit is tossed again about forty times a second with odds set by a table of
+weights, and three rounds of that pull the static toward one of the seven
+pictures drawn under the wall. A finished tile holds its picture for a second
+or two, then goes back to static and starts over. The table of weights starts
+as coin tosses too. While the wall dreams, the same table is being trained on
+those seven pictures, on this page; every twenty epochs the new weights
+replace the old under every tile, and the curve on the right scores the
+wall's pictures in pixels wrong against the nearest of the seven. The first
+recognizable pictures arrive within a few seconds; the training ends after
+seven hundred epochs, about a minute on a laptop.
 
-<MosaicHero />
+<LearningWall />
 
-Nothing on this wall is drawn. The weights loading the coins ship with this
-page unexplained — on credit. The wall returns at the end, dreaming a picture
-you painted, on weights trained in front of you.
+Nothing on this wall is drawn, and nothing on it ships: the weights are
+trained while you watch. What ships unexplained — on credit — is the rest:
+why a coin with the right odds is a computer, why the patch under each tile
+is wired the way it is, what the trainer subtracts, and what the number on
+the curve is a stand-in for. The wall returns at the end of this article at
+sixteen cells, the size at which every number it prints can be checked
+against an exact answer, and at the end of the series with its bill.
 
 One amnesty up front: there is no quantum mechanics anywhere in this article.
 These are classical coins.
@@ -960,8 +971,11 @@ wrongness has moved up a level — out of the schedule, into the learned
 landscape — and the only witness that can follow it there is the same kind
 that caught it the first time: an exact number, not an impression.
 
-The wall that opened this article is back — the one that flickered before any
-of its vocabulary existed, running weights it promised to explain.
+The wall from the top of this article is back at the size this act built:
+sixteen cells instead of sixty-four, six pictures instead of seven, forty
+chains, and no patch of chip underneath — the dense wiring of the trainer
+above, where the exact reverse kernel is 65,536 additions away and every
+number the wall prints can be checked against it.
 
 <Predict
   question="This wall was trained on the six glyphs. When any one cell's flicker settles, what does it settle on?"
@@ -977,8 +991,9 @@ every so often one lands *between* — a bar with a checker's accent, a box
 missing a wall. That is not a defect to apologize for. The machine's product
 was never a picture; it is a distribution, and the strays are the visible
 proof that the wall is sampling one rather than stamping copies. The weights
-running here are the ones the opening shipped on credit — trained by exactly the loop
-you just watched, on exactly these six glyphs. The paint-box closes the
+running here are the only ones in this article that ship with the page —
+trained once, offline, by exactly the loop you just watched, on exactly these
+six glyphs. The paint-box closes the
 loop: draw your own sixteen pixels, press train, and the browser reruns
 the whole clamp–dream–subtract loop with your glyph in the dataset — four
 hundred epochs, about a second; the model is that small. Then the wall

@@ -1,0 +1,1865 @@
+Experimental investigation of performance differences between Coherent Ising Machines and a quantum annealer
+
+arXiv:1805.05217v2 [quant-ph] 14 Aug 2018
+
+Ryan Hamerly1,2,† , Takahiro Inagaki3,† , Peter L. McMahon4,2,† , Davide Venturelli5,6 ,
+Alireza Marandi4 , Tatsuhiro Onodera4 , Edwin Ng4 , Carsten Langrock4 , Kensuke Inaba3 ,
+Toshimori Honjo3 , Koji Enbutsu7 , Takeshi Umeki7 , Ryoichi Kasahara7 , Shoko Utsunomiya2 ,
+Satoshi Kako2 , Ken-ichi Kawarabayashi2 , Robert L. Byer4 , Martin M. Fejer4 , Hideo Mabuchi4 ,
+Dirk Englund1 , Eleanor Rieffel5 , Hiroki Takesue3 , Yoshihisa Yamamoto4,8
+December 3, 2024
+1
+
+Research Laboratory of Electronics, Massachusetts Institute of Technology, 50 Vassar Street, Cambridge,
+MA 02139, USA
+2
+National Institute of Informatics, Hitotsubashi 2-1-2, Chiyoda-ku, Tokyo 101-8403, Japan
+3
+NTT Basic Research Laboratories, NTT Corporation, 3-1 Morinosato Wakamiya, Atsugi, Kanagawa
+243-0198, Japan
+4
+E. L. Ginzton Laboratory, Stanford University, Stanford, CA 94305, USA
+5
+NASA Ames Research Center Quantum Artificial Intelligence Laboratory (QuAIL), Mail Stop 269-1,
+Moffett Field, California 94035, USA
+6
+USRA Research Institute for Advanced Computer Science (RIACS), 615 National Ave, Mountain View,
+California 94035, USA
+7
+NTT Device Technology Laboratories, NTT Corporation, 3-1 Morinosato Wakamiya, Atsugi, Kanagawa
+243-0198, Japan
+8
+ImPACT Program, Japan Science and Technology Agency, Gobancho 7, Chiyoda-ku, Tokyo 102-0076,
+Japan
+†
+These authors contributed equally to this work.
+Abstract
+Physical annealing systems provide heuristic approaches to solving NP-hard Ising optimization problems. Here, we study the performance of two types of annealing machines—a commercially available
+quantum annealer built by D-Wave Systems, and measurement-feedback coherent Ising machines (CIMs)
+based on optical parametric oscillator networks—on two classes of problems, the Sherrington-Kirkpatrick
+(SK) model and MAX-CUT. The D-Wave quantum annealer outperforms the CIMs on MAX-CUT on
+regular graphs of degree 3. On denser problems, however, we observe an exponential penalty for the
+quantum annealer (exp(−αDW N 2 )) relative to CIMs (exp(−αCIM N )) for fixed anneal times, on both the
+SK model and on 50%-edge-density MAX-CUT, where the coefficients αCIM and αDW are problem-classdependent. On instances with over 50 vertices, a several-orders-of-magnitude time-to-solution difference
+exists between CIMs and the D-Wave annealer. An optimal-annealing-time analysis is also consistent
+with a significant projected performance difference. The difference in performance between the sparsely
+connected D-Wave machine and the measurement-feedback facilitated all-to-all connectivity of the CIMs
+provides strong experimental support for efforts to increase the connectivity of quantum annealers.
+
+Introduction
+Optimization problems are ubiquitous in science, engineering, and business. Many important problems
+(especially combinatorial problems such as scheduling, resource allocation, route planning or community
+detection) belong to the NP-hard complexity class, and even for typical instances require a computation
+time that scales exponentially with the problem size [1]. Canonical examples such as Karp’s 21 NP-complete
+problems [2] have attracted much attention from researchers seeking to devise new optimization methods,
+because by definition any NP-complete problem can be reduced to any other problem in NP with only polynomial overhead. Many approximation algorithms and heuristics (e.g., relaxations to semidefinite programs
+[3], simulated annealing [4], and breakout local search [5]) have been developed to search for good-quality approximate solutions as well as ground states for sufficiently small problem sizes. However, for many NP-hard
+1
+
+optimization problems, even moderately sized problem instances can be time-consuming to solve exactly or
+even approximately. Hence, there is strong motivation to find alternative approaches that can consistently
+beat state-of-the-art algorithms.
+Despite decades of Moore’s Law scaling, large NP-hard problems remain very costly even on modern microprocessors. Thus, there is a growing interest in special-purpose machines that implement a solver directly
+by mapping the optimization to the underlying physical dynamics. Examples include digital CMOS annealers [6, 7], as well as analog devices such as nano-magnet arrays [8], electronic oscillators [9, 10] and laser
+networks [11]. Quantum adiabatic computation [12] and quantum annealing [13, 14, 15, 16] are also prominent examples, and may offer the possibility of quantum speedup [17, 18, 19] for certain NP-hard problems.
+However, all the non-photonic analog optimization systems realized to date suffer from limited connectivity,
+so that actual problems must in general first be embedded [20, 21] into the solver architecture native graph
+before they can be solved. This requirement adds an upfront computational cost [20, 22, 23] of finding
+the embedding (unless previously known) and, of most relevance in this study, in general results in the use
+of multiple physical pseudo-spins to encode each logical spin variable, which can lead to a degradation of
+time-to-solution.
+In this paper, we perform the first direct comparison between the D-Wave 2000Q quantum annealer and the
+Coherent Ising Machine (CIM) [24, 25]. As we will see later, a crucial distinction between these systems is
+their intrinsic connectivity, which has a profound influence on their performance. Both systems are designed
+to solve the classical Ising problem, that is, to minimize the classical Hamiltonian:
+H=
+
+(a)
+Laser
+
+X
+1X
+Jij σi σj +
+hi σi
+2 ij
+i
+
+(1)
+
+(c)
+OPO
+
+SHG
+
+Pump
+
+χ(2) (PPLN)
+
+aN-1 aN
+
+a1 a2
+
+Feedback
+IM
+PM
+
+FPGA
+
+(b)
+
+Threshold Pth
+
+Im[ai]
+
+(d)
+Re[ai]
+
+π
+Below threshold:
+squeezed vacuum
+
+At threshold:
+bifurcation
+
+0
+
+Above threshold:
+coherent states
+with phase {0, π}
+
+Jijσiσj
+Ground state
+
+OPO pump
+Equal state probabilities
+
+Configuration
+
+Ground state
+selected
+
+Configuration
+
+Figure 1: (a) Coherent Ising Machine design consisting of time-multiplexed OPO and measurement-feedback
+apparatus. See Refs. [24, 25] for details. (b) OPO state during transition from below-threshold squeezed
+state to (bistable) above-threshold coherent state. (c) Solution of antiferromagnetic Ising problem on the
+Möbius ladder with the CIM, giving measured OPO amplitudes ai and Ising energy H as a function of time
+in round trips. (d) Illustration of search-from-below principle of CIM operation.
+
+2
+
+where σi = ±1 are the Ising spins, Jij are the entries of the spin-spin coupling matrix, and hi the Zeeman
+(bias) terms. The Ising problem is NP-hard for non-planar couplings [26] and is one of the most widely
+studied problems in this complexity class. We focus on two canonical NP-hard Ising problems: unweighted
+MAX-CUT [2] and ground-state computation of the Sherrington-Kirkpatrick spin-glass model [27].
+In the CIM, the spin network is represented by a network of degenerate optical parametric oscillators (OPOs).
+Each OPO is a nonlinear oscillator that converts pump light to its half-harmonic [28]; it can oscillate in two
+identical phase states, which encode the value of the Ising spin [29, 30]. Optical coherence is essential to
+the CIM, where the data is encoded in the phase of the light. As Fig. 1(a) shows, time multiplexing offers a
+straightforward way to generate many identical OPOs in a single cavity [30]. A pulsed laser with repetition
+time T is used to pump an optical cavity with round-trip time N ×T . Parametric amplification is provided by
+the χ(2) crystal; since this is an instantaneous nonlinearity, the circulating pulses in the cavity are identical
+and non-interacting. The approach is scalable using high repetition-rate lasers and long fiber cavities: OPO
+gain has been reported for up to N = 106 pulses, and stable operation achieved for N = 50,000 [31]. Each
+circulating pulse represents an independent OPO with a single degree of freedom ai . Classically, ai is a
+complex variable, which maps to the annihilation operator âi in quantum mechanics [32]. A measurementfeedback apparatus is used to apply coupling between the pulses [24, 25]. In each round trip, a small fraction
+of the light (∼10%) is extracted from the cavity and homodyned against a reference pulse (the OPO pump
+is created from second harmonic generation (SHG) of the reference laser, so there is good matching between
+the reference and the OPO signal light, which is at half the frequency of the pump). The homodyne result, in
+essence a measurement of ai , is fed into an electronic circuit (consisting of an ADC, an FPGA, andPa DAC)
+that, for each pulse, computes a feedback signal that is proportional to the matrix-vector product j Jij aj .
+This signal is converted back to light using an optical modulator and a reference pulse, and re-injected into
+the cavity. The measurement-feedback CIM has intrinsic all-to-all connectivity through its exploitation of
+memory in the electronic circuit (although the same effect can be obtained with optical delay-line memories
+in all-optical CIMs [29, 30]).
+The OPO is a dissipative quantum system with a pitchfork bifurcation well adapted for modeling Ising spins:
+as the pump power is increased (Fig. 1(b)), the OPO state transitions from a below-threshold squeezed vacuum state [33, 34, 35] to an above-threshold coherent state [36]. Because degenerate parametric amplification
+is phase-sensitive, only
+two phase states are stable above threshold; thus the OPO functions as a classical
+
+“spin” with states |0i , |πi that can be mapped to the Ising states σi = {+1, −1}. The optimization process happens in the near-threshold regime where the dynamics are determined
+by a competition between the
+P
+network loss and Ising coupling (which seek to minimize the product ij Jij ai aj ), and nonlinear parametric
+gain (which seeks to enforce the constraints ai ∈ R, |ai | = const).
+As an example, consider the Ising problem on the N = 16 Möbius ladder graph with anti-ferromagnetic
+couplings [37]. Fig. 1(c) shows a typical run of the CIM, resulting in a solution that minimizes the Ising
+energy (data from Ref. [24]). The most obvious interpretation of the process is spontaneous symmetry
+breaking of a pitchfork bifurcation: prepared in a squeezed vacuum state and driven by shot noise, the OPO
+state bifurcates, during which its amplitudes ai grow either in positive or negative value, and subsequently
+the system settles into the Ising ground state (or a low-lying excited state) [24, 38] (this is related to the
+Gaussian-state model in Ref. [39]). Another view derives from ground-state “search from below” (Fig. 1(d)).
+Here the Ising energy is visualized as a complicated landscape of potential oscillation thresholds, each with
+its own spin configuration. If the OPO pump is far below the minimum threshold, all spin configurations
+will be excited with near-equal probability, but once the ground-state threshold is exceeded, its probability
+will grow exponentially at the expense of other configurations [30, 40]. This ground-state selection process
+corresponds to the 40 ≤ t ≤ 60 region in Fig. 1(c).
+The D-Wave 2000Q (DW2Q) quantum annealer used in this work is installed at NASA Ames Research
+Center in Mountain View, California. The DW2Q has 2,048 qubits, but its “Chimera” coupling graph (i.e.,
+the graph whose edges define the non-zero Jij terms in Eq. (1)) is very sparse. Since most Ising problems
+are not defined on subgraphs of the Chimera, minor embedding is used to find a Chimera subgraph on
+which the corresponding Ising model has a ground state that corresponds to the classical ground state of
+the Ising model defined on the desired problem graph [20, 21]. Native clique embeddings [41] (Fig. 2(a)) are
+pre-computed embeddings that can be used for fully-connected problems or problems on dense graphs. Each
+3
+
+logical qubit is associated to an L-shaped ferromagnetic chain of dN/κe + 1 physical qubits, where 2κ is the
+number of qubits in each unit cell of the Chimera graph (κ = 4 in the D-Wave 2000Q). Clique embeddings
+are desirable because all chain lengths are equal: this architecture simplifies the parameter setting procedure
+due to symmetry and it is thought to prevent desynchronized freeze-out of chains during the calculation
+[42]. However, the embedding introduces considerable overhead relative to the fully-connected model: for
+N logical qubits, N (dN/κe + 1) ≈ N 2 /κ physical qubits are used. Due to the triad structure [22] of the
+embeddings (Fig. 2(a)), only approximately half of the annealer’s physical qubits are utilized, limiting the
+D-Wave 2000Q to problems with N ≤ 64 (the actual limit is N ≤ 61 due to unusable qubits on the particular
+machine at NASA Ames).
+
+Results
+Sherrington-Kirkpatrick (SK) spin-glass
+As a first benchmarking problem, we consider the Sherrington-Kirkpatrick (SK) spin-glass model on a fullyconnected (i.e., maximally dense) graph, where the couplings Jij = ±1 are randomly chosen with equal
+probability [27]. Ground-state computation of the SK model is directly related to the graph partitioning
+problem, which is also NP-hard [43]. For each problem size 2 ≤ N ≤ 61, 20 randomly-chosen instances
+were solved on the DW2Q. We consider as a performance metric the success probability P , defined as the
+fraction of runs on the same instance that return the ground state energy, as well as the time to solution
+Tsoln = Tann dlog(0.01)/ log(1 − P )e, which multiplies the expected number of independent runs to solve a
+problem with 99% probability with the time of a single run, Tann .
+Fig. 2(b) shows that the DW2Q performance is strongly dependent on the embedding parameter Jc , and the
+optimal Jc scales roughly as N 1/2 (see methods for details). This scaling is consistent with results published
+on the same class of problems with the earlier D-Wave Two quantum annealer, and it is believed to be
+connected to the spin-glass nature of the SK Ising problem [42]. Fig. 2(c) shows that the performance on the
+D-Wave depends strongly on the single-run annealing time, with the values Tann = (1, 10, 100, 1000)µs plotted
+here. The D-Wave annealing time is restricted to the range [1, 2000]µs. We observe that longer annealing
+
+(a)
+
+(c)
+
+(b)
+
+CIM
+D-Wave
+1
+
+10 100 Tann=1000µs
+
+D-Wave
+CIM
+
+Figure 2: (a) Illustration of clique embedding: an arbitrary N = 16 graph is embedded into the D-Wave
+chimera, each spin mapped to a ferromagnetically coupled line of physical qubits (each color is a logical qubit).
+(b) D-Wave ground-state probability for Sherrington-Kirkpatrick (SK) model as a function of problem size
+N and embedding parameter Jc . Shading indicates interquartile range (IQR, 25/75 percentile range of
+instances). (c) Scaling of ground-state probability and time to solution for DW2Q (with optimal Jc ) and
+Stanford CIM. D-Wave and CIM ran 20 and 10 instances per problem size, respectively.
+4
+
+times give higher success probabilities, in accordance with the expectations from the adiabatic quantum
+optimization approach that inspired the design of the D-Wave machine. The data fit well to a squareexponential P = exp(−(N/N0DW )2 ), where the parameter N0DW increases slowly, roughly logarithmically,
+with Tann . The key computing figure of merit is the total annealing time to solution Tsoln . This metric shows
+a tradeoff between the annealing time of a single run and success probability: short anneals are preferred for
+small problems where the success probability is always close to unity and insensitive to the annealing time,
+and long anneals are preferred for large problems where the success probability dominates. For problem sizes
+N < 30, the results in Fig. 2 agree with an extrapolation of the benchmark data for Tann = 20µs reported
+in Ref. [42], which used an earlier processor (the 512-qubit D-Wave, despite the engineering improvements
+that have been made in the last two generation chips (2X and 2000Q)).
+The same SK instances for N = 10, 20, . . . , 60 were solved on the CIMs hosted at Stanford University in
+Stanford, California and NTT Basic Research Laboratories in Atsugi, Japan [24, 25]. Additional problems
+with N ≥ 60 were also solved on the CIM, but were too large to be programmed on the DW2Q. The two Ising
+machines have similar performance (see Supp. Sec. S2 for more details). Fig. 2(c) shows a plot of the success
+probability as a function of problem size: the exponential scaling for the CIM is shallower than the one
+given by the DW2Q performance. We note that the success probability P for the CIM scales approximately
+as exp(−N/N0CIM ), where N0CIM is a constant. The fact that for the DW2Q, success probability P scales
+with an N 2 dependence in the exponential rather than N (as is the case for the CIM) leads to a dramatic
+difference in success probability between the quantum annealer and the CIM for problem sizes N ≥ 60. This
+large difference is also reflected in the times-to-solution for the CIM versus the D-Wave quantum annealer.
+MAX-CUT
+We next study the DW2Q performance on MAX-CUT for both dense and sparse unweighted graphs. Unweighted MAX-CUT is the problem of finding a partition (called a cut) of the vertices V of a graph G = (V, E)
+where the partition is defined by two disjoint sets V1 and V2 with V1 ∪ V2 = V , and for which the number
+of edges between the two sets |{(v1 ∈ V1 , v2 ∈ V2 ) ∈ E}| is maximized. Unweighted MAX-CUT is NP-hard
+for general graphs [2], and can be P
+expressed as an Ising problem by setting the anti-ferromagnetic couplings
+Jij = +1 along graph edges: H = (ij)∈E σi σj . Thus, the problem in Fig. 1(c) is the same as MAX-CUT on
+the Möbius ladder graph. Previous CIM studies have solved MAX-CUT on problems up to size N = 2,000
+in experiment [30, 37, 24, 25] and N = 20,000 in simulation [29, 44].
+Random unweighted MAX-CUT graphs at the phase transition [45], with edge density 0.5 (i.e. Erdős-Rényi
+graphs G(N, 12 )) were tested on DW2Q for problems up to N = 61, and on the CIM for N ≤ 150. For these
+graphs, clique embeddings were used, but in practice the performance did not differ from the embedding
+heuristic provided by the D-Wave API [21]. In Fig. 3(a) we show that the optimal value of the embedding
+coupling parameter Jc appears to be correlated with the appearance of defects in the perfect polarization
+state expected in logical qubits at the end of the anneal. The success probability follows the same square2
+exponential (e−O(N ) ) trend with N as in the SK model, but the drop-off is even steeper. The CIM success
+probabilities are also lower than for the SK model, but are now orders of magnitude higher than the DW2Q
+for N ≥ 40. By N = 55, the CIM success probability is 106 times larger than that for the DW2Q, and
+there is correspondingly a 107 times difference in the measured time to solution (Table 1). Extrapolated to
+N = 100, this difference exceeds 1020 .
+To test the effect of sparseness, Fig. 3(c) plots the performance on unweighted regular graphs of degree
+d = 3, 4, 5, 7, 9, where the degree of a graph is the number of edges per vertex. Despite their sparseness,
+MAX-CUT on these restricted graph classes is also NP-hard [46]. The CIM shows no performance difference
+between d = 3 (cubic) and dense graphs. For DW2Q, the sparse graphs are embedded using the graph minor
+heuristic, which allows problems of up to size N = 200 to be embedded in the DW2Q [21]. In addition,
+the found embeddings require significantly fewer qubits (for the sparse graphs) than the clique embeddings
+(compare Figs. 3(d) and 2(a)). For cubic graphs, the DW2Q achieves slightly better performance than the
+CIM, while the CIM’s advantage is noticeable for d ≥ 5.
+The CIM achieves similar success probabilities for cubic and dense graphs, suggesting that dense problems
+are not intrinsically harder than sparse ones for this class of annealer. D-Wave’s strong dependence on edge
+5
+
+(a)
+
+(c)
+
+(b)
+
+CIM (d=3) D-Wave
+d=3
+
+CIM
+
+4
+d=
+
+CIM (dense)
+
+D-Wave
+
+D-Wave
+
+5
+d=
+
+d=7
+
+d=9
+
+dense
+
+(d)
+
+(e)
+
+Figure 3: (a) D-Wave performance on dense MAX-CUT problems with (edge density 0.5), showing that
+optimal performance occurs when the Jc coupling is strong enough to make it unlikely that logical qubits
+(chains) become “broken” (see also Supp. Figs. S1-S2). (b) D-Wave and NTT CIM success probability for
+dense MAX-CUT as a function of problem size (for Tsoln see Supp. Fig. S6). (c) D-Wave (annealing time
+Tann = 1000µs) and NTT CIM success probability for sparse graphs of degree d = 3, 4, 5, 6, 9 as well as
+dense graphs. (d) Example of a cubic-graph embedding found with the heuristic. (e) Success probability
+scatterplots comparing D-Wave (Tann = 1000µs) and CIM.
+
+N
+10
+20
+40
+60
+80∗
+100∗
+∗
+
+DW2Q
+6.0 µs
+35 µs
+6.1 ms
+1.4 s
+(400 s)
+(105 s)
+
+SK
+CIM
+25 µs
+100 µs
+0.4 ms
+0.6 ms
+1.8 ms
+3.0 ms
+
+Factor
+0.2
+0.3
+15
+2000
+(105 )
+(107 )
+
+N
+10
+20
+40
+55
+80∗
+100∗
+
+MAX-CUT (dense)
+DW2Q
+CIM
+Factor
+6.0 µs
+25 µs
+0.2
+0.4 ms 100 µs
+4
+6.1 s
+0.4 ms
+104
+104 s
+1.2 ms
+107
+11
+(10 s) 1.8 ms (1013 )
+(1019 s) 2.3 ms (1021 )
+
+N
+10
+20
+50
+100
+150
+200
+
+MAX-CUT (d = 3)
+DW2Q
+CIM
+Factor
+1.0 µs
+50 µs
+0.02
+3.0 µs 100 µs
+0.03
+12 µs
+0.4 ms
+0.03
+100 µs 3.3 ms
+0.03
+2.8 ms 22 ms
+0.1
+11 ms
+51 ms
+0.2
+
+2
+
+D-Wave solution times extrapolated using P = e(N/N0 ) fits in Figs. 2(c), 3(b). Note that dense problems with
+N > 61 are not embeddable in the DW2Q.
+
+Table 1: Time to solution Tsoln for SK, dense MAX-CUT, and d = 3 MAX-CUT problems on D-Wave and
+NTT CIM (see Supp. Sec. S2). The annealing time for D-Wave runs was chosen (in the range [1, 1000]µs)
+to optimize Tsoln (see Supp. Sec. S4). All CIM data are for fixed anneal times (1000 round trips). “Factor”
+(DW)
+(CIM)
+refers to the ratio of solution times Tsoln /Tsoln .
+
+6
+
+density is most likely a consequence of embedding compactness: it is known that more compact embeddings
+(fewer physical qubits per chain) tend to give better annealing performance, after all optimization and
+parameter setting is considered [21]. Since qubits on the D-Wave chimera graph have at most 6 connections,
+the minimum chain length is ` = d(d − 2)/4e, so embeddings grow less compact with increasing graph degree
+(see Supp. Sec. S3). Since degree-1 and degree-2 vertices can be pruned from a graph in polynomial time (a
+variant of cut-set conditioning [47]), d = 3 is the minimum degree required for NP-hardness. Of NP-hard
+MAX-CUT instances, Fig. 3(c) suggests that there is only a very narrow region (d = 3, 4) where D-Wave
+matches or outperforms the CIM; for the remainder of the graphs the CIM dominates.
+Graph Density and Hardness
+Fixing the problem size and varying the edge density, we see the same effect and can fill in the gap between
+sparse graphs and dense graphs. We constructed random unweighted graphs of degree d = 1, 2, . . . , (N − 2)
+for each graph size N = 20, 30, 40, 50, 60. The success probabilities for DW2Q and the CIM are shown in
+Fig. 4(a) (for clarity only N = 40 CIM data are shown). In this case, we used clique embeddings for all
+problems, so for a given N all the embeddings are the same. Even with the embeddings fixed, the DW2Q
+finds sparse problems easier to solve than dense ones. The reason is that, consistent with Ref. [42], the
+optimal constraint coupling is weaker for sparse problems than for dense problems (Fig. 4(b)). In general,
+we find that Jc ∝ d for fixed N . Having a large constraint coupling could be problematic because the physical
+quantum annealer scales the largest coupling coefficient to the maximum coupling strength on the chip; the
+constraints max out this coupling and cause the logical couplings to be downscaled proportionally as Jc−1 .
+Thus dense graphs have weaker logical couplings in the embedded problem, hindering the annealer’s ability
+to find the ground state due to parameter misspecification or “intrinsic control errors” (ICE) [42, 48].
+
+(a)
+
+d=3
+
+d=6
+
+d=9
+
+(b)
+
+(c)
+
+D-WAVE (clique)
+D-WAVE (heuristic)
+CIM
+
+CIM (N=40)
+
+d=3
+
+d=5
+
+d=9
+
+dense
+
+Figure 4: (a) Success probability as a function of edge density. Native clique embeddings used for DWave. Optimal embedding parameter (see subgraph (b)) is used, with Tann = 1000 µs. (b) D-Wave success
+probability as a function of graph degree, showing that the optimal Jc scales as Jc ∝ d for fixed N . (For
+fixed edge density, the N dependence was determined previously to be Jc ∝ N 3/2 , see Fig. 3(a)). (c)
+Comparison of D-Wave and NTT CIM success probabilities for N = 50, using both clique embeddings and
+2
+heuristically determined embeddings (Tann = 1000 µs, dense D-Wave bars are extrapolation from e−(N/N0 )
+fit in Fig. 3(b))
+
+7
+
+The CIM has only weak dependence on the edge density x = d/(N −1). Earlier work on N = 100 graphs [24],
+as well as the CIM data plotted in Fig. 3(c), are consistent with this result. This suggests that the CIM
+has promise as a general-purpose Ising solver, achieving good performance on a large class of problems,
+irrespective of connectivity.
+Comparing Figs. 4(a) and 3(c) we can glean some insight regarding the effect of embedding overhead on the
+D-Wave quantum annealer’s performance. The heuristic embeddings in Fig. 3(c) are designed to minimize
+the overhead factor (ratio of physical qubits to logical qubits). This ratio is much larger for the native-clique
+embeddings, growing linearly, i.e., as O(N ) (see Supplementary Sec. S1). Fig. 4(c) compares these two
+D-Wave settings against the CIM at N = 50; while the CIM out-performs on all graphs with d ≥ 5, the
+difference between the success probabilities using clique and heuristic embeddings suggests that performance
+is heavily dependent on embedding overhead and the difference grows with edge density (and graph size).
+This illustrates an additional tradeoff in quantum annealing: poor-performing but easy-to-find embeddings
+vs. well-performing embeddings that require substantial pre-computation. This tradeoff is expected to favor
+the well-performing embeddings when the number of qubits (or connections) becomes large.
+Effect of Annealing Time
+The above analysis focused on time to solution at a fixed annealing time Tann . While this is a relevant
+metric for realistic machines where Tann is limited by parameter misspecification, finite temperature and
+other noise sources, it is difficult to answer questions of scaling using fixed anneal times. In particular, fixed
+anneal times can create an illusion of speedup for small problem sizes if the chosen anneal time is too large
+[18]. Therefore, it is also important to consider the machine’s performance at the optimal annealing time,
+which is more robust to this pitfall.
+In the CIM, the anneal time is set by the pump turn-on schedule and is an integer number of round trips.
+The experiments in this paper were conducted with Tann = 1000 round trips, but shorter or longer times
+are also possible. To assess the effect of the anneal time on CIM performance, we simulate the CIM with
+c-number stochastic differential equations (c-SDEs) using the truncated Wigner representation [36]. The
+algorithm, which is based on Ref. [38], is described in Supp. Sec. S3. Fig. 5(a) compares the performance
+of the experimental CIMs to the c-SDE model for dense MAX-CUT instances, indicating that the model
+reasonably reproduces the behavior of the experimental CIMs (similar agreement is found for SK and cubic
+MAX-CUT instances, see Supp. Fig. S9).
+Fig. 5(b) plots the (c-SDE) CIM success probability and time to solution (in round trips) as a function of
+anneal time. Consistent with the experimental results, we see an exponential scaling with N in the large-N
+limit (the curves are fit to P (N ) = (a + (1 − a)ebN )−1 , which becomes exponential for large N ). The timeto-solution plot is a series of (nearly) linear intersecting curves, where curves with shorter anneal time have
+a lower intercept but a larger slope. Thus the optimal anneal time depends on problem size and increases
+with N . Fig. 5(c) shows the analogous D-Wave data for the same problem class (dense MAX-CUT). Here
+the fixed-Tann curves scale quadratically with N rather than linearly.
+It has been observed empirically on D-Wave QAs that for Chimera-graph spin glasses, optimal time-tosolution scales as exp(BN 1/2 ) (where B is a constant) [18, 19, 49], while Tsoln at fixed anneal times increases
+more steeply [18]. The lower envelope of the curves in Fig. 5(b) can be reasonably fit to this form, even
+though the CIM is based on an entirely different computational
+principle. By analogy, since the fixed-anneal
+time curves for D-Wave scale as exp (N/N0DW )2 (for dense graphs), it is not unreasonable to expect that
+the envelope should fit to exp(B 0 N ) for some constant B 0 (Fig. 5(c)). This is consistent with the hypothesis
+1/2
+that a physical annealer’s time to solution should scale exponentially with Nph , where Nph is the number
+of physical qubits (or bits) required to encode the Ising problem.
+1/2
+
+We note that our claims are only suggestive, but not conclusive, of exp(BNph ) scaling at the optimal
+annealing time. Only for a limited range of problem sizes (25 ≤ N ≤ 50) is the optimal annealing time
+accessible with the DW2Q, and the data are noisy enough that other curves would also fit the lower envelope.
+Thus we caution against naı̈vely extrapolating these curves to large problem sizes. However, a clear scaling
+8
+
+D-Wave 2000Q
+
+CIM (c-SDE simulations)
+
+(a)
+
+(c)
+
+(b)
+
+Figure 5: Optimal annealing-time analysis for D-Wave and CIM, dense MAX-CUT instances. (a) CIM
+experimental performance vs. c-number SDE simulations. (b) CIM success probability and time to solution
+(given in terms of the number of round trips) as a function of problem size N . The effective round-trip time
+for the NTT CIM ((2.5N )µs, see Supp. Sec. S2) is used to convert this figure to seconds. (c) D-Wave time
+to solution as a function of annealing time Tann and problem size N . Dashed line shows optimal CIM Tsoln
+from (b) for comparison.
+advantage for the CIM does exist at measured problem sizes, a conclusion also observed (Supp. Figs. S10-S11)
+for SK and cubic (i.e., d = 3) MAX-CUT instances (although the D-Wave nonetheless outperforms the CIM
+by a factor of 10–100 for all measured cubic MAX-CUT problems).
+
+Discussion
+In conclusion, we have benchmarked the D-Wave 2000Q system hosted at NASA Ames and measurementfeedback CIMs hosted at Stanford University and NTT Basic Research Laboratories, focusing on MAX-CUT
+problems on random graphs and Sherrington-Kirkpatrick spin-glass models, and found that the merits of each
+machine are highly problem-dependent. Connectivity appears to be a key factor in performance differences
+between these machines. Problems with sparse connectivity, such as 1D chains (cf. Refs. [50] and [51]) and
+MAX-CUT on cubic graphs (Fig. 3), can be embedded into the DW2Q with little or no overhead, resulting
+in similar performance between the quantum annealer and the CIMs. However, the embedding overhead
+for dense problems like SK is very steep, requiring O(N 2 ) physical qubits to represent a size-N graph, and
+resulting in large embedded problems that decrease the performance of the quantum annealer. The ability
+to avoid an embedding overhead likely contributes to the CIM’s performance advantage on SK models that
+grows exponentially with the square of the problem size. For problems of intermediate sparseness, such as
+MAX-CUT on regular graphs of small degree d ≥ 5, the CIM is still faster by a large factor.
+Ultimately it is overall quantities such as wall-clock time or energy usage that are of practical interest.
+Read-in and read-out times, classical pre- and post-processing, and energy usage must be included in a
+
+9
+
+comprehensive evaluation. Both CIMs and superconducting qubit quantum annealers are in early stages of
+development, with these quantities currently in flux. Moreover, to beat state-of-the-art classical techniques
+(Supp. Sec. S5) on the problems studied in this paper, advances will be required. D-Wave has recently implemented features allowing unconventional control of the annealing process that can significantly improve
+results, and as mentioned above, efforts to improve the connectivity are underway. A key question will be the
+extent to which these technologies can harness quantum effects for computational purposes. Signatures of
+entanglement have been seen in D-Wave quantum annealers, though it remains open the extent to which the
+computation makes use of entanglement-related effects. CIMs, already interesting as semiclassical computational devices, can in principle also have entanglement [52], by either building scalable all-optical couplings
+[30, 53] (albeit with low losses being required), or by creating entanglement in the measurement-feedback
+architecture, for example by performing entanglement swapping.
+While the path forward for designing improved CIMs and quantum annealers involves many different aspects, this paper has primarily observed results that can be interpreted as being related to connectivity
+differences between the machines that were benchmarked. It has been conjectured often that increased internal connectivity in quantum annealers can improve performance [54, 55, 56], and there are large projects
+underway to realize higher-connectivity quantum annealers (including efforts by D-Wave, as well as the
+IARPA QEO program [57], and Google [58]). Our results provide strong experimental justification for this
+line of development.
+
+Methods
+Sample Problems
+For fully-connected SK and MAX-CUT on dense graphs, 20 random instances were created of each size
+N = 2, 3, . . . , 61 for the D-Wave. Of these, the N = 2, 10, 20, . . . , 60 instances were also used for the CIM.
+An additional set of random instances were created for N = 70, 80, . . . , 150 for the CIM, using the same
+algorithm.
+For the sparse-graph analysis, we computed regular graphs of size N = 2, 4, . . . , 300 and degree d = 3, 4, . . . 20,
+with 20 instances for each pair (N, d). The algorithm randomly assigns edges to eligible vertices until all
+reach the required degree (and backtracks if it gets stuck). The same algorithm was also used for the
+variable-density graphs: d = 1, 2, . . . , (N − 2) for N = 20, 30, 40, 50, 60, creating 20 instances per pair (N, d).
+Exact SK ground states were found with the Spin Glass Server [59], which uses BiqMac [60], an exact
+branch-and-bound algorithm. For SK instances of size N ≤ 100, the algorithm obtained proven ground
+states. For N > 100 the solver timed out before exhausting all branches (runtime T = 3000 s), so the result
+is not a guaranteed ground state; however, we believe it reaches the ground state with high probability for
+N ≤ 150 because multiple runs of the algorithm give the same state energy, and none of the CIM runs found
+an Ising energy lower than the Spin Glass Server result. MAX-CUT ground states for N ≤ 30 were found
+by brute-force search on a GPU; for 20 ≤ N ≤ 150 a Breakout Local Search (BLS) algorithm was used
+[5]. Although BLS is a heuristic solver, for N ≤ 150 it finds the ground state with nearly 100% probability,
+giving us high confidence that the BLS solutions are ground states. While the brute-force solver, D-Wave,
+and the CIM found states of equal energy to the BLS solution (if run long enough), they never found states
+of lower energy.
+D-Wave annealers
+Initial D-Wave experiments were performed on the D-Wave 2X at NASA Ames Research Center and the
+D-Wave 2X online system at D-Wave Systems Inc. Later runs were made on the D-Wave 2000Q at NASA
+Ames, once that machine came online. The 2X and 2000Q systems use a C12 (12 cells × 12 cells × 4 qubits)
+and C16 (16 × 16 × 4) Chimera, respectively. For all-to-all graphs, D-Wave 2X supports N ≤ 48 and 2000Q
+supports N ≤ 64 (the number is slightly smaller because of broken qubits). All N ≤ 48 runs were consistent
+
+10
+
+across the three machines as well as with extrapolation of data in Ref. [42] from runs performed on a different
+set of instances on the earlier generation machine D-Wave Two. All data reported in this paper came from
+the D-Wave 2000Q.
+Embeddings were pre-computed for all problems (heuristic embeddings for sparse MAX-CUT; native clique
+embeddings for SK, dense MAX-CUT, and variable-density MAX-CUT) so that runs in different conditions
+(e.g. annealing times, constraint couplings) would use the same embeddings. For each problem type, the
+optimal annealing parameter Jc is found as a function of problem size N by sweeping Jc (Supp. Sec. S1).
+The optimal Jc was found to be independent of the annealing time. The standard annealing schedule was
+used in all experiments, but the annealing time was tuned. Most instances were run 104 –105 times total,
+depending on the observed success rate (the especially hard N ≥ 50 MAX-CUT instances were run up to
+4 × 106 times). 5–10 different embeddings were used per instance and the success probability was averaged.
+Spin-reversal transformations were used to avoid spurious effects. After an anneal, each logical qubit value
+was determined by taking the majority vote of all qubits in the chain.
+In all figures, the shaded regions give the [25, 75]-percentile range (inter-quartile range, or IQR) for the data.
+Figs. 2(b), 3(a), 4(a), show individual instances as dots and the solid line gives the median. Figs. 2(c), 3(b-c),
+4(b) are too crowded to show D-Wave instances; the dots give medians and the smooth lines give analytic
+fits. For CIM data, medians and IQR are shown in Figs. 2(c), 3(b), while Fig. 3(c) only shows medians and
+IQR, due to crowding.
+CIM
+CIM experiments were performed on the 100-OPO CIM at Ginzton Laboratory of Stanford University and
+the 2048-OPO CIM at NTT Basic Research Laboratories. The Stanford and NTT devices are described
+in Refs. [24] and [25], respectively. Computation time of the Stanford CIM is 1.6ms, which is the time for
+1000 round-trips of the 320-m fiber ring cavity. Since the NTT CIM processes 2000-node problem in 5.0ms,
+which is the time for 1000 round-trips of the 1-km fiber ring cavity, we can solve up to b2000/N c problems
+in parallel per the computation time.
+The CIM’s reliable operation depends on relative phases between the OPO pulses, injection pulses, and
+measurement-LO pulses being kept stable and well-calibrated. Such phase stabilization is imperfect in the
+experimental setups used in this study, and consequently post-selection procedures have been applied to both
+the Stanford and NTT CIM experimental data. This is described in detail in Supp. Sec. S2. Computation
+times have been reported in terms of annealing times; as with the DW2Q, these times exclude the time
+required to transfer data to and from the CIM
+
+Acknowledgements
+This research was funded by the Impulsing Paradigm Change through Disruptive Technologies (ImPACT)
+Program of the Council of Science, Technology and Innovation (Cabinet Office, Government of Japan). R.H.
+is supported by an IC Postdoctoral Research Fellowship at MIT, administered by ORISE through U.S. DOE
+and ODNI. P.L.M. was partially supported by a Stanford Nano- and Quantum Science and Engineering
+Postdoctoral Fellowship. D.V. acknowledges funding from NASA Academic Mission Services, contract no.
+NNA16BD14C. H.M., E.N., and T.O. acknowledge funding from NSF award PHY-1648807. D.E. acknowledges support from the U.S. ARO through the ISN at MIT (no. W911NF-18-2-0048) and the SRC-NSF
+E2CDA program. The authors acknowledge Salvatore Mandrà for useful discussions and parallel-tempering
+simulation results, and Daniel Lidar and Catherine McGeoch for helpful correspondence.
+Y.Y., P.L.M. and E.R. proposed the project. R.H. performed D-Wave experiments and data analysis,
+and prepared the figures. R.H., P.L.M., D.V., and T.I. wrote the manuscript. T.I. and P.L.M. performed
+NTT and Stanford CIM experiments, respectively. D.V. helped with D-Wave experiments and data analysis.
+A.M., C.L., R.L.B., M.M.F., and H.M. contributed to building the Stanford CIM. K.I., T.H., K.E., T.U.,
+R.K., and H.T. contributed to building the NTT CIM. R.H. performed simulations of the CIM, adapting
+11
+
+code from P.L.M., E.N., and T.O. E.R., Y.Y., and A.M. assisted with preparation of the manuscript. S.U.,
+S.K., K.K., and D.E. assisted with interpretation of the results.
+The authors declare that they have no competing financial interests.
+Correspondence and requests for materials should be addressed to R.H. (e-mail: rhamerly@mit.edu), T.I. (email: inagaki.takahiro@lab.ntt.co.jp), or P.L.M. (e-mail: pmcmahon@stanford.edu).
+
+12
+
+[Supplementary] Experimental investigation of performance differences between Coherent Ising Machines and a quantum annealer
+S1
+
+D-Wave embeddings and Jc optimization
+
+Native clique embeddings [41] are used for all SK problems, MAX-CUT problems on graphs with edge
+density 0.5, and MAX-CUT problems on varying-density graphs (Figs. 2(c), 3(b) and 4(a) respectively
+in main text). The code to generate the embeddings is available on GitHub [61]. Once an embedding is
+chosen, the embedding parameter Jc (ferromagnetic coupling between qubits in a chain) is tuned to maximize
+performance. In no cases does the optimal Jc depend on the annealing time.
+Fig. S1 shows that the optimal Jc scales roughly as N 1/2 for SK problems and N 3/2 for MAX-CUT problems
+of edge density 0.5. In particular, the relations Jc = 1.1N 1/2 (SK) and Jc = 0.047N 3/2 (MAX-CUT) were
+used in Figs. 2(c), 3(b).
+For graphs with variable edge density, it was shown in Fig. 4(b) that the optimal Jc scales as d for fixed N ,
+with Jc = 0.5d = 9.5x for N = 20 shown in the figure (x = d/(N − 1) is the edge density). Extrapolating
+this using the N 3/2 relation above (which holds for constant x = 21 ), we used Jc = 9.5(N/20)3/2 x, which is
+very close to the Jc = 0.047N 3/2 used for edge-density 0.5 graphs. The relation was also tested for N = 30
+variable edge-density graphs and found to give the optimal Jc .
+Fig. 3(a) of the main text suggests that the success probability is maximized when the number of broken
+chains is Nbr ≈ 0.7. Plotting Nbr as a function of N and Jc in Fig. S2, we see that Nbr ≈ 0.7 for a narrow
+range of Jc centered around the line Jc = 0.047N 3/2 . For a wide range of N , this value of Jc also roughly
+maximizes the success probability (Fig. S1).
+The fact that dense MAX-CUT problems are optimally embedded when Nbr = O(1) is an example of the
+general principle that Jc must neither be too strong nor too weak for a problem. If Jc is too small so
+that Nbr  1, the constraint is not enforced effectively and thus the embedded problem can have a ground
+state that is different from the logical problem. Once Nbr . 1, increasing Jc further will not improve the
+computation significantly because all of the constraints are already satisfied with high probability. Rather,
+it degrades performance because Jc maxes out the physical coupling on the chip so that logical couplings are
+
+SK (Tann = 20 s)
+
+100
+
+Max-Cut (Tann = 1000 s)
+
+Success Probability P
+
+10 1
+10 2
+N = 12
+20
+28
+36
+44
+52
+60
+
+10 3
+10 4
+10 5
+0.0
+
+0.5
+
+1.0
+
+1.5
+Jc/N 1/2
+
+2.0
+
+2.5
+
+N = 16
+20
+24
+28
+32
+36
+40
+3.0 0.00
+
+0.02
+
+0.04
+
+0.06
+Jc/N 3/2
+
+0.08
+
+0.10
+
+0.12
+
+Figure S1: D-Wave success probability for SK problems and MAX-CUT problems of edge density 0.5, as a
+function of problem size N and embedding parameter Jc .
+13
+
+Broken Chains Nbr
+
+101
+
+Constraint too
+strong, Nbr 1
+
+Constraint Jc
+
+101
+
+100
+Nbr = 0.3
+0.7
+
+10 1
+
+1.5
+100
+
+Jc = 0.047N 3/2
+Nbr 0.7
+
+Constraint too
+weak, Nbr 1
+10 2
+
+5
+
+6 7 8 9 10
+
+20
+Problem size N
+
+30
+
+40
+
+50 60
+
+Figure S2: MAX-CUT on edge-density 0.5 graphs. Broken chains as a function of problem size N and
+embedding parameter Jc
+scaled down as Jc−1 , which will correspondingly reduce the spectral gap of the (physical) Hamiltonian, and
+can also cause problems due to the finite bit precision and hardware imperfections of the D-Wave system.
+For the sparse graphs, embeddings are found using the heuristic of Cai et al. [21], which is available as part
+of the D-Wave API toolkit. For each sparse graph instance, we attempt to generate 10 embeddings using
+the heuristic with a time-out of 60 seconds. The probability of finding an embedding is shown in Fig. S3(a)
+(the d = 3 case is in agreement with [21, Fig. 7]). The time required to find an embedding (on average) and
+the number of physical qubits Nemb are also plotted in Fig. S3(a).
+Fig. S3(b) shows the number of physical qubits for graphs of degree d = 3, 4, 5, 7, 9 embedded using the
+heuristic, as well as the average chain length L = Nemb /N . This is compared against the clique embeddings
+described above.
+Because the heuristic embeddings differ markedly from clique embeddings, we do not use the formula Jc =
+9.5(N/20)3/2 x derived above. Rather, the optimal Jc is found by hand, running the quantum annealer for
+a range of N , d and Jc (Fig. S4). We find that the optimal Jc is independent of N for sufficiently large N ,
+while it increases slightly for small N for d = 7, 9. We interpolate using the curves of Fig. S4 to find the
+embedding parameter used in the main text (Fig. 3(c)).
+
+S2
+
+CIM data and post-selection
+
+The CIM is based on an OPO network, which is sensitive to optical phase fluctuations. During the course of
+operation, the phase of the injection beam will drift. This drift is slow compared to experimental timescales,
+but can become large if a calculation is run thousands of times.
+To filter out out-of-phase computations (which always lead to the wrong answer), each CIM includes a
+phase-checking mechanism, albeit somewhat different for the NTT and the Stanford CIMs. We summarize
+both here.
+In the NTT system, phase stability and calibration is implemented with a phase-check graph: the 2,048 spins
+in the CIM are partitioned into a 16-spin (unused) header, a 32-spin bipartite graph for phase checking, and a
+14
+
+(a)
+
+(b)
+
+Figure S3: (a) Probability of finding an embedding using the heuristic, average time required to find an
+embedding, and number of physical qubits as a function of graph parameters (N, d) for fixed-degree graphs.
+(b) Number of qubits and average embedding chain length as functions of N .
+
+Success Probability
+
+d=3
+
+100
+10 1
+10 2
+10 3
+10 4
+1
+
+N=
+20
+40
+60
+80
+100
+2 3 4 5 6 78 1
+
+d=4
+
+N=
+20
+40
+60
+
+80
+100
+2 3 4 5 6 78 1
+
+d=5
+
+N=
+20
+30
+
+50
+70
+90
+2 3 4 5 6 78 1
+Coupling Jc
+
+d=7
+
+Optimal Jc
+
+N=
+20
+
+40
+60
+76
+2 3 4 5 6 78 1
+
+d=9
+
+N=
+20
+30
+
+50
+66
+2 3 4 5 6 78
+
+Figure S4: Choice of optimal coupling for sparse graphs using the heuristic embedding.
+“frame” of 2,000 spins for the desired problem. Since N  2000 for the problems in this paper, we can solve
+up to b2000/N c ≈ 2000/N problems in parallel per frame. The coupling matrix Jij has a block-diagonal
+structure (Fig. S5(a)).
+The couplings of the bipartite graph
+P for phase-check are randomly set to +1 or −1 and the value of the
+phase-check Hamiltonian HPC = 12 ij Jij σi σj is computed after each run. If the optical phase is incorrect,
+we find HPC > 0 because the system couplings are reversed and the machine is trying to minimize −HPC .
+The top plot of Fig. S5(b) shows the phase-check HPC value (normalized to the maximum) as a function of
+time. HPC drops sharply to a negative value when the CIM is in phase, making it a good proxy for the CIM
+phase.
+In the bottom plots of Fig. S5(b), three data-filtering techniques are shown. Here we plot the free-running
+success probability (fraction of instances per frame in the ground state) for an N = 50 problem (40 trials
+running in parallel per frame). Averaging over all frames requires no post-processing, but gives a low success
+probability because we are including many trials when the machine is out of phase. Filtering on the phasecheck graph (green curve) does significantly better; however, we are still averaging over the edges of the
+phase-check region where the system is only marginally in phase. Still better success probabilities can be
+15
+
+(a) Header Phase
+check
+16
+
+Problem
+graphs
+
+(b)
+
+(c)
+
+32
+
+2000 spins
+
+D-Wave
+(T = 1000µs)
+
+Jij matrix
+
+Phase-check
+graph (bipartite)
+Problem graphs
+
+Figure S5: (a) Partitioning of NTT CIM spins into a 16-spin header, a 32-spin phase-check graph, and 2,000
+spins for problem graphs, and the resulting Jij matrix. (b) Phase-check Hamiltonian HPC as a function of
+time (frame index), and three post-selection techniques for inferring the success probability. (c) NTT CIM
+success probability for SK and x = 0.5 MAX-CUT problems as a function of post-selection method.
+found by looking for the best batch of 1,000 consecutive trials (25 consecutive frames) in the series (red
+curve). This generally corresponds to the the CIM working in its best condition: when the feedback signal is
+well in phase. This is the success probability we could expect from a well-engineered CIM where the optical
+phase, pump power, and other optical degrees of freedom have been sufficiently stabilized.
+We compare the three post-selection methods in Fig. S5(c) to show that our post-selection techniques give
+only a constant improvement in success probability, and this constant is never more than an order of magnitude. Thus, we can safely conclude that the CIM’s performance advantage does not arise from cherry-picking
+good samples from the data. The “best batch” method (red curves in Fig. S5) is used to process all CIM
+data reported in the main text.
+The data collected from the Stanford CIM was also post-processed to select only the runs on the machine
+for which the optical setup was optimally stable. However, the procedure for post-selection was slightly
+different to that used for the data from the NTT CIM. In the case of the Stanford CIM, a recording of
+the homodyne measurement of the output pulses immediately before a run began was stored. During this
+recording phase, constant-amplitude pulses were injected into the cavity. If the entire system is phasestable, then the recorded homodyne measurement results should not show large fluctuations from pulse to
+pulse. Furthermore, the particular value of the phase of the injected light is also relevant (not just that it
+is ideally constant), since the computation mechanism relies on interference of injected pulses with pulses
+in the cavity, and how much interference is obtained is partially determined by the phase of the injection
+pulses. We therefore post-selected not only for stability, but also for a particular mean value of the homodyne
+measurement results, which was determined on an instance-by-instance basis. The net effect of this postselection procedure is to produce success probabilities that represent the probabilities one would obtain if
+the CIM was always phase-stable whenever a computation was run, and the phase was correctly calibrated
+for each problem instance.
+The post-selected success probabilities were only on average 5× higher than the success probabilities obtained
+when no post-selection was applied. This implies that even if one is pessimistic about the prospects of
+improvement to the optical phase stabilization of the CIM, and one assumes that the most stable the
+16
+
+machine will ever be is as it was during the experiments reported in this paper, then at worst one should
+divide the success probabilities for the Stanford CIM reported in this paper by 5×. This gives the estimate
+for the expected success probabilities for a machine that has the same fundamental operating principle as
+the currently implemented CIM at Stanford, as well as the same experimental imperfections (including phase
+noise) that the current setup has.
+The CIMs at Stanford and NTT were run on the same (randomly-chosen) Ising problems for N ≤ 100
+MAX-CUT (edge density x = 0.5) and SK (fully connected). The average success probabilities of the two
+machines agree to within a factor of 5 (Fig. S6).
+In order to compare the solution time Tsoln with D-Wave, we need the physical annealing time for the CIM.
+A strict minimum for the annealing time is given by the product of the time between pulses (equal to 1/f
+where f is the pump repetition frequency), the size of the problem N , and the number of round trips per
+run R:
+NR
+(min)
+(S1)
+Tann
+=
+f
+This is the effective annealing time if perfect parallelization is achieved and all spins are used for logic (i.e.
+a negligible fraction of phase-check and dummy spins). Both Stanford and NTT CIMs use R = 1000 round
+trips.
+(min)
+
+However, the annealing time is generally longer than Tann because dummy spins are added to the cavity
+to compensate for the delays due to the DAC / ADC electronics in the feedback circuit and to give the
+FPGA more time to finish the coupling computation. This increases the cavity round-trip time and thus the
+annealing time.
+In the NTT CIM, we used 5056 pulses in a 1-km fiber ring cavity as: 16-spin (header), 32-spin (phase check),
+2000-spin (solve problem), 100-spin (blank), 2808-spin (free running in FPGA calculation time), 100-spin
+
+SK (complete graph)
+
+100
+
+102
+
+10 1
+(D-Wave)
+Tann = 1 s
+10 s
+100 s
+1000 s
+
+Success Probability P
+
+10 3
+10 4
+10 5
+
+Max-Cut (dense graph)
+
+100
+10 1
+10 2
+
+100
+10 2
+Time to Solution Tsoln (s)
+
+10 2
+
+0
+
+20
+
+40
+
+Not parallelized
+Parallelized
+
+10 6
+
+Max-Cut (dense graph)
+
+104
+102
+
+10 2
+(CIM)
+NTT
+Stanford
+
+10 4
+
+10 4
+
+100
+
+CIM
+
+10 3
+
+10 5
+
+SK (complete graph)
+
+104
+
+10 4
+
+D-Wave
+60 80 100 120 140
+Problem size N
+
+10 6
+0
+
+20
+
+40
+
+60 80 100 120 140
+Problem size N
+
+Figure S6: Comparison of Stanford and NTT CIM performance for SK and dense MAX-CUT problems.
+D-Wave data for Tann = 1, 10, 100, and 1000µs are also plotted.
+
+17
+
+(blank). The pump repetition rate is 1 GHz and the round-trip time is 5µs. As only 2000 of 5056 pulses are
+used, even if perfect parallelism is employed, the annealing time is approximately 2.5× longer than Eq. (S1),
+or Tann = (2.5N )µs, where N is the problem size. Fig. S6 plots the NTT CIM time-to-solution both with
+and without parallelism, to enable a fair comparison with the D-Wave annealer (we did not attempt to
+parallelize D-Wave to run multiple problems per anneal).
+In the Stanford CIM, which did not employ parallelism due to its smaller number of spins, the annealing time
+is Tann = 1.6 ms for all problems. The Stanford CIM [24] features a 320-m fiber ring cavity that contains
+160 optical pulses (repetition rate 100 MHz), of which up to 100 can be used to encode Ising problems. The
+data in Fig. 2(c) come from the Stanford CIM, where the above annealing time combined with the formula
+Tsoln = Tann dlog(0.01)/ log(1 − P )e is used to calculate the time to solution.
+
+S3
+
+C-SDE Simulations of CIM
+
+The CIM is a time-multiplexed synchronously-pumped OPO with measurement feedback coupling (Fig. S7).
+It consists of a main loop (red) with a delay line for measurement and feedback (blue). Because the OPO
+is weakly coupled, we can treat this system using truncated-Wigner theory [36], which reduces the quantum
+dynamics to a set of c-number Langevin equations (c-SDEs). For OPOs with low single-pass gain at threshold,
+
+(4)
+FPGA
+
+(3)
+b
+a
+
+(1)
+
+(2)
+
+(5)
+PSA
+(6)
+(7)
+
+Figure S7: Abstract schematic of measurement-feedback CIM.
+Step
+1
+
+Description
+Beamsplitter
+
+2
+3
+4
+
+Loss
+Loss
+Detection
+FPGA
+Modulation
+Beamsplitter
+Loss
+PSA Gain
+
+5
+6
+7
+
+Truncated-Wigner Model
+(1)
+ai cos(θm ) + wi sin(θm ) → ai
+(1)
+ai sin(θm ) − wi cos(θm ) → bi
+(2)
+ai cos(θL1 ) + wi sin(θL1 ) → ai
+(3)
+bi cos(θL2 ) + wi sin(θL2 ) → bi
+P bi → x i
+j Jij xj → yi
+(4)
+C(F (t)yi ; ymax ) + wi → bi
+ai cos(θf ) + bi sin(θf ) → ai
+(5)
+ai cos(θL3 ) + wi sin(θL3 ) → ai
+(6)
+p + wi → pi
+p
+L p2i + a2i /2 → Bi
+
+eBi 1 + 21 (e2Bi − 1)(1 − (1 + a2i /2p2i )−1/2 ) ai → ai
+
+Table S1: Seven steps in a single round trip for the measurement-feedback CIM, and the appropri−4
+ate truncated-Wigner description. √Constants are chosen
+to match the
+√
+√ Stanford CIM:
+√ L = 3.6 × 10 ,
+3
+p = 2.8 × 10 , sin(θm ) = sin(θf ) = 0.1, sin(θL1 ) = 0.6, sin(θL2 ) = 0.5, sin(θL3 ) = 0.6.
+18
+
+continuous-time stochastic differential equations can be employed [29]. Since the round-trip gain of our
+system is high, a discrete-time model is needed, where the evolution of a single round trip (represented as a
+discrete-time c-SDE) consists of a series of seven discrete steps, each with its appropriate truncated-Wigner
+description (Table S1).
+Steps 1 and 5 are standard beamsplitters, whose input/output equations match those in classical optics. Steps
+2, 3 and 6, which represent loss in the fiber loop and injection channel, can be modeled as beamsplitters
+with vacuum inputs. Homodyne detection converts the real part of bi to a classical signal, discarding the
+imaginary part (only the real parts of optical signals ai , bi are treated in this model). The resulting classical
+signal is processed in the FPGA (step 4). The FPGA result is imprinted onto an optical field using a
+modulator, adding the vacuum fluctuations of the injected field. The modulation signal is clamped (function
+C(z; z0 ) ≡ max(min(z, z0 ), −z0 )) by the DAC maximum voltage (parameter ymax above). Step 7 is the χ(2)
+phase-sensitive amplifier (PSA) gain. The formula is derived by solving the nonlinear field equations [28,
+Sec. 2.2] in a χ(2) medium [38, Eq. (8)]. All input vacuum fields are normally distributed random variables:
+(m)
+wi ∼ N (0, 21 ). We note that our model bears resemblance to mean-field annealing approaches to the Ising
+problem [62].
+In this paper, the constants are chosen to match the experimental parameters of the Stanford CIM. The
+model is sensitive to the measurement and feedback couplings (θm , θf ), but less sensitive to the overall loss,
+which simply increases the amount of quantum noise in the system by a small amount.
+The Stanford CIM employs an “injection turn-on” scheme. We start with the feedback turned off and pump
+the OPO to slightly below threshold. Then the feedback term is slowly increased, lowering the effective
+threshold of the coupled-OPO system [24]. This is opposite to the “pump turn-on” technique used in the
+NTT CIM and optical-feedback systems [25, 30, 37], where the coupling (and therefore threshold) stays fixed
+and the pump is increased. But the fundamental dynamics (bifurcation from squeezed vacuum driven by
+quantum noise) is the same, and we expect similar computational performance for both machines. The key
+degree of freedom is the pump schedule F (t). For simplicity, we use a linear ramp
+F (t) = Fmax
+
+t
+Tann
+
+(S2)
+
+which increases from zero to Fmax over Tann round trips (the runtime, or “annealing time”, of the CIM,
+where Tann = 1000 in the experiments in this paper.)
+The free parameter Fmax sets the scale of the feedback strength, and is tuned to maximize the success
+probability. Intuitively, one wants the feedback term yi to be comparable to the circulating field ai , as a
+small feedback term will not effectively couple the OPOs but a very large term will lead to spuriousP
+behavior
+that no longer maps onto the Ising problem [29]. Since the injected field is proportional to F (t) j Jij aj ,
+and since in random non-structured problems, the aj are expected to be random, it is reasonable to assume
+that:
+1 X
+−1/2
+Fmax ∝
+(Jij )2
+(S3)
+N ij
+For SK and dense MAX-CUT problems, Eq. (S3) predicts Fmax ∝ N −1/2 , while for sparse problems, Fmax
+should be a constant. This prediction is confirmed numerically in Fig. S8. The success probability depends
+on both N and Fmax , and the peak is always located at Fmax N 1/2 = const for SK and dense MAX-CUT,
+and Fmax = const for sparse MAX-CUT. The optimal Fmax is roughly:
+
+−1/2
+
+(SK)
+3.0N
+Fmax = 3.0N −1/2 (Dense MAX-CUT)
+(S4)
+
+
+0.35
+(Cubic MAX-CUT)
+Using the optimal Fmax in Eq. (S4), we simulate the CIM on all of the problems presented in the paper.
+Fig. S9 shows the result. Strictly speaking, the model is only applicable to the Stanford CIM, but both
+machines give similar performance that is roughly matches the c-SDE simulations.
+
+19
+
+SK
+
+Success Probability P
+
+100
+
+MAX-CUT (dense)
+
+MAX-CUT (cubic)
+
+10 1
+10 2
+10 3
+10 4
+
+N = 50
+100
+150
+200
+100
+
+(instances)
+(median)
+(IQR)
+FmaxN 1/2
+
+101
+
+100
+
+FmaxN 1/2
+
+101
+
+10 1
+
+Fmax
+
+100
+
+Figure S8: Simulated CIM success probability as a function of Fmax for the SK, dense MAX-CUT, and cubic
+MAX-CUT problems from my paper.
+
+SK
+
+MAX-CUT (dense)
+
+MAX-CUT (cubic)
+
+Simulation / Experiment P
+
+100
+
+10 1
+
+10 2
+
+10 3
+
+Simulation
+Stanford CIM
+NTT CIM
+(instances)
+(median)
+(IQR)
+50
+100
+Problem Size N
+
+150
+
+50
+100
+Problem Size N
+
+150
+
+0
+
+50
+
+100
+150
+Problem Size N
+
+200
+
+10 1
+10 2
+Simulation P
+
+100
+
+10 3
+
+10 1
+10 2
+Simulation P
+
+100
+
+Experiment P
+
+100
+
+10 1
+
+10 2
+
+10 3 3
+10
+
+Stanford CIM
+NTT CIM
+(instances)
+(median)
+10 1
+10 2
+Simulation P
+
+100
+
+10 3
+
+Figure S9: Top: success probability as a function of problem size. Bottom: correlation plots between the
+c-SDE simulated CIM (x-axis) and experimental data (y-axis).
+
+20
+
+SK
+
+Success Probability P
+
+100
+
+MAX-CUT (dense)
+
+MAX-CUT (cubic)
+
+10 1
+10 2
+10 3
+
+Tann =
+10
+30
+100
+300
+1000
+
+10 4
+10 5
+10 6
+10 7
+108
+
+Tann =
+3000
+10000
+
+Time to Solution Tsoln
+
+107
+106
+105
+104
+103
+
+Tsoln = AeBN 1/2 curve
+
+102
+101
+
+0
+
+50
+
+100
+
+150
+
+0
+
+50
+100
+Problem Size N
+
+150
+
+0
+
+50
+
+100
+
+150
+
+200
+
+Figure S10: Simulated CIM success probability and time to solution (in round trips) for SK and MAX-CUT
+problems. Squares are medians. Shaded region is IQR. Solid lines are fits to Eq. (S4).
+C-SDE simulations are run to assess the effect of the annealing time and to determine the optimal-annealingtime scaling of the CIM time to solution. Fig. S10 plots the success probability and time to solution
+(normalized to the round-trip time) for annealing times ranging from Tann = 10 round trips up to Tann =
+1000. We see clear exponential behavior in the asymptotic limit, especially when Tann is small. The plots
+fit reasonably well to a logistic curve intersecting the origin:
+α
+N →∞
+P (N ) =
+−→ αe−βN
+(S5)
+βN
+(α − 1) + e
+Likewise, the time-to-solution curves are rising exponentials in the large-N limit. When plotted on a logarithmic scale, the intercept of the curves increases with Tann , while the slope decreases. This makes clear
+that, as in quantum annealing, there is a tradeoff between success probability and annealing time [18]. The
+optimal time to solution is given by the lower envelope of these curves. In quantum annealing on glassy
+chimera-graph problems, an empirical scaling of Tsoln ∼ exp(O(N 1/2 )) has been reported [18, 19, 49]. Curves
+1/2
+of the form AeBN
+are plotted in Fig. S10 for reference. The rough fit suggests, but is not conclusive proof
+of, a similar time-to-solution scaling for coherent Ising machines.
+
+S4
+
+Optimal Anneal-Time Analysis
+
+To obtain the best performance of the D-Wave annealer under a fixed anneal schedule, we optimize Tsoln
+2
+with respect to the annealing time. For a fixed Tann we find the square-exponential relation P = e−(N/N0 )
+for SK and dense MAX-CUT problems. Cubic MAX-CUT problems also fit this curve, especially for short
+anneals. In the range Tann ∈ [1, 2000]µs of admissible annealing times, we find N0 ≈ α + β log10 (Tann /µs),
+where α and β are problem-dependent constants (Table S2).
+21
+
+SK
+15.24
+2.81
+
+α
+β
+
+MAX-CUT (dense)
+10.05
+1.39
+
+MAX-CUT (cubic)
+53.45
+22.15
+
+Table S2: Problem-dependent constants α, β used in the relation N0 = α + β log10 (T /µs) for the success2
+probability exponential P = e−(N/N0 )
+The top graphs in Fig. S11 plot the dependence of Tsoln on Tann for fixed N , allowing one to visualize the
+optimal annealing time for each problem size. The aforementioned fit agrees reasonably with the data for
+most problem sizes, although we make no claims about its validity outside the range of annealing times
+tested.
+The lower plots in Fig. S11 show the D-Wave time to solution in terms of problem size. The lower envelope
+of the fixed-Tann curves, approximated as a line (Tsoln + AeBN ), gives the optimal time to solution for the
+DW2Q. For comparison, the optimal CIM time-to-solution obtained in Fig. S10 is also plotted. The CIM
+round-trip time used is the value for the NTT CIM accounting for parallelization: Tann = (2.5N )µs; see
+Sec. S2.
+Since the optimal annealing time lies in the experimentally accessible regime [1, 2000]µs for only a limited
+range of problem sizes (N ∈ [40, 60] for SK, [30, 50] for dense MAX-CUT), it is difficult to estimate the precise
+shape of the lower envelope by looking at Fig. S11. While the data is consistent with an exponential, it is also
+consistent with many other curves, so we caution against naively extrapolating these curves. Nevertheless,
+
+SK
+
+104
+
+MAX-CUT (dense)
+
+N=
+
+102
+100
+
+60
+50
+
+10 2
+
+40
+
+40
+
+30
+20
+10
+10 6 1
+10
+100 101 102 103
+Annealing time Tann ( s)
+
+20
+10
+104 10 1
+
+100 101 102 103
+Annealing time Tann ( s)
+
+100
+10 2
+
+e
+av
+D-W
+
+10 4
+
+CIM
+
+0
+
+20
+
+D-W
+ave
+
+Time to solution Tsoln (s)
+
+150
+
+Tann ( s) =
+1
+10
+100
+1000
+
+102
+
+10 6
+
+200
+
+30
+
+10 4
+
+104
+
+MAX-CUT (cubic)
+
+103×
+
+40
+60
+Problem Size N
+
+104
+
+120
+80
+50
+20
+10 1 100 101 102 103
+Annealing time Tann ( s)
+
+106×
+
+CIM
+
+D-Wa
+
+CIM
+
+80
+
+0
+
+10
+
+20 30 40
+Problem Size N
+
+50
+
+60
+
+104
+
+0
+
+50
+
+ve
+
+100
+150
+Problem Size N
+
+200
+
+Figure S11: Top: D-Wave time to solution Tsoln as a function of the annealing time for fixed problem sizes,
+illustrating the optimal anneal time. Bottom: Tsoln as a function of problem size, with optimal anneal-time
+curve approximated as a line. CIM time to solution at optimal anneal time (from Fig. S10) plotted for
+comparison (NTT CIM with parallelization, Tann = (2.5N )µs).
+22
+
+at optimal annealing time, the CIM is substantially faster (≥ 103 × for SK, ≥ 106 × for dense MAX-CUT)
+at the upper end of experimentally measured problem sizes, while D-Wave has a performance advantage of
+10–100× for cubic MAX-CUT, although this advantage narrows with larger problem sizes.
+
+S5
+
+Performance of Parallel Tempering
+
+Parallel tempering is a state-of-the-art classical optimization technique that has been shown to perform
+well on a variety of Ising problems [49, 63, 64]. Here, we include results provided by Salvatore Mandrà,
+which made use of the implementation of parallel tempering in the NASA/TAMU Unified Framework for
+Optimization (UFO). The comparison shows respectable performance of NTT’s parallel CIM compared with
+PT@UFO. We see that NTT’s parallel CIM comes close to the performance of PT@UFO for the SK problem
+instances in the size range considered, and is also close on the MAX-CUT problem up through the middle
+range of problem sizes considered, but diverges for larger problem sizes.
+
+SK
+
+MAX-CUT (dense)
+
+Time to Solution Tsoln (s)
+
+100
+10 1
+10 2
+10 3
+NTT CIM
+NTT CIM (parallel)
+PT@UFO
+fit
+
+10 4
+10 5
+
+0
+
+50
+
+100
+
+150
+0
+Problem size N
+
+50
+
+100
+
+150
+
+Figure S12: CIM time to solution compared against the parallel tempering algorithm implemented in the
+Unified Framework for Optimization (UFO). The error bars for PT@UFO corresponds to the minimum and
+maximum value of time to solution for that specific size. All UFO runs were performed on Intel Xeon CPU
+E5-1650 v2 (3.50GHz).
+
+References
+[1] Rudich, S. & Wigderson, A. Computational Complexity Theory, vol. 10 (American Mathematical Soc.,
+2004).
+[2] Karp, R. M. Reducibility among combinatorial problems. In Complexity of Computer Computations,
+85–103 (Springer, 1972).
+[3] Goemans, M. X. & Williamson, D. P. Improved approximation algorithms for maximum cut and
+satisfiability problems using semidefinite programming. Journal of the ACM (JACM) 42, 1115–1145
+(1995).
+[4] Kirkpatrick, S., Gelatt, C. D. & Vecchi, M. P. Optimization by simulated annealing. Science 220,
+671–680 (1983).
+[5] Benlic, U. & Hao, J.-K. Breakout local search for the max-cut problem. Engineering Applications of
+Artificial Intelligence 26, 1162–1173 (2013).
+23
+
+[6] Yoshimura, C. et al. Uncertain behaviours of integrated circuits improve computational performance.
+Scientific Reports 5 (2015).
+[7] Tsukamoto, S., Takatsu, M., Matsubara, S. & Tamura, H. An accelerator architecture for combinatorial
+optimization problems. FUJITSU Science and Technology Journal 53, 8–13 (2017).
+[8] Sutton, B., Camsari, K. Y., Behin-Aein, B. & Datta, S. Intrinsic optimization using stochastic nanomagnets. Scientific Reports 7 (2017).
+[9] Parihar, A., Shukla, N., Jerry, M., Datta, S. & Raychowdhury, A. Vertex coloring of graphs via phase
+dynamics of coupled oscillatory networks. Scientific Reports 7, 911 (2017).
+[10] Yin, X. et al. Efficient analog circuits for boolean satisfiability. IEEE Transactions on Very Large Scale
+Integration (VLSI) Systems 26, 155–167 (2018).
+[11] Tait, A. N. et al. Neuromorphic photonic networks using silicon photonic weight banks. Scientific
+Reports 7, 7430 (2017).
+[12] Farhi, E. et al. A quantum adiabatic evolution algorithm applied to random instances of an NP-complete
+problem. Science 292, 472–475 (2001).
+[13] Kadowaki, T. & Nishimori, H. Quantum annealing in the transverse Ising model. Physical Review E
+58, 5355 (1998).
+[14] Santoro, G. E. & Tosatti, E. Optimization using quantum mechanics: quantum annealing through
+adiabatic evolution. Journal of Physics A: Mathematical and General 39, R393 (2006).
+[15] Boixo, S. et al. Evidence for quantum annealing with more than one hundred qubits. Nature Physics
+10, 218–224 (2014).
+[16] Santoro, G. E., Martoňák, R., Tosatti, E. & Car, R. Theory of quantum annealing of an Ising spin
+glass. Science 295, 2427–2430 (2002).
+[17] Somma, R. D., Nagaj, D. & Kieferová, M. Quantum speedup by quantum annealing. Physical Review
+Letters 109, 050501 (2012).
+[18] Rønnow, T. F. et al. Defining and detecting quantum speedup. Science 345, 420–424 (2014).
+[19] Albash, T. & Lidar, D. A. Demonstration of a scaling advantage for a quantum annealer over simulated
+annealing. Physical Review X 8, 031016 (2018).
+[20] Choi, V. Minor-embedding in adiabatic quantum computation: I. the parameter setting problem.
+Quantum Information Processing 7, 193–209 (2008).
+[21] Cai, J., Macready, W. G. & Roy, A. A practical heuristic for finding graph minors. arXiv preprint
+arXiv:1406.2741 (2014).
+[22] Choi, V. Minor-embedding in adiabatic quantum computation: II. minor-universal graph design. Quantum Information Processing 10, 343–353 (2011).
+[23] Klymko, C., Sullivan, B. D. & Humble, T. S. Adiabatic quantum programming: minor embedding with
+hard faults. Quantum Information Processing 13, 709–729 (2014).
+[24] McMahon, P. L. et al. A fully-programmable 100-spin coherent Ising machine with all-to-all connections.
+Science 354, 614–617 (2016).
+[25] Inagaki, T. et al. A coherent Ising machine for 2000-node optimization problems. Science 354, 603–606
+(2016).
+[26] Barahona, F. On the computational complexity of Ising spin glass models. Journal of Physics A:
+Mathematical and General 15, 3241 (1982).
+[27] Kirkpatrick, S. & Sherrington, D. Solvable model of a spin-glass. Physical Review Letters 35, 1792–1796
+(1975).
+24
+
+[28] Boyd, R. W. Nonlinear optics (Academic Press, 2003).
+[29] Wang, Z., Marandi, A., Wen, K., Byer, R. L. & Yamamoto, Y. Coherent Ising machine based on
+degenerate optical parametric oscillators. Physical Review A 88, 063853 (2013).
+[30] Marandi, A., Wang, Z., Takata, K., Byer, R. L. & Yamamoto, Y. Network of time-multiplexed optical
+parametric oscillators as a coherent Ising machine. Nature Photonics 8, 937–942 (2014).
+[31] Takesue, H. & Inagaki, T. 10-GHz clock time-multiplexed degenerate optical parametric oscillators for
+a photonic Ising spin network. Optics Letters 41, 4273–4276 (2016).
+[32] Walls, D. F. & Milburn, G. J. Quantum Optics (Springer Science & Business Media, 2007).
+[33] Milburn, G. & Walls, D. Production of squeezed states in a degenerate parametric amplifier. Optics
+Communications 39, 401–404 (1981).
+[34] Drummond, P., McNeil, K. & Walls, D. Non-equilibrium transitions in sub/second harmonic generation.
+Journal of Modern Optics 28, 211–225 (1981).
+[35] Wu, L.-A., Kimble, H., Hall, J. & Wu, H. Generation of squeezed states by parametric down conversion.
+Physical Review Letters 57, 2520 (1986).
+[36] Kinsler, P. & Drummond, P. D. Quantum dynamics of the parametric oscillator. Physical Review A
+43, 6194 (1991).
+[37] Takata, K. et al. A 16-bit coherent Ising machine for one-dimensional ring and cubic graph problems.
+Scientific Reports 6, 34089 (2016).
+[38] Hamerly, R. et al. Topological defect formation in 1D and 2D spin chains realized by network of optical
+parametric oscillators. International Journal of Modern Physics B 30, 1630014 (2016).
+[39] Clements, W. R. et al. Gaussian optical Ising machines. Physical Review A 96, 043850 (2017).
+[40] Yamamoto, Y. et al. Coherent ising machinesoptical neural networks operating at the quantum limit.
+npj Quantum Information 3, 49 (2017).
+[41] Boothby, T., King, A. D. & Roy, A. Fast clique minor generation in chimera qubit connectivity graphs.
+Quantum Information Processing 15, 495–508 (2016).
+[42] Venturelli, D. et al. Quantum optimization of fully connected spin glasses. Physical Review X 5, 031040
+(2015).
+[43] Fu, Y. & Anderson, P. W. Application of statistical mechanics to NP-complete problems in combinatorial
+optimisation. Journal of Physics A: Mathematical and General 19, 1605 (1986).
+[44] Haribara, Y., Utsunomiya, S. & Yamamoto, Y. Computational principle and performance evaluation
+of coherent Ising machine based on degenerate optical parametric oscillator network. Entropy 18, 151
+(2016).
+[45] Coppersmith, D., Gamarnik, D., Hajiaghayi, M. & Sorkin, G. B. Random max sat, random max cut,
+and their phase transitions. Random Structures & Algorithms 24, 502–545 (2004).
+[46] Alimonti, P. & Kann, V. Hardness of approximating problems on cubic graphs. Algorithms and Complexity 288–298 (1997).
+[47] Dechter, R. & Pearl, J. The cycle-cutset method for improving search performance in AI applications
+(University of California, Computer Science Department, 1986).
+[48] D-Wave Systems, Inc. Technical description of the D-Wave quantum processing unit (2016). Part of
+D-Wave API documentation.
+[49] Mandra, S. & Katzgraber, H. G. A deceptive step towards quantum speedup detection. Quantum
+Science and Technology 3 (2018).
+25
+
+[50] Gardas, B., Dziarmaga, J., Zurek, W. H. & Zwolak, M. Defects in quantum computers. Scientific
+reports 8, 4539 (2018).
+[51] Inagaki, T. et al. Large-scale Ising spin network based on degenerate optical parametric oscillators.
+Nature Photonics 10, 415–419 (2016).
+[52] Maruo, D., Utsunomiya, S. & Yamamoto, Y. Truncated wigner theory of coherent ising machines based
+on degenerate optical parametric oscillator network. Physica Scripta 91, 083010 (2016).
+[53] Shen, Y. et al. Deep learning with coherent nanophotonic circuits. Nature Photonics 11, 441 (2017).
+[54] Dumoulin, V., Goodfellow, I. J., Courville, A. C. & Bengio, Y. On the challenges of physical implementations of RBMs. In AAAI, vol. 2014, 1199–1205 (2014).
+[55] Katzgraber, H. G., Hamze, F. & Andrist, R. S. Glassy chimeras could be blind to quantum speedup:
+Designing better benchmarks for quantum annealing machines. Physical Review X 4, 021008 (2014).
+[56] Rieffel, E. G. et al. A case study in programming a quantum annealer for hard operational planning
+problems. Quantum Information Processing 14, 1–36 (2015).
+[57] Weber, S. et al. Hardware considerations for high-connectivity quantum annealers. Bulletin of the
+American Physical Society (2018).
+[58] Chen, Y. et al. Progress towards a small-scale quantum annealer I: Architecture. In APS Meeting
+Abstracts (2017).
+[59] Liers, F. & Jünger, M. Spin glass server. URL http://informatik.uni-koeln.de/spinglass/.
+[60] Rendl, F., Rinaldi, G. & Wiegele, A. Solving Max-Cut to optimality by intersecting semidefinite and
+polyhedral relaxations. Math. Programming 121, 307 (2010).
+[61] D-Wave Systems, Inc. Chimera embedding. https://github.com/dwavesystems/chimera-embedding
+(2016).
+[62] King, A. D., Bernoudy, W., King, J., Berkley, A. J. & Lanting, T. Emulating the coherent ising machine
+with a mean-field algorithm. arXiv preprint arXiv:1806.08422 (2018).
+[63] Mandra, S., Katzgraber, H. G. & Thomas, C. The pitfalls of planar spin-glass benchmarks: raising the
+bar for quantum annealers (again). Quantum Science and Technology 2, 038501 (2017).
+[64] Mandrà, S., Zhu, Z., Wang, W., Perdomo-Ortiz, A. & Katzgraber, H. G. Strengths and weaknesses of
+weak-strong cluster problems: A detailed overview of state-of-the-art classical heuristics versus quantum
+approaches. Physical Review A 94, 022337 (2016).
+
+26
+
+

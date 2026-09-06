@@ -1,0 +1,927 @@
+ 
+
+ Universal photonic artificial intelligence acceleration | Nature 
+
+ Skip to main content 
+
+ Thank you for visiting nature.com. You are using a browser version with limited support for CSS. To obtain
+ the best experience, we recommend you use a more up to date browser (or turn off compatibility mode in
+ Internet Explorer). In the meantime, to ensure continued support, we are displaying the site without styles
+ and JavaScript.
+
+ Advertisement
+
+ View all journals 
+
+ Saved research 
+
+ Search 
+
+ Account 
+
+ Log in 
+
+ Content 
+ Explore content 
+
+ About the journal 
+
+ Publish with us 
+
+ Subscribe 
+
+ Sign up for alerts 
+
+ RSS feed 
+
+ nature 
+
+ articles 
+
+ article 
+
+ Article
+
+ Published: 09 April 2025 
+
+ Universal photonic artificial intelligence acceleration
+
+ Sufi R. Ahmed 1 , 
+ Reza Baghdadi 1 , 
+ Mikhail Bernadskiy 1 , 
+ Nate Bowman 1 , 
+ Ryan Braid 1 , 
+ Jim Carr 1 , 
+ Chen Chen 1 , 
+ Pietro Ciccarella 1 , 
+ Matthew Cole 1 , 
+ John Cooke 1 , 
+ Kishor Desai 1 , 
+ Carlos Dorta 1 , 
+ Jonathan Elmhurst 1 , 
+ Bryce Gardiner 1 , 
+ Elliot Greenwald 1 , 
+ Shashank Gupta 1 , 
+ Parry Husbands 1 , 
+ Brian Jones 1 , 
+ Anthony Kopa 1 , 
+ Ho John Lee 
+ ORCID: orcid.org/0009-0001-3082-8808 1 , 
+ Arulselvan Madhavan 1 , 
+ Adam Mendrela 1 , 
+ Nicholas Moore 
+ ORCID: orcid.org/0009-0001-2787-4678 1 , 
+ Lakshmi Nair 1 , 
+ Aditya Om 1 , 
+ Subie Patel 1 , 
+ Rutayan Patro 1 , 
+ Rob Pellowski 1 , 
+ Esha Radhakrishnani 1 , 
+ Sandeep Sane 1 , 
+ Nicholas Sarkis 1 , 
+ Joe Stadolnik 1 , 
+ Mykhailo Tymchenko 1 , 
+ Gongyu Wang 
+ ORCID: orcid.org/0009-0002-4800-7781 1 , 
+ Kurt Winikka 1 , 
+ Alexandra Wleklinski 1 , 
+ Josh Zelman 1 , 
+ Richard Ho 
+ ORCID: orcid.org/0009-0008-6399-1848 2 , 
+ Ritesh Jain 1 , 
+ Ayon Basumallik 
+ ORCID: orcid.org/0009-0003-4980-259X 1 , 
+ Darius Bunandar 
+ ORCID: orcid.org/0000-0002-8218-5656 1 & 
+ …
+ Nicholas C. Harris 
+ ORCID: orcid.org/0000-0003-3009-563X 1 
+ Show authors 
+
+ Nature 
+ volume 640 , pages 368–374 ( 2025 ) Cite this article 
+
+ Save article 
+
+ View saved research 
+
+ 26k Accesses 
+
+ 212 Citations 
+
+ 230 Altmetric 
+
+ Metrics details 
+
+ Abstract
+ Over the past decade, photonics research has explored accelerated tensor operations, foundational to artificial intelligence (AI) and deep learning 1 , 2 , 3 , 4 , as a path towards enhanced energy efficiency and performance 5 , 6 , 7 , 8 , 9 , 10 , 11 , 12 , 13 , 14 . The field is centrally motivated by finding alternative technologies to extend computational progress in a post-Moore’s law and Dennard scaling era 15 , 16 , 17 , 18 , 19 . Despite these advances, no photonic chip has achieved the precision necessary for practical AI applications, and demonstrations have been limited to simplified benchmark tasks. Here we introduce a photonic AI processor that executes advanced AI models, including ResNet 3 and BERT 20 , 21 , along with the Atari deep reinforcement learning algorithm originally demonstrated by DeepMind 22 . This processor achieves near-electronic precision for many workloads, marking a notable entry for photonic computing into competition with established electronic AI accelerators 23 and an essential step towards developing post-transistor computing technologies.
+
+ This is a preview of subscription content, access via your institution 
+
+ Access options
+
+ Access through your institution 
+
+ Access Nature and 54 other Nature Portfolio journals
+
+ Get Nature+, our best-value online-access subscription
+
+ 27,99 € / 30 days 
+
+ cancel any time
+
+ Learn more 
+
+ Subscribe to this journal
+
+ Receive 52 print issues and online access
+
+ 185,98 € per year
+
+ only 3,58 € per issue
+
+ Learn more 
+
+ Buy this article
+ Purchase on SpringerLink 
+ Instant access to the full article PDF. 
+ 39,95 € 
+
+ Prices may be subject to local taxes which are calculated during checkout
+
+ Additional access options:
+
+ Log in 
+
+ Learn about institutional subscriptions 
+
+ Read our FAQs 
+
+ Contact customer support 
+
+ Fig. 1: Quad-core photonic processor. 
+
+ Fig. 2: Processor functionality and execution model. 
+
+ Fig. 3: Unit cell operation and characterization. 
+
+ Fig. 4: Neural network tasks running on the photonic processor. 
+
+ Similar content being viewed by others
+
+ Programmable metasurfaces for future photonic artificial intelligence
+
+ Article 
+
+ 12 May 2025 
+
+ Single-chip photonic deep neural network with forward-only training
+
+ Article 
+
+ 02 December 2024 
+
+ Field-programmable photonic nonlinearity
+
+ Article 
+
+ 15 April 2025 
+
+ Explore related subjects
+
+ Discover the latest articles and news in related subjects. 
+
+ Applied optics 
+
+ Mathematics and computing 
+
+ Data availability
+
+ The datasets presented in this study and analysis programs are available at https://github.com/lightmatter-ai/upaia-paper-2025 .
+
+ References
+ LeCun, Y., Bengio, Y. & Hinton, G. Deep learning. Nature 521 , 436–444 (2015).
+ Article 
+ ADS 
+ CAS 
+ PubMed 
+
+ Google Scholar 
+
+ Krizhevsky, A., Sutskever, I. & Hinton, G. E. ImageNet classification with deep convolutional neural networks. Commun. ACM 60 , 84–90 (2017).
+ Article 
+
+ Google Scholar 
+
+ He, K., Zhang, X., Ren, S. & Sun, J. in Proc. 2016 IEEE Conference on Computer Vision and Pattern Recognition (CVPR) 770–778 (IEEE, 2016).
+
+ Vinyals, O. et al. Grandmaster level in StarCraft II using multi-agent reinforcement learning. Nature 575 , 350–354 (2019).
+ Article 
+ ADS 
+ CAS 
+ PubMed 
+
+ Google Scholar 
+
+ Shen, Y. et al. Deep learning with coherent nanophotonic circuits. Nat. Photonics 11 , 441–446 (2017).
+ Article 
+ ADS 
+ CAS 
+
+ Google Scholar 
+
+ Lin, X. et al. All-optical machine learning using diffractive deep neural networks. Science 361 , 1004–1008 (2018).
+ Article 
+ ADS 
+ MathSciNet 
+ CAS 
+ PubMed 
+
+ Google Scholar 
+
+ Hamerly, R., Bernstei, L., Sludds, A., Soljačić, M. & Englund, D. Large-scale optical neural networks based on photoelectric multiplication. Phys. Rev. X 9 , 021032 (2019).
+ CAS 
+
+ Google Scholar 
+
+ Feldmann, J. et al. Parallel convolutional processing using an integrated photonic tensor core. Nature 589 , 52–58 (2021).
+ Article 
+ ADS 
+ CAS 
+ PubMed 
+
+ Google Scholar 
+
+ Dong, B. et al. Partial coherence enhances parallelized photonic computing. Nature 632 , 55–62 (2024).
+ Article 
+ CAS 
+ PubMed 
+ PubMed Central 
+
+ Google Scholar 
+
+ Dong, B. et al. Higher-dimensional processing using a photonic tensor core with continuous-time data. Nat. Photonics 17 , 1080–1088 (2023).
+ Article 
+ ADS 
+ CAS 
+
+ Google Scholar 
+
+ Becker, S., Englund, D. & Stiller, B. An optoacoustic field-programmable perceptron for recurrent neural networks. Nat. Commun. 15 , 3020 (2024).
+ Article 
+ ADS 
+ CAS 
+ PubMed 
+ PubMed Central 
+
+ Google Scholar 
+
+ Chen, Z. et al. Deep learning with coherent VCSEL neural networks. Nat. Photonics 17 , 723–730 (2023).
+ Article 
+ ADS 
+ CAS 
+
+ Google Scholar 
+
+ Wang, T. et al. An optical neural network using less than 1 photon per multiplication. Nat. Commun. 13 , 123 (2022).
+ Article 
+ ADS 
+ CAS 
+ PubMed 
+ PubMed Central 
+
+ Google Scholar 
+
+ Sludds, A. et al. Delocalized photonic deep learning on the internet’s edge. Science 378 , 270–276 (2022).
+ Article 
+ ADS 
+ CAS 
+ PubMed 
+
+ Google Scholar 
+
+ Shalf, J. The future of computing beyond Moore’s Law. Philos. Trans. R. Soc. A Math. Phys. Eng. Sci. 378 , 20190061 (2020).
+ Article 
+ ADS 
+ MathSciNet 
+
+ Google Scholar 
+
+ Schwierz, F. & Liou, J. J. in Proc. 2020 IEEE Latin America Electron Devices Conference (LAEDC) 1–4 (IEEE, 2020).
+
+ Leiserson, C. E. et al. There’s plenty of room at the Top: what will drive computer performance after Moore’s law? Science 368 , eaam9744 (2020).
+ Article 
+ CAS 
+ PubMed 
+
+ Google Scholar 
+
+ Moore, G. E. Cramming more components onto integrated circuits. Proc. IEEE 86 , 82–85 (1998).
+ Article 
+
+ Google Scholar 
+
+ Waldrop, M. M. The chips are down for Moore’s law. Nature 530 , 144–147 (2016).
+ Article 
+ ADS 
+ CAS 
+ PubMed 
+
+ Google Scholar 
+
+ Vaswani, A. et al. in Proc. Advances in Neural Information Processing Systems 30 (eds Guyon, I. et al.) 5998–6008 (Curran Associates, 2017).
+
+ Devlin, J., Chang, M.-W., Lee, K. & Toutanova, K. in Proc. 2019 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies, Volume 1 (Long and Short Papers) (eds Burstein, J., Doran, C. & Solorio, T.) 4171–4186 (Association for Computational Linguistics, 2019).
+
+ Mnih, V. et al. Human-level control through deep reinforcement learning. Nature 518 , 529–533 (2015).
+ Article 
+ ADS 
+ CAS 
+ PubMed 
+
+ Google Scholar 
+
+ Jouppi, N. P. et al. in Proc. 44th Annual International Symposium on Computer Architecture (ISCA ’17) 1–12 (ACM, 2017).
+
+ Peng, B., Hua, S., Su, Z., Xu, Y. & Shen, Y. in Proc. 2022 IEEE Photonics Conference (IPC) (IEEE, 2022).
+
+ Youngblood, N. Coherent photonic crossbar arrays for large-scale matrix-matrix multiplication. IEEE J. Sel. Top. Quantum Electron. 29 , 1–11 (2023).
+ Article 
+
+ Google Scholar 
+
+ Zhang, H. et al. An optical neural chip for implementing complex-valued neural network. Nat. Commun. 12 , 457 (2021).
+ Article 
+ ADS 
+ CAS 
+ PubMed 
+ PubMed Central 
+
+ Google Scholar 
+
+ Wetzstein, G. et al. Inference in artificial intelligence with deep optics and photonics. Nature 588 , 39–47 (2020).
+ Article 
+ ADS 
+ CAS 
+ PubMed 
+
+ Google Scholar 
+
+ Demirkiran, C. et al. An electro-photonic system for accelerating deep neural networks. ACM J. Emerg. Technol. Comput. Syst. 19 , 1–31 (2023).
+ Article 
+
+ Google Scholar 
+
+ Pintus, P. et al. Integrated non-reciprocal magneto-optics with ultra-high endurance for photonic in-memory computing. Nat. Photonics 19 , 54–62 (2025).
+ Article 
+ CAS 
+
+ Google Scholar 
+
+ Shastri, B. J. et al. Photonics for artificial intelligence and neuromorphic computing. Nat. Photonics 15 , 102–114 (2021).
+ Article 
+ ADS 
+ CAS 
+
+ Google Scholar 
+
+ Xu, X. et al. 11 TOPS photonic convolutional accelerator for optical neural networks. Nature 589 , 44–51 (2021).
+ Article 
+ ADS 
+ CAS 
+ PubMed 
+
+ Google Scholar 
+
+ Jacob, B. et al. in Proc. 2018 IEEE/CVF Conference on Computer Vision and Pattern Recognition 2704–2713 (IEEE, 2018).
+
+ Courbariaux, M., Bengio, Y. & David, J.-P. Training deep neural networks with low precision multiplications. Preprint at https://arxiv.org/abs/1412.7024 (2015).
+
+ Kirtas, M. et al. Mixed-precision quantization-aware training for photonic neural networks. Neural Comput. Appl. 35 , 21361–21379 (2023).
+ Article 
+
+ Google Scholar 
+
+ Basumallik, A. et al. Adaptive block floating-point for analog deep learning hardware. Preprint at https://arxiv.org/abs/2205.06287 (2022).
+
+ Giewont, K. et al. 300-mm monolithic silicon photonics foundry technology. IEEE J. Sel. Top. Quantum Electron. 25 , 1–11 (2019).
+ Article 
+
+ Google Scholar 
+
+ Ghafarian, H. et al. A 9-bit, 45 mW, 0.05 mm 2 source-series-terminated DAC driver with echo canceller in 22-nm CMOS for in-vehicle communication. IEEE Solid-State Circuits Lett. 4 , 10–13 (2021).
+ Article 
+
+ Google Scholar 
+
+ Yu, K. et al. in Proc. 2015 IEEE International Solid-State Circuits Conference - (ISSCC) Digest of Technical Papers https://doi.org/10.1109/isscc.2015.7063098 (IEEE, 2015).
+
+ McCreary, J. L. & Gray, P. R. All-MOS charge redistribution analog-to-digital conversion techniques. I. IEEE J. Solid-State Circuits 10 , 371–379 (1975).
+ Article 
+ ADS 
+
+ Google Scholar 
+
+ Jang, M. et al. Design techniques for energy-efficient analog-to-digital converters. IEEE Open J. Solid-State Circuits Soc. 3 , 145–161 (2023).
+ Article 
+
+ Google Scholar 
+
+ Ramkaj, A. T. et al. A 5-GS/s 158.6-mW 9.4-ENOB passive-sampling time-interleaved three-stage pipelined-SAR ADC with analog-digital corrections in 28-nm CMOS. IEEE J. Solid-State Circuits 55 , 1553–1564 (2020).
+
+ Google Scholar 
+
+ Lagos, J. et al. A 10.1-ENOB, 6.2-fJ/conv.-step, 500-MS/s, ringamp-based pipelined-SAR ADC with background calibration and dynamic reference regulation in 16-nm CMOS. IEEE J. Solid-State Circuits 57 , 1112–1124 (2022).
+ Article 
+ ADS 
+
+ Google Scholar 
+
+ de Lima, T. F. et al. Noise analysis of photonic modulator neurons. IEEE J. Sel. Top. Quantum Electron. 26 , 1–9 (2020).
+ Article 
+
+ Google Scholar 
+
+ Karpathy, A. nanoGPT. GitHub https://github.com/karpathy/nanoGPT (2023).
+
+ Wang, C. et al. Integrated lithium niobate electro-optic modulators operating at CMOS-compatible voltages. Nature 562 , 101–104 (2018).
+ Article 
+ ADS 
+ CAS 
+ PubMed 
+
+ Google Scholar 
+
+ Abel, S. et al. Large Pockels effect in micro- and nanostructured barium titanate integrated on silicon. Nat. Mater. 18 , 42–47 (2019).
+ Article 
+ ADS 
+ CAS 
+ PubMed 
+
+ Google Scholar 
+
+ Youngblood, N., Chen, C., Koester, S. J. & Li, M. Waveguide-integrated black phosphorus photodetector with high responsivity and low dark current. Nat. Photonics 9 , 247–252 (2015).
+ Article 
+ ADS 
+ CAS 
+
+ Google Scholar 
+
+ Parkhi, O. M., Vedaldi, A., Zisserman, A. & Jawahar, C. V. in Proc. 2012 IEEE Conference on Computer Vision and Pattern Recognition 3498–3505 (IEEE, 2012).
+
+ Download references 
+
+ Acknowledgements
+ We would like to thank K. C. Buckenmaier, M. Gould, C. Ramey, B. Dobbie, S. McKenzie, O. Yildirim, J. Talmage and M. Todd for their early contributions to the development of the photonic processor. We would also like to thank C. McCarter, N. Dronen, M. Forsythe, T. Lazovich, L. Levkova, D. Walter and D. Widemann for the development and implementation of the ABFP format. Also, we thank C. Chan, P. Clark, S. Cyphers, L. Huang, E. Hein, A. Hussein, S. Iyer, T. Kenney, S. Lines, A. Romano, T. Sarvey and Y. Sanders for their early contributions to the development of the software framework.
+
+ Author information
+ Authors and Affiliations
+ Lightmatter, Mountain View, CA, USA
+ Sufi R. Ahmed, Reza Baghdadi, Mikhail Bernadskiy, Nate Bowman, Ryan Braid, Jim Carr, Chen Chen, Pietro Ciccarella, Matthew Cole, John Cooke, Kishor Desai, Carlos Dorta, Jonathan Elmhurst, Bryce Gardiner, Elliot Greenwald, Shashank Gupta, Parry Husbands, Brian Jones, Anthony Kopa, Ho John Lee, Arulselvan Madhavan, Adam Mendrela, Nicholas Moore, Lakshmi Nair, Aditya Om, Subie Patel, Rutayan Patro, Rob Pellowski, Esha Radhakrishnani, Sandeep Sane, Nicholas Sarkis, Joe Stadolnik, Mykhailo Tymchenko, Gongyu Wang, Kurt Winikka, Alexandra Wleklinski, Josh Zelman, Ritesh Jain, Ayon Basumallik, Darius Bunandar & Nicholas C. Harris
+
+ OpenAI, San Francisco, CA, USA
+ Richard Ho
+
+ Authors Sufi R. Ahmed View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Reza Baghdadi View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Mikhail Bernadskiy View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Nate Bowman View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Ryan Braid View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Jim Carr View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Chen Chen View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Pietro Ciccarella View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Matthew Cole View author publications 
+ Search author on: PubMed Google Scholar 
+
+ John Cooke View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Kishor Desai View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Carlos Dorta View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Jonathan Elmhurst View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Bryce Gardiner View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Elliot Greenwald View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Shashank Gupta View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Parry Husbands View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Brian Jones View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Anthony Kopa View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Ho John Lee View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Arulselvan Madhavan View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Adam Mendrela View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Nicholas Moore View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Lakshmi Nair View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Aditya Om View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Subie Patel View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Rutayan Patro View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Rob Pellowski View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Esha Radhakrishnani View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Sandeep Sane View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Nicholas Sarkis View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Joe Stadolnik View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Mykhailo Tymchenko View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Gongyu Wang View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Kurt Winikka View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Alexandra Wleklinski View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Josh Zelman View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Richard Ho View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Ritesh Jain View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Ayon Basumallik View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Darius Bunandar View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Nicholas C. Harris View author publications 
+ Search author on: PubMed Google Scholar 
+
+ Contributions
+ S.R.A., R.Ba., N.B., R.Br., J.Co., C.C., P.C., J.Ca., K.D., C.D., J.E., B.G., E.G., S.G., R.H., R.J., B.J., A.K., A.Me., E.R., S.S., N.S., J.S., M.T., A.W., J.Z., D.B. and N.C.H. contributed to the design and development of the photonic processor hardware. M.B., A.B., A.O., M.C., P.H., A.Ma., N.M., L.N., S.P., R.Pa., R.Pe., K.W., G.W. and H.J.L. contributed to the design and development of the software stack for the photonic processor. All authors contributed to the manuscript.
+ Corresponding authors
+ Correspondence to
+ Ayon Basumallik , Darius Bunandar or Nicholas C. Harris .
+
+ Ethics declarations
+
+ Competing interests
+
+ The authors declare no competing interests.
+
+ Peer review
+
+ Peer review information
+
+ Nature thanks Anthony Rizzo and the other, anonymous, reviewer(s) for their contribution to the peer review of this work.
+
+ Additional information
+ Publisher’s note Springer Nature remains neutral with regard to jurisdictional claims in published maps and institutional affiliations.
+
+ Supplementary information
+
+ Supplementary Information (download PDF ) 
+ Supplementary Sections 1–6, including Supplementary Figs. 1 and 2 and Supplementary Tables 1–4.
+
+ Rights and permissions
+ Springer Nature or its licensor (e.g. a society or other partner) holds exclusive rights to this article under a publishing agreement with the author(s) or other rightsholder(s); author self-archiving of the accepted manuscript version of this article is solely governed by the terms of such publishing agreement and applicable law.
+ Reprints and permissions 
+
+ About this article
+
+ Cite this article
+ Ahmed, S.R., Baghdadi, R., Bernadskiy, M. et al. Universal photonic artificial intelligence acceleration.
+ Nature 640 , 368–374 (2025). https://doi.org/10.1038/s41586-025-08854-x
+ Download citation 
+ Received : 18 November 2024 
+
+ Accepted : 03 March 2025 
+
+ Published : 09 April 2025 
+
+ Version of record : 09 April 2025 
+
+ Issue date : 10 April 2025 
+
+ DOI : https://doi.org/10.1038/s41586-025-08854-x 
+
+ Share this article
+ Anyone you share the following link with will be able to read this content:
+ Get shareable link Sorry, a shareable link is not currently available for this article.
+
+ Copy shareable link to clipboard 
+
+ Provided by the Springer Nature SharedIt content-sharing initiative
+
+ Access through your institution 
+
+ Buy or subscribe 
+
+ Associated content
+
+ Photonic chips provide a processing boost for AI 
+
+ Anthony Rizzo
+
+ Nature 
+
+ News & Views 
+
+ 09 Apr 2025 
+
+ An integrated large-scale photonic accelerator with ultralow latency 
+
+ Shiyue Hua
+ Erwan Divita
+ Yichen Shen
+
+ Nature 
+
+ Article 
+
+ Open Access 
+
+ 09 Apr 2025 
+
+ Advertisement
+
+ Explore content
+
+ Research articles
+
+ News
+
+ Opinion
+
+ Research Analysis
+
+ Careers
+
+ Books & Culture
+
+ Podcasts
+
+ Videos
+
+ Current issue
+
+ Browse issues
+
+ Collections
+
+ Subjects
+
+ Follow us on Facebook
+
+ Follow us on Bluesky
+
+ Follow us on X
+
+ Subscribe 
+
+ Sign up for alerts 
+
+ RSS feed 
+
+ About the journal
+
+ Journal Staff
+
+ About the Editors
+
+ Research Cross-Journal Editorial Team
+
+ Journal Information
+
+ Journal Metrics
+
+ Our publishing models
+
+ Editorial Values Statement
+
+ Editorial policies
+
+ Journalistic Principles
+
+ History of Nature
+
+ Awards
+
+ Contact
+
+ Send a news tip
+
+ Publish with us
+
+ For Authors
+
+ For Referees
+
+ Language editing services
+
+ Open access funding 
+
+ Submit manuscript 
+
+ Search
+
+ Search articles by subject, keyword or author 
+
+ Show results from 
+
+ All journals 
+ This journal 
+
+ Search 
+
+ Advanced search
+
+ Quick links
+
+ Explore articles by subject 
+
+ Find a job 
+
+ Guide to authors 
+
+ Editorial policies 
+
+ Nature
+
+ ( Nature )
+
+ ISSN 1476-4687 (online)
+
+ ISSN 0028-0836 (print)
+
+ nature.com footer links
+
+ About Nature Portfolio
+
+ About us 
+
+ Press releases 
+
+ Press office 
+
+ Contact us 
+
+ Discover content
+
+ Journals A-Z 
+
+ Articles by subject 
+
+ protocols.io 
+
+ Nature Index 
+
+ Publishing policies
+
+ Nature portfolio policies 
+
+ Open access 
+
+ Author & Researcher services
+
+ Reprints & permissions 
+
+ Research data 
+
+ Language editing 
+
+ Scientific editing 
+
+ Nature Masterclasses 
+
+ Research Solutions 
+
+ Libraries & institutions
+
+ Librarian service & tools 
+
+ Librarian portal 
+
+ Open research 
+
+ Recommend to library 
+
+ Advertising & partnerships
+
+ Advertising 
+
+ Partnerships & Services 
+
+ Media kits 
+
+ Branded
+ content 
+
+ Professional development
+
+ Nature Awards 
+
+ Nature Careers 
+
+ Nature 
+ Conferences 
+
+ Regional websites
+
+ Nature Africa 
+
+ Nature China 
+
+ Nature India 
+
+ Nature Japan 
+
+ Nature Middle East 
+
+ Privacy
+ Policy 
+
+ Use
+ of cookies 
+
+ Your privacy choices/Manage cookies
+
+ Legal
+ notice 
+
+ Accessibility
+ statement 
+
+ Terms & Conditions 
+
+ Your US state privacy rights 
+
+ © 2026 Springer Nature Limited
+
+ Close 
+
+ Sign up for the Nature Briefing: AI and Robotics newsletter — what matters in AI and robotics research, free to your inbox weekly.
+
+ Email address 
+
+ Sign up 
+
+ I agree my information will be processed in accordance with the Nature and Springer Nature Limited Privacy Policy . 
+
+ Close 
+
+ Get the most important science stories of the day, free in your inbox. 
+ Sign up for Nature Briefing: AI and Robotics
+
+ 

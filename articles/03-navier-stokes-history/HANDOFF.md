@@ -126,6 +126,13 @@ figure fixes — redeploy whenever publish flips.
    fork-hinge drafts go to Nick for taste-testing per standing practice; the
    sibling audit (hooks/waypoints/ending must not rhyme with lessons 01/02 —
    the ending was written to a new skeleton: verify).
+   Slop sweep 2026-09-04 (main loop, SLOP + INTROS): opening ¶1 clean (cold
+   concrete history, no adjectives); ¶2 fails INTROS 2/3 ("This lesson is that
+   argument" schedules, article-as-subject, series callback) — rewrite with the
+   machine as subject, keeping the thesis-last pair ("The scene never changes.
+   The theory drawing it does."); scattered "earned/honest" house-vocab (L283,
+   L375, L530) is F18-lite — flatten to facts at the voice pass. L265 debt
+   plant is the sanctioned SLOP-1 form; keep.
 4. **Stage-5 audits**: palette (sepia never used for physics; term colors match
    lesson 01's), ledger (the §5 zero is visibly paid in §10; every nameplate
    filled by §12 except the blank end; the fluxions plant §3 → Stokes payoff §8;
@@ -147,3 +154,6 @@ figure fixes — redeploy whenever publish flips.
 ## Judgment calls reserved for the user
 
 - Publishing. Archival images. GPU hero upgrade. Any section cuts.
+- Paradox-spine rebuild (proposed 2026-09-04 worker synthesis: tour→paradox
+  re-spine with cut list; standing plan remains editorial read + Stage-4 voice
+  pass + publish). Rebuild-vs-publish is Nick's call — no sections cut until then.

@@ -1,0 +1,1024 @@
+Reinforcement Learning Enhanced Quantum-inspired Algorithm
+for Combinatorial Optimization
+
+Dmitrii Beloborodov 1 A. E. Ulanov 1 Jakob N. Foerster 2 Shimon Whiteson 2 A. I. Lvovsky 1 3
+
+arXiv:2002.04676v1 [cs.LG] 11 Feb 2020
+
+Abstract
+Quantum hardware and quantum-inspired algorithms are becoming increasingly popular for
+combinatorial optimization. However, these algorithms may require careful hyperparameter tuning for each problem instance. We use a reinforcement learning agent in conjunction with a
+quantum-inspired algorithm to solve the Ising energy minimization problem, which is equivalent
+to the Maximum Cut problem. The agent controls the algorithm by tuning one of its parameters
+with the goal of improving recently seen solutions.
+We propose a new Rescaled Ranked Reward (R3)
+method that enables stable single-player version
+of self-play training that helps the agent to escape local optima. The training on any problem
+instance can be accelerated by applying transfer
+learning from an agent trained on randomly generated problems. Our approach allows sampling
+high-quality solutions to the Ising problem with
+high probability and outperforms both baseline
+heuristics and a black-box hyperparameter optimization approach.
+
+1. Introduction
+Many of the important real-world combinatorial problems
+can be mapped to the Ising model, ranging from portfolio optimization (Venturelli & Kondratyev, 2019; Marzec,
+2016) to protein folding (Perdomo-Ortiz et al., 2012). The
+Ising model describes the pairwise interaction of binary
+particles and assigns some cost function (energy) to each
+particle configuration. The Ising problem consists in finding
+binary strings that minimize the energy. It is a quadratic
+unconstrained optimization task over the discrete {±1}n
+domain and equivalent to the Max-Cut problem from graph
+1
+
+Russian Quantum Center, Moscow, Russia 2 Department of
+Computer Science, University of Oxford, Oxford, United Kingdom 3 Department of Physics, University of Oxford, Oxford,
+United Kingdom. Correspondence to: Dmitrii Beloborodov
+<dmitribeloborodov@yandex.ru>.
+
+theory.
+There are multiple methods to solve the Ising and Max-Cut
+problems. Classic algorithms include heuristics performing
+local search in the solution space, like breakout local search
+(Benlic & Hao, 2013) and simulated annealing (Kirkpatrick
+et al., 1983). For many combinatorial problems, commercial solvers are available, including Gurobi (gur, 2019) and
+CPLEX (cpl, 2019).
+An entirely different approach is to use a quantum physical
+system with its energy function similar to the optimization
+objective, and then anneal this system towards its ground
+state — the lowest energy state. Devices utilizing this
+method include the coherent Ising machine (CIM) (Inagaki
+et al., 2016; McMahon et al., 2016) and the quantum superconducting annealer manufactured by D-Wave Systems
+(McGeoch et al., 2019). For example, in CIM, pulses of
+light circulate in a lossy optical fiber loop containing a parametric amplifier. In each round trip, a classical controller is
+used to modulate these pulses according to the parameters
+of the Ising problem and the measured amplitudes of other
+pulses.
+Quantum technology is not yet in position to compete with
+classical computation systems in terms of both problem
+sizes and quality of solutions obtained. However, it has inspired a family of new classical optimisation algorithms that
+perform strongly in comparison with existing ones (King
+et al., 2018; Leleu et al., 2019). An example is a simulation
+of CIM, known as the SimCIM algorithm (Tiunov et al.,
+2019). SimCIM reformulates the Ising model as a continuous constrained optimization problem and solves it with
+iterative gradient-based optimization, with each iteration
+corresponding to a roundtrip of the optical pulses through
+the fiber loop. SimCIM was implemented on computers
+equipped with consumer GPU and proved to outperform
+CIM in terms of the solution quality and computation time
+(Tiunov et al., 2019). It has since been applied as a Boltzmann sampler to train general Boltzmann machines and
+for applications in statistical physics (Ulanov et al., 2019).
+However, both SimCIM and CIM require parameter tuning
+for each problem instance to obtain best results. One of
+the SimCIM parameters, the combined coefficients of linear
+gain and loss (which can be interpreted as a dynamic reg-
+
+Reinforcement Learning Enhanced Quantum-inspired Algorithm for Combinatorial Optimization
+
+ularization coefficient), needs to be varied as a function of
+the iteration number. As a result, the use of classic hyperparameter optimization approaches (Feurer & Hutter, 2018)
+is limited, since most methods assume a small number of
+continuous or discrete parameters.
+To automate parameter tuning in a flexible way, we use a
+reinforcement learning agent to control the regularization
+(gain-loss) function of SimCIM during the optimization process. An important feature of the Ising problem is the presence of multiple local optima whose energy is only slightly
+higher than the global minimum, but the associated bit configuration is significantly different. To address this issue,
+we propose Rescaled Ranked Reward method (R3) which is
+a modification of Ranked Reward (R2) (Laterre et al., 2018).
+In this approach, we assign reward to the agent depending on
+how its current score compares to scores obtained in recent
+trials, and thus enable self-play training for a single-player
+environment. Rescaled Ranked Reward method ensures that
+the agent is motivated to keep discovering better solutions,
+without destabilizing the training process.
+We demonstrate that the convergence speed noticeably improves if we apply policy transfer from an agent pre-trained
+on randomly generated problems to the unseen target problem. This transfer learning is facilitated by feature-wise
+linear modulation (FiLM) (Dumoulin et al., 2016) with the
+features extracted from the general parameters of the problem at hand.
+Our approach allows us to find the best solutions with higher
+probability than SimCIM with a regularization function that
+changes linearly or according to a hyperbolic tangent function with manually tuned parameters (which is our benchmark for the human level performance). It also outperforms
+CMA-ES (Hansen et al., 2003), one of the most powerful
+black-box algorithms for hyperparameter optimization.
+The code is available at https://github.com/
+BeloborodovDS/SIMCIM-RL.
+
+P
+C(J, x) = 41 (xT Jx − ij Jij ) → maxx ,
+J ∈ Rn×n , J T = J, x ∈ {±1}n
+
+(2)
+
+This problem can be interpreted as a task of dividing a set
+of n nodes of a weighted graph into two subsets, such that
+the sum of edge weights connecting these subsets C(J, x)
+is maximized. In this interpretation, the problem matrix J
+is the adjacency matrix of the graph, and binary variables
+x denote the choice of the subset for each node. The optimization objective C(J, x) is called the cut value (higher is
+better); in this paper we use it to evaluate our algorithm and
+compare it to benchmarks.
+2.2. SimCIM algorithm
+SimCIM (Tiunov et al., 2019) solves the discrete problem
+(1) by replacing x with a vector c of n continuous variables
+bounded in [−1, 1]:
+(
+−cT Jc + pcT c → minc ,
+J ∈ Rn×n , J T = J, c ∈ [−1, 1]n
+
+(3)
+
+In addition to the Ising term, the SimCIM loss function
+contains a regularization term parametrized by the real scalar
+p, which corresponds to the combined gain and linear loss
+coefficients in the CIM (Tiunov et al., 2019); its value is
+allowed to change during the optimization process. This
+change does not have to be smooth or even continuous,
+however p should generally decrease with time to ensure
+that the loss function (3) approximates the continuous Ising
+loss function by the end of the iterations.
+The problem (3) is solved via gradient descent. We initialize
+the vector c of problem variables according to c1 = {0}n .
+At each iteration t, we compute the noisy anti-gradient of
+the loss function
+g t = µ(Jct − pt ct ) + σεt ,
+
+2. Background
+2.1. Combinatorial optimization
+The Ising problem is a discrete energy minimization problem:
+(
+−xT Jx → minx ,
+J ∈ Rn×n , J T = J, x ∈ {±1}n
+
+(
+
+(1)
+
+where µ is the learning rate, pt is the regularization coefficient, εt is a vector of random samples from the standard
+normal distribution and σ is the noise amplitude. Then we
+calculate the update vector mt = ηmt−1 + (1 − η)g t by
+applying momentum µ to the anti-gradient (the update vector is initialized according to m0 = {0}n ) and update the
+problem variable vector as follows:
+ct+1 = ct + mt
+
+Here x is a vector of n binary variables that can have values
+±1, and J is a symmetric problem matrix that describes
+pairwise interactions between them. This problem is NPhard (Barahona, 1982). It is equivalent to the Max-cut
+problem:
+
+I[|ct + mt | ≤ 1]
+
+(4)
+
+where I denotes the indicator function and element-wise
+product. In other words, an update is applied to each element
+of ct only if it does not cause it to to exceed the boundary
+of [−1, 1].
+
+Reinforcement Learning Enhanced Quantum-inspired Algorithm for Combinatorial Optimization
+
+These iterations are repeated N times. Subsequently, the solution of the original discrete problem (1) is calculated as its
+elementwise sign. SimCIM is reminiscent to the HopfieldTank simulated annealer (Hopfield & Tank, 1986), but differs from it in the shape of the activation function.
+The hyperparameters µ, η, σ are scalar values and relatively
+easy to tune. In contrast, pt is a discretized function of
+time, which poses a challenge to common hyperparameter
+optimization techniques due to the large dimensionality.
+Eigenvalue decomposition Since the matrix J is real and
+symmetric, we can construct an eigenvalue decomposition
+J = QΛQT , where Q is an orthogonal matrix with the
+eigenvectors of matrix J as its columns, and Λ is a diagonal
+matrix with the eigenvalues of J as diagonal elements Λii .
+With some simplifications (η = σ = 0, ct  1) the dynamics (4) of the system can be described by the equation
+ct+1 = ct + µ(Jct − pt ct ). By performing eigenvalue
+decomposition and the change of variable e = QT c, the update equation simplifies to et+1,i = et,i +µ(Λii et,i −pt et,i )
+— i.e. the update is applied to individual elements of the vector e. Thus, when pt is greater than the highest eigenvalue
+of J, both e and c = Qe exponentially decay. Also, setting pt lower than all Λii will lead to exponential growth
+of all amplitudes ei , and subsequent poor conversion of the
+iterations. Using these observations, we reparameterize the
+regularization function by introducing a normalized regularization function p̄t , which, as a rule, is restricted to the
+interval [0, 1]:
+
+
+pt = p̄t max Λii − min Λii + min Λii .
+i
+
+i
+
+i
+
+(5)
+
+Choosing a learning rate To select the learning rate µ
+for each problem instance, we use an automatic procedure
+similar to the learning rate range test proposed in (Smith,
+2017). One optimization cycle of SimCIM (4) with momentum η = 0 is performed with an exponentially decaying µ,
+starting from some high value. The learning rate is chosen
+at an iteration where the l1 norm of gradient kg t k1 starts to
+converge.
+2.3. Reinforcement learning
+In reinforcement learning (RL) setting, an agent at each step
+t interacts with some environment E by observing its state
+st , performing an action at sampled from its policy π(a),
+and obtains a reward rt (st , at , st+1 ). One interaction session, called an episode, usually lasts until the agent reaches
+a terminal state or until the limit on the number of steps
+T is reached. The goal of the agent is to maximize the
+expected
+PTsum of discounted rewards during the episode:
+Eτ (π) t=0 γ t rt (st , at , st+1 ), where τ (π) is a trajectory
+
+generated by the agent in the environment, and γ ∈ (0, 1] is
+the discount factor.
+In actor-critic learning, an agent consists of two components.
+The actor, using observations from the environment, predicts
+the agent’s policy π(a). The actor’s parameters are updated
+in the direction of improvement, which is estimated using
+sampled trajectories. The critic predicts the value of each
+observation, which is then used to reduce the variance of
+actor’s gradient. In the case of deep reinforcement learning,
+both actor and critic are usually implemented as deep neural
+networks.
+
+3. Our approach
+We use a neural network based RL agent to control the
+scaled regularization function p̄t . Every m iterations of SimCIM, the agent observes the state of the optimization process
+and modifies p̄t . Observations, actions and rewards from
+each SimCIM optimization cycle constitute one agent rollout: in an episode of N SimCIM steps the agent performs
+N/m actions.
+Actions The agent has a discrete action space: it is allowed to increase or decrease the regularization function,
+which is initialized at p̄0 = 1.0, by one of the values
+{±p∆ , 0}. In addition to that, p̄t is decreased by m
+N at each
+agent step to ensure that a random agent yields a decreasing
+regularization function. Between the agent steps, p̄t is interpolated linearly; p̄t is also clipped to the interval [0, 1.05] to
+limit the exploration area.
+Observations The agent observes the current state of optimization variables in the eigenbasis of the problem matrix
+J, i.e. it is supplied with the set of amplitudes et,i (listed in
+the order of decreasing corresponding eigenvalues Λii ), as
+well as the elapsed time t/N and the regularization function
+p̄t−1 from the previous step. The benefit of using et , rather
+than the actual amplitudes ct , as the state component, is that
+the former have a natural ordering according to the corresponding eigenvalues of J, while the components of ct can
+be arbitrary permuted along with the rows and columns of
+J. This representation of the state therefore facilitates the
+transferability of the agent across problems.
+To provide the agent with the information about the current
+problem instance for the purpose of transfer
+Pn learning, we
+calculate problem features as φj = n1 i=1 |Qij |. This
+means that φj are scaled l1 norms of the problem matrix
+eigenvectors. These features are “static” observations that
+are fixed during the entire episode. Features φj are provided
+to the agent at each step as a part of the observation.
+Rewards In the case of combinatorial optimization, we
+are interested in finding solutions with the best quality (e.g.
+
+Reinforcement Learning Enhanced Quantum-inspired Algorithm for Combinatorial Optimization
+
+cut value) for each instance, while the path in which it
+has been reached is less important. Also, solutions with
+slightly different cut values may correspond to completely
+different bit configurations x. Thus the current cut value or
+its difference between steps is not the best choice for the
+reward.
+To address this issue, the Ranked Reward (R2) method was
+proposed in (Laterre et al., 2018). In R2, the environment
+maintains a list of discovered cut values Cj for the last P
+episodes (a “leaderboard”), the q-th percentile C q is calculated over this list, and the new solution with the cut value
+C is rewarded at the last step only according to the rule
+
+
+C > Cq
++1,
+rR2 = −1,
+(6)
+C < Cq ,
+
+
+±1 randomly, C = C q
+where q and P are hyperparameters. This kind of reward
+ensures that the agent constantly improves its performance
+in search of better solutions. In the language of of self-play
+(Silver et al., 2017), the agent is rewarded for beating most
+of its last results in a single-player game (being at the top of
+the leaderboard) and punished otherwise.
+We propose a modification of this method that we dub
+Rescaled Ranked Rewards (R3) to account for imbalanced
+reward distribution:
+
+q
+
+C > Cq
++ 100 ,
+q
+rR3 = −(1 − 100 ), C < C q ,
+
+
+r̄,
+C = Cq
+
+(7)
+
+where r̄ is calculated in such a way that the average reward
+over the last P episodes is equal to zero. This modification
+ensures that negative and positive rewards are balanced. It
+also ensures that solutions with C > C q are clearly distinguishable from those with C = C q , and hence discourages
+the agent from getting stuck in a local optimum.
+Transfer learning The approach we propose requires
+training the agent for each problem instance separately, however it is possible to accelerate this process significantly by
+pre-training the agent on randomly generated problem instances.
+We pre-train the agent on random adjacency matrices from
+the Erds–Rnyi distribution (Erdős & Rényi, 1960) with a
+fixed connection probability of 0.06. We select this value
+so that the pre-training distribution is close to that for the
+target set of problems. However, we observe that transfer
+works reliably for matrices with different structure, too.
+At each step of the pre-training process, the environment
+samples a new matrix J, and the agent uses it to generate
+
+a batch of episodes and perform a gradient update. This is
+repeated a fixed number of times. Note that this procedure
+does not require any costly data labeling or using previously
+known solutions.
+Once the training is complete, the agent is fine-funed in
+application to the specific problem of interest. This finetuning is performed in a similar manner: at each step the
+agent generates a batch of episodes using the matrix J of
+the problem and performs a gradient update.
+Implementation details The agent is implemented as two
+separate fully-connected networks (actor and critic) with
+two hidden layers of size 256 and tanh activation functions.
+These two networks take environment observation as input
+and produce policy and value function respectively.
+The static features of the problem matrix φj are not included
+in the network inputs; instead, they are used to calculate a
+set of parameters to perform feature-wise linear modulation
+(FiLM) (Dumoulin et al., 2016) of the last hidden layer in
+the actor network. The FiLM module is a linear layer that
+predicts a set of weights and biases that are used to scale and
+shift the activations of the actor’s hidden layer element-wise.
+We train the agent using the PPO (Schulman et al., 2017)
+algorithm with 4 epochs. The discount factor γ is equal to
+1.0. SimCIM performs N = 1000 iterations per episode,
+and the agent acts every m = 10 iterations, corresponding
+to 100 steps per episode. The SimCIM algorithm allows
+efficient parallel implementation on a GPU, so we train the
+agent in batches of size 256 (both for pre-training and finetuning). We use q = 0.99 to calculate rewards in R2 and R3
+methods; the leaderboard size P is equal to 5 batch sizes
+for fine-tuning and one batch size for pre-training (since
+each problem instance is used to generate only one batch of
+episodes). The pre-training is performed for 30000 problem
+instances.
+The SimCIM hyperparameters are chosen as follows. The
+momentum is set to η = 0.9 and noise level to σ = 0.03.
+The learning rate µ is tuned automatically for each problem instance, including the random instances used for pretraining. The regularization function increment p∆ is equal
+to 0.04.
+
+4. Related Work
+Aside from classic heuristic methods for combinatorial optimization that can be found in industrial-scale packages like
+Gurobi (gur, 2019) and CPLEX (cpl, 2019), many RL-based
+algorithms are emerging. Early works (Vinyals et al., 2015;
+Mirhoseini et al., 2017) use RL to train recurrent neural
+networks with attention mechanisms to construct the solution iteratively. In later papers (Khalil et al., 2017; Li et al.,
+2018; Kool et al., 2018; Mittal et al., 2019; Abe et al., 2019;
+
+Reinforcement Learning Enhanced Quantum-inspired Algorithm for Combinatorial Optimization
+
+Barrett et al., 2019) different kinds of graph neural networks
+are used in conjunction with RL to solve combinatorial
+problems on graphs by iteratively flipping bit values.
+In (Laterre et al., 2018), a permutation-invariant network
+was used as a reinforcement learning agent to solve the bin
+packing problem. This work introduced Ranked Reward to
+automatically control the learning curriculum of the agent.
+Combining RL with heuristics was explored in (Xinyun &
+Yuandong, 2018): one agent was used to select a subset
+of problem components, and another selected an heuristic
+algorithm to process them.
+In (Khairy et al., 2019), a reinforcement learning agent
+was used to tune the parameters of a simulated quantum
+approximate optimization algorithm (QAOA) (Farhi et al.,
+2014) to solve the Max-Cut problem and showed strong
+advantage over black-box parameter optimization methods
+on graphs with up to 22 nodes. QAOA was designed with
+near-term noisy quantum hardware in mind, however, at the
+current state of technology, the problem size is limited both
+in hardware and simulation.
+To the best of our knowledge, combining quantum-inspired
+algorithms with RL for combinatorial optimization in the
+context of practically significant problem sizes was not explored before.
+
+5. Experiments
+To evaluate our method, we use problem instances from
+Gset (Ye, 2003), which is a set of graphs (represented by
+adjacency matrices J) that is commonly used to benchmark
+Max-Cut solvers. Gset contains problems of practically
+significant sizes, from hundreds to thousands of variables
+from several different distributions.
+We concentrate on graphs G1–10. Of these, G1–G5 appear
+to belong to the Erds–Rnyi (Erdős & Rényi, 1960) model
+with the connection probability approximately equal to 0.06,
+while G6–G10 are weighted graphs with the same adjacency
+structure, but with approximately half of the edges having
+weights equal to −1. All of these graphs have 800 nodes.
+For all our experiments, we use a single machine with a
+GeForce RTX 2060 GPU.
+5.1. Performance
+The agent, pre-trained and fine-tuned as described in Section 3, is used to generate a batch of solutions, for which
+we calculate the maximum and median cut value. We also
+report the fraction of solved instances: the problem is considered solved if the maximum cut over the batch is equal
+to the best known value reported in (Benlic & Hao, 2013).
+The results are presented in Table 1. The obtained maximum
+
+and median are normalized by this best known value; the
+normalized values are further averaged over instances G1–
+G10 and over three random seeds for each instance (for each
+random seed we pre-train a new agent). Note that problem
+instances G6–G10 belong to a distribution never seen by the
+agent during the pre-training.
+We compare our method to two baseline approaches to tuning the regularization function of SimCIM. In the first approach (labelled “Linear”), the scaled regularization function p̄t is decaying linearly from 1 to 0 during the N SimCIM iterations; in our reinforcement learning setting, this is
+equivalent to the agent that always chooses zero increment
+as the action. In the second approach (labelled “Manual”),
+which has been used in the original SimCIM paper (Tiunov
+et al., 2019), the regularization function is a parameterized
+hyperbolic tangent function:
+pt = Jm O(tanh(S(t/N − 0.5)) + D),
+(8)
+P
+where Jm = maxi j |Jij |; t/N is a normalized iteration number and O, S, D are the scale and shift parameters.
+These parameters are tuned manually for all instances G1–
+G10 at once. If manually tuned in this fashion, SimCIM
+solves 8 of G1–G10 instances, however the result is stochastic and the probability of solving each instance is different
+(Tiunov et al., 2019). We evaluate the baselines by sampling
+30 batches of solutions (batch size 256) for each instance
+and averaging the statistics (maximum, median, fraction of
+solved) over all batches of all instances.
+We also compare our approach to a well-known evolutionary algorithm CMA-ES (Hansen et al., 2003) (population
+size 10). We parameterize the regularization function for
+iteration t according to Eq. (8), and CMA-ES is used to tune
+D ∈ [−3, 3] and O, S ∈ [0.01, 10] (exponential scale) for
+at most 500 SimCIM evaluations in batches of size 256 each.
+We maximize Cmax + qmax , where Cmax is the maximum
+cut over the batch, and qmax is the fraction of values in the
+batch equal to Cmax . Since all elements of J are integer,
+so is the cut value, while 0 < qmax ≤ 1. As a result, this
+objective orders batches first by the maximum cut value, and
+then by the probability to obtain it. After the optimization is
+finished, the best parameters are selected, and a new batch
+of solutions is sampled with these parameters. We report
+results from the batches obtained in this manner, averaged
+over three random seeds and over all instances.
+Though the pre-trained agent without fine-tuning (Agent-0)
+is even worse than the baselines, fine-tuning rapidly improves the performance of the agent. The fine-tuned agent
+does not solve all instances in G1–G10, however it discovers
+high-quality solutions more reliably than the benchmarks.
+CMA-ES is capable of solving each of G1–G10 instances:
+we observed that the best known value appeared at least once
+for each instance during several trials with different seeds.
+
+Reinforcement Learning Enhanced Quantum-inspired Algorithm for Combinatorial Optimization
+Table 1. Performance on Gset: maximum and median normalized cut values are averaged over the instances (G1–G10); Agent-K denotes
+an agent fine-tuned for K episodes, Agent-0 is not fine-tuned. Standard deviation over three random seeds is reported in brackets for each
+value.
+
+M AXIMUM
+M EDIAN
+S OLVED
+
+L INEAR
+
+M ANUAL
+
+CMA-ES
+
+AGENT-0
+
+AGENT-100
+
+AGENT-200
+
+AGENT-500
+
+0.9993 (2 E -05)
+0.9942 (5 E -05)
+0.2000 (0 E +00)
+
+0.9997 (2 E -05)
+0.9946 (3 E -04)
+0.6667 (5 E -02)
+
+0.9995 (8 E -05)
+0.9933 (4 E -04)
+0.6000 (0 E +00)
+
+0.9990 (2 E -04)
+0.9901 (2 E -03)
+0.1333 (5 E -02)
+
+0.9996 (8 E -05)
+0.9901 (1 E -04)
+0.6000 (8 E -02)
+
+0.9997 (1 E -05)
+0.9925 (2 E -03)
+0.7333 (5 E -02)
+
+0.9998 (0 E +00)
+0.9979 (4 E -04)
+0.8000 (0 E +00)
+
+However, for some instances this result is not reproducible
+due to the stochastic nature of SimCIM: a new batch of
+solutions generated with the best parameters found by CMAES may yield a lower maximum cut. In this sense, the results
+for CMA-ES are worse than for the manually tuned baseline.
+
+11620
+
+G2: cut value
+
+11610
+11600
+
+with CMA-ES, the solution probability is vanishingly small:
+1.3 × 10−5 for G9 and 9.8 × 10−5 for G10.
+We also note the difference in the numbers of samples used
+by the automatic methods — our agent and CMA-ES — as
+compared to the manual hyperparameter tuning and the linear variation of the hyperparameter. In the former case, the
+total number of samples consumed including both training
+(fine-tuning) and at test equalled ∼ 256 × 500 = 128000.
+On the other hand, the manual tuning required much fewer
+samples (tens of thousands), while the linear setting did not
+involve any tuning at all. Hence it is fair to say that the
+linear and manual methods are much more sample-efficient.
+
+11590
+
+5.2. Ablation study
+
+11580
+Best known
+Median (manual)
+99th percentile
+Median
+
+11570
+11560
+0
+
+200
+
+400
+600
+800
+Training episodes (batched)
+
+1000
+
+Figure 1. Example: dynamics of the cut value obtained on G2
+during fine-tuning, standard deviation is calculated over three
+random seeds (smoothed with Savitzky–Golay filter).
+
+Figure 1 demonstrates the dynamics of the maximum and
+median cut values for the G2 instance during the process of
+fine-tuning. The median value continues to improve, even
+after the agent has found the best known value, and eventually surpasses the manually tuned baseline. This means
+that the agent still finds new ways to reach solutions with
+the best known cut. A further advantage of our agent is that
+it adaptively optimizes the regularization hyperparameter
+during the test run by taking the current trajectories ct into
+account.
+The exact maximum cut values after fine-tuning and best
+know solutions for specific instances G1–G10 are presented
+in Table 2. We see that the agent stably finds the best known
+solutions for G1–G8 and closely lying solutions for G9–G10.
+The reason it fails to solve G9 and G10 is that the policy
+found by the agent corresponds to a deep local optimum that
+the agent is unable to escape by gradient descent. In contrast,
+CMA-ES does not use gradient descent and is focused on
+exploratory search in a broad range of parameters, and hence
+is sometimes able to solve these graphs. However, even
+
+We study the effect of the three main components of our approach: transfer learning from random problems, Rescaled
+Ranked Rewards (R3) scheme, and feature-wise linear modulation (FiLM) of the actor network with the problem features.
+• To study the effect of the policy transfer, we train pairs
+of agents with the same hyperparameters, architecture
+and reward type, but with and without pre-training on
+randomly sampled problems. In the latter case, the
+parameters of the agent are initialized randomly.
+• We compare our R3 method with the original R2
+method both with and without pre-training.
+• We study the effect of FiLM by removing the static
+observations extracted from the problem matrix J from
+the observation and the FiLM layer from the agent.
+We report the fraction of solved problems, averaged over
+instances G1–G10 and over three random seeds for each
+instance. The results are presented in Table 3 and Fig. 2.
+According to the results, all of the above listed features are
+essential for the agent’s performance. We see, in particular,
+that the pre-trained agent with both FiLM and R3 rewards
+experiences a slightly slower start, but eventually finds better
+optima faster than ablated agents.
+
+Reinforcement Learning Enhanced Quantum-inspired Algorithm for Combinatorial Optimization
+Table 2. Results for specific Gset instances: best known cut value, best value obtained by the agent, their difference and the probability for
+the fully trained agent to find a solution corresponding to its best value.
+
+B EST (B ENLIC & H AO , 2013)
+AGENT
+D IFFERENCE
+P ROBABILITY
+
+G1
+
+G2
+
+G3
+
+G4
+
+G5
+
+G6
+
+G7
+
+G8
+
+G9
+
+G10
+
+11624
+11624
+0
+0.87
+
+11620
+11620
+0
+0.49
+
+11622
+11622
+0
+0.81
+
+11646
+11646
+0
+0.93
+
+11631
+11631
+0
+0.34
+
+2178
+2178
+0
+0.53
+
+2006
+2006
+0
+0.82
+
+2005
+2005
+0
+0.92
+
+2054
+2050
+-4
+0.61
+
+2000
+1999
+-1
+0.46
+
+Table 3. Ablation study, fraction of problems solved. Agent-K denotes an agent fine-tuned for K episodes. Standard deviation over three
+random seeds is reported in brackets for each value.
+
+S OLVED
+S OLVED (100 IT.)
+S OLVED (200 IT.)
+S OLVED (500 IT.)
+
+R3
+
+P RE - TRAINING
+R3, NO F I LM
+
+R2
+
+R3
+
+N O PRE - TRAINING
+R3, NO F I LM
+
+R2
+
+0.60 (8 E -02)
+0.73 (5 E -02)
+0.80 (0 E +00)
+
+0.63 (5 E -02)
+0.70 (0 E +00)
+0.77 (5 E -02)
+
+0.60 (8 E -02)
+0.67 (5 E -02)
+0.70 (0 E +00)
+
+0.40 (0 E +00)
+0.47 (5 E -02)
+0.73 (5 E -02)
+
+0.37 (5 E -02)
+0.53 (9 E -02)
+0.73 (5 E -02)
+
+0.10 (8 E -02)
+0.33 (5 E -02)
+0.53 (5 E -02)
+
+0.8
+11620
+
+Manual
+Transfer: R3
+Transfer: R3, no FILM
+Transfer: R2
+From scratch: R3
+From scratch: R3, no FILM
+From scratch: R2
+
+0.2
+0.0
+0
+
+200
+
+400
+600
+Training episodes (batched)
+
+800
+
+1000
+
+Figure 2. Ablation study: averaged fraction of solved problem
+instances versus the number of episodes of fine-tuning for each
+instance (smoothed with Savitzky–Golay filter). Standard deviation is calculated over three random seeds. “Transfer” and “From
+scratch” are used to denote the agent with and without pre-training,
+respectively.
+
+5.3. Rescaled ranked rewards
+The analysis of specific problem instances helps to demonstrate the advantage of the R3 method. We analyze the
+behavior of the 99-th percentile of the solution cut values
+(the one used to distribute rewards in R2 and R3) on the G2
+instance from Gset in Fig. 3. G2 has several local optima
+with the same cut value 11617, which are relatively easy to
+reach. When the agent is stuck in a local optimum, many
+solutions generated by the agent are likely to have their cut
+values equal to the percentile, while solutions with higher
+cut values may appear infrequently.
+In the R2 scheme (6), the agent gets random ±1 rewards
+
+R2: loss
+R3: loss
+
+11616
+11614
+
+G2: Value loss (scaled)
+
+0.4
+
+G2: 99th percentile
+
+0.6
+Instances solved
+
+R2: percentile
+R3: percentile
+
+11618
+
+Stuck in a
+Escaped a
+local optimum local optimum
+
+11612
+11610
+11608
+11606
+11604
+0
+
+50
+
+100
+150
+200
+250
+Training episodes (batched)
+
+300
+
+350
+
+Figure 3. Value loss and 99th percentile during fine-tuning on G2
+for R2 and R3 when dealing with local optima.
+
+for local-optimum solutions and +1 for better ones. Thus
+infrequent solutions with higher cut values become almost
+indistinguishable from the local-optimum solutions. Furthermore, the fraction of episodes with local-optimum solutions
+increases, which results in a large fraction of random rewards, thereby preventing the efficient training of the critic
+network. This is evident from the monotonic growth of the
+value loss function in Fig. 3.
+In our R3 scheme (7), in contrast, the rewards for the localoptimum solutions are deterministic and dependent on the
+frequency of such solutions. The more often the agent
+reaches them, the lower the reward, while the reward for
+solutions with higher cut values is fixed. Eventually, better
+solutions outweigh sub-optimal ones, and the agent escapes
+the local optimum. This moment is indicated by a significant
+increase of the value loss: the agent starts exploring new,
+
+Reinforcement Learning Enhanced Quantum-inspired Algorithm for Combinatorial Optimization
+
+more promising states.
+
+References
+
+6. Discussion and future work
+
+Cplex optimizer.
+https://www.ibm.com/
+analytics/cplex-optimizer, 2019.
+
+One of the benefits of our approach is the lightweight architecture of our agent, which allows efficient GPU implementation along with the SimCIM algorithm itself. This allows
+us to rapidly fine-tune the agent for each problem instance.
+However, the fully-connected architecture makes it harder
+to apply our pre-trained agent to problems of various sizes,
+since the size of the network input layer depends on the
+problem size. Hence it would be interesting to explore using
+size-agnostic architectures for the agent, like graph neural
+networks.
+Another future research direction is to train the agent to
+vary more SimCIM hyperparameters, such as the scaling
+of the adjacency matrix or the noise level. Additionally, it
+would be interesting to explore using meta-learning at the
+pre-training step to accelerate the fine-tuning process.
+
+Gurobi optimization. https://www.gurobi.com/,
+2019.
+Abe, K., Xu, Z., Sato, I., and Sugiyama, M. Solving np-hard
+problems on graphs by reinforcement learning without
+domain knowledge. arXiv preprint arXiv:1905.11623,
+2019.
+Barahona, F. On the computational complexity of ising spin
+glass models. Journal of Physics A: Mathematical and
+General, 15(10):3241, 1982.
+Barrett, T. D., Clements, W. R., Foerster, J. N., and Lvovsky,
+A. Exploratory combinatorial optimization with reinforcement learning. arXiv preprint arXiv:1909.04063,
+2019.
+
+Lastly, with our approach, each novel instance requires a
+new run of fine-tuning, leading to a large number of required
+samples compared with simple instance-agnostic heuristics.
+In order to make our approach viable from a practical point
+of view, we hope to address generalization across different,
+novel, problem instances more efficiently.
+
+Benlic, U. and Hao, J.-K. Breakout local search for the
+max-cut problem. Engineering Applications of Artificial
+Intelligence, 26(3):1162–1173, 2013.
+
+7. Conclusion
+
+Erdős, P. and Rényi, A. On the evolution of random graphs.
+Publ. Math. Inst. Hung. Acad. Sci, 5(1):17–60, 1960.
+
+In this work we proposed an RL-based approach to tuning
+the regularization function of SimCIM, a quantum-inspired
+algorithm, to robustly solve the Ising problem. Our hybrid approach shows strong advantage over heuristics and a
+black-box approach, and allows us to sample high-quality
+solutions with high probability.
+We proposed an improvement over the Ranked Reward (R2)
+scheme, called Rescaled Ranked Reward (R3), which allows the agent to constantly improve the current solution
+while avoiding local optima. We also demonstrated that our
+algorithm may be accelerated significantly by pre-training
+the agent on randomly generated problem instances, while
+being able to generalize to out-of-distribution problems.
+Importantly, our approach is not limited to SimCIM or even
+the Ising problem, but can be readily generalised to any
+algorithm based on continuous relaxation of discrete optimisation.
+
+Acknowledgements
+We would like to thank Egor Tiunov for providing the manual tuning data and Vitaly Kurin for helpful discussions.
+This project has received funding from the Russian Science
+Foundation (19-71-10092).
+
+Dumoulin, V., Shlens, J., and Kudlur, M. A learned representation for artistic style. arXiv preprint arXiv:1610.07629,
+2016.
+
+Farhi, E., Goldstone, J., and Gutmann, S. A quantum
+approximate optimization algorithm. arXiv preprint
+arXiv:1411.4028, 2014.
+Feurer, M. and Hutter, F. Hyperparameter optimization.
+In Hutter, F., Kotthoff, L., and Vanschoren, J. (eds.),
+Automatic Machine Learning: Methods, Systems, Challenges, pp. 3–38. Springer, 2018. In press, available at
+http://automl.org/book.
+Hansen, N., Müller, S. D., and Koumoutsakos, P. Reducing the time complexity of the derandomized evolution
+strategy with covariance matrix adaptation (cma-es). Evolutionary computation, 11(1):1–18, 2003.
+Hopfield, J. and Tank, D.
+Computing with neural
+circuits: a model.
+Science, 233(4764):625–633,
+1986.
+ISSN 0036-8075.
+doi: 10.1126/science.
+3755256. URL https://science.sciencemag.
+org/content/233/4764/625.
+Inagaki, T., Haribara, Y., Igarashi, K., Sonobe, T., Tamate,
+S., Honjo, T., Marandi, A., McMahon, P. L., Umeki,
+T., Enbutsu, K., et al. A coherent ising machine for
+2000-node optimization problems. Science, 354(6312):
+603–606, 2016.
+
+Reinforcement Learning Enhanced Quantum-inspired Algorithm for Combinatorial Optimization
+
+Khairy, S., Shaydulin, R., Cincio, L., Alexeev, Y., and Balaprakash, P. Learning to optimize variational quantum
+circuits to solve combinatorial problems, 2019.
+Khalil, E., Dai, H., Zhang, Y., Dilkina, B., and Song,
+L. Learning combinatorial optimization algorithms over
+graphs. In Advances in Neural Information Processing
+Systems, pp. 6348–6358, 2017.
+King, A. D., Bernoudy, W., King, J., Berkley, A. J., and
+Lanting, T. Emulating the coherent ising machine with a
+mean-field algorithm. arXiv preprint arXiv:1806.08422,
+2018.
+Kirkpatrick, S., Gelatt, C. D., and Vecchi, M. P. Optimization by simulated annealing. Science, 220(4598):
+671–680, 1983.
+Kool, W., van Hoof, H., and Welling, M. Attention,
+learn to solve routing problems!
+arXiv preprint
+arXiv:1803.08475, 2018.
+Laterre, A., Fu, Y., Jabri, M. K., Cohen, A.-S., Kas, D., Hajjar, K., Dahl, T. S., Kerkeni, A., and Beguir, K. Ranked reward: Enabling self-play reinforcement learning for combinatorial optimization. arXiv preprint arXiv:1807.01672,
+2018.
+Leleu, T., Yamamoto, Y., McMahon, P. L., and Aihara, K.
+Destabilization of local minima in analog spin systems by
+correction of amplitude heterogeneity. Physical review
+letters, 122(4):040607, 2019.
+Li, Z., Chen, Q., and Koltun, V. Combinatorial optimization
+with graph convolutional networks and guided tree search.
+In Advances in Neural Information Processing Systems,
+pp. 539–548, 2018.
+Marzec, M. Portfolio optimization: applications in quantum
+computing. Handbook of High-Frequency Trading and
+Modeling in Finance (John Wiley & Sons, Inc., 2016) pp,
+pp. 73–106, 2016.
+McGeoch, C. C., Harris, R., Reinhardt, S. P., and Bunyk,
+P. I. Practical annealing-based quantum computing. Computer, 52(6):38–46, 2019.
+McMahon, P. L., Marandi, A., Haribara, Y., Hamerly, R.,
+Langrock, C., Tamate, S., Inagaki, T., Takesue, H., Utsunomiya, S., Aihara, K., et al. A fully programmable
+100-spin coherent ising machine with all-to-all connections. Science, 354(6312):614–617, 2016.
+Mirhoseini, A., Pham, H., Le, Q. V., Steiner, B., Larsen, R.,
+Zhou, Y., Kumar, N., Norouzi, M., Bengio, S., and Dean,
+J. Device placement optimization with reinforcement
+learning. In Proceedings of the 34th International Conference on Machine Learning-Volume 70, pp. 2430–2439.
+JMLR. org, 2017.
+
+Mittal, A., Dhawan, A., Medya, S., Ranu, S., and Singh,
+A. Learning heuristics over large graphs via deep reinforcement learning. arXiv preprint arXiv:1903.03332,
+2019.
+Perdomo-Ortiz, A., Dickson, N., Drew-Brook, M., Rose, G.,
+and Aspuru-Guzik, A. Finding low-energy conformations
+of lattice protein models by quantum annealing. Scientific
+reports, 2:571, 2012.
+Schulman, J., Wolski, F., Dhariwal, P., Radford, A., and
+Klimov, O. Proximal policy optimization algorithms.
+arXiv preprint arXiv:1707.06347, 2017.
+Silver, D., Hubert, T., Schrittwieser, J., Antonoglou, I., Lai,
+M., Guez, A., Lanctot, M., Sifre, L., Kumaran, D., Graepel, T., et al. Mastering chess and shogi by self-play
+with a general reinforcement learning algorithm. arXiv
+preprint arXiv:1712.01815, 2017.
+Smith, L. N. Cyclical learning rates for training neural networks. In 2017 IEEE Winter Conference on Applications
+of Computer Vision (WACV), pp. 464–472. IEEE, 2017.
+Tiunov, E. S., Ulanov, A. E., and Lvovsky, A. Annealing
+by simulating the coherent ising machine. Optics express,
+27(7):10288–10295, 2019.
+Ulanov, A. E., Tiunov, E. S., and Lvovsky, A. Quantuminspired annealers as boltzmann generators for machine learning and statistical physics. arXiv preprint
+arXiv:1912.08480, 2019.
+Venturelli, D. and Kondratyev, A. Reverse quantum annealing approach to portfolio optimization problems. Quantum Machine Intelligence, 1(1-2):17–30, 2019.
+Vinyals, O., Fortunato, M., and Jaitly, N. Pointer networks.
+In Advances in Neural Information Processing Systems,
+pp. 2692–2700, 2015.
+Xinyun, C. and Yuandong, T. Learning to perform local
+rewriting for combinatorial optimization. arXiv preprint
+arXiv:1810.00337, 2018.
+Ye, Y. Gset max-cut problem set. https://web.
+stanford.edu/˜yyye/yyye/Gset/, 2003.
+
+

@@ -7,6 +7,7 @@ import Lesson04II from './lesson-04-learned-solver.II.mdx'
 import Lesson05 from './lesson-05-where-simulation-is-wrong.mdx'
 import Maths01 from './maths-01-jacobian-hessian.mdx'
 import Physics01 from './physics-01-wave-particle.mdx'
+import Physics02G from './physics-02-einstein-grossmann.mdx'
 import Physics02 from './physics-02-pbits.mdx'
 import Physics03 from './physics-03-z1.mdx'
 import Thermo03 from './thermo-03-diffusion.mdx'
@@ -160,6 +161,17 @@ export const lessons: Lesson[] = [
     tags: ['quantum', 'optics', 'waves', 'probability'],
     status: { kind: 'draft' },
     versions: sole(Physics01),
+  },
+  {
+    id: 'einstein-grossmann',
+    field: 'physics',
+    order: 2,
+    title: 'The Draft That Had to Fail',
+    blurb:
+      'Einstein had the physics of gravity and no mathematics to write it in; his classmate Grossmann answered with curved geometry. Their joint draft got the shape right and the law wrong — and Mercury graded it.',
+    tags: ['geometry', 'history'],
+    status: { kind: 'draft' },
+    versions: sole(Physics02G),
   },
   {
     id: 'pbits',

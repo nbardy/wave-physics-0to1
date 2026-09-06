@@ -335,7 +335,55 @@ showing a mechanism. Open cold on the concrete thing. "Here is/are" survives
 only pointing at a concrete object the reader is about to touch. SLOP.md
 family 20 carries the tests.
 
-The full taxonomy — 20 slop families, the four detection tests, and the real
+Fifth incident (2026-08-26), flagged on the photonics P2 intro draft
+(OUTLINES stage, before any build):
+
+- ✗ "Some evening, look at a distant streetlight through a sheer curtain."
+- ✗ "The curtain is not decorating the light. It is transforming it"
+- ✗ "The plates earned their frost"
+- ✗ "Everything in this article … is that sentence, rearranged."
+
+Nick: "you've got the corniest fucking metaphors."
+
+**The rule extracted: no greeting-card staging.** A world-anchor is
+admitted as evidence, stated cold — never as an atmospheric invitation to a
+mood. Personification stays mechanical (springs want to expand) and never
+goes precious (plates do not "earn" their frost); the warm copula flourish
+("everything is that sentence, rearranged") is the deflationary rebrand in
+a cozier costume. The anchor fact may be real physics — the slop is the
+scene built around it. SLOP.md family 21 carries the tests.
+
+Sixth incident (2026-09-06), flagged on the published p-bits hero caption
+(article one of the series):
+
+- ✗ "Forty small lattices, sixteen cells each, every cell flipping many times
+  a second — and pictures keep condensing out of the static: a bar, a box, a
+  cross, dissolving and re-forming, never twice in the same place, never on a
+  schedule." — "I hate this description in article one. It has this silly
+  statement, ---(em dash) Realization, Poetic finish … What is it really
+  trying to say I can't even understand what the first visual in that article
+  is saying"
+
+**The rule extracted: a figure's description states the mechanism, in the
+order it runs.** The three-beat shape — inventory, dash-pivot into a
+performed realization, lyric tail — is a discovery's silhouette with the
+discovery removed. Cover everything after the dash; if an inventory remains
+and a mood was covered, rewrite from what starts, what happens to it, what it
+becomes. SLOP.md family 22 carries the tests.
+
+Seventh incident (2026-09-06), same p-bits opening, the sentence after the hero:
+
+- ✗ "Randomness is the one output the eye cannot audit." — "just a weird silly
+  and unnecessary sentence, we want to remove unnecessary 'o wow intentioned'
+  filler slop like this as well"
+
+**The rule extracted: no sentence exists to be quoted.** A minted aphorism —
+abstract subject, copula, "the one X that…" — is a bid for admiration placed
+before the evidence. Delete it with the sentence after it in view; the
+paragraph opens better on the concrete case. SLOP.md family 24 carries the
+tests.
+
+The full taxonomy — 24 slop families, the four detection tests, and the real
 before/after pairs from this repo's de-slop commits — lives in **`SLOP.md`**.
 
 ---

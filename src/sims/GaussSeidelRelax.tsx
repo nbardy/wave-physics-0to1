@@ -3,10 +3,11 @@ import { Sim, type Stepper } from '../components/Sim'
 import { FluidSolver, SolverRenderer } from './lib/solver'
 
 // §10 — scrubbing the Poisson solve. A frozen velocity field with a pile-up
-// (a divergent impulse) is stored once; the slider chooses how many Jacobi
-// sweeps to run ON A COPY, so dragging is deterministic scrubbing, not
-// accumulation. Left pane: divergence (violet, the crime). Right pane:
-// the pressure field the sweeps discover (red hill / cyan hollow).
+// (a divergent impulse) is stored once; the slider chooses how many
+// Gauss–Seidel sweeps (in place, via FluidSolver.project) to run ON A COPY,
+// so dragging is deterministic scrubbing, not accumulation. Left pane:
+// divergence (violet, the crime). Right pane: the pressure field the sweeps
+// discover (red hill / cyan hollow).
 
 const NX = 72
 const NY = 44
@@ -63,7 +64,7 @@ function createJacobi(itersRef: { current: number }): Stepper {
   }
 }
 
-export function JacobiRelax({ height = 220 }: { height?: number }) {
+export function GaussSeidelRelax({ height = 220 }: { height?: number }) {
   const [iters, setIters] = useState(0)
   const itersRef = useRef(iters)
   itersRef.current = iters

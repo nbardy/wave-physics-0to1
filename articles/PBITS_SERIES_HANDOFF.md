@@ -282,6 +282,51 @@ Reading (the diffusion ancestor; qualitative only, outside the RESEARCH
 ledger). Remaining forever-item: Nick's own phone/desktop read of all
 three, now that the trilogy is live.
 
+## HERO v2 — THE LEARNING WALL (2026-09-06, uncommitted, not deployed)
+
+Nick's verdict on the shipped hero (MosaicHero at the top of Part 1): "not
+obviously useful, not obviously interesting, unclear what it does" — the
+intent was always the FINALE's model, shown first, TRAINING and improving
+live with its internals visible, the series then working toward full
+understanding of that one object. Built as `src/sims/pbits/LearningWall.tsx`
++ `learnFeed.ts` (the wall's schedule and the weight feed, one interface,
+two constructors: Web Worker for the browser, inline for checks) +
+`learnWorker.ts`; `scripts/check-learningwall.ts` (`bun run check:hero`).
+
+What it is: twenty 8×8 chains on real 16×16 Z1 patches (Part 3's
+fabric-native model, `denoiseFabric.ts`), dreaming continuously on whatever
+weights exist right now, while the SAME trainer (FABRIC_TRAIN_DEFAULTS
+verbatim, seed 11) runs from coin-toss weights in a worker and posts new
+weights every 20 epochs. On canvas: the wall; the seven training pictures;
+one chain as its 256 p-bits; a learning curve (40 fresh test dreams per
+point, px wrong vs nearest glyph); epoch/seconds; the wall's own last-20
+score. A "train again" button restarts from new coin tosses (seed 11+gen).
+
+Measured (check facts): 26.8 px / 0% recognizable at epoch 0 → 8.8 px at
+epoch 100 → 4.6 px / 88% at 700; 40% recognizable first at epoch 60. Trainer
+wall-clock 22 s alone on Apple Silicon (31 ms/epoch), 40–95 s under CPU
+contention; prose says "about a minute on a laptop". Sweep budget is
+FabricDream's 24/level, NOT BilledWall's billed 6 — measured on the shipped
+weights: k=6 11.7 px/41%, k=24 6.1 px/74% (table in learnFeed.ts). The ring
+assertion: the feed at seed 11 reproduces pretrained8.ts to 4.9e-6 — Part 3
+bills the weights Part 1 trains in front of the reader.
+
+Prose rebinds landed (small, surgical — another session was editing the
+same intro today, SLOP families 22–24): Part 1 hook paragraph + the IOU
+paragraph (weights no longer "on credit"; the explanation is); Part 1 §10
+return (the 4×4 MosaicHero is now "the wall at the size this act built",
+its weights the only shipped ones in the article); Part 3 opening (wall
+"opened Part 1", weights "that opening trains", 6 sweeps vs the opening's
+24), F11 provenance sentence, the ring-closer's history sentence, Final
+Words' first sentence.
+
+DECISIONS FOR NICK: (1) 24 vs 6 sweeps per level in the hero (built at 24;
+6 would make it bit-for-bit BilledWall's dreams but 41% recognizable);
+(2) whether Part 1 §10 keeps the 4×4 paint-box wall or gets the 8×8 hero
+back with a paint-box (not built); (3) publish flip after his own read.
+Browser: worker loads, no console errors; live frame not captured (pane
+hidden — the rAF trap); `_figure_check/learningwall-*.png` are the eyes.
+
 ## ADVERSARIAL-REVIEW CORRECTIONS (2026-08-25, correctness only, uncommitted)
 
 Seventeen findings (F1–F17) applied across the three lessons; no style or

@@ -96,6 +96,17 @@ export const PALETTE = {
   knot: '#059669', // knots, knot lines, refinement strips
   topo: '#dc2626', // the selected B-rep entity — the pointing finger
   hole: '#0891b2', // inner wire, trimmed-away region, the hole that isn't material
+
+  // Physics 02 (articles/physics/02-einstein-grossmann/PLAN.md §Palette) —
+  // the role-rhyme again: amber the curved protagonist we watch, blue the
+  // flat control, violet the curvature meters. Red is the 1913 draft, green
+  // the 1915 law — they encode which law only in §§5–6, nowhere else.
+  geoFlat: '#2563eb', // flat-sheet construction — the control
+  geoCurved: '#d97706', // the curved protagonist, its rulers and geodesics
+  geoCurv: '#7c3aed', // curvature readouts: triangle excess, loop rotation
+  entwurf: '#dc2626', // the 1913 draft law
+  gr1915: '#059669', // the November 1915 law
+  observed: '#6b7280', // the observed 43″ line — a reference, not a contestant
 } as const
 
 export type PaletteKey = keyof typeof PALETTE

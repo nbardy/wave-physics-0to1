@@ -1,0 +1,268 @@
+import { StraightLines } from '../sims/physics/StraightLines'
+import { LoopMeter } from '../sims/physics/LoopMeter'
+import { CovarianceMachine } from '../sims/physics/CovarianceMachine'
+import { FallTest } from '../sims/physics/FallTest'
+import { MercuryGrade } from '../sims/physics/MercuryGrade'
+
+# The Draft That Had to Fail
+
+Everything you have ever dropped went straight down. A stone out of your hand
+falls about five metres per second faster with every second —
+$g = 9.8\ \mathrm{m/s^2}$, the first number physics ever taught you, and the
+most obedient one you own.
+
+In August 1912 Albert Einstein walked across Zurich with the replacement for
+that sentence finished in his head, and no mathematics to write it in. His old
+classmate Marcel Grossmann, professor of mathematics, answered with sixty
+years of geometry Einstein had never read.
+
+Falling is going straight through curved geometry.
+
+The figure below is yours to bend. Two pairs of lines, each launched
+parallel. The upper pair holds its separation all the way across. The lower
+pair does not. The slider bends the lower sheet and nothing else.
+
+<StraightLines />
+
+The upper pair is the geometry you were given in school. The lower pair is
+the geometry you live in — drawn in the same ink, by the same hand, and just
+as straight by its own rulers' account.
+
+Two confessions before anything moves. First, the curved sheet stands in for
+something one dimension richer than itself: the geometry of gravity is
+spacetime curvature, and I am showing you spatial curvature, which can be
+drawn. Time joins honestly at Mercury, where the numbers need it; until then
+every claim here is about the shape of space. Second, the dramatis personae:
+Grossmann is not the assistant in this story. He is the co-author — the 1913
+paper signs Einstein for the physical part and Grossmann for the mathematical
+part, and both signatures mean it.
+
+The colour contract, held for the whole article: <C k="geoFlat">blue</C> is
+the flat control, <C k="geoCurved">amber</C> is the curved protagonist and
+its rulers, <C k="geoCurv">violet</C> is a curvature reading. When the two
+laws arrive, the <C k="entwurf">1913 draft is red</C> and the
+<C k="gr1915">1915 law is green</C>. Names arrive late here: you meet each
+thing before you learn what it is called, each name is introduced once, and
+the colours remember the rest.
+
+## What "Straight" Means
+
+A ruler is a contract. Laid on the flat sheet, every copy of it agrees with
+every other: end to end they tile, parallels stay parallel, and a triangle's
+three angles add to exactly 180°. Nothing about that is negotiable, and
+nothing about it is interesting — until you lay the same rulers on the lower
+sheet.
+
+There the copies stop agreeing. Carried across the bend, a ruler comes back
+stretched or turned against the one it started beside. Two lines drawn
+"straight" — each short segment laid by the local ruler's own account — drift
+toward each other and meet. A triangle drawn the same way overshoots 180°.
+Drag the hero's slider back to flat and all of it unwinds: 180°, parallels,
+agreement. The bend is the whole difference, and the slider is the whole
+argument.
+
+The field of rulers has a name, and the name is a compression: $g$, the
+metric — "the ruler at every point, and how each one compares with its
+neighbours." On the flat sheet $g$ is the same everywhere, which is why
+school geometry works. On the lower sheet $g$ varies from place to place,
+which is why the lines meet. Every formula this article earns will be a
+sentence about $g$ first and a symbol second.
+
+The path itself has a name too: a geodesic — going straight by the local
+rulers' account, with no other meaning of "straight" admitted. On the flat
+sheet a geodesic is what you always called a straight line. On the curved
+sheet it is the amber curve that meets its neighbour. That is the only
+definition in force from here on. Which sheet is the world — that is the
+question the rest of the article spends.
+
+## The Derivative Dies
+
+Carry an arrow around a small loop on the flat sheet, keeping it parallel to
+itself at every step, and it returns pointing where it started. Every child
+with a compass walking a field knows this. Now carry it around a loop on the
+protagonist.
+
+<LoopMeter />
+
+It comes back rotated. The loop encloses area, the patch has curvature, and
+the arrow keeps the receipt: the rotation equals curvature times area. Make
+the loop small and the rotation shrinks with it; shrink it to nothing and the
+arrow returns itself — the flat verdict recovered as a boundary check, which
+is how you know the curved behaviour is honest rather than drawn that way.
+
+The right pane is the same fact wearing different clothes: a triangle whose
+angles sum past 180° by exactly the rotation on the left. Two witnesses, one
+quantity, and they agree at every setting of the knob because they are two
+readings of the same geometry, not two assertions about it.
+
+The verdict, stated flat: the ordinary derivative of a direction
+is a fact about flat habits, not about the surface. "Keep pointing the same
+way" has no meaning until someone says which rulers decide what "the same
+way" is at the next point. On the flat sheet the answer was free — every
+ruler agreed, so nobody had to choose. On the curved sheet the choice is the
+whole subject.
+
+In symbols, the ruler-field is $g$ — the compression from the previous
+section, now load-bearing. A derivative that asks $g$ before comparing
+neighbouring rulers is the covariant derivative; one that does not is the
+unrepaired kind from the hero figure, reporting the bend in our habits as
+if it were physics. Unfortunately, every law of motion ever written is
+built from derivatives.
+
+## The Repair
+
+Give each point the rule its own rulers imply: to move a direction from here
+to next door, consult $g$, correct for how the rulers change between the two
+doors, and only then compare. That rule is the connection — built from the
+rulers, not added beside them — and a path that never turns by its own
+rulers' account is a geodesic. The amber curves from the hero were geodesics
+all along; now they have their paperwork.
+
+The law of free fall, words first: a body with nothing pushing it follows a
+geodesic of $g$. The symbol $g$ already carries it, colour-bound — where $g$
+is flat the geodesics are straight lines and the stone obeys
+$g = 9.8\ \mathrm{m/s^2}$, school physics recovered rather than replaced.
+Where $g$ curves, "straight" and "down" stop being two different ideas.
+
+<Waypoint>
+
+Rulers at every point, straightness by the rulers' account, a meter that
+reads curvature wherever it hides. The kinematics is complete — and the
+dynamics untouched: no sentence yet says which ruler-field the world uses,
+and that is where the story breaks in half.
+
+</Waypoint>
+
+## The Draft
+
+Two laws were written on this same geometry. Both drop the apple onto
+Newton's track. The sky disagrees with one of them — with a number.
+
+The human part takes three dated sentences. In August 1912 Einstein brings
+Grossmann the physics — gravity is spacetime geometry, free bodies ride its
+geodesics, Newton must fall out — and Grossmann answers with the mathematics:
+Riemann's geometry and the absolute differential calculus of Ricci and
+Levi-Civita, the machinery for writing laws about $g$. In 1913 they publish
+the Outline together, the
+Entwurf: Einstein responsible for the physical part, Grossmann for the
+mathematical part, presented jointly on 9 September 1913. In June 1913
+Einstein sits down with Michele Besso and runs the draft against the sky.
+
+The draft's geometry is right. Its field law — the equation that says which
+ruler-field the world's matter produces — is not. The law they chose works
+only in a restricted family of coordinate systems: rotate the grid and the
+draft's answer shifts, where a physical answer should sit still. The figure
+is a toy with the same symmetry property, not the equations themselves:
+the <C k="gr1915">green bar</C> is a rotation-proof operator and holds its
+value at every grid angle, while the
+<C k="entwurf">red bar</C> is a grid-aligned operator that answers fully on
+its home grid and dies to nothing at ninety degrees. Both laws agree where
+the draft was built to agree. Everywhere else the draft reports the grid.
+
+<CovarianceMachine />
+
+"Works in every coordinate system" sounds like bookkeeping until a law fails
+it in public. Covariance is not notation. It is the demand that the answer
+belong to the world rather than to the surveyor — and the draft visibly
+answers the surveyor.
+
+What the draft did honour was the fall. Newton, the draft, and the 1915 law
+all drop the same balls down the same shaft and land them together, at every
+height the knob offers. Watch all three land. The simultaneity closes an
+escape route: had the draft merely flunked falling, its story would be a
+footnote about a wrong guess. It passed every test anyone could run on Earth.
+The next test is Mercury's orbit.
+
+<FallTest />
+
+## Mercury Grades Them
+
+Mercury's orbit does not close. Each perihelion — each closest approach to
+the Sun — arrives a little ahead of where Newton puts it, and the arrears
+accumulate: 43 seconds of arc per century, measured first by Le Verrier in
+1859, a remainder Newton never paid. The draft and the final law disagree
+about the size of that remainder, and the disagreement is quantitative —
+down to the second of arc.
+
+<Predict
+  question="Two laws, one planet, 43 seconds of arc on the board. The draft already passed every earthly test — does it land on Mercury?"
+  a="It lands close; geometry is geometry"
+  b="It falls short; the law matters, not just the shape"
+>
+
+<MercuryGrade />
+
+</Predict>
+
+Three lanes, one integrator, one difference: the gray lane is Newton, and it
+closes — its fan never opens, which is the integrator proving its own
+honesty. The <C k="gr1915">green lane</C> carries the November 1915
+correction and opens about a degree per orbit in this rescaled strength. The
+<C k="entwurf">red lane</C> carries the draft's correction and opens a
+smaller fan at every eccentricity the knob offers. The measured ratio sits
+in the meter: 0.42, against history's 18/43 = 0.42.
+
+That is the verdict, and it was already on paper in June 1913. Einstein and
+Besso solved the draft's equations for the Sun's field and computed
+Mercury's advance: about 18 seconds of arc per century against the observed
+43. He kept the result quiet and kept working on the draft for two more
+years. The wrong theory graded itself, quantitatively, before the right one
+existed.
+
+Strengths and time here are rescaled so the fan opens visibly — the true
+correction would need some thirty thousand silent orbits to pry the lanes
+this far apart, and no reader should watch that. What the rescaling preserves
+is the ratio, and the ratio is the claim: the draft earns less than half the
+observed advance at every eccentricity, and no choice of orbit repairs it.
+The shape was right. The law was wrong. Mercury knew.
+
+## November
+
+Four weeks, four communiques to the Prussian Academy: the 4th, the 11th, the
+18th, and the 25th of November 1915. On the 18th Einstein shows the new field
+equations give 43 seconds of arc per century — the full remainder, with the
+techniques built beside Besso in 1913 doing the work. The tools of the draft
+closed the case against it.
+
+The hero figure, revisited: the same two pairs of lines. The upper pair is
+still the geometry you were given. The lower pair reads now — those meeting
+lines are geodesics of $g$, and a falling stone is one of them, going
+straight by the only rulers the world offers.
+
+<StraightLines />
+
+No law in this article was chosen for its elegance. The draft was kept for
+two years because it seemed to protect energy and the Newtonian limit, and
+it was dropped when it failed the sky. That is the whole method, and it is
+why the friend belongs in the title: the physics saw the shape, the
+mathematics built the object, the planet graded the law, and none of the
+three could have done the others' job.
+
+A stone leaves your hand. Nothing pulls it and nothing pushes it — it
+follows the straightest path the rulers allow, through a world curved to
+meet it.
+
+## Further Reading
+
+Michel Janssen and Jürgen Renn, [*Einstein and the Perihelion Motion of
+Mercury*](https://arxiv.org/pdf/2111.11238v1.pdf) — the manuscript trail
+page by page: the 1913 Einstein–Besso calculations that gave 18 seconds,
+the November 1915 papers that gave 43. The place to watch a wrong theory
+convict itself in primary sources.
+
+The Zurich Notebook itself, summer 1912 to spring 1913, in facsimile at the
+Einstein Archives Online (search "Zurich Notebook"): the pages where
+equations near the final ones were considered and set aside, in Einstein's
+own hand with Grossmann's mathematics arriving mid-stream. The lone-genius
+telling goes to die here.
+
+Galina Weinstein, [*Einstein, Schwarzschild, the Perihelion Motion of
+Mercury and the Rotating Disk
+Story*](https://arxiv.org/pdf/1411.7370) — the November weeks in their
+original order, the four communiques and the rotating-disk reasoning that
+ran alongside them.
+
+Einstein and Grossmann, *Entwurf einer verallgemeinerten
+Relativitätstheorie und einer Theorie der Gravitation*, 1913 — the Outline,
+physical part and mathematical part, worth meeting in translation at least
+once, if only to see the signatures side by side.

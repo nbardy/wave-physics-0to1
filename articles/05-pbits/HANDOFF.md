@@ -129,3 +129,5 @@ the RESEARCH ledger in articles/06 tracks corroborated-vs-verified status.
   `phaseData`/`phaseDream` only if a second lesson needs them).
 - A concurrent session's WIP snapshot commit (f51c552) captured mid-build
   file states; working tree is canonical. Committing is Nick's call.
+
+- **2026-09-06, hero caption de-slopped.** Nick flagged the opening figure description ("Forty small lattices … — and pictures keep condensing out of the static: … never twice in the same place, never on a schedule") as unreadable: statement — realization, poetic finish. Now SLOP.md family 22 (the dash epiphany); the caption states the mechanism (static → three rounds of tosses under trained weights → picture → hold → static). Two echoes of the same tail were cut (DreamChain readout, Geman further-reading line). Verified by driving the stepper: 92% of finished tiles land within 3 px of a trained glyph.

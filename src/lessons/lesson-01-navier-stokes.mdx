@@ -12,7 +12,7 @@ import { PressureLandscape } from '../sims/PressureLandscape'
 import { DivergenceLoop } from '../sims/DivergenceLoop'
 import { PressureFix } from '../sims/PressureFix'
 import { HelmholtzSplit } from '../sims/HelmholtzSplit'
-import { JacobiRelax } from '../sims/JacobiRelax'
+import { GaussSeidelRelax } from '../sims/GaussSeidelRelax'
 import { TermToggle } from '../sims/TermToggle'
 import { SolverXray } from '../sims/SolverXray'
 import { RippleWaves } from '../sims/RippleWaves'
@@ -488,12 +488,14 @@ equation*, and a computer solves it by patient negotiation: every cell repeatedl
 updates its pressure toward what its four neighbours (and the local divergence)
 suggest. Scrub through that negotiation yourself:
 
-<JacobiRelax />
+<GaussSeidelRelax />
 
 At zero sweeps: all <C k="div">divergence</C>, no pressure. A few dozen sweeps of
-neighbourly negotiation later, the <C k="pHi">hill</C> has risen and the divergence is
-gone. These sweeps are *Jacobi iterations*, and our simulations run dozens of them
-at every cell of the grid, every frame.
+neighbourly negotiation later, the <C k="pHi">hill</C> has risen and the divergence has
+fallen to about a fifth of its opening value — and eighty sweeps leave a tenth.
+These sweeps are *Gauss–Seidel iterations*, each cell taking its neighbours'
+freshest numbers, and our simulations run forty of them at every cell of the grid,
+every frame — a budget, not a solution.
 
 Pressure has no equation of its own — no $\partial p/\partial t$ anywhere.
 It is not a substance with momentum and history. It is whatever field, at each

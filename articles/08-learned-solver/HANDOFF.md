@@ -188,8 +188,20 @@ wake it was 11%" — the held-out average; asserted to round to 11.
    length (~2,650 body words against an outline estimate of 4,000–5,000 — the
    story is complete at this length; nothing was padded), the ending, and
    whether *Paint the bulge* earns its place as the article's only NEW figure.
+   Slop sweep 2026-09-04 (main loop): the v2 baseline reads light — cold open
+   on disagreeing meters, a genuine five-fork error table with adjudication;
+   worst lines are L44-46 ("where it had better not" prescribes) and L76
+   ("Here is something lesson 01 did not tell you" — survives only as a camera
+   move because SolveDebt lands it). Judge v3 against this, not the jacket copy.
 3. **Reader-ToM review** (two simulated readers, line-anchored) has not been
    run on v3.
 4. **Hestenes–Stiefel link** — add once verified.
 5. **Consider `check:learned` in a combined script** — the repo has no aggregate
    check command.
+6. **Cross-track S3 checkpoints (2026-09-04 synthesis).** Hero freeze: C owns
+   the 144×88 cylinder (SolveDebt) + 96×64 h1 (race); the survey article reuses
+   that pair + airfoil OOD (no new hero); lesson-03's disc/separation meter is
+   BLOCKED on a residual-gated solve. Speedup claims only as gate+baseline+OOD
+   triples (3.38× @1e-3 vs GS on h1; cold CG 420 passes beats warm GS 792).
+   Sign-offs owed by Nick: [ ] tour→paradox spine swap (03),
+   [ ] hero assignments, [ ] survey-article spine if the closure rung is cut.

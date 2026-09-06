@@ -1,0 +1,629 @@
+Emulating the coherent Ising machine with a mean-field algorithm
+Andrew D. King,1, ∗ William Bernoudy,1 James King,1 Andrew J. Berkley,1 and Trevor Lanting1
+
+arXiv:1806.08422v1 [quant-ph] 21 Jun 2018
+
+1
+
+D-Wave Systems Inc., Burnaby B.C.
+(Dated: June 25, 2018)
+
+The coherent Ising machine is an optical processor that uses coherent laser pulses, but does not
+employ coherent quantum dynamics in a computational role. Core to its operation is the iterated
+simulation of all-to-all spin coupling via mean-field calculation in a classical FPGA coprocessor.
+Although it has been described as “operating at the quantum limit” and a “quantum artificial
+brain,” interaction with the FPGA prevents the coherent Ising machine from exploiting quantum
+effects in its computations. Thus the question naturally arises: Can the optical portion of the
+coherent Ising machine be replaced with classical mean-field arithmetic? Here we answer this in the
+affirmative by showing that a straightforward noisy version of mean-field annealing closely matches
+CIM performance scaling, while running roughly 20 times faster in absolute terms.
+
+I.
+
+INTRODUCTION
+
+Advances in quantum information and the decline
+of Moore’s Law have incited a flurry of research into
+quantum computing and other nontraditional computing schemes. Among these schemes is the coherent Ising
+machine (CIM), prototypes of which exist at Stanford
+[1] and NTT [2]. The CIM is an optical machine used to
+solve problems in the Ising model using coherent laser
+pulses. Despite the name, the CIM does not exploit
+multi-spin quantum dynamics in a computational role.
+While it has been described as a “quantum artificial
+brain” [3] and “operating at the quantum limit” [4], there
+is nothing “quantum” about it from a computational perspective.
+The classical Ising problem solved by the CIM is a
+minimization of the energy function
+X
+X
+H=
+Jij s̃i s̃j +
+hi s̃i ,
+(1)
+ij
+
+i
+
+where each s̃i = ±1 is the sign of a continuous variable si ∈ [−1, 1] stored by the CIM in the phase of
+a laser pulse that circulates around a fiber optic loop.
+Every round trip, the states of the pulses si are measured and fed into an FPGA [5]. The FPGA calculates,
+for each
+P si , the mean field imposed by the other pulses
+Φi = j Jij sj . The CIM then combines Φi with si by
+generating a mean-field pulse via digital-to-analog conversion from the FPGA and optically combining it with
+si .
+Since the pulses are repeatedly measured and are only
+connected indirectly through the FPGA, no entanglement between pulses is generated [4] and no useful quantum effects can survive beyond a single round trip. In
+light of this, it is natural to ask whether we can replace
+the optical apparatus, which serves to store the spins and
+allow combination with a mean-field term, with an arithmetic operation in a conventional processor.
+
+∗ aking@dwavesys.com
+
+compute meanfield terms
+
+measure spins
+
+combine mean-field
+terms with spins
+
+FIG. 1. Algorithmic form of CIM and noisy meanfield annealing. Algorithmically, the CIM follows a simple
+loop in which spins are repeatedly measured, then combined
+with a mean-field term derived from that measurement. We
+compare CIM performance with NMFA, an algorithm that
+follows the same loop using continuous real spin values in
+[−1, 1] instead of optical pulse phases. While the CIM injects
+mean-field terms using optical pulses, NMFA injects meanfield terms using Boltzmann factors for a decreasing sequence
+of temperatures.
+
+Here we compare the CIM with an analogous noisy
+mean-field annealing (NMFA) algorithm. With its parameters fixed to a single set of values, NMFA closely
+matches the behavior of the CIM across a variety of instances studied in Refs. [2] and [6]. NMFA attains similar
+success probabilities, but on a GPU runs roughly 20 times
+faster than the NTT CIM and 130 times faster than the
+Stanford CIM at the 100-spin scale, which is currently
+the maximum capacity of the Stanford CIM.
+
+II.
+
+NOISY MEAN-FIELD ANNEALING
+
+Broken down to its algorithmic form, the CIM implements a cycle of spin measurement, mean-field computation, and combination shown in Fig. 1. We implement
+the same cycle in a classical noisy mean-field annealing
+algorithm as follows. Pseudocode is given in Algorithm
+1 and source code is provided as supplemental material.
+While the CIM uses the phase of an optical pulse to
+implement a spin si , NMFA stores spins si as continuous values in the interval [−1, 1]. Computation of the
+mean-field terms is done in the same way for both solvers.
+
+2
+
+Algorithm 1 Noisy mean-field annealing. Generates a
+set of Ising spins s̃i given Ising problem (h, J) and
+parameters T , σ, and α.
+1: for i = 1 to N do
+2:
+si := 0
+3: end for
+4: for t = 1 to tf do
+5:
+for i = 1 to N do
+q
+P
+P 2
+6:
+Φi := (hi + j Jij sj )/ h2i + j Jij
++ N (0, σ)
+7:
+ŝi := − tanh (Φi /Tt )
+8:
+end for
+9:
+for i = 1 to N do
+10:
+si := αŝi + (1 − α)si
+11:
+end for
+12: end for
+13: for i = 1 to N do
+14:
+s̃i := si /|si |
+15: end for
+
+Temperature T
+
+100
+
+10−1
+
+0
+
+500
+
+1,000
+
+Iteration
+
+FIG. 2. Annealing schedule for NMFA. A three-segment
+piecewise exponential schedule provides good agreement between NMFA and CIM.
+
+When it comes time to combine the mean-field term with
+the existing spin, the CIM does this by injecting a meanfield laser pulse into the existing spin pulse. NMFA adds
+Gaussian noise with standard deviation σ to the normalized mean-field term, then converts it to a spin value ŝi
+using the Boltzmann expectation at a temperature T ,
+i.e., ŝi := − tanh (Φi /Tt ). NMFA then replaces spin si
+with the convex combination αŝi +(1−α)si . The temperature decreases throughout the process. This approach is
+essentially a noisy generalization of mean-field annealing
+[7] with a feedback constant less than 1.
+While NMFA is not intended to be a faithful microscopic model of the CIM, it nonetheless has all of the required ingredients: noisy analog spins, a mean-field feedback loop, and a means to smoothly evolve between noisedominated and mean-field-dominated biases at the beginning and end of the computation, respectively. Fig. 3
+shows the evolution of spin values si (and the derived
+Ising energy) during a 100-iteration run on a 16-spin
+Möbius ladder, showing very similar behavior to the CIM
+as shown in Ref. [6] Fig. 1c.
+Note that in Line 6 of Algorithm 1, the mean-field term
+Φi is normalized by the root mean square of Hamiltonian
+terms acting on the spin, reflecting the expected magnitude of the mean field acting on that spin in a random
+state in the large-system limit. In Line 7, ŝi is computed
+as the Boltzmann expectation given Φi and Tt .
+We used α = 0.15 and σ = 0.15 for all experiments
+in this paper. For all experiments except the 16-spin
+example in Fig. 3 we used the annealing schedule shown
+in Fig. 2. These parameters were tuned coarsely to show
+approximate agreement between NMFA and CIM.
+
+III.
+
+RESULTS
+
+Spin value si
+
+1
+
+0
+
+−1
+
+0
+
+20
+
+40
+
+60
+
+80
+
+100
+
+0
+
+20
+
+40
+60
+Iteration
+
+80
+
+100
+
+Ising energy
+
+20
+10
+0
+−10
+−20
+
+FIG. 3. Example of NMFA run on a 16-spin Möbius
+ladder. Evolution of spin values from 0 toward ±1 closely
+resembles behavior of the CIM on the same input (compare
+with Ref. [6] Fig. 1c). Temperature schedule in Fig. 2 is compressed to 100 iterations.
+
+Ref. [6] presents both Stanford CIM and NTT CIM
+results for several sets of random problems, which we reproduce in Fig. 4 using NTT CIM and NMFA data. In
+Fig. 4a, Sherrington-Kirkpatrick instances are studied,
+where Jij = 1 with probability p = 1/2 and Jij = −1
+otherwise. Fig. 4b shows results for dense MAX-CUT
+instances, where Jij = 1 with probability p = 1/2 and
+Jij = 0 otherwise. Fig. 4c shows data for degree-3 MAXCUT instances, where each spin is coupled to three others
+(and all nonzero couplers have Jij = 1). Fig. 4d–4f show
+performance in terms of time to solution using the common TTS metric used in Ref. [6] and elsewhere. We show
+best run data for the CIM, where the best block of 1000
+samples is chosen from 10,000 or more [6]; for NMFA we
+show average performance for 10,000 samples. In Fig. 5
+we give an instance-wise comparison.
+Across these input classes, NMFA mirrors the success
+probabilities of CIM closely across the range of testbed
+parameters. To get an idea of how long it takes each
+solver to draw a sample, we compare runtimes of CIM
+against NMFA for dense MAX-CUT instances with N =
+100, which is the maximum input size for the Stanford
+
+3
+
+b
+
+10−2
+NMFA
+NTT CIM (best run)
+
+0
+
+50
+100
+Problem size N
+Fully-connected (SK)
+
+d 100
+10−2
+10−3
+10−4
+10−5
+10−6
+
+0
+
+50
+100
+Problem size N
+
+100
+
+10−1
+
+10−2
+NMFA
+NTT CIM (best run)
+
+0
+
+150
+
+50
+100
+Problem size N
+
+f
+
+NTT CIM (best run)
+NMFA
+
+10−1
+10−2
+10−3
+10−4
+10−5
+10−6
+
+0
+
+50
+100
+Problem size N
+
+10−1
+
+10−2
+NMFA
+NTT CIM (best run)
+
+10−3
+
+150
+
+Dense MAX-CUT
+
+e 100
+
+NTT CIM (best run)
+NMFA
+
+10−1
+
+100
+
+10−3
+
+150
+
+Degree-3 MAX-CUT
+
+c
+
+Time to solution (s)
+
+10−3
+
+Time to solution (s)
+
+Success probability pGS
+
+10−1
+
+Time to solution (s)
+
+Success probability pGS
+
+100
+
+Dense MAX-CUT
+
+Success probability pGS
+
+Fully-connected (SK)
+
+a
+
+150
+
+0
+
+50
+100
+Problem size N
+
+150
+
+Degree-3 MAX-CUT
+100
+NTT CIM (best run)
+NMFA
+
+10−1
+10−2
+10−3
+10−4
+10−5
+10−6
+
+0
+
+50
+100
+Problem size N
+
+150
+
+FIG. 4. Performance of NTT CIM and NMFA on problem sets studied in Ref. [6]. Marks and shaded regions
+represent medians and interquartile ranges. a–c, success probabilities on (a) fully-connected Sherrington-Kirkpatrick problems
+with Jij ∈ {−1, 1}, 10 instances per size; (b) dense MAX-CUT problems (edge probability p = 0.5), 10 instances per size; (c)
+degree-3 MAX-CUT problems, 20 instances per size. d–f, time to solution. NMFA time per sample is computed via wall-clock
+time across 10,000 samples; CIM time per sample is computed using 5 ms sample time for 2000 spins, divided by the number
+of copies of an instance that can be run in parallel.
+
+TABLE I. Mean and best performance (out of 100 runs) on 2000-spin MAX-CUT instances detailed in Ref. [2].
+Values given are for the maximization problem (MAX-CUT) rather than the equivalent Ising minimization problem.
+Instance
+NTT CIM [2]
+NMFA
+
+G22 (random)
+mean 13248, best 13313
+mean 13267, best 13325
+
+CIM. The Stanford CIM takes 1600 µs for a single run.
+The NTT CIM, which has a maximum size of N = 2000
+and run time of 5000 µs, can run 20 instances with N =
+100 in parallel, giving an effective run time of 250 µs.
+NMFA, running on an NVIDIA GeForce GTX 1080 Ti
+GPU, takes 12.3 µs per run, making it around 20 times
+faster than the NTT CIM and 130 times faster than the
+Stanford CIM, ignoring CIM overhead such as readout
+and postselection [6].
+
+G39 (scale-free)
+mean 2328, best 2361
+mean 2339, best 2369
+
+K2000 (fully-connected)
+mean 32457, best 33191
+mean 32730, best 33186
+
+Table I shows mean and best MAX-CUT values over
+100 runs for three 2000-spin instances studied in Ref. [2],
+with NMFA using the same parameters as with the
+smaller instances. On all three graphs, NMFA performs
+comparably to the CIM.
+
+4
+
+b
+150
+
+100
+
+0.6
+0.4
+
+50
+
+NTT CIM best pGS
+
+0.8
+Problem size
+
+NTT CIM best pGS
+
+1
+
+0.2
+0
+
+0
+
+0.2
+
+0.4
+0.6
+NMFA pGS
+
+0.8
+
+Dense MAX-CUT
+1
+0.8
+
+c
+
+100
+
+0.6
+0.4
+
+50
+0.2
+0
+
+1
+
+150
+
+0
+
+0.2
+
+0.4
+0.6
+NMFA pGS
+
+0.8
+
+1
+
+Degree-3 MAX-CUT
+1
+
+NTT CIM best pGS
+
+Problem size
+
+Fully-connected (SK)
+
+200
+
+0.8
+
+150
+
+0.6
+100
+0.4
+50
+
+0.2
+0
+
+Problem size
+
+a
+
+0
+
+0.2
+
+0.4
+0.6
+NMFA pGS
+
+0.8
+
+1
+
+FIG. 5. Instance-wise comparison of NTT CIM and NMFA. We compare success probabilities for each instance studied
+in Fig. 4 for (a) SK, (b) dense MAX-CUT, and (c) degree-3 MAX-CUT problems.
+
+IV.
+
+ALL-TO-FPGA-TO-ALL CONNECTIVITY
+
+Although the CIM is described as having all-to-all connectivity, there is no direct connection or coupling between any two spins. Rather, all spins are measured and
+routed through an FPGA, where for each spin si they are
+agglomerated as a single effective term Φi , which is then
+output by the FPGA and routed back into the optical
+cavity. This mean-field simulation of all-to-all connectivity could be achieved in a number of ways, including in
+a D-Wave processor by removing all inter-qubit connectivity and instead subjecting individual qubits to linear
+mean-field terms that evolve over a sequence of iterations.
+
+running on a classical computer. Our results show that
+on the instances studied so far, the coherent Ising machine falls short of this mark.
+Similar criticism from outside researchers toward
+D-Wave quantum annealing processors [8, 9] ultimately
+led to advances in the field and more concrete validation of the quantum model in question [10–14]. In the
+case of the coherent Ising machine, this outcome seems
+unlikely: while it does represent a novel use of optics,
+no macroscopic quantum model of computation has been
+proposed. It is therefore unclear what, if any, potential
+utility the coherent Ising machine has as a future computing technology.
+VI.
+
+V.
+
+CONCLUSIONS
+
+The promise of any nontraditional computing method
+rests on it being able to do something faster, better,
+cheaper, or more easily than available methods. In particular, it should be able to outperform a simple emulator
+
+ACKNOWLEDGMENTS
+
+We thank Ryan Hamerly, Takahiro Inagaki, Ken-ichi
+Kawarabayashi, and Peter McMahon for useful discussions and for kindly providing experimental data. We
+thank Richard Harris, Catherine McGeoch, Paul Bunyk,
+Jack Raymond, Isil Ozfidan, Emile Hoskinson, and Mohammad Amin for discussions on the manuscript.
+
+5
+
+[1] P. L. McMahon, A. Marandi, Y. Haribara, R. Hamerly,
+C. Langrock, S. Tamate, T. Inagaki, H. Takesue,
+S. Utsunomiya, K. Aihara, R. L. Byer, M. M. Fejer,
+H. Mabuchi, and Y. Yamamoto, Science 354, 614 (2016).
+[2] T. Inagaki, Y. Haribara, K. Igarashi, T. Sonobe, S. Tamate, T. Honjo, A. Marandi, P. L. McMahon, T. Umeki,
+K. Enbutsu, O. Tadanaga, H. Takenouchi, K. Aihara,
+K. I. Kawarabayashi, K. Inoue, S. Utsunomiya, and
+H. Takesue, Science 354, 603 (2016), arXiv:1607.08222.
+[3] NII, “National Institute of Informatics 2017 overview,”
+(2017).
+[4] Y. Yamamoto, K. Aihara, T. Leleu, K.-i. Kawarabayashi,
+S. Kako, M. Fejer, K. Inoue, and H. Takesue, npj Quantum Information 3, 49 (2017).
+[5] A field-programmable gate array (FPGA) is a userprogrammable integrated circuit used to quickly perform
+a specialized computational task.
+[6] R. Hamerly, T. Inagaki, P. L. McMahon, D. Venturelli,
+A. Marandi, T. Onodera, E. Ng, C. Langrock, K. Inaba,
+T. Honjo, K. Enbutsu, T. Umeki, R. Kasahara, S. Utsunomiya, S. Kako, K.-i. Kawarabayashi, R. L. Byer,
+M. M. Fejer, H. Mabuchi, E. Rieffel, H. Takesue, and
+Y. Yamamoto, “Scaling advantages of all-to-all connectivity in physical annealers: the Coherent Ising Machine
+vs. D-Wave 2000Q,” (2018), arXiv:1805.05217v1.
+[7] G. L. Bilbro, R. Mann, T. K. Miller, W. E. Snyder, D. E.
+V. D. Bout, and M. W. White, Advances in Neural Information Processing Systems 1 , 91 (1989).
+[8] J. A. Smolin and G. Smith, Frontiers in Physics 2, 8
+(2014), arXiv:1305.4904.
+
+[9] S. W. Shin, G. Smith, J. A. Smolin, and U. Vazirani,
+“How “Quantum” is the D-Wave Machine?” (2014),
+arXiv:1401.7087.
+[10] L. Wang, T. F. Rønnow, S. Boixo, S. V. Isakov, Z. Wang,
+D. Wecker, D. A. Lidar, J. M. Martinis, and M. Troyer,
+“Comment on: ”Classical signature of quantum annealing”,” (2013), arXiv:1305.5837.
+[11] T. Lanting, A. J. Przybysz, A. Y. Smirnov, F. M.
+Spedalieri, M. H. Amin, A. J. Berkley, R. Harris,
+F. Altomare, S. Boixo, P. Bunyk, N. Dickson, C. Enderud, J. P. Hilton, E. M. Hoskinson, M. W. Johnson,
+E. Ladizinsky, N. Ladizinsky, R. Neufeld, T. Oh, I. Perminov, C. Rich, M. Thom, E. Tolkacheva, S. Uchaikin,
+A. B. Wilson, and G. Rose, Physical Review X 4, 021041
+(2014).
+[12] T. Albash, W. Vinci, A. Mishra, P. A. Warburton, and
+D. A. Lidar, Physical Review A 91, 042314 (2015).
+[13] S. Boixo, V. N. Smelyanskiy, A. Shabani, S. V. Isakov,
+M. Dykman, V. S. Denchev, M. H. Amin, A. Y. Smirnov,
+M. Mohseni, and H. Neven, Nature Communications 7,
+10327 (2016).
+[14] A. D. King, J. Carrasquilla, I. Ozfidan, J. Raymond,
+E. Andriyash, A. Berkley, M. Reis, T. M. Lanting,
+R. Harris, G. Poulin-Lamarre, A. Y. Smirnov, C. Rich,
+F. Altomare, P. Bunyk, J. Whittaker, L. Swenson,
+E. Hoskinson, Y. Sato, M. Volkmann, E. Ladizinsky,
+M. W. Johnson, J. Hilton, and M. H. Amin, “Observation of topological phenomena in a programmable lattice
+of 1,800 qubits,” (2018), arXiv:1803.02047.
+
+

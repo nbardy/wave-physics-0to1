@@ -10,8 +10,9 @@
 // One step = add forces → advect (semi-Lagrangian: unconditionally stable —
 // backtrace and bilinearly interpolate; this is why the scheme cannot blow up
 // the way the naive centered-difference update does) → diffuse (implicit
-// Jacobi, stable for any ν·dt) → project (divergence → pressure Poisson via
-// Jacobi → subtract ∇p). Each stage is individually toggleable because §11's
+// Gauss–Seidel (in place), stable for any ν·dt) → project (divergence →
+// pressure Poisson via Gauss–Seidel (in place) → subtract ∇p). Each stage is
+// individually toggleable because §11's
 // marquee figure kills terms one at a time.
 
 import { stampAirfoilMask } from './airfoil'
@@ -34,7 +35,10 @@ const DIFFUSE_ITERS_MAX = 64
 function diffuseIters(a: number): number {
   return Math.min(DIFFUSE_ITERS_MAX, Math.max(DIFFUSE_ITERS_MIN, Math.ceil(6 * a)))
 }
-const PRESSURE_ITERS = 40 // Jacobi sweeps per step; §10 exposes this as a knob
+// Fixed frame budget, NOT a converged solve: 40 cold-started sweeps leave a
+// large residual fraction on grid-scale modes (see SolveDebt). Residual-gated
+// solves live in sims/learned/poisson.ts; do not cite 40 as "solved".
+const PRESSURE_ITERS = 40 // Gauss–Seidel sweeps per step; §10 exposes this as a knob
 
 export class FluidSolver {
   readonly nx: number
@@ -150,7 +154,7 @@ export class FluidSolver {
     }
   }
 
-  /** Implicit diffusion via Jacobi: stable for any a = ν·dt (unlike explicit FTCS). */
+  /** Implicit diffusion via in-place Gauss–Seidel: stable for any a = ν·dt (unlike explicit FTCS). */
   private diffuseField(dst: Float32Array, src: Float32Array, a: number) {
     dst.set(src)
     const iters = diffuseIters(a)
@@ -177,7 +181,7 @@ export class FluidSolver {
   }
 
   /**
-   * Pressure projection: solve ∇²p = ∇·u* (Jacobi), then u -= ∇p.
+   * Pressure projection: ∇²p = ∇·u* via in-place Gauss–Seidel, then u -= ∇p.
    * Solid cells act as Neumann boundaries (mirror the center pressure).
    */
   project(iters = this.pressureIters) {

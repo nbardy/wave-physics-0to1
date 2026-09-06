@@ -190,6 +190,15 @@ branches.
     plus Monte-Carlo photon arrivals in `src/sims/physics/`; 20 headless figure
     checks green, which found two real figure bugs; awaits Nick's read and a mobile
     pass → `articles/physics/01-wave-particle/HANDOFF.md`.
+  - **Physics P2** (Einstein–Grossmann 1912–15, *The Draft That Had to Fail*):
+    BUILT end-to-end 2026-09-04 (`draft`, registry order 2, tags
+    `geometry`+`history`) — ~2,250 words, 6 slots from 5 steppers (geodesic
+    hero, loop/triangle meters, covariance toy, fall test, 3-lane Mercury
+    integrator measuring draft/full = 0.420 vs history 18/43); 26 headless
+    checks green via `bun run check:grossmann` (incl. a 380px mobile block),
+    which caught a placeholder pass, an alpha-ink mismatch, a meter
+    collision, and a printed-not-measured readout; awaits Nick's read and
+    live browser QA → `articles/physics/02-einstein-grossmann/HANDOFF.md`.
   - **The p-bit SERIES** (field `thermo`, “Thermodynamic computing” — split out of
     `physics` 2026-08-20 so the broad-physics field stays standalone lessons; the
     series is T1/T2/T3, read in order):
