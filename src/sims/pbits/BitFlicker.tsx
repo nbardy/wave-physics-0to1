@@ -6,20 +6,33 @@ import { drawLayerRail, drawSpin, u01 } from './lib'
 
 // PLAN F2/F3 — the coin with a knob. One p-bit flickers at a fixed sample rate;
 // its histogram leans as the bias knob moves. With `trace` on, every bias the
-// reader visits deposits its measured mean as a dot against h — the S-curve is
-// drawn BY the reader's sweeping, before the sigmoid is ever named.
+// reader visits deposits dots against h — the S-curve is drawn BY the reader's
+// sweeping, before the sigmoid is ever named.
+//
+// Each column is an overlapping dot chart, not one dot: samples arrive in blocks
+// of BLOCK, and each block's mean is a dot inked at alpha = (dots at that level)
+// / (dots in the column). A block of BLOCK ±1 samples can only land on BLOCK + 1
+// discrete means, so repeat dots stack exactly and darken. The darkest dot in a
+// column IS the mean; the pale fringe above and below is the spread you'd get
+// from re-measuring — the thing a single averaged dot hides.
 
 const SAMPLE_DT = 1 / 40 // fixed sampling clock, decoupled from frame rate
 const H_MAX = 3
 const BINS = 25
+const BLOCK = 8 // samples per deposited dot → BLOCK + 1 possible dot heights
+const LEVELS = BLOCK + 1
 
 export interface BitShared {
   h: number
 }
 
 interface TraceBin {
-  sum: number
-  n: number
+  /** dots deposited at each of the LEVELS discrete block means, low to high */
+  levels: number[]
+  dots: number
+  /** samples of the block still filling */
+  partial: number
+  partialSum: number
 }
 
 export function createBitFlicker(
@@ -33,7 +46,12 @@ export function createBitFlicker(
   let tick = 0
   let acc = 0
   let lastH = shared.current.h
-  const bins: TraceBin[] = Array.from({ length: BINS }, () => ({ sum: 0, n: 0 }))
+  const bins: TraceBin[] = Array.from({ length: BINS }, () => ({
+    levels: Array.from({ length: LEVELS }, () => 0),
+    dots: 0,
+    partial: 0,
+    partialSum: 0,
+  }))
 
   const sample = (h: number) => {
     tick++
@@ -42,8 +60,15 @@ export function createBitFlicker(
     if (s > 0) nPlus++
     else nMinus++
     const bin = Math.min(BINS - 1, Math.max(0, Math.round(((h + H_MAX) / (2 * H_MAX)) * (BINS - 1))))
-    bins[bin].sum += s
-    bins[bin].n++
+    const b = bins[bin]
+    b.partialSum += s
+    b.partial++
+    if (b.partial < BLOCK) return
+    // a full block closes: its mean lands on one of the LEVELS rungs
+    b.levels[(b.partialSum + BLOCK) / 2]++
+    b.dots++
+    b.partial = 0
+    b.partialSum = 0
   }
 
   return {
@@ -110,15 +135,24 @@ export function createBitFlicker(
       ctx.moveTo(px(0), tr.y)
       ctx.lineTo(px(0), tr.y + tr.h)
       ctx.stroke()
+      ctx.fillStyle = PALETTE.sUp
       for (let b = 0; b < BINS; b++) {
-        const { sum, n } = bins[b]
-        if (n < 8) continue
+        const { levels, dots } = bins[b]
+        if (dots < 1) continue
         const hh = -H_MAX + (b / (BINS - 1)) * 2 * H_MAX
-        ctx.beginPath()
-        ctx.arc(px(hh), py(sum / n), 3.4, 0, Math.PI * 2)
-        ctx.fillStyle = PALETTE.sUp
-        ctx.fill()
+        const x = px(hh)
+        for (let k = 0; k < LEVELS; k++) {
+          const share = levels[k] / dots
+          if (share === 0) continue
+          // floor keeps a lone outlying block visible as a ghost rather than
+          // vanishing once the column has collected many dots
+          ctx.globalAlpha = Math.min(1, 0.14 + 0.86 * share)
+          ctx.beginPath()
+          ctx.arc(x, py((2 * k) / BLOCK - 1), 3.4, 0, Math.PI * 2)
+          ctx.fill()
+        }
       }
+      ctx.globalAlpha = 1
       // where the knob stands now
       ctx.strokeStyle = 'rgba(217,119,6,0.5)'
       ctx.setLineDash([4, 4])
@@ -129,13 +163,17 @@ export function createBitFlicker(
       ctx.setLineDash([])
       ctx.font = FONT_LABEL
       ctx.fillStyle = 'rgba(85,96,111,0.9)'
-      // narrow: the full caption truncated mid-word at 360px (figure audit
-      // close-out item, 2026-08-17) — same fact, compressed wording
-      ctx.fillText(
-        w < 520 ? 'mean vs bias — every bias leaves a dot' : 'mean vs bias — every bias you visit leaves its dot',
-        tr.x + 6,
-        tr.y + tr.h + 14,
-      )
+      // captions longest-first: the pane narrows with the figure, and a caption
+      // wider than the pane truncates mid-word (figure audit, 2026-08-17), so
+      // pick by measurement rather than a guessed breakpoint
+      const captions = [
+        'mean vs bias — each stop leaves a stack of dots; the darkest is its mean',
+        'mean vs bias — each stop leaves a stack; darkest is its mean',
+        'mean vs bias — darkest dot is the mean',
+        'darkest dot is the mean',
+      ]
+      const fits = captions.find((c) => ctx.measureText(c).width <= tr.w - 12) ?? captions[captions.length - 1]
+      ctx.fillText(fits, tr.x + 6, tr.y + tr.h + 14)
     },
   }
 }
