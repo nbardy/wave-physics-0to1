@@ -269,7 +269,9 @@ branches.
     lesson 01's "flows here are two dimensional" confession flips into the
     thesis). Week-scale solver+renderer work, scoped honestly in
     `articles/04-drag-and-turbulence/DENSE_CORE.md`. Not in the registry.
-- **Cross-thread decision queue**: the remaining publish flips (propose, don't
+- **Cross-thread decision queue**: the batch list lives in
+  `HUMAN_PENDING_REVIEW.md` — new human-needed items go there as they arise,
+  resolved ones retire to its §Resolved. The remaining publish flips (propose, don't
   surprise). RESOLVED 2026-07-06: the lesson-02 epigraph is verified against the
   live tweet (Nick supplied it; wording verbatim, attribution dated). DECIDED 2026-07-06 (Nick): lesson 01 published keeping its
   Final Words shape, so **lesson 02 owes the ending rewrite**; `KelvinHelmholtz.tsx`
