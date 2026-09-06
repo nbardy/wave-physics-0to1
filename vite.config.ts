@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
 import { copyFileSync } from 'node:fs'
+import { join } from 'node:path'
 
 // GitHub Pages serves project sites from a subpath (/<repo>/); Cloudflare
 // Pages serves from root. GITHUB_PAGES (set by scripts/deploy-pages.sh) switches
@@ -16,10 +17,19 @@ const base = onGitHubPages ? '/wave-physics-0to1/' : '/'
 // GitHub Pages has no SPA fallback: a deep-link reload (/lesson/foo) 404s
 // unless a 404.html exists. Serving a copy of index.html there lets the
 // client router take over. Only needed for the Pages build.
+//
+// This hangs off writeBundle, not closeBundle, and reads the real outDir
+// instead of a hardcoded 'dist'. Under closeBundle the copy raced the write:
+// on a tree that already had a stale dist/ it silently worked, but on a FRESH
+// checkout it threw ENOENT — and that ENOENT then masked the actual build
+// error underneath it (measured 2026-09-06: a genuine "Could not resolve
+// ../sims/JacobiRelax" surfaced only as a confusing missing-dist/index.html).
 const spa404 = {
   name: 'spa-404-fallback',
-  closeBundle() {
-    if (onGitHubPages) copyFileSync('dist/index.html', 'dist/404.html')
+  writeBundle(options: { dir?: string }) {
+    if (!onGitHubPages) return
+    const dir = options.dir ?? 'dist'
+    copyFileSync(join(dir, 'index.html'), join(dir, '404.html'))
   },
 }
 
