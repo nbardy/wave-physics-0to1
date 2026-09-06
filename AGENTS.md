@@ -40,6 +40,12 @@ in `articles/NN-slug/HANDOFF.md`. Fully-designed ideas that lost to a better
 candidate go to `articles/CONCEPT_BANK.md` — check it before inventing a hook or
 hero from scratch.
 
+**Open experiments and unbuilt work live in `RESEARCH_QUEUE.md`** (root) — proposed
+builds, ablations, and passes that were measured but never applied, each with its
+cost, its check, and who owes the decision. An item leaves the queue three ways:
+built (state moves to a HANDOFF), killed, or declined. Work in progress is never
+described there.
+
 **Each doc owns one thing; principles live in exactly one home.** AGENTS = repo
 mechanics, doc map, cross-thread state. METHODOLOGY = the process and its audits.
 ESSENCE / NICKS_VOICE / SLOP = the voice poles and the detector. INTROS = opening-
