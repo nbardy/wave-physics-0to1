@@ -224,6 +224,87 @@ Boundary: "Here is/are" pointing at a concrete object the reader is about to
 touch ("Here are two p-bits side by side") is a camera move and survives;
 "Here is the [abstraction], [verb]-ing" does not.
 
+**21. The greeting card (staged coziness).** Flagged 2026-08-26 on the
+photonics P2 intro draft — "Some evening, look at a distant streetlight
+through a sheer curtain…", "The curtain is not decorating the light. It is
+transforming it", "The plates earned their frost," "…is that sentence,
+rearranged." Nick: "you've got the corniest fucking metaphors." The move:
+wonder staged as atmosphere — second-person scene-setting as an opening,
+precious personification, warm copula flourishes. Family 20's soft twin:
+that one borrows gravitas from movie trailers, this one borrows coziness
+from greeting cards, and both perform an emotion the mechanism has not
+earned. The anchor fact underneath may be genuine physics (the curtain
+diffraction cross is real); the slop is the mood built around it, and it
+often smuggles other families in warm dress — the "not decorating…
+transforming" beat is symmetry filler (family 4), the "…is that sentence,
+rearranged" flourish is the deflationary rebrand (family 16). The rule:
+**a world-anchor is evidence, stated cold** — it points at a checkable
+fact in a plain declarative, and the reader supplies the mood. Placement
+matters: a "next time you…" pointer may close an article (that is the
+benediction's home, per ESSENCE §6); scene-setting does not open one.
+Test: strip the staging and state the bare fact — if the fact still
+astonishes, the staging was subtracting from it; if it does not, the
+staging was concealing that there was no fact.
+
+**22. The dash epiphany (statement — realization, poetic finish).** Flagged
+2026-09-06 on the published p-bits hero caption, article one of the series:
+"Forty small lattices, sixteen cells each, every cell flipping many times a
+second — and pictures keep condensing out of the static: a bar, a box, a
+cross, dissolving and re-forming, never twice in the same place, never on a
+schedule." Nick: "It has this silly statement, ---(em dash) Realization,
+Poetic finish … What is it really trying to say I can't even understand what
+the first visual in that article is saying." The move has three beats: an
+inventory statement (counts and rates with no claim attached); an em-dash
+that pivots into a realization the author performs live ("— and pictures
+keep condensing"); and a tail of comma-strung fragments decaying into lyric
+("dissolving and re-forming, never twice…, never on…"). The sentence has the
+silhouette of a discovery — setup, swell, dissolve — and the silhouette
+replaces the content: the reader is told that something was noticed and never
+told what. The mechanism (static; three rounds of re-tosses under trained
+weights; a picture; a hold; static again) is exactly what the flourish
+covers. Tells: the pre-dash half is a list, not a sentence whose verb does
+work; the dash changes *register* instead of adding a clause; the tail passes
+the topic-swap test untouched (any figure can "dissolve and re-form, never
+twice in the same place"). Cousin of families 20 and 21 — performed emotion
+again — but the specific crime is punctuation impersonating an insight, and
+its habitat is the figure caption, where prose should be at its most literal.
+Rule: **a figure's description states what the figure does, in the order the
+mechanism does it.** Test: cover everything after the dash. If what remains is
+an inventory and what was covered was a mood, rewrite from the mechanism —
+what starts, what happens to it, what it becomes — and delete the finish.
+Real before/after from the fix (the ✗ is the line quoted above):
+
+> ✓ "Forty tiles, sixteen cells each. Every tile starts as static, sixteen
+> fair coins, and every cell is tossed again eleven times a second with odds
+> set by a trained table of weights. Three rounds of that pull the static
+> toward one of six pictures the weights were trained on … A finished tile
+> holds its picture for a second or two, then goes back to static and starts
+> over."
+
+The same article carried the tail twice more in lighter dress ("family
+members, never on a schedule, never in a fixed order"; "images condensing out
+of noise") — a swell, once coined, recurs as a cadence, so sweep the whole
+piece when one is found.
+
+**23. The yoga coach (awarded ownership).** Flagged 2026-09-06 on the p-bits
+lesson: "That S-shape is yours; the figure only recorded it." The sentence hands
+the reader a trophy for turning a slider. Nothing is theirs — the sigmoid was
+there before they arrived, and the figure did not "record" anything, it plotted
+a formula. The move is the influencer-coach register: praise for participation
+("you did that", "you've earned it", "every one of them is yours now"), a warm
+voice stepping between the reader and the object to congratulate them. Cousin
+of family 21 (staged coziness) but the specific crime is **ownership as
+flattery** — the reader is credited with producing what the machine produced.
+Tell: the word "yours" (or "you built", "you drew", "you just did") attached to
+something the reader only watched or nudged. Literal ownership survives ("the
+figure below is yours to bend" — they can bend it). Rule: **point at the
+object, not at the reader's relationship to it.** Real before/after from the
+fix:
+
+> ✗ "That S-shape is yours; the figure only recorded it. Written down, the rule
+> you just drew is [formula]"
+> ✓ "Notice that the curve follows a formula: [formula]"
+
 ---
 
 ## Where the enforcement lives

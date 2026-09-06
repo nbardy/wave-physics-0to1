@@ -34,23 +34,24 @@ bits flip at random on purpose, millions of times a second, driven by the
 same jitter every other chip suppresses. The flipping is not overhead it
 tolerates. The flipping is the computation.
 
-Randomness is the one output the eye cannot audit. Two streams of flicker look
-identical when one of them is right and the other is confidently, permanently
-wrong — and a fast, plausible-looking sampler can sit half a distribution
-from the law while every energy readout applauds it. So alongside the
-machine, this lesson builds the instrument that can catch it lying.
+Two streams of flicker look identical when one of them is right and the other
+is permanently wrong, and a fast, plausible-looking sampler can sit half a
+distribution from the right answer while every energy readout reads normal.
+Catching it lying takes a second instrument.
 
-Forty small lattices, sixteen cells each, every
-cell flipping many times a second — and pictures keep condensing out of the
-static: a bar, a box, a cross, dissolving and re-forming, never twice in the
-same place, never on a schedule.
+Forty tiles, sixteen cells each. Every tile starts as static, sixteen fair
+coins, and every cell is tossed again eleven times a second with odds set by
+a trained table of weights. Three rounds of that pull the static toward one
+of six pictures the weights were trained on: a bar, a cross, a box, an X, a
+checker, a corner. A finished tile holds its picture for a second or two,
+then goes back to static and starts over. Watch one tile through a whole
+cycle before you take in the wall.
 
 <MosaicHero />
 
-Nothing on this wall is drawn. Every cell is a coin toss; the weights loading
-the dice were trained, and they ship with this page unexplained — on credit.
-The wall returns at the end, dreaming a picture you painted, on weights
-trained in front of you.
+Nothing on this wall is drawn. The weights loading the coins ship with this
+page unexplained — on credit. The wall returns at the end, dreaming a picture
+you painted, on weights trained in front of you.
 
 One amnesty up front: there is no quantum mechanics anywhere in this article.
 These are classical coins.
@@ -74,13 +75,13 @@ here on. In silicon a p-bit is a comparator listening to its own thermal noise �
 a real circuit, drawn in full when the machine itself arrives.
 
 Now sweep the knob slowly from one end to the other and let it rest a moment at
-each stop. Every bias you visit leaves a dot behind — its measured mean — and the
-dots trace a curve:
+each stop. Every bias you visit leaves a little column of dots behind — one dot
+per short run of samples, stacking and darkening where those runs agree — and the
+dark spine of the cloud traces a curve:
 
 <BitFlicker trace />
 
-That S-shape is yours; the figure only recorded it. Written down, the rule you
-just drew is
+Notice that the curve follows a formula:
 
 $$P(s = +1) = \sigma(2h), \qquad \sigma(x) = \frac{1}{1 + e^{-x}}$$
 
@@ -163,7 +164,25 @@ inner bars take over instead. The <C k="ghost">gray outlines</C> behind the
 sampled bars are new: they are the *exact* answer, computed by brute force, and
 this is the first time in the lesson the flicker can be checked against truth.
 
-A wire persuades with arithmetic. Watch the second p-bit's:
+A wire carries a state, not a force. Nothing pulls the two cells toward
+each other. The right cell's summing node, the one place its whole world
+arrives as current, picks up one extra contributor: a current proportional to
+what the left cell shows *right now*. Left up, the current pushes the right
+cell up; left down, it pushes down; the wire's weight is how hard. On the chip
+that contributor is a conductance from the left comparator's output to the
+right cell's input node. A <C k="anti">cool wire</C> is the same conductance
+tied to the left comparator's other output — a comparator has two, the answer
+and its opposite, and which one the wire taps is the sign. The tap runs both
+ways: the left cell's node gets an equal conductance from the right, and that
+pair of equal taps is all "a wire wants its ends to agree" means in metal.
+
+That is why the wire can do what the knobs could not. A knob is a push that
+never changes sign, so it drags the lean with it. The wire's push flips sign
+every time the neighbor flips, and the neighbor is a fair coin, so over a
+second the push averages to zero and the lean needle stays at center. At each
+instant, though, the push points wherever the neighbor is: the right cell is
+biased all the time, toward a target that moves, and the target is the other
+coin. Watch that push on the second p-bit:
 
 <PairCoupler mode="wire" fieldGauge />
 
@@ -896,12 +915,12 @@ static in three moves.
 <DreamChain />
 
 The finished dreams collect along the bottom, and they are the readout: bars,
-checkers, crosses — family members, never on a schedule, never in a fixed
-order. Starve the slider to one sweep per level and the resemblance slips —
-measurably, if not dramatically: the nearest-glyph readout under the strip
-drifts out by about a third of a pixel — because each sample gets clamped as
-the next level's evidence before it has settled. The dreams' coherence is bought with
-Gibbs time.
+checkers, crosses, in whatever order the seeds deliver them. Starve the slider
+to one sweep per level and the resemblance slips — measurably, if not
+dramatically: the nearest-glyph readout under the strip drifts out by about a
+third of a pixel — because each sample gets clamped as the next level's
+evidence before it has settled. The dreams' coherence is bought with Gibbs
+time.
 
 Where the coherence comes from is easiest to see by removing it. The corner
 of the energy we flagged — kill $W$, no hidden units — trains in seconds right
@@ -1016,9 +1035,9 @@ schedule at sizes the browser cannot audit, that is the door.
 
 Stuart and Donald Geman's 1984 paper, *Stochastic Relaxation, Gibbs
 Distributions, and the Bayesian Restoration of Images*, is where the Gibbs
-sampler got its name — and, forty years early, most of this article's
-furniture: a lattice of pixels, each updated from its neighbors'
-conditional, images condensing out of noise. Read it after this page and the
+sampler got its name. It also holds most of this article's furniture, forty
+years early: a lattice of pixels, each updated from its neighbors'
+conditional, and images recovered from noise. Read it after this page and the
 sampler running every figure here is recognizably theirs — waiting four
 decades for silicon willing to run it natively.
 

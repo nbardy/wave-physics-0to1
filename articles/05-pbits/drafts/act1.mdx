@@ -17,10 +17,10 @@ that surrenders it instead. Its bits flip at random on purpose, millions of time
 a second, driven by the same thermal jitter every other chip suppresses — and it
 computes *with* the flipping, on less power than a nightlight.
 
-Randomness is the one output the eye cannot audit. Two streams of flicker look
-identical when one of them is right and the other is confidently, permanently
-wrong — so alongside the machine, this lesson builds the instrument that can
-catch it lying. A fast, plausible-looking sampler is going to produce an
+Two streams of flicker look identical when one of them is right and the other
+is permanently wrong, and a fast, plausible-looking sampler can sit half a
+distribution from the right answer while every energy readout reads normal.
+Catching it lying takes a second instrument. A fast, plausible-looking sampler is going to produce an
 entirely wrong answer in these pages while every energy readout applauds it,
 and the instrument will be the only witness.
 
@@ -51,8 +51,7 @@ dots trace a curve:
 
 <BitFlicker trace />
 
-That S-shape is yours; the figure only recorded it. Written down, the rule you
-just drew is
+Notice that the curve follows a formula:
 
 $$P(s = +1) = \sigma(2h), \qquad \sigma(x) = \frac{1}{1 + e^{-x}}$$
 
