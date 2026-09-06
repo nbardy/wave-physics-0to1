@@ -76,6 +76,7 @@ export function createPairCoupler(
   let s = Int8Array.from([1, -1])
   let sweepN = 0
   let acc = 0
+  let t = 0
   let knobKey = ''
 
   const key = () => `${shared.current.h1}|${shared.current.h2}|${shared.current.J}`
@@ -89,6 +90,7 @@ export function createPairCoupler(
         counts = new Float64Array(4)
       }
       acc += dt
+      t += dt
       while (acc >= SAMPLE_DT) {
         acc -= SAMPLE_DT
         sweepN++
@@ -108,12 +110,51 @@ export function createPairCoupler(
       if (wired) {
         ctx.strokeStyle = edgeColor(shared.current.J)
         ctx.lineWidth = 1 + Math.abs(shared.current.J) * 3
-        ctx.globalAlpha = 0.7
+        ctx.globalAlpha = fieldGauge ? 0.25 : 0.7
         ctx.beginPath()
         ctx.moveTo(x1, cy)
         ctx.lineTo(x2, cy)
         ctx.stroke()
         ctx.globalAlpha = 1
+      }
+      if (fieldGauge) {
+        // The wire as what it is in metal: two taps, one per direction. Each
+        // lane carries a current into the far cell's summing node, and its
+        // color is the PUSH that current delivers there — amber pushes up,
+        // blue pushes down — i.e. sign(J · s_source). On a warm wire that is
+        // the source coin's own color; on a cool wire it is the opposite,
+        // which is the "other comparator output" the prose describes. The
+        // dashes run toward the cell being pushed, and the lane repaints the
+        // instant its source coin flips. Added 2026-09-06 when the wire
+        // paragraph gained its mechanism and the figure had nothing to show
+        // for it but a bond-looking line.
+        const J = shared.current.J
+        const lane = (from: number, to: number, dy: number, src: number) => {
+          const push = J * src
+          if (push === 0) return
+          ctx.strokeStyle = push > 0 ? PALETTE.sUp : PALETTE.sDn
+          ctx.lineWidth = 1 + Math.min(Math.abs(J), 2) * 1.5
+          ctx.setLineDash([6, 5])
+          ctx.lineDashOffset = -t * 40
+          ctx.beginPath()
+          ctx.moveTo(from, cy + dy)
+          ctx.lineTo(to, cy + dy)
+          ctx.stroke()
+          ctx.setLineDash([])
+          ctx.lineDashOffset = 0
+          // arrowhead at the pushed cell's rim
+          const dir = Math.sign(to - from)
+          const tip = to - dir * 22
+          ctx.fillStyle = ctx.strokeStyle
+          ctx.beginPath()
+          ctx.moveTo(tip, cy + dy)
+          ctx.lineTo(tip - dir * 7, cy + dy - 4)
+          ctx.lineTo(tip - dir * 7, cy + dy + 4)
+          ctx.closePath()
+          ctx.fill()
+        }
+        lane(x1, x2, -5, s[0])
+        lane(x2, x1, 5, s[1])
       }
       drawSpin(ctx, x1, cy, 20, s[0])
       drawSpin(ctx, x2, cy, 20, s[1])
@@ -166,7 +207,20 @@ export function createPairCoupler(
         const f = localField(m, s, 1)
         ctx.font = FONT_METER
         ctx.fillStyle = PALETTE.meter
-        ctx.fillText(`field on the right coin: ${fmt(f, 2)}`, w * 0.06, headTop)
+        // Written as the sum the cell actually forms — bias (0 here) plus the
+        // wire's weight times the left coin's state — so the term that flips
+        // is visible, not only its total.
+        const sL = s[0] > 0 ? '+1' : '−1'
+        const Jn = shared.current.J
+        const Jtxt = Jn < 0 ? `(−${fmt(-Jn, 2)})` : fmt(Jn, 2)
+        const ftxt = f < 0 ? `−${fmt(-f, 2)}` : fmt(f, 2)
+        ctx.fillText(
+          w < 520
+            ? `field on the right coin: ${ftxt}`
+            : `field on the right coin: 0 + ${Jtxt} × (${sL}) = ${ftxt}`,
+          w * 0.06,
+          headTop,
+        )
         ctx.font = FONT_LABEL
         ctx.fillStyle = 'rgba(85,96,111,0.9)'
         ctx.fillText(
