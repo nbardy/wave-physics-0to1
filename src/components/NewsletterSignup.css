@@ -1,0 +1,66 @@
+.newsletter-signup {
+  max-width: 440px;
+  margin: 1.5rem 0 1.8rem;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+.newsletter-signup label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.newsletter-signup-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.newsletter-signup input,
+.newsletter-signup button {
+  box-sizing: border-box;
+  min-height: 44px;
+  border: 1px solid var(--rule-strong);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: inherit;
+  line-height: 1.25;
+}
+
+.newsletter-signup input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.6rem 0.75rem;
+  font-size: 1rem;
+}
+
+.newsletter-signup input::placeholder {
+  color: var(--ink-soft);
+  opacity: 1;
+}
+
+.newsletter-signup button {
+  flex: none;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.newsletter-signup button:hover {
+  border-color: var(--ink-soft);
+  background: var(--paper);
+}
+
+.newsletter-signup input:focus-visible,
+.newsletter-signup button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.newsletter-signup-note {
+  margin-top: 0.4rem;
+  font-size: 0.75rem;
+}
