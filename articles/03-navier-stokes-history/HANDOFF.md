@@ -271,6 +271,12 @@ size warning remains. Changes are local, not deployed.
 
 ## Alternate version-two sketch — 2026-09-10
 
+**Decision, 2026-09-11:** Nick accepted keeping the improved history article and
+using selected sketch experiments in a separate revision of the construction
+lesson. The sketch is retained as design material, not an active third article
+or replacement history. The construction lesson's HANDOFF and
+`articles/01-navier-stokes/II_REBUILD_PLAN.md` own that work.
+
 Nick requested a separate story and visual sketch from scratch, preserving the
 current article and implementing no new figures. Written in
 [V2_STORY_SKETCH.md](V2_STORY_SKETCH.md), working title **Predicting Water**.

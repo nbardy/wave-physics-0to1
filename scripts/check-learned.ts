@@ -185,7 +185,7 @@ ok(paramCount() === 809 && MANIFEST.params === 809, 'model size', `${paramCount(
   ok(s.pressureIters === 40, 'lesson 01 stops at forty', `FluidSolver.pressureIters = ${s.pressureIters}`)
 }
 {
-  const src = readFileSync(join(ROOT, 'src/lessons/lesson-01-navier-stokes.mdx'), 'utf8').replace(/\s+/g, ' ')
+  const src = readFileSync(join(ROOT, 'src/lessons/lesson-01-navier-stokes.I.mdx'), 'utf8').replace(/\s+/g, ' ')
   ok(src.includes('the divergence is gone') && src.includes('Jacobi iterations'), 'what lesson 01 said', 'lesson 01 still says the divergence is gone after a few dozen sweeps and calls them Jacobi iterations — §Forty sweeps quotes it')
 }
 

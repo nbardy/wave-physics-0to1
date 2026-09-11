@@ -211,12 +211,14 @@ Lesson 04's own browser and mobile pass is still owed too, per
 
 **Owner: Nick. Blocked on the gate at the top of this file.**
 
-The I · II · III switch works and is verified in a browser, but **only lesson 04
-has versions**, and no lesson has a MUSE slot filled. The commission was to
+The I · II · III switch works and is verified in a browser. Lesson 04 has
+distinct drafts. Lesson 01's comparison-copy setup was built on 2026-09-11;
+its accepted next direction and current state live in
+`articles/01-navier-stokes/HANDOFF.md`. No lesson has a MUSE slot filled. The commission was to
 rewrite *them*, plural, so Nick could compare baseline against this side's
 rewrite against MUSE's.
 
-Nothing should be built until Nick picks spines from the eleven `REIMAGINE.md`
+For the remaining lessons, nothing should be built until Nick picks spines from the eleven `REIMAGINE.md`
 outlines — building on an unread outline is how version II of lesson 04 became a
 mis-scoped speedup article. Three of the eleven are spine swaps needing his
 explicit yes; `02_INDEX.md` also lists physics lines the main loop already

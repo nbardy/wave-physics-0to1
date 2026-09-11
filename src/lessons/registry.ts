@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react'
-import Lesson01 from './lesson-01-navier-stokes.mdx'
+import Lesson01I from './lesson-01-navier-stokes.I.mdx'
+import Lesson01II from './lesson-01-navier-stokes.II.mdx'
 import Lesson02 from './lesson-02-fiber-bundles.mdx'
 import Lesson03 from './lesson-03-navier-stokes-history.mdx'
 import Lesson04I from './lesson-04-learned-solver.I.mdx'
@@ -215,7 +216,20 @@ export const lessons: Lesson[] = [
       'Meet each piece of fluid motion on its own, see why it alone falls short, then assemble the equation and run it live.',
     tags: ['fluids', 'pde', 'simulation'],
     status: { kind: 'published' },
-    versions: sole(Lesson01),
+    versions: [
+      {
+        label: 'I',
+        author: 'baseline',
+        note: 'Construction revision checkpoint · 11 September 2026',
+        Content: Lesson01I,
+      },
+      {
+        label: 'II',
+        author: 'working draft',
+        note: 'Starting copy of I · the next revision has not been applied yet',
+        Content: Lesson01II,
+      },
+    ],
   },
   {
     id: 'fiber-bundles',

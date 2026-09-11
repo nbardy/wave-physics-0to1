@@ -27,10 +27,6 @@ carries only the ask and where to look.
 
 ## §2 Structural decisions (these unblock builds)
 
-- [ ] **Lesson-03: tour vs paradox spine.** Standing plan: editorial read +
-  Stage-4 voice pass + publish. Proposal: tour→paradox re-spine with cut list
-  (worker synthesis 2026-09-04; checkpoint logged in `articles/03-navier-stokes-history/HANDOFF.md`
-  judgments). No sections cut until decided.
 - [ ] **Hero assignments (S3 freeze).** C owns the 144×88 cylinder (SolveDebt) +
   96×64 h1 (race); survey article reuses that pair + airfoil OOD (no new hero);
   03's disc/separation meter BLOCKED on a residual-gated solve. Confirm or
@@ -71,6 +67,10 @@ carries only the ask and where to look.
   knob to both ends.
 
 ## Resolved (date + one line — retire, don't delete)
+
+- **2026-09-11 · Lesson-03 structure:** Nick accepted preserving the improved
+  history article; selected *Predicting Water* ideas move to the construction
+  lesson's revision plan. No history re-spine or third-article build is active.
 
 - 2026-07-06: lesson-02 epigraph verified against live tweet (verbatim, dated).
 - 2026-07-06: lesson 01 published keeping Final Words → lesson 02 owes ending rewrite.

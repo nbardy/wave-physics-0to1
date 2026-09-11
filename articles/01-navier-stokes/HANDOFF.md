@@ -10,6 +10,44 @@ rewrite (01 keeps the shape); KelvinHelmholtz stays benched; shipped with the
 known device-rotation stretch limitation and the CPU-fallback waver (confessed in
 §12's fair warnings).
 
+## Parallel reading copies — 2026-09-11
+
+Nick requested a committed checkpoint and two versions before the next revision.
+The existing checkout was preserved in three commits: `924c9df` (shared
+infrastructure and launch preparation), `7fe705a` (history and its sketch), and
+`ca79202` (construction lesson, workbenches, and revision methodology).
+
+The explainer now uses the existing I · II switch. The complete current article
+is `src/lessons/lesson-01-navier-stokes.I.mdx`, still the default. Version II is
+`src/lessons/lesson-01-navier-stokes.II.mdx`, initially an exact copy of I and
+explicitly labeled as a starting copy. Both match the article at `ca79202` byte
+for byte. The source path used by `scripts/check-learned.ts` now follows I.
+
+The accepted next direction is recorded in [II_REBUILD_PLAN.md](II_REBUILD_PLAN.md):
+repair the parcel example, strengthen the physical reading of viscosity, then
+evaluate matched-Re flows and a staged plate-to-pipe experiment after pressure
+and equation assembly. Preserve the new numerical workbenches. No proposed
+experiment was implemented by this copy operation. New components or opt-in
+props must keep I's behavior intact; copying MDX alone does not freeze shared
+simulation code. Use `ca79202` for an exact historical source checkout.
+
+Typecheck and build pass after the split; the existing bundle-size warning
+remains. All 142 construction checks passed on the unchanged simulation code.
+Browser checks confirm both versions render all 32 canvases through Final Words,
+the selected tab and note follow the URL, and switching remounts the canvases.
+Direct II navigation and the return to I work at 390px without horizontal
+overflow. Desktop/mobile screenshots were inspected. Visual QA caught the
+existing active-tab hover rule painting dark text on its dark background;
+the active state now retains its light text while hovered.
+The learned-solver suite has a pre-existing prose guard looking for the former
+lesson's “Jacobi iterations” / “the divergence is gone” wording, absent from the
+September 10 revision. Only its renamed source path is updated here; that
+sibling-article quotation drift still needs its own correction.
+
+These are local commits and reading copies. New Worker/dependency changes began
+in another task during checkpointing; they are outside this versioning change.
+Deployment remains pending coordination under AGENTS' shared-tree shipping rule.
+
 ## Construction-lesson revision — 2026-09-10, local
 
 Nick asked for a reusable reflection on the history revision, then an application

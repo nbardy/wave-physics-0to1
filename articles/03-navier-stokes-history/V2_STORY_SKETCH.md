@@ -2,6 +2,12 @@
 
 *An alternate visual and story sketch for the Navier–Stokes history lesson.*
 
+**Disposition, 2026-09-11:** retained as design material. Nick chose to preserve
+the improved history article and prepare parallel versions of the construction
+lesson. Selected experiments from this sketch are candidates in its
+[version-II revision plan](../01-navier-stokes/II_REBUILD_PLAN.md); this ten-section
+story is not an active third-article or replacement-history build.
+
 **2026-09-10 — proposal only.** Written alongside the existing article at Nick's
 request. This is a new narrative, with proposed figures designed for it. Nothing
 here changes the current lesson, implements a figure, or creates a published

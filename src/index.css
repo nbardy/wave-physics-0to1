@@ -334,7 +334,8 @@ a:hover {
   border-color: var(--ink);
   text-decoration: none;
 }
-.version-pill--active {
+.version-pill--active,
+.version-pill--active:hover {
   color: var(--bg);
   background: var(--ink);
   border-color: var(--ink);
