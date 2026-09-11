@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { FIELDS, lessons, SERIES } from '../lessons/registry'
 import { TocList } from '../components/Toc'
-import NewsletterSignup from '../components/NewsletterSignup'
 
 export default function Home() {
   return (
@@ -14,7 +13,6 @@ export default function Home() {
           around simulations that run the physics rather than illustrate it. The fields below are
           independent — start wherever you like.
         </p>
-        <div id="newsletter"><NewsletterSignup /></div>
         <p className="masthead-links">
           <Link to="/all">Browse everything, by tag →</Link>
         </p>

@@ -59,10 +59,13 @@ announcements. There is no confirmation email in the collection-only flow.
 
 ## Shared article template and RSS
 
-The homepage and every article use `NewsletterSignup`, with the copy
-“Get emailed every new visual explainer” in a light-blue box. MDX’s shared
-`h1` mapping puts it beneath the title; `LessonView` adds it at the bottom.
-`/subscribe` leads to the homepage form. The two Navier–Stokes articles have
+Every page uses `NewsletterSignup`, with the copy
+“Get emailed every new visual explainer” in a light-blue box. The shared `Layout`
+puts exactly one before the page content and one after it, including the homepage,
+article index, series pages, and articles. The email button says “Sign up”; the
+RSS icon button copies the canonical feed URL and confirms the copy. If the
+browser blocks clipboard access, a selectable URL appears for manual copying.
+Both paths also offer an “Open feed” link. `/subscribe` leads to the homepage form. The two Navier–Stokes articles have
 reciprocal light-blue related-reading cards. Every thermodynamic-computing
 part has “Check out the whole series →” above its title.
 
@@ -77,3 +80,10 @@ The deployed API passed signup, duplicate, persistence, and unsubscribe checks
 with a disposable address; the exact test row was removed. No email was sent.
 The release uses the previously live article revision plus these launch changes,
 so ongoing article and simulation edits are not included.
+
+September 11 follow-up: “Sign up” and an RSS icon button now share the controls
+row. `Layout` owns both placements on every route. Verified exactly two forms
+on the homepage, index, series, article, and stack-check pages; desktop and
+390px layouts; RSS copy without email validation; and the selectable URL
+fallback with clipboard rejection simulated in a local fixture. Production
+build and TypeScript checks passed.
