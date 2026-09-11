@@ -286,16 +286,17 @@ export function WingFlow({
     <div className={variant === 'finale' ? 'sim-stir' : undefined} onPointerMove={onPointer} onPointerDown={onPointer}>
       <Sim height={height} create={(w, h) => createWing(variant, reRef, stirRef, w, h)}>
         <label className="sim-slider">
-          <span>{variant === 'finale' ? 'honey' : ''}</span>
+          <span>{variant === 'finale' ? 'honey' : 'Viscosity · low'}</span>
           <input
             type="range"
             min={HONEY_RE}
             max={600}
             step={5}
-            value={re}
-            onChange={(e) => setRe(Number(e.target.value))}
+            aria-label={variant === 'finale' ? 'Wing Reynolds number' : 'Wing viscosity'}
+            value={variant === 'hero' ? HONEY_RE + 600 - re : re}
+            onChange={(e) => setRe(variant === 'hero' ? HONEY_RE + 600 - Number(e.target.value) : Number(e.target.value))}
           />
-          <span>{variant === 'finale' ? 'Re' : ''}</span>
+          <span>{variant === 'finale' ? `Re ${Math.round(re)}` : 'high'}</span>
         </label>
       </Sim>
     </div>

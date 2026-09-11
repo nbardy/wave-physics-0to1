@@ -6,6 +6,10 @@ because the corpus shows the craft is layered: *structure* mistakes are fatal an
 to fix early; *voice* mistakes are cheap and only worth fixing late. Never polish prose
 sitting on a broken skeleton.
 
+For revising an existing article with reader feedback, see
+[METHODOLOGY_PART_2.md](METHODOLOGY_PART_2.md), with separate guides for prose and
+visuals drawn from the September 2026 Navier–Stokes revision.
+
 ## §0 — Our standing deviations (decided once, apply to every lesson)
 
 We imitate the essence, not the accidents. Four deliberate departures:
@@ -62,9 +66,16 @@ The skeleton is a **chain of failures repaired**:
    can read the display.
 3. **Ground the continuum in micro once, then formally abandon it** ("this lets us
    leave the particles behind").
-4. **Budget figures at ~1 per 140 words** (band: 85–180). A 12,000-word lesson is
-   ~70–90 figures — write the full figure list now: for each, the one idea, the one
-   knob, and the *cheapest rendering that works*. Amortize with **reuse-with-overlay**
+4. **Give each figure a discovery before giving it controls.** Write a short brief:
+   either **what the model gains** (what was missing, what we add, what it can now
+   explain or predict), or **the isolated phenomenon** (what varies, what stays
+   fixed, what relation becomes visible). Then specify the reader's action and the
+   two revealing states it connects. Why would someone want to try it again?
+   The pleasure can come from shaping a flow, crossing a threshold, finding an
+   invariant, or resolving a surprising comparison; complexity is not the goal.
+   Choose the *cheapest rendering that makes that discovery legible*. Figure
+   density (~85–180 words per figure) is a planning diagnostic, never a reason to
+   add a scene without a discovery. Amortize with **reuse-with-overlay**
    (same scene gaining arrows → markers → colors) and **one-delta sequencing**
    (consecutive figures differ by exactly one element).
 5. **Plant the payoffs**: every early unexplained demo gets a ledger entry and a
@@ -79,8 +90,8 @@ The skeleton is a **chain of failures repaired**:
 
 ## Stage 3 — BLOCKED CONTENT
 
-**Output: MDX with real figures and scaffold prose. Gate: it runs — every figure is
-live, honest, and one-knob.**
+**Output: MDX with real figures and scaffold prose. Gate: each figure makes its
+intended discovery visible through an honest, focused interaction.**
 
 Build order matters: **figures before finished prose**, because the figure is the
 argument and the prose is its legend.
@@ -88,13 +99,20 @@ argument and the prose is its legend.
 1. **Assign the palette contract** for the whole lesson: quantity → color, fixed at
    first appearance, never redesigned (barrel is red from fig 6 to fig 93). This is
    the color-vocabulary namespace prose will bind to.
-2. **Build each Stepper** (see AGENTS.md for the honesty rules: fixed timestep, stated
-   stability condition, `create` = fresh state, pure `draw`). One knob; sliders default
-   to time-speed; failure regimes reachable on purpose — the reader finds the boundary
-   by crossing it.
-3. **Block the prose** as setup → figure → readout: the sentence above names the knob
-   and what to try; the sentence below reads out what you should have seen ("Notice
-   that…"). No captions — the prose does that work.
+2. **Build the interaction around that discovery.** Use a slider for a meaningful
+   continuous quantity, a switch for an assumption, dragging for a physical
+   intervention, a probe for a local measurement, or steps for discrete observations.
+   Choose reachable states with a large, readable consequence: visually compelling,
+   scientifically informative, or both. A striking invariant also counts when the
+   imposed change is plainly visible. Preserve a reference, matched specimen, or
+   before state when comparison is the claim. Never inflate or fabricate the physics
+   to enlarge a difference; improve the scale, representation, or experiment.
+   Time-speed is useful only when timing itself earns attention. Prefer one focused
+   experiment over one arbitrary knob; a small set of purposeful actions may serve
+   it better. Follow the Stepper honesty rules in AGENTS.md.
+3. **Block the prose** as setup → figure → readout: above, establish the question,
+   what the reader is looking at, and what to try; below, explain the observed
+   consequence and what it adds to the argument. No captions — prose does that work.
 4. Rough in the math per the protocol: figure → words → symbols → check. Don't polish
    phrasing yet.
 5. Ship blocked sections behind `status: draft` as they land — the pipeline stays green
@@ -176,7 +194,11 @@ arrived while writing; if none arrived, the article ships drier and that's fine.
   sixteenth", "the dates are right on its four steps"), point at the pixels that
   deliver it. A claim with no evidence on screen is a defect of the same severity as
   a crash, and it is the single most common one we ship. Finally, drive every knob to
-  both ends: a range that changes nothing is furniture pretending to be an instrument.
+  both ends and perform each offered action. Compare the revealing states from the
+  Stage-2 brief: can the reader see the model's new capability, the isolated relation,
+  or the invariant under a substantial change? A control that only makes activity
+  busier fails unless that activity is the subject. If the discovery remains weak,
+  redesign, combine, or remove the figure; more explanation cannot rescue it.
 
   *Provenance (2026-07-06): a reader glanced at two screenshots and found, in
   seconds, defects that a full automated pass had certified as clean — three blank
@@ -185,7 +207,7 @@ arrived while writing; if none arrived, the article ships drier and that's fine.
   it render?"; the reader asked "does this teach me anything?" Only the second
   question has ever mattered.*
 - **Rhythm audit** (mechanical, scriptable): words-per-figure in band; no >3-paragraph
-  droughts; knob count ≤1 except flagged finales; adjacency (figure-figure without
+  droughts; each control serves the figure's focused experiment; adjacency (figure-figure without
   prose) ≈ never. The band and plan-stage figure counts are *diagnostics, not
   quotas* — the philosophy is AGENTS.md "Scale and style": a figure is added because
   a moment needs one; a short article that lands is finished at its own length.

@@ -10,6 +10,78 @@ rewrite (01 keeps the shape); KelvinHelmholtz stays benched; shipped with the
 known device-rotation stretch limitation and the CPU-fallback waver (confessed in
 §12's fair warnings).
 
+## Construction-lesson revision — 2026-09-10, local
+
+Nick asked for a reusable reflection on the history revision, then an application
+to this article with a distinct purpose: how the simulation works and how its
+mistakes are diagnosed. The guide is `METHODOLOGY_PART_2.md`, with separate
+`METHODOLOGY_PART_2_PROSE.md` and `METHODOLOGY_PART_2_VISUALS.md` companions.
+METHODOLOGY links to them; existing voice/process documents remain canonical.
+
+The lesson now has 32 figure slots. Retained the physical-intuition sections and
+wing, and revised the central computational sequence with nine new/replacement
+slots in `src/sims/solver-lab/`:
+
+- **Backtrace:** source cells, fractional departure position, actual interpolation
+  weights, destination concentration. Distance is in cells per update.
+- **Transport error:** matched FTCS and semi-Lagrangian updates of a uniform-flow
+  pulse, exact translated cell averages, fixed concentration scale, negative/peak
+  values and numerical error. Scrubbing preserves failure for inspection.
+- **Diffusion:** jet/layers/thin-stripes initial conditions beside the same profile
+  after two seconds, with an initial ghost and energy remaining. Fixed observation
+  time makes the viscosity comparison immediate and reversible.
+- **Cell flux:** actual four-face accounting, including signed net outflow; replaces
+  the poorly explained broken-cylinder dye wash.
+- **Pressure correction:** computed correction of a known gradient-plus-curl field.
+  Corrects the old illustration's physical sign error: outward flow requires a
+  central pressure depression. The original circulation survives projection.
+- **Pressure iterations:** 0–160 Gauss–Seidel sweeps from identical input, visible
+  residual, no dependency on advancing animation. Measured remaining RMS error:
+  25.81% after 10, 4.38% after 40, 0.0719% after 160.
+- **Term experiment:** full update versus one omitted operation, matched initial
+  conditions and elapsed time; inspect dye or local imbalance.
+- **One timestep:** six successive snapshots (stored state, push, carry velocity,
+  smooth, pressure, carry dye), plus a magnified velocity-change view. Replaces
+  repeatedly running an isolated operation on an increasingly damaged state.
+- **Live workbench:** the same periodic MAC-grid operations in motion; pointer
+  stirring, accessible push button, independent dye injection, viscosity, and grid
+  overlay. Interventions work while paused. Fixed 1/40-second physics timestep.
+
+Prose now distinguishes physical viscosity, numerical diffusion, dye transport,
+and pressure residual. The opening and ending focus on the calculation; a relative
+link leads to the separate history article. Further reading has direct links.
+The hero's formerly unnamed dial now says viscosity and increases in that direction;
+the finale names Re. The history article and its version-two sketch were not edited
+in this pass. Existing wing/GPU implementation remains separate from the new
+periodic workbench; do not imply these are identical discretizations.
+
+**Validation:** `bun run check:construction` passes 142 checks (known-curl projection,
+pressure sign, relaxation numbers, Fourier diffusion, transport bounds/error,
+same-start ablations, distinct dye/force interventions, 30/60-Hz cadence equality,
+pure rendering, and desktop/mobile text bounds). `typecheck` and production build
+pass; build retains the existing large-bundle warning. Chrome QA at 1280 and 390 px:
+all seven static sliders change the canvas at opposite endpoints and reproduce the
+original canvas on return; all six timestep buttons produce distinct views; no
+horizontal overflow or runtime errors. Live workbench: 61 animation frames in one
+second, Pause freezes, Add dye and Push both work while paused. Browser probes need
+a settled React render before sampling (a 160 ms settling interval avoided reading
+the previous frame). PNGs are in `_figure_check/solver-construction/`.
+
+The shared Sim shell gained an additive `resettable` option, defaulting to true.
+Static workbenches hide Reset because their parameters already determine the whole
+state; the old button just rebuilt an identical image. Other lessons retain their
+existing behavior. No deployment or commit was made.
+
+## Prose copyedit — 2026-09-10, local
+
+Nick requested a restrained pass on awkward fragments and model-like phrasing.
+Smoothed sentence fragments, removed several repeated crime/ownership metaphors,
+and simplified transitions. Section order, component tags/props, and display
+equations are unchanged. Also corrected the Reynolds-ratio example (double speed
+AND viscosity to preserve Re), and clarified that pressure lacks an independent
+time-evolution equation, not an equation altogether. Checked MDX build/typecheck;
+no simulation code changed in this pass. Not deployed.
+
 ## Post-publish fixes, 2026-07-06 (play-test found two figures lying)
 
 Nick play-tested the live article and found the hero slider "doesn't really do
