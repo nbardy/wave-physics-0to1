@@ -2,118 +2,84 @@ import { useRef, useState } from 'react'
 import { Sim, type Stepper } from '../components/Sim'
 import { PALETTE } from './lib/palette'
 
-// Hagen–Poiseuille, 1839–46 — laminar flow in a pipe, staged as a RACE between two
-// pipes driven by the SAME pressure gradient Δp/L, so the fourth power arrives as a
-// length you can measure with your eye instead of a decimal in a readout.
-//
-//   u(r) = u_max · (1 − r²/R²),    u_max = (Δp/L)·R² / (4μ)   ∝ R²
-//   Q     = ∫ u dA = (π/8)·(Δp/L)·R⁴ / μ                      ∝ R⁴
-//
-// How the R⁴ is EARNED rather than typed: each pipe is seeded with a marker count
-// proportional to its cross-sectional area (∝ R²), and every marker is advected by
-// the analytic parabola, whose scale is ∝ R². Markers that run off the right-hand
-// end are TALLIED, one at a time, into that pipe's collecting column. The crossing
-// rate is therefore (markers ∝ R²) × (mean speed ∝ R²) ∝ R⁴ — the column heights are
-// a count of real crossings. No ratio is hardcoded anywhere in this file.
-//
-// Stability: there is no integrator. A marker's step is an analytic velocity that
-// never depends on the previous state, so nothing can grow without bound. The fixed
-// timestep is here only so RAF cadence cannot change the measured crossing rates.
-
-const FIXED_DT = 1 / 240 // fixed physics step, decoupled from RAF cadence
-const R_REF = 1.0 // the reference pipe: full radius, always the top lane
-const UMAX_REF = 0.5 // peak speed (pipe-lengths/sec) at R = R_REF — the ∝R² baseline
-const MARKER_DENSITY = 300 // markers per unit cross-sectional area → count ∝ R²
-// Mean speed across the parabola is (2/3)·u_max, so the reference pipe tallies
-// MARKER_DENSITY·(2/3)·UMAX_REF = 100 crossings/sec — COLUMN_FULL is a ~7 s fill.
-const COLUMN_FULL = 700
-const SEPIA = '#78716c' // history-furniture color (lesson-03 palette addition)
-
-interface Marker {
-  x: number // ∈ [0,1] along the pipe
-  r: number // ∈ [-1,1] fraction of THIS pipe's radius (lateral)
+// Hagen–Poiseuille flow with identical pressure gradient and viscosity.
+// u(r) = (Δp/L) R² (1-r²/R²)/(4μ). Integrate u over concentric
+// equal-area annuli to measure Q. Midpoint quadrature in s=r²/R² is exact
+// for this linear integrand: mean speed is u_max/2, NOT 2u_max/3 (a slit).
+// Volume units: the reference pipe's internal volume; length and area normalized.
+// Markers illustrate that velocity field; they are not the volumetric meter.
+// Fixed streamlines, deterministic equal-area seeding, identical seeds in both
+// pipes. No random lateral respawning: it would trap dots near the slow walls.
+// Fixed timestep for the collector/markers. Analytic constant velocities have
+// no CFL restriction; modulo wrapping remains valid for any displacement.
+const FIXED_DT = 1 / 240
+const R_REF = 1
+const UMAX_REF = 0.5
+const ANNULI = 64
+const MARKER_DENSITY = 160
+const CYCLE_SECONDS = 8
+const CYCLE_TICKS = CYCLE_SECONDS / FIXED_DT
+const COLUMN_FULL = CYCLE_SECONDS * UMAX_REF / 2
+const SEPIA = '#78716c'
+interface Marker { x: number; r: number; speedFraction: number }
+interface Pipe { R: number; markers: Marker[]; volume: number; color: string }
+export function uMax(R: number) { return UMAX_REF * (R / R_REF) ** 2 }
+export function volumeFlux(R: number): number {
+  const annulusArea = (R / R_REF) ** 2 / ANNULI
+  let flux = 0
+  for (let i = 0; i < ANNULI; i++) {
+    const radiusSquared = (i + 0.5) / ANNULI
+    flux += uMax(R) * (1 - radiusSquared) * annulusArea
+  }
+  return flux
 }
-
-interface Pipe {
-  R: number
-  markers: Marker[]
-  tally: number // markers collected this cycle — this IS the column height
-  color: string
-}
-
 function buildMarkers(R: number): Marker[] {
-  // constant areal density: a pipe of radius R gets ∝R² markers
-  const count = Math.max(8, Math.round(MARKER_DENSITY * R * R))
-  const markers = new Array<Marker>(count)
-  for (let i = 0; i < count; i++) markers[i] = { x: Math.random(), r: Math.random() * 2 - 1 }
-  return markers
+  const count = Math.round(MARKER_DENSITY * R * R)
+  return Array.from({ length: count }, (_, i) => {
+    const s = (i + 0.5) / count
+    // Project a uniform circular cross-section onto the side view.
+    const theta = i * Math.PI * (3 - Math.sqrt(5))
+    return { x: (0.5 + i * 0.4142135623730951) % 1, r: Math.sqrt(s) * Math.sin(theta), speedFraction: 1 - s }
+  })
 }
-
-function uMax(R: number): number {
-  return UMAX_REF * (R / R_REF) ** 2
+export interface PipeComparison extends Stepper {
+  setRadius(radius: number): void
+  measure(): { radius: number; elapsed: number; referenceVolume: number; testVolume: number; referenceFlow: number; testFlow: number }
 }
-
-function createPipes(rRef: { current: number }): Stepper {
-  const ref: Pipe = { R: R_REF, markers: buildMarkers(R_REF), tally: 0, color: PALETTE.dye }
-  const test: Pipe = {
-    R: rRef.current,
-    markers: buildMarkers(rRef.current),
-    tally: 0,
-    color: PALETTE.dye2,
-  }
+export function createPipes(initialRadius = 0.5): PipeComparison {
+  const ref: Pipe = { R: R_REF, markers: buildMarkers(R_REF), volume: 0, color: PALETTE.dye }
+  const test: Pipe = { R: initialRadius, markers: buildMarkers(initialRadius), volume: 0, color: PALETTE.dye2 }
   const pipes = [ref, test]
-
-  const advancePipe = (p: Pipe) => {
-    const um = uMax(p.R)
-    for (const m of p.markers) {
-      m.x += um * (1 - m.r * m.r) * FIXED_DT // parabolic profile in the fractional radius
-      if (m.x > 1) {
-        m.x -= 1
-        m.r = Math.random() * 2 - 1 // respawn at the left, fresh lateral position
-        p.tally++ // one marker crossed the outlet: collect it
-      }
-    }
+  let ticks = 0, acc = 0, elapsed = 0
+  const restart = () => {
+    ticks = 0; acc = 0; elapsed = 0
+    for (const p of pipes) { p.volume = 0; p.markers = buildMarkers(p.R) }
   }
-
-  let acc = 0
-  const advance = () => {
-    // Knob change → restage: rebuild the test pipe's marker set and empty both
-    // columns so the next comparison starts clean. Done here in the step path;
-    // draw stays pure.
-    if (Math.abs(rRef.current - test.R) > 1e-3) {
-      test.R = rRef.current
-      test.markers = buildMarkers(test.R)
-      ref.tally = 0
-      test.tally = 0
-    }
-    advancePipe(ref)
-    advancePipe(test)
-    // The cycle restarts when the reference column tops out, so the two heights are
-    // always a fresh side-by-side measurement instead of a saturated pair.
-    if (ref.tally >= COLUMN_FULL) {
-      ref.tally = 0
-      test.tally = 0
-    }
-  }
-
   return {
+    setRadius(radius) { test.R = Math.max(0.35, Math.min(1, radius)); restart() },
+    measure() { return { radius: test.R, elapsed, referenceVolume: ref.volume, testVolume: test.volume, referenceFlow: volumeFlux(ref.R), testFlow: volumeFlux(test.R) } },
     step(dt) {
       acc += dt
-      let guard = 0
-      while (acc >= FIXED_DT && guard < 8) {
-        advance()
+      while (acc + 1e-12 >= FIXED_DT) {
+        // Empty both collectors together after each eight-second sample.
+        if (ticks === CYCLE_TICKS) { ticks = 0; for (const p of pipes) p.volume = 0 }
+        ticks++; elapsed = ticks * FIXED_DT
+        for (const p of pipes) {
+          p.volume = volumeFlux(p.R) * elapsed
+          for (const m of p.markers) m.x = (m.x + uMax(p.R) * m.speedFraction * FIXED_DT) % 1
+        }
         acc -= FIXED_DT
-        guard++
       }
     },
     draw(ctx, w, h) {
       ctx.clearRect(0, 0, w, h)
-      const padX = 18
+      ctx.fillStyle = '#f7f9fc'; ctx.fillRect(0, 0, w, h)
+      const padX = 12
       const xOut = w * 0.55 // pipes end here; past this a marker is collected
-      const halfPix = 40 // pixels of half-radius at R = R_REF
+      const halfPix = 34 // pixels of half-radius at R = R_REF
       const X = (x: number) => padX + x * (xOut - padX)
 
-      const colTop = 16
+      const colTop = 35
       const colBot = h - 30
       const colH = colBot - colTop
       const colX0 = w * 0.66
@@ -185,7 +151,7 @@ function createPipes(rRef: { current: number }): Stepper {
         ctx.fillText(`R = ${p.R.toFixed(2)}`, padX, midY - rHalf - 7)
       }
 
-      // collecting columns — heights are the raw crossing tallies
+      // Collecting columns integrate the cross-sectional volume flux, not dot counts.
       for (let i = 0; i < pipes.length; i++) {
         const p = pipes[i]
         const x = colX0 + i * (colW + colGap)
@@ -194,41 +160,42 @@ function createPipes(rRef: { current: number }): Stepper {
         ctx.lineWidth = 1
         ctx.strokeRect(x, colTop, colW, colH)
         ctx.globalAlpha = 1
-        const fh = Math.min(1, p.tally / COLUMN_FULL) * colH
+        const fh = Math.min(1, p.volume / COLUMN_FULL) * colH
         ctx.fillStyle = p.color
         ctx.fillRect(x, colBot - fh, colW, fh)
         ctx.fillStyle = SEPIA
         ctx.font = '600 11px ui-monospace, monospace'
-        ctx.fillText(`${p.tally}`, x, colBot + 15)
+        ctx.fillText(p.volume.toFixed(2), x - 2, colBot + 15)
       }
 
-      // sepia readout in the gap between the lanes
-      const ratio = test.tally > 0 ? `  =  ${(ref.tally / test.tally).toFixed(1)} : 1` : ''
       ctx.fillStyle = SEPIA
-      ctx.font = '600 12px ui-monospace, monospace'
-      ctx.fillText(`Q ∝ R⁴     collected ${ref.tally} : ${test.tally}${ratio}`, padX, h * 0.5 + 4)
+      ctx.font = '11px system-ui, sans-serif'
+      ctx.fillText('Same pressure drop, length and fluid', padX, 16)
+      ctx.fillText('Volume', colX0, colTop - 8)
+      ctx.font = '600 12px system-ui, sans-serif'
+      const flowRatio = volumeFlux(test.R) / volumeFlux(R_REF)
+      ctx.fillText(`Flow: ${(100 * flowRatio).toFixed(flowRatio < 0.1 ? 1 : 0)}% of reference`, padX, h * 0.5 - 3)
+      ctx.font = '11px system-ui, sans-serif'
+      ctx.fillText(`Collected over ${elapsed.toFixed(1)} s`, padX, h * 0.5 + 15)
     },
   }
 }
 
 export function PoiseuillePipe() {
   const [R, setR] = useState(0.5)
-  const rRef = useRef(R)
-  rRef.current = R
-
+  const radius = useRef(R), sim = useRef<PipeComparison | null>(null)
+  radius.current = R
   return (
-    <Sim height={320} create={() => createPipes(rRef)}>
+    <Sim height={320} create={() => {
+      const fresh = createPipes(radius.current); sim.current = fresh; return fresh
+    }}>
       <label className="sim-slider">
-        <span>narrow</span>
-        <input
-          type="range"
-          min={0.35}
-          max={1.0}
-          step={0.01}
-          value={R}
-          onChange={(e) => setR(Number(e.target.value))}
-        />
-        <span>wide R</span>
+        <span>Radius</span>
+        <input aria-label="Pipe radius" type="range" min={0.35} max={1} step={0.01} value={R}
+          onChange={e => {
+            const next = Number(e.target.value); setR(next); sim.current?.setRadius(next)
+          }} />
+        <span>{R.toFixed(2)}</span>
       </label>
     </Sim>
   )

@@ -1,327 +1,205 @@
+import { useRef, useState } from 'react'
 import { Sim, type Stepper } from '../components/Sim'
-import { FluidSolver, SolverRenderer } from './lib/solver'
 import { PALETTE } from './lib/palette'
+import { NX, NY, inside, drawWing, type Point } from './history/wing'
+import { PROBE, boxFlux, blendFlow, projectWingFlow, sampleFlow, type FaceFlow } from './history/projection'
 
-// Lesson 03 · "Euler's Field" — what the pressure term is actually for.
-//
-// Two channels STACKED, not side by side. Stacking puts the same x-column of
-// both flows on the same vertical line, so the eye differences them for free:
-// at any station along the channel you can see what the upper fluid did and
-// what the lower one did instead. Side-by-side panes make the reader saccade
-// horizontally and re-find the disc each time.
-//
-//   upper — the full step, pressure included: advect, diffuse, then project
-//           (solve ∇²p = ∇·u*, subtract ∇p). The stream parts and goes AROUND.
-//   lower — the identical step with the projection removed. Nothing rescues
-//           incompressibility, so the fluid goes THROUGH: dye piles into the
-//           disc's face, the streaklines fold, and the violet overlay marks
-//           every cell that is quietly creating or destroying fluid.
-//
-// Both solvers come from the same constructor call with the same arguments, so
-// they are bit-identical at t=0, and they are stepped in lockstep inside one
-// fixed-timestep loop. The ONLY difference between them is `toggles.project`.
-// There are no knobs: the figure this replaces reused lesson 01's three-switch
-// TermToggle, which let a reader mutate an already-ruined running sim, so the
-// clean before/after was never on screen at the same time — and two of its
-// three switches named terms this section has not introduced yet.
-//
-// VISCOSITY HONESTY: Euler's equations have no viscosity at all, and both panes
-// here carry a little (Re = 60). That is deliberate. An inviscid upper pane on
-// this grid would shed an unsteady wake, and an unsteady upper pane invites the
-// wrong reading — "turbulent vs. laminar" — when the figure means "goes around
-// vs. goes through". Because the viscosity is IDENTICAL on both sides, it
-// cancels out of the comparison: the pressure term remains the only difference
-// between the two flows.
-//
-// STABILITY (AGENTS.md): semi-Lagrangian advection is unconditionally stable
-// and diffusion is solved implicitly (Jacobi, stable for any a = ν·dt), so
-// neither pane can blow up numerically — the lower pane fails PHYSICALLY, which
-// is the whole point. INFLOW·FIXED_DT = 22/40 = 0.55 cells per step keeps the
-// backtrace inside a neighbouring cell, which is an ACCURACY choice, not a
-// stability one; the scheme would survive a much larger step, just smeared.
+const DT = 1 / 120
+const HEAD = 27
+const FOOT = 28
+const GAP = 18
+const VIEW_WIDTH = 168
+const INK = '#41464f'
+const MUTED = '#7b818c'
+interface Particle { x: number; y: number; color: number }
+export interface PressureComparison extends Stepper {
+  setPressure: (amount: number) => void
+  measure: () => { reference: ReturnType<typeof boxFlux>; experiment: ReturnType<typeof boxFlux> }
+}
 
-// ---------------------------------------------------------------- constants
+// Trace the same two inlet heights through each field. These are computed
+// streamlines, not decorative curves or a density simulation.
+export function tracePressurePaths(field: FaceFlow): Point[][] {
+  return [45, 56].map(y => {
+    const path: Point[] = [{ x: 2, y }]
+    let p = path[0]
+    const dt = 1 / 180
+    for (let i = 0; i < 5000; i++) {
+      const a = sampleFlow(field, p.x, p.y)
+      const b = sampleFlow(field, p.x + a.x * dt / 2, p.y + a.y * dt / 2)
+      const next = { x: p.x + b.x * dt, y: p.y + b.y * dt }
+      if (inside(next.x, next.y) || Math.hypot(b.x, b.y) < 0.1) break
+      path.push(next)
+      p = next
+      if (p.x > NX - 2 || p.y < 1 || p.y > NY - 1) break
+    }
+    return path
+  })
+}
 
-const INFLOW = 22 // cells/s
-const FIXED_DT = 1 / 40
-const RE = 60 // ν = U·D/Re, set once per grid below
-const GAP = 10 // px between the two panes
-const LINGER = 1.1 // s to hold on the wreckage before rebuilding both
-
-// Grid sized so CELLS ARE SQUARE — a disc has to render as a disc. The figure
-// this replaces stretched a fixed 128×80 grid across a wide canvas and drew an
-// ellipse, which reads as an airfoil-ish blob and quietly changes the physics
-// the reader thinks they are looking at. Derive the row count from the PANE's
-// pixel aspect; if a short pane leaves too few rows to resolve the disc, raise
-// nx and ny TOGETHER (cells stay square) rather than squashing the aspect.
-// At the article's 720px column and height 360, a pane is ~700×175 — aspect
-// 0.25, which would put ny at 36 and the disc at r=4. NY_MIN=48 lifts that to
-// r=6 (D=12 cells, close to CylinderFlow's 14) and pulls nx up to ~192 to keep
-// the cells square. ~9.2k cells per pane, two panes; the same order as the CPU
-// cylinder's single 144×88.
-const NX_TARGET = 144
-const NY_MIN = 48
-
-type Grid = { nx: number; ny: number; discR: number; discX: number; discY: number; dyeRows: number[] }
-
-const DYE_STRIPES = 8
-
-function gridFor(paneW: number, paneH: number): Grid {
-  const aspect = paneH / paneW
-  let nx = NX_TARGET
-  let ny = Math.round(nx * aspect)
-  if (ny < NY_MIN) {
-    ny = NY_MIN
-    nx = Math.round(ny / aspect)
+export function createPressureComparison(initialPressure = 0): PressureComparison {
+  const projection = projectWingFlow()
+  if (projection.relativeResidual > 1e-7) throw new Error('Pressure comparison did not converge')
+  const experiment: FaceFlow = { u: projection.before.u.slice(), v: projection.before.v.slice() }
+  let pressure = initialPressure
+  blendFlow(projection, pressure, experiment)
+  const referenceFlux = boxFlux(projection.after)
+  let experimentFlux = boxFlux(experiment)
+  const referencePaths = tracePressurePaths(projection.after)
+  let experimentPaths = tracePressurePaths(experiment)
+  let seed = 1757
+  const random = () => {
+    seed = (Math.imul(seed, 1664525) + 1013904223) | 0
+    return (seed >>> 0) / 4294967296
   }
-  const discR = Math.round(0.13 * ny)
-  return {
-    nx,
-    ny,
-    discR,
-    discX: Math.round(0.26 * nx),
-    // One cell off the vertical centre-line — CylinderFlow's convention. A
-    // perfectly symmetric solve sits on an unstable knife-edge; the offset lets
-    // the wake pick a side instead of hanging there. At Re 60 the upper wake
-    // should still relax to steady and near-symmetric.
-    discY: Math.round(0.5 * ny) + 1,
-    dyeRows: Array.from({ length: DYE_STRIPES }, (_, s) =>
-      Math.round(((s + 0.5) / DYE_STRIPES) * (ny - 2)) + 1,
-    ),
+  // Identical initial tracer positions in both fields. Dots trace prescribed
+  // velocities; their count is NOT a density or volume-conservation estimator.
+  const spawn = (p: Particle, scatter = false) => {
+    const row = Math.floor(random() * 12)
+    p.x = scatter ? 2 + random() * (NX - 4) : 2
+    p.y = 22 + row * 5.4 + (random() - 0.5)
+    p.color = row < 6 ? 0 : 1
+    if (inside(p.x, p.y)) p.x = 2
   }
-}
-
-// THE METER — mean |∇·u| per fluid cell, displayed as "% of its volume per
-// second" (div is 1/s on a unit cell, so ×100 is exactly that).
-//
-// MEASURED LESSON (reader pass, 2026-07-29): the first version reported the
-// FRACTION OF CELLS whose |div| cleared a floor — a spread statistic — and it
-// read BACKWARDS: the projected pane's 40-sweep Jacobi residual is diffuse
-// low-grade noise that tripped the floor in 6.5% of cells, while the broken
-// pane's violation, though enormous, is CONCENTRATED in the plume around the
-// disc (3.3% of cells). The honest pane out-scored the broken one and the
-// number argued against the figure. Magnitude, not spread, is what differs
-// between the panes, so the meter now averages |div| itself: the concentrated
-// plume dominates the mean, the diffuse residual stays small, and the ordering
-// matches what the violet shows.
-// MEASURED (2026-07-29, headless audit): the honest pane's steady mean reads
-// ~5.5% of a cell's volume per second — that is the 40-sweep Jacobi residual's
-// true size, reported rather than rounded away. The first threshold here was
-// 0.06, which restarted the broken pane the instant it crossed 6.0% — capping
-// the on-screen contrast at 6.0-vs-5.5, two nearly equal numbers. The wreck
-// threshold must sit far above the honest baseline or the meter contrast is
-// throttled by the restart logic itself.
-const WRECK_MEAN = 0.3 // broken pane restarts near ~30% vs the honest ~5.5%
-// A hard cap on one demonstration cycle, so the birth of the catastrophe is on
-// screen for a reader arriving mid-scroll even if WRECK_MEAN is mistuned. A
-// parcel crosses the channel in nx/INFLOW ≈ 9 s, so 12 s is ~1.4 crossings.
-const MAX_RUN = 12
-
-const INK = 'rgba(26,31,43,0.75)'
-const LABEL_FONT = '600 12px ui-sans-serif, system-ui'
-
-// ------------------------------------------------------------------- panes
-
-type PaneSpec = {
-  label: string
-  project: boolean
-  overlay: 'none' | 'divergence'
-  meterColor: string
-}
-
-const SPEC_ON: PaneSpec = {
-  label: '−∇p/ρ on',
-  project: true,
-  overlay: 'none',
-  meterColor: INK,
-}
-const SPEC_OFF: PaneSpec = {
-  label: '−∇p/ρ off',
-  project: false,
-  overlay: 'divergence',
-  // violet doubles as the legend for the overlay: the number and the stain are
-  // the same colour, so no sentence is needed to connect them
-  meterColor: PALETTE.div,
-}
-
-type Pane = {
-  spec: PaneSpec
-  solver: FluidSolver
-  renderer: SolverRenderer
-  /** Readout only — written in step(), read in draw(). draw() stays pure. */
-  frac: number
-}
-
-function makePane(spec: PaneSpec, g: Grid): Pane {
-  const visc = (INFLOW * 2 * g.discR) / RE
-  const solver = new FluidSolver(g.nx, g.ny, INFLOW, visc)
-  solver.addDisc(g.discX, g.discY, g.discR)
-  solver.toggles.project = spec.project
-  // MEASURED (2026-07-29): at the default 40 Jacobi sweeps the projected pane's
-  // mean |div| residual is ~6%/s — the SAME order as the broken pane's
-  // concentrated crime averaged over its channel, so the two meters read as
-  // near-equals (and sometimes inverted) while the violet shows an enormous
-  // one-sided plume. No statistic can rescue a residual as large as the signal;
-  // the honest pane has to actually converge. 160 sweeps on this small grid
-  // costs ~1.5M cell-ops/step — cheap — and drops the residual severalfold, so
-  // the meters separate for the honest reason. Only the projected pane pays
-  // (the broken pane never projects).
-  solver.pressureIters = 160
-  return { spec, solver, renderer: new SolverRenderer(solver), frac: 0 }
-}
-
-/**
- * Mean |∇·u| over the INTERIOR fluid cells — magnitude, not spread (see METER
- * note), and interior only (see below).
- *
- * MEASURED (2026-07-29): the solver calls `boundaries()` AFTER `project()`,
- * re-imposing the inflow column, wall rows, and disc no-slip on top of the
- * freshly projected field — which manufactures divergence along those cells
- * that no number of pressure sweeps can remove (40 vs 160 sweeps: identical
- * ~6%/s reading). That divergence is the boundary enforcement's, not the
- * flow's, and it drowned the honest pane's meter in it. So the meter measures
- * where the equation is actually in charge: MARGIN cells in from every edge,
- * and never adjacent to a solid cell. Both panes use the same mask, and the
- * broken pane's plume lives squarely inside it.
- */
-const MARGIN = 4
-function meanAbsDiv(s: FluidSolver): number {
-  let fluid = 0
-  let sum = 0
-  for (let j = MARGIN; j < s.ny - MARGIN; j++) {
-    for (let i = MARGIN; i < s.nx - MARGIN; i++) {
-      const k = s.idx(i, j)
-      if (s.solid[k]) continue
-      if (s.solid[k - 1] || s.solid[k + 1] || s.solid[k - s.nx] || s.solid[k + s.nx]) continue
-      fluid++
-      sum += Math.abs(s.div[k])
+  const first: Particle[] = Array.from({ length: 240 }, () => {
+    const p: Particle = { x: 0, y: 0, color: 0 }
+    spawn(p, true)
+    return p
+  })
+  const particles = [first, first.map(p => ({ ...p }))]
+  const advance = (marks: Particle[], field: FaceFlow) => {
+    for (const p of marks) {
+      // RK2 with fixed DT. Speeds in this solved field stay below 70 cells/s,
+      // so a step is under 0.6 cell. No PDE time integration is performed.
+      const v = sampleFlow(field, p.x, p.y)
+      const mid = sampleFlow(field, p.x + v.x * DT / 2, p.y + v.y * DT / 2)
+      const x = p.x + mid.x * DT, y = p.y + mid.y * DT
+      // Tracers stop at the impermeable body, rather than being drawn through it.
+      if (!inside(x, y)) { p.x = x; p.y = y }
+      if (p.x < 0 || p.x > NX - 2 || p.y < 1 || p.y > NY - 1) spawn(p)
     }
   }
-  return sum / fluid
-}
-
-/**
- * The projected pane will NOT read 0. Forty Jacobi sweeps leave a residual,
- * and the figure reports it instead of rounding it away to a comforting zero.
- */
-function pct(meanDiv: number): string {
-  const p = meanDiv * 100
-  if (p >= 10) return p.toFixed(0)
-  if (p >= 1) return p.toFixed(1)
-  if (p > 0 && p < 0.01) return '<0.01'
-  return p.toFixed(2)
-}
-
-// ------------------------------------------------------------------- phase
-
-type Phase = { kind: 'running' } | { kind: 'wrecked'; since: number }
-
-function createPressureOff(width: number, height: number): Stepper {
-  const paneH = (height - GAP) / 2
-  const grid = gridFor(width, paneH)
-
-  const build = (): readonly [Pane, Pane] => [makePane(SPEC_ON, grid), makePane(SPEC_OFF, grid)]
-
-  let panes = build()
-  let phase: Phase = { kind: 'running' }
-  let elapsed = 0
   let acc = 0
-
-  const advanceBoth = () => {
-    for (const pane of panes) {
-      pane.solver.injectDyeStripe(grid.dyeRows, 1)
-      pane.solver.step(FIXED_DT)
-      // THE TRAP: FluidSolver.project() calls computeDivergence() BEFORE it
-      // subtracts ∇p, so after a projected step `solver.div` holds the
-      // PRE-correction divergence — the crime the pressure term just cleaned
-      // up, not what is left over. Reading it as-is would make the honest pane
-      // look exactly as guilty as the broken one. Recompute here, after the
-      // correction, so the upper meter reports the true residual. (The lower
-      // pane never projects at all, so its `div` is stale for the opposite
-      // reason — same fix. CylinderFlow.tsx does this too.)
-      pane.solver.computeDivergence()
-      pane.frac = meanAbsDiv(pane.solver)
-    }
-  }
-
-  // Thin dispatcher: one handler per phase, no default branch.
-  const runRunning = (): Phase => {
-    advanceBoth()
-    elapsed += FIXED_DT
-    const wrecked = panes[1].frac >= WRECK_MEAN || elapsed >= MAX_RUN
-    return wrecked ? { kind: 'wrecked', since: 0 } : { kind: 'running' }
-  }
-
-  const runWrecked = (p: { kind: 'wrecked'; since: number }): Phase => {
-    const since = p.since + FIXED_DT
-    if (since <= LINGER) return { kind: 'wrecked', since }
-    // A restart of the DEMONSTRATION, not of physics — nothing here is claiming
-    // that a fluid recovers from having its pressure term removed. It never
-    // does. Both panes are rebuilt together, from the same constructor call, so
-    // every cycle starts the comparison fair and a reader who arrives mid-scroll
-    // still sees the catastrophe being BORN rather than its aftermath.
-    // (AdvectionSchemes.tsx restarts its two panes for exactly this reason.)
-    panes = build()
-    elapsed = 0
-    return { kind: 'running' }
-  }
-
-  const substep = (p: Phase): Phase => {
-    switch (p.kind) {
-      case 'running':
-        return runRunning()
-      case 'wrecked':
-        return runWrecked(p)
-    }
-  }
-
-  // Second thin dispatcher: the hold note. An empty string draws nothing, so
-  // there is no branch at the paint site either.
-  const noteFor = (p: Phase): string => {
-    switch (p.kind) {
-      case 'running':
-        return ''
-      case 'wrecked':
-        return 'restarting both'
-    }
-  }
-
-  const paint = (ctx: CanvasRenderingContext2D, pane: Pane, w: number, y: number) => {
-    ctx.save()
-    ctx.translate(0, y)
-    pane.renderer.draw(ctx, w, paneH, pane.spec.overlay)
-    ctx.font = LABEL_FONT
-    ctx.fillStyle = INK
-    ctx.fillText(pane.spec.label, 10, 18)
-    ctx.fillStyle = pane.spec.meterColor
-    ctx.fillText(`fluid created or destroyed: ${pct(pane.frac)}% of a cell's volume each second`, 10, paneH - 10)
-    ctx.restore()
-  }
-
   return {
+    setPressure(amount) {
+      pressure = Math.max(0, Math.min(1, amount))
+      blendFlow(projection, pressure, experiment)
+      experimentFlux = boxFlux(experiment)
+      experimentPaths = tracePressurePaths(experiment)
+      // The control changes the field. Old tracer positions are retained;
+      // released parcels now follow the repaired velocity on the next step.
+    },
+    measure: () => ({ reference: referenceFlux, experiment: experimentFlux }),
     step(dt) {
       acc += dt
-      let guard = 0
-      while (acc >= FIXED_DT && guard < 3) {
-        phase = substep(phase)
-        acc -= FIXED_DT
-        guard++
+      while (acc + 1e-10 >= DT) {
+        advance(particles[0], projection.after)
+        advance(particles[1], experiment)
+        acc -= DT
       }
-      acc = Math.min(acc, FIXED_DT)
     },
-    draw(ctx, w, h) {
-      const lowerY = paneH + GAP
-      paint(ctx, panes[0], w, 0)
-      paint(ctx, panes[1], w, lowerY)
-      ctx.font = LABEL_FONT
-      ctx.fillStyle = PALETTE.div
-      ctx.textAlign = 'right'
-      ctx.fillText(noteFor(phase), w - 10, h - 10)
-      ctx.textAlign = 'left'
+    draw(ctx, width, height) {
+      ctx.fillStyle = '#ffffff'
+      ctx.fillRect(0, 0, width, height)
+      const paneHeight = (height - GAP) / 2
+      const scale = width / VIEW_WIDTH
+      const fieldHeight = paneHeight - HEAD - FOOT
+      const viewTop = NY / 2 - fieldHeight / scale / 2
+      const labels = ['With pressure', pressure === 0 ? 'Without pressure' : pressure === 1 ? 'Pressure restored' : 'Partly restored']
+      const fluxes = [referenceFlux, experimentFlux]
+      for (let row = 0; row < 2; row++) {
+        const y0 = row * (paneHeight + GAP)
+        const field = row === 0 ? projection.after : experiment
+        const flux = fluxes[row]
+        ctx.save()
+        ctx.translate(0, y0)
+        ctx.fillStyle = INK
+        ctx.font = '600 14px ui-sans-serif, system-ui'
+        ctx.fillText(labels[row], 8, 18)
+        ctx.save()
+        ctx.beginPath(); ctx.rect(0, HEAD, width, fieldHeight); ctx.clip()
+        ctx.fillStyle = '#f7f9fc'; ctx.fillRect(0, HEAD, width, fieldHeight)
+        ctx.translate(0, HEAD - viewTop * scale)
+        const xBox = PROBE.left * scale, yBox = PROBE.top * scale
+        const boxW = (PROBE.right - PROBE.left) * scale, boxH = (PROBE.bottom - PROBE.top) * scale
+        ctx.fillStyle = 'rgba(37,99,235,0.055)'; ctx.fillRect(xBox, yBox, boxW, boxH)
+        // Faint instantaneous direction marks make the turning visible even
+        // while paused. They sample the same face field that moves the dots.
+        ctx.lineWidth = 0.8; ctx.strokeStyle = '#cad1dc'
+        for (let y = 27; y < 83; y += 8) for (let x = 12; x < NX - 8; x += 14) {
+          if (inside(x, y)) continue
+          const v = sampleFlow(field, x, y)
+          ctx.beginPath(); ctx.moveTo(x * scale, y * scale)
+          ctx.lineTo((x + v.x * 0.16) * scale, (y + v.y * 0.16) * scale); ctx.stroke()
+        }
+        for (const p of particles[row]) {
+          const v = sampleFlow(field, p.x, p.y)
+          ctx.strokeStyle = p.color === 0 ? PALETTE.dye : PALETTE.dye2
+          ctx.fillStyle = ctx.strokeStyle
+          ctx.globalAlpha = 0.4; ctx.lineWidth = 1
+          ctx.beginPath(); ctx.moveTo((p.x - v.x * 0.08) * scale, (p.y - v.y * 0.08) * scale)
+          ctx.lineTo(p.x * scale, p.y * scale); ctx.stroke()
+          ctx.globalAlpha = 0.65; ctx.beginPath(); ctx.arc(p.x * scale, p.y * scale, 1.35, 0, 2 * Math.PI); ctx.fill()
+        }
+        ctx.globalAlpha = 1
+        const paths = row === 0 ? referencePaths : experimentPaths
+        for (let i = 0; i < paths.length; i++) {
+          const path = paths[i]
+          ctx.strokeStyle = i === 0 ? PALETTE.dye : PALETTE.dye2
+          ctx.lineWidth = 1.8
+          ctx.beginPath()
+          path.forEach((p, j) => j === 0 ? ctx.moveTo(p.x * scale, p.y * scale) : ctx.lineTo(p.x * scale, p.y * scale))
+          ctx.stroke()
+          // Direction heads ride the actual tangent to the computed path.
+          for (const targetX of [28, 77, 130]) {
+            const j = path.findIndex(p => p.x >= targetX)
+            if (j < 1) continue
+            const p = path[j], prev = path[j - 1]
+            const angle = Math.atan2(p.y - prev.y, p.x - prev.x)
+            ctx.save(); ctx.translate(p.x * scale, p.y * scale); ctx.rotate(angle)
+            ctx.beginPath(); ctx.moveTo(-5, -3); ctx.lineTo(0, 0); ctx.lineTo(-5, 3); ctx.stroke(); ctx.restore()
+          }
+        }
+        drawWing(ctx, NX * scale, NY * scale)
+        ctx.strokeStyle = '#475569'; ctx.lineWidth = 1.25; ctx.setLineDash([4, 3])
+        ctx.strokeRect(xBox, yBox, boxW, boxH); ctx.setLineDash([])
+        ctx.restore()
+        const meterY = paneHeight - 9
+        ctx.fillStyle = MUTED; ctx.font = '12px ui-sans-serif, system-ui'
+        ctx.fillText('Outflow / inflow', 8, meterY)
+        const barX = Math.max(157, width - 158), barW = width - barX - 57
+        ctx.fillStyle = '#e5e9f0'; ctx.fillRect(barX, meterY - 7, barW, 4)
+        ctx.fillStyle = row === 0 || pressure === 1 ? PALETTE.vel : PALETTE.dye
+        ctx.fillRect(barX, meterY - 7, barW * Math.min(1, flux.ratio), 4)
+        ctx.font = '600 13px ui-monospace, monospace'; ctx.textAlign = 'right'
+        ctx.fillText(`${Math.round(flux.ratio * 100)}%`, width - 8, meterY + 1)
+        ctx.restore()
+      }
     },
   }
 }
 
-export function PressureOff({ height = 360 }: { height?: number }) {
-  return <Sim height={height} create={(w, h) => createPressureOff(w, h)} />
+export function PressureOff() {
+  const [pressure, setPressure] = useState(0)
+  const pressureRef = useRef(0)
+  const simRef = useRef<PressureComparison | null>(null)
+  return (
+    <Sim aspectRatio={1.12} create={() => {
+      const sim = createPressureComparison(pressureRef.current)
+      simRef.current = sim
+      return sim
+    }}>
+      <label className="sim-slider">
+        <span>Restore pressure</span>
+        <input type="range" aria-label="Restore pressure" min={0} max={100} step={1} value={pressure}
+          onChange={e => {
+            const value = Number(e.target.value)
+            pressureRef.current = value / 100
+            simRef.current?.setPressure(value / 100)
+            setPressure(value)
+          }} />
+        <span>{pressure}%</span>
+      </label>
+    </Sim>
+  )
 }

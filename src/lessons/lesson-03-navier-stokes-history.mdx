@@ -1,9 +1,10 @@
+import { Link } from 'react-router-dom'
 import { TimelineHero } from '../sims/TimelineHero'
 import { BuoyancyCrown } from '../sims/BuoyancyCrown'
 import { Barometer } from '../sims/Barometer'
 import { PascalMountain } from '../sims/PascalMountain'
-import { DyeCarry } from '../sims/DyeCarry'
-import { ShearBlend } from '../sims/ShearBlend'
+import { FlowPrediction } from '../sims/FlowPrediction'
+import { MomentumExchange } from '../sims/MomentumExchange'
 import { CorpuscleHail } from '../sims/CorpuscleHail'
 import { SoundRace } from '../sims/SoundRace'
 import { BernoulliPipe } from '../sims/BernoulliPipe'
@@ -19,7 +20,7 @@ import { PoiseuillePipe } from '../sims/PoiseuillePipe'
 import { ReynoldsTube } from '../sims/ReynoldsTube'
 import { BoundaryLayerLoupe } from '../sims/BoundaryLayerLoupe'
 import { WhorlsCascade } from '../sims/WhorlsCascade'
-import { SolverXray } from '../sims/SolverXray'
+import { SolverSteps } from '../sims/SolverSteps'
 
 # The History of Navier–Stokes
 
@@ -30,18 +31,49 @@ The hyphen between them was installed by posterity — and it skips over three o
 men who derived the same equation in between, each convinced the others had done it
 wrong.
 
-The equation stands built. What put its terms on paper is a hundred and sixty
-years of argument — staged here on the same gray disc in the same stream. The scene
-never changes. The theory drawing it does.
+Its terms took shape through a hundred and sixty years of argument. Below, the
+wing and the incoming stream stay the same while the model of the fluid changes.
 
 <TimelineHero />
 
-Drag the year and the theory changes its mind: a hail of particles, then a
-frictionless glide, then honey, then eddies, then the trail you know from the
-previous lesson. Under the canvas, the equation assembles as the years pass, each
-term wearing a nameplate. The nameplates travel with us, filling in one at a
-time. The right-hand end of the
-slider is blank. That is not an oversight, and it stays blank to the end.
+Drag across the labeled year notches: independent particles strike the wing in Newton's model;
+Euler's fluid bends around it without friction; viscosity slows the water at
+the surface and changes the wake. The amber and rose dots follow individual
+parcels, so even a steady stream shows motion. The colors mark where the parcels
+entered, not different fluids. Pale regions contain undyed fluid, not a vacuum;
+the gray tracers follow that fluid throughout the channel.
+
+**Mark the wake** places a blue batch of tracers behind the wing without pushing
+the water. In the Euler view they travel downstream. In the later viscous views,
+let the wake develop for a few seconds, then release a batch: some tracers turn
+back toward the wing and circle inside the wake before escaping. They reveal
+motion the inlet dye can miss.
+
+At a notch, one model fills the view. Between notches, the neighboring
+simulations run together and their images overlap in the percentages shown
+above. The nearer era keeps its amber and rose dye; the other appears in cyan
+so you can distinguish their paths. At the midpoint the later era takes the
+normal colors, while the earlier one fades away in cyan. The color keys beside
+the names identify each view. This is a visual crossfade, not a fluid governed by a mixture of two
+laws. The notches are equally spaced steps through the models, not a linear
+calendar scale. Click a year to select it exactly.
+
+I use a rounded wing section for all six stops. The dates mark changes in our
+understanding, not six simulations those scientists actually ran. Newton's
+independent particles cannot exchange momentum with their neighbors. The Euler
+view chooses a steady, irrotational solution; it does not represent every flow
+Euler's equations allow. The viscous stops use the same modern solver, with
+decreasing viscosity, and 1904 adds a
+near-wall comparison. Its blue strokes show the computed streamwise velocity;
+the gray strokes show the frictionless value at the same locations. Under the
+canvas, each term gains its author's name. The separate smoothness plate stays
+open; 1999 at the end of the slider dates the numerical method.
+
+The later views can shed vortices, but this is a coarse two-dimensional flow,
+not a resolved simulation of three-dimensional turbulence. No new "turbulence
+term" switches on at 1883 or 1999. I advance the viscous equations on a staggered
+108 × 54 grid and solve for pressure until the remaining volume imbalance is
+small; the drawing's smooth outline does not add resolution to that grid.
 
 ## Still Water
 
@@ -61,40 +93,96 @@ and it gives them about *rest* only.
 Pressure, too, was born in still fluid. In 1643 Evangelista Torricelli stood a
 closed tube of
 mercury upside down in a dish and watched the column fall to a fixed height,
-leaving a vacuum above it. Tilt the tube below and watch what refuses to change:
+leaving a vacuum above it. The question is what the air supports: a fixed length
+of mercury, or a fixed vertical height?
+
+Both tubes below sit in the same mercury reservoir under the same air pressure.
+Keep the left tube upright and tilt the right one. The dark liquid ends at the
+same horizontal line in both; the pale space above it is vacuum. Compare the
+vertical ruler with the length measured along each tube. The bar underneath
+divides all the mercury between the reservoir and the columns above its surface.
+Watch what one gains as the other loses:
 
 <Barometer />
 
-The mercury's *vertical* height stays put while the length of the column grows to
-accommodate the tilt. Something is holding the column up, and it doesn't care about
-the tube — Torricelli named it: we live submerged at the bottom of an ocean of air,
-and the column is a scale weighing that ocean. In 1648 Blaise Pascal sent his
-brother-in-law up a mountain with two barometers to check — one carried to the
-summit, one left at the base with a friar assigned to stare at it all day, so that
-nobody could say the weather had done it — and the ocean got shallower on the way
-up:
+At this pressure, both surfaces stand 760 mm above the reservoir. At 55° the tilted
+column is about 1,325 mm long, yet it reaches exactly the same height. That longer
+column really does contain more mercury. Where does the extra come from?
+
+The bottom of the tube is open to the reservoir. As you tilt it, mercury enters
+through that submerged opening and occupies more of the tube, leaving less vacuum
+above it. The glass keeps its length and internal volume; the mercury keeps its
+density. Raise the tube upright again and the extra mercury drains back into the
+reservoir.
+
+At 55°, the columns above the bath hold about 452 mL more mercury, and the
+reservoir holds exactly that much less. Its surface drops about 25 mm below the
+faint line marking its starting level. Both column tops descend with it, still
+760 mm above the new surface. The volume bar keeps its total length throughout.
+
+These are illustrative vessel dimensions, with a shallow reservoir so its loss
+is visible. We're comparing settled states, leaving out sloshing, glass-wall
+volume, and meniscus curvature. The mercury surface stays horizontal as the
+glass rotates around it.
+
+[Hydrostatic balance](https://openstax.org/books/university-physics-volume-1/pages/14-2-measuring-pressure)
+is $p_{\rm air}=\rho g h$. Tilt changes the distance along the tube; changing the
+pressure changes $h$. Torricelli pictured an ocean of air with us submerged at
+its bottom. Pascal took that picture seriously: climb a mountain and there is
+less air above you. If its weight supports the mercury, the column should fall.
+
+But a falling column alone would not settle it. The weather might have changed
+while you were climbing. On 19 September 1648, Pascal's brother-in-law Florin
+Périer compared two tubes in Clermont, found their readings equal, and left one
+with Father Chastin to watch throughout the day. He carried the other up the
+Puy-de-Dôme. The tube that stayed behind was as important as the one that climbed.
+
+Follow the three stops below. The instruments are drawn at a common baseline so
+you can compare their column heights, even when they are in different places.
+These are the observations Périer reported, with the old French units converted
+approximately to millimeters.
 
 <PascalMountain />
 
-The column stands about eight centimeters lower at the summit of the Puy-de-Dôme
-than in the town below, because there is simply less air overhead; the barometer at
-the base never moved. Pressure is the weight of the fluid above you. So far it is a
-*static* weight — its second career, as the instant enforcer inside moving water, is
-a century away.
+[Périer's account](https://fr.wikisource.org/wiki/Œuvres_de_Blaise_Pascal/Lettre_de_Florin_Perier_à_Blaise_Pascal)
+gives the summit drop as three French inches and one and a half lines—about
+8.5 centimeters. He repeated the summit measurement in exposed and sheltered
+places, and reported the same height. The result survived both a change of
+surroundings and the journey back.
 
-And moving water? The best the age could do was look at it very, very carefully.
-Around 1510 Leonardo da Vinci filled notebook pages with the wakes of obstacles in
-streams — braided eddies, drawn with an accuracy instruments wouldn't match for
-centuries — and gave the phenomenon its name: *la turbolenza*. Below is the kind of
-motion he was drawing; he could render it, catalogue it, name it — and neither he
-nor anyone else could write one line of mathematics about it:
+Less air overhead, less pressure, a shorter mercury column: the instrument gave
+Torricelli's ocean a measurable depth. We are still weighing fluids at rest. Pressure's second
+career, redirecting moving water from one place to another, is a century away.
 
-<DyeCarry field="vortex" />
+Moving water posed a harder demand. Leonardo's [studies of flowing water,
+around 1510–13](https://www.rct.uk/collection/912663/recto-studies-of-flowing-water-with-notes-verso-the-head-of-a-woman)
+trace curling waves through cascades. A drawing can record where water went.
+But push the water somewhere else, and what happens next?
 
-That is where dynamics stood for two hundred years after Archimedes' heirs perfected
-statics: turbulence had a name three centuries before it had an equation, and four
-before it had a number. A drawing is not a law. The first person to attempt a law
-was also the person who invented what "a law of motion" means.
+Both views below start with the same four eddies and the same colored markers.
+In the upper view, each place keeps its starting velocity forever. In the lower
+view, a modern fluid equation updates those velocities as the water moves.
+First let them run. Then **drag through either view to stir the lower fluid**;
+the same fresh dye appears in both. Try **Add dye only** as well: should adding a
+marker change the motion it reveals?
+
+<FlowPrediction />
+
+The upper markers keep circling the original eddies. Below, the eddies carry one
+another along, stretch, and rearrange; your stroke changes what they do next.
+Adding dye alone changes neither velocity field. The colors make motion visible,
+but cannot supply the missing rule for how velocity changes.
+
+Here that rule carries the fluid's local spin with the flow, lets viscosity
+smooth it, and reconstructs a velocity field that preserves volume. This is a
+small two-dimensional Navier–Stokes model, looking ahead to the equation we're
+going to assemble. Opposite edges join, so a marker leaving one side returns at
+the other. Without more stirring, viscosity gradually weakens the motion. It is
+an experiment with interacting vortices, not a reconstruction of Leonardo's
+cascade or a full simulation of three-dimensional turbulence.
+
+Knowing the motion now and calculating the motion next: that was the missing
+step. Newton made it the central problem of mechanics.
 
 ## Newton's Guess
 
@@ -103,14 +191,27 @@ through resisting fluids — is the least read and the most wrong. It is also wh
 this story properly starts, because buried in it is a one-sentence guess that turned
 out to be exactly right. Newton proposed that the resistance arising from the *want
 of lubricity* between parts of a fluid is proportional to the velocity with which
-those parts are separated from one another. Below, two layers of water slide past
-each other and the quick one hauls the slow one along; the slider thickens the
-fluid from water toward honey:
+those parts are separated from one another. Give two equal masses of water
+opposite velocities. If they exchange momentum, which one should slow down?
 
-<ShearBlend />
+Both views below start with the upper layers moving right and the lower layers
+moving left. The upper view keeps them uncoupled. In the lower one, viscosity
+lets adjacent layers pull on each other. Move the coupling slider, then watch
+near the seam; changing it starts both views together. **Kick layers apart**
+repeats the experiment at the current setting:
 
-Stress proportional to the rate of sliding — that is the working definition of an
-ordinary fluid to this day, and it is the physical content of the green term you
+<MomentumExchange />
+
+Both sides slow near the seam, and the change spreads outward. The colored
+markers show displacement; the arrows show signed velocity. No wall is driving
+these layers, and no momentum leaves at the outer edges. Their total momentum
+stays zero even as their relative motion fades. With no coupling, the two views
+agree. Strong coupling makes their disagreement visible within a few seconds.
+This is momentum diffusion across equal-mass layers, computed by a stable
+finite-difference scheme.
+
+Stress proportional to the rate of sliding remains the defining assumption for a
+Newtonian fluid, and it is the physical content of the green term you
 built in the previous lesson. Newton stated it in passing, as a hypothesis, and
 made no attempt to put it inside an equation of motion. It waited a hundred and
 thirty-five years for one.
@@ -130,17 +231,35 @@ model did eventually come back to life — two and a half centuries later, for
 spacecraft skimming the thin upper atmosphere, where the molecules really don't
 feel each other.)
 
-Newton also made the first prediction in history about a *wave* in a fluid: the
-speed of sound, derived from mechanics alone. The race below runs his number
-against the measured one:
+Newton also tried to calculate the speed of sound from mechanics. His result
+was about fifteen percent too slow. The missing ingredient was heat.
+
+Compress the same amount of air into the same smaller volume in both chambers
+below. On the left, heat escapes and temperature stays fixed. On the right,
+heat stays in the gas. Which chamber pushes back harder? The pressure bars share
+a scale and measure the rise above the starting pressure. Underneath, the two
+markers show how far a small sound disturbance would travel in each prepared
+gas during the same half-second:
 
 <SoundRace />
 
-He came in about fifteen percent low, and knew it, and padded the gap with fudge
-factors about the "crassitude" of air particles. The real error was thermodynamic —
-sound compresses air too fast for the heat to leak away, which stiffens the spring —
-and Laplace corrected it in 1816. Newton's number stayed wrong for a hundred and
-twenty-nine years.
+The insulated gas warms and its pressure rises more. It acts as a stiffer spring.
+**Release compression**: both gases return to the same starting temperature,
+pressure, and density, yet their predicted sound speeds still differ. The
+thermal assumption changes how strongly even a tiny compression pushes back.
+
+For the two [ideal-gas responses](https://openstax.org/books/university-physics-volume-1/pages/17-2-speed-of-sound),
+$pV$ stays constant when temperature is fixed, while $pV^\gamma$ stays constant
+when heat is retained. Near the starting state, the bulk modulus is therefore
+$p$ or $\gamma p$. Since $c=\sqrt{B/\rho}$, air's $\gamma\approx1.4$ makes
+sound about $\sqrt{1.4}$ times faster than Newton's isothermal prediction.
+The comparison starts at 0°C; the lower readouts include the additional warming
+when you compress the insulated chamber. These are reversible ideal-gas compression states
+and calculated sound fronts, not a molecular or acoustic wave simulation.
+
+Sound compresses air too quickly for much heat to escape. Laplace's correction
+in 1816 supplied that missing stiffness, a hundred and twenty-nine years after
+the *Principia*.
 
 One more thing happened in 1687 that shaped the next century: the calculus wars.
 When the priority fight came to trial at the Royal Society, the committee's report
@@ -158,10 +277,9 @@ pressure along the way. Narrow the pipe below and watch the gauges:
 
 <BernoulliPipe />
 
-Where the pipe narrows the markers rush and the gauge drops; where it widens they
-laze and the gauge climbs. Read that as an *observation*, not an explanation — a
-ledger that balances, with no mechanism on offer; the balance is all we need from
-it.
+Where the pipe narrows, the markers speed up and the pressure falls. Where it
+widens, they slow down and the pressure rises. Bernoulli's energy balance relates
+these changes, but it does not determine the full velocity field.
 
 What the book could not do is as important as what it could. An energy ledger along
 a pipe says nothing about water in the open — it cannot tell you what the stream
@@ -203,47 +321,51 @@ called for the resistance of a body moving through a fluid — the practical pro
 of the age, the number that decides hull shapes and cannon ranges — worked out for
 the simplest fluid imaginable: no friction, no stickiness, nothing but inertia and
 pressure. That fluid is the one d'Alembert's instrument could actually handle, so
-he took the question and computed. Before you look at what came out, commit to a
-guess.
+he took the question and computed. A theory of moving water ought to recover
+something as ordinary as the resistance you feel pulling an oar. Could this one?
+
+Hold a long cylinder across a stream and look at it end-on: it appears as the
+circle below. The gray dots follow the water. The colored arrows belong to the
+*cylinder*: they show the horizontal part of the pressure force at each patch of
+its surface. Before adding those forces, commit to a guess.
 
 <Predict
-  question="The stream below is frictionless — the ideal fluid of 1749. How hard does it push the disc downstream?"
-  a="Hard — it's a solid disc in a current"
+  question="In this steady, frictionless flow, what is the total downstream force on the cylinder?"
+  a="A substantial push — it blocks the current"
   b="Not at all"
 >
   <IdealFlow />
 </Predict>
 
-The meter is not broken and it is not asserting anything. It integrates the
-pressure over the disc's surface every frame, sorted by which way each patch of
-rim actually shoves: part of the surface is pushed downstream, part of it is
-pulled back upstream, and the two totals match to every decimal the meter can
-print.
+The water exerts forces, but **their sum is zero**. The brown arrows contribute
+downstream; the indigo arrows contribute upstream. Reflect any patch across the
+vertical dashed line and you find a partner with the same pressure and the
+opposite horizontal force. The two large arrows collect those contributions.
 
-Follow one parcel of water through the trip and the cancellation stops being a
-coincidence. The parcel arrives at the nose and is brought to a stop; the crowding
-there is the high pressure you can see in <C k="pHi">red</C>, and the arrows show
-it shoving the disc squarely downstream. Squeezed from behind by that high
-pressure, the parcel then accelerates away around the shoulder, into the
-<C k="pLo">cyan</C> — it has run downhill, spending pressure to buy speed. And now
-it has to get around the back. From the shoulder to the tail the pressure climbs
-again, so the parcel is running uphill, paying its speed back out. Here is the
-part that decides everything: **nothing in this fluid takes a cut.** No friction,
-no stickiness, no stirring, no heat. Every scrap of speed the parcel bought coming
-down the front hill it spends climbing the back one, so it arrives at the tail with
-exactly the speed it had at the nose — and therefore crowds against the tail at
-exactly the pressure it crowded against the nose. The red lobe behind the disc is
-not a coincidence of the geometry. It is the front lobe, rebuilt out of the
-parcel's own returned momentum.
+Try doubling **Stream speed** from 1× to 2×. Each total grows from 1 to 4; the
+faint gray arrows keep the original size in view. The pressure changes grow as
+speed squared, so the water acts harder on both sides. It still produces no net
+drag. Slowing the stream to 0.5× shrinks both totals to a quarter. You cannot get
+resistance out of this flow by turning it up.
 
-Now look at what that does to the arrows around the rim. The nose is shoved
-downstream and the tail is shoved upstream by patches of water crowding at
-identical pressure. Where the flow runs fastest, over the shoulders, the pressure
-drops below ambient and the water *pulls* instead — and it pulls at the front
-shoulders and the rear shoulders equally hard, in opposite directions. Every patch
-of that surface has a twin on the far side of the disc doing the opposite job with
-the same strength. The whole rim is a mirror, and the disc goes nowhere. A ship in
-this water needs no sails.
+These forces measure the pressure change from the undisturbed stream. Uniform
+surrounding pressure already cancels around a closed body, so subtracting it
+doesn't change the drag. A low-pressure patch can therefore contribute an outward
+*pull* in this accounting. Color tells you the direction of the horizontal force;
+it does not divide the cylinder into a front half and a back half.
+
+Why do the pressures match? Follow the paths around the cylinder. Water slows
+near the nose, speeds up around the shoulders, then slows again toward the rear.
+By Bernoulli's law, pressure falls as speed rises and recovers as speed falls.
+**In this solution the flow stays attached all the way around.** Nothing takes a
+cut from the mechanical energy: the water climbs the back pressure hill with
+what it gained coming down the front one. The rear pressure recovers completely,
+and the forces cancel.
+
+This figure evaluates the [exact potential-flow solution](https://www-mdp.eng.cam.ac.uk/web/library/enginfo/aerothermal_dvd_only/aero/fprops/poten/node37.html)
+and integrates its surface pressure. The zero is a result of those assumptions.
+Real water can leave a separated wake behind a cylinder; the rear pressure then
+fails to recover. We have not yet given the theory a way to explain that change.
 
 D'Alembert knew the verdict was absurd — the prize question was precisely the
 resistance that every sailor and swimmer feels. Twenty years on he was still
@@ -258,9 +380,9 @@ happens on it.
 
 <Waypoint>
 This is everything the year 1752 held: exact statics, an energy ledger for pipes, a
-brand-new mathematics of change invented for a vibrating string — and a proof, by
-the best theory available, that water cannot push back on anything moving through
-it. The zero on that meter is a debt, and this article does not pay it for another
+brand-new mathematics of change invented for a vibrating string — and a
+frictionless calculation that misses the resistance felt by every rower. The
+zero is a debt, and this article does not pay it for another
 hundred and fifty-two years.
 </Waypoint>
 
@@ -295,34 +417,43 @@ together for the first time in history:
   ]}
 />
 
-Four of the five nameplates fill in at once, all with the same name and year. The
-local change, the self-carrying, the pressure push, the incompressibility
-constraint: all Euler, 1757 — one man's decade. Delete the pressure term and the
-equation forgets the one thing that told the water a disc was there. Below, the
-same channel runs twice from the same still start, with the pressure push kept on
-top and cut underneath:
+Four of the five nameplates fill in together: local change, advection, pressure,
+and the incompressibility constraint all appear in Euler's 1757 equations.
+Pressure and that last constraint work together. When a wing blocks a stream,
+the water approaching it needs another way out.
+
+The dashed box below encloses a fixed region against the wing's nose. The amber
+and rose curves trace two routes from the inlet; the dots show motion along the
+flow. Watch the parcels entering the box from the left. In the upper view, pressure turns the flow so
+water can leave through the other sides. In the lower view, that pressure push
+has been removed. The meter compares the flow leaving the box with the flow
+entering it; a constant volume of incompressible water requires 100%.
 
 <PressureOff />
 
-On top the water feels the disc long before it arrives and bows around it —
-pressure is the only term in that line able to send news upstream. Underneath, the
-stream drives in as though nothing were in its way, banks up against the gray, and
-the <C k="div">violet</C> floods the places where water is being conjured out of
-nothing or quietly destroyed — and each pane's meter averages that crime over its
-whole channel. Both channels carry the same faint stickiness, which
-Euler's equations do not have at all; it is identical on both sides, so the only
-difference between them is the term.
+Without pressure, only part of the incoming flow finds a way out. That velocity
+field would compress the water in the box. Restoring the pressure bends the
+paths and brings the outflow back into balance. Pressure does not remove the
+wing or make water pass through it; it redirects the approaching stream.
 
-Euler saw the power and the wall with equal clarity. If we cannot fully grasp the
+This comparison isolates a single pressure correction. Both views start with
+the same proposed flow and impermeable wing; the upper view applies the full
+correction, while the slider applies a fraction of it below. I solve the
+pressure equation on a staggered grid until the remaining imbalance is
+negligible, then let the dots trace those velocity fields. The meter sums flow
+across all four sides of the box. The dots are tracers, not a simulation of
+changing water density.
+
+Euler also understood the difficulty of solving his equations. If we cannot fully grasp the
 motion of fluids, he wrote, it is not mechanics we should blame, nor any hidden
 principle of nature still missing — it is analysis itself that fails us. He was
-right about the wall for two centuries and counting.
+right that writing the equations would not be enough to solve them.
 
 But run your eye back over that term stack. The green slot is empty, and the drag
 meter from the last section still reads zero — Euler's equations inherit
 d'Alembert's paradox whole. Worse, in this world honey and water obey the *same*
-equation, and your hands know from the previous lesson how false that is. One term
-is missing, and the missing term is the whole story.
+equation, despite the difference you saw in the previous lesson. The equations
+still have no way to account for viscosity.
 
 ## The Missing Term
 
@@ -339,18 +470,31 @@ was Fourier, the man who wrote the mathematics of heat.
 On the 18th of March, 1822, Navier read a memoir to the Académie des Sciences in
 which he did what Euler could not. His route was strange: he imagined water as a
 lattice of molecules pulling on their neighbors, with a pull that depends on how
-fast they slide past one another. Drive the top row of the lattice below and watch
-what the neighbor-coupling does to the rows beneath:
+fast they slide past one another. A moving layer could drag the next one along.
+That is the missing mechanism: **motion can spread sideways, across the flow.**
+
+Below, identical plates move back and forth above two layers of fluid. The
+<C k="dye">amber dots</C> mark fluid parcels; the <C k="vel">blue arrows</C> show
+which way they move and how fast. With no coupling, the plate slides over still
+fluid. With coupling, it carries nearby fluid along. Turn the slider from weak
+to strong and watch how far down that motion reaches. The shaded middle row is
+our comparison point; its readout measures its travel as a percentage of the
+plate's travel over a full cycle.
 
 <MolecularSprings />
 
-Each molecule drags its neighbors toward its own motion, and the jerky shear
-smooths itself into an orderly gradient — the profile on the right relaxes toward a
-straight line, and once it's straight, every molecule agrees with its neighborhood
-average and the smoothing stops. Summed over the lattice, Navier's molecular pulls
-became a new term in Euler's equation: the Laplacian of velocity — *disagreement
-with the neighborhood* — times a constant. It is the heat operator, learned from
-Fourier and written into water. The stack is complete:
+The lower layers move less and turn around later. Stronger coupling passes more
+of the plate's motion down to them. The gray tracks mark each parcel's full
+excursion, so you can still compare the layers when a dot stops to reverse.
+Both views repeat a settled cycle; changing the slider selects a new cycle at
+the same instant. This is a continuum model of the effect, not a reconstruction
+of Navier's molecules.
+
+What matters in his argument is the local balance. A layer moving faster than
+its neighbors slows down; a slower one speeds up. The change depends on its
+neighbors' average velocity minus its own. In the continuum limit, that
+difference becomes the Laplacian of velocity, multiplied by a constant. It is
+the heat operator, learned from Fourier and written into water. The stack is complete:
 
 <TermStack
   items={[
@@ -369,11 +513,11 @@ Fourier and written into water. The stack is complete:
 Now the uncomfortable part: **the molecules were fiction, and the term was
 right.** Navier's intermolecular model was
 wrong in its details, and his constant — he called it $\varepsilon$ — was a
-molecular quantity he could not connect to anything measurable. You met that slider
-on the lattice above, labeled with its units: none. There is no correct setting.
-Neither could he. A term derived from imaginary physics, arriving at
-the correct equation, convinced almost no one — and so the equation had to be
-discovered again. And again. And again, and again.
+molecular quantity he could not connect to a measured viscosity. The slider above
+controls that measurable continuum property; it does not supply the missing link
+in his molecular argument. The correct equation did not settle the dispute over
+its foundations. Four more derivations followed, each starting from different
+assumptions about the fluid.
 
 (One more of Navier's headaches: at the wall, he assumed the fluid *slides*. The
 century's pipe experiments would say otherwise — but keep a little sympathy for the
@@ -386,10 +530,9 @@ Paris argument about what a fluid actually *is* — molecules or continuum — c
 out in memoirs, referee reports, and open polemic, with the same equation falling
 out the end every time.
 
-Cauchy, 1823 — who got pulled in while refereeing Navier's memoir. His contribution
-is the deepest object in the parade: forget fluids for a moment and ask what "the
-material pushes on itself" even means, at a point, in any material at all. His
-answer is the stress tensor. Drag a face of the fluid element below:
+Cauchy entered the argument in 1823 while refereeing Navier's memoir. He asked a
+more general question: how do we describe the internal forces at a point in any
+material? His answer was the stress tensor. Drag a face of the fluid element below:
 
 <StressCube />
 
@@ -412,25 +555,23 @@ elasticity — a material that could not hold a shape. Navier answered that
 it was he who had "conceived the idea of a new question," and that all this new
 talk of rigor was a way of belittling the man who asked it.
 
-Saint-Venant derived it in 1837
-the modern way — internal stress proportional to the local rate of shearing
-strain, the reading you'd give it today — published in 1843, two years ahead of
-Stokes, and was the only man in the parade who carefully credited everyone else.
+Saint-Venant derived it in 1837 by making internal stress proportional to the
+local rate of shearing strain, the approach used today. He published in 1843,
+two years ahead of Stokes, and carefully credited the earlier contributions.
 He was also the one who defended Navier's bridge in print — the failure, he wrote,
 was one misjudged force on one stone, the kind of oversight fixed on site, and the
 dismantling was the work of a "spirit of denigration... of science, disparaged
-under the name of theory opposed to practice." For all of it he received nothing:
-the equation is named for the first and the last of its five discoverers. Eponymy
-is a lottery, and citing your rivals buys no tickets.
+under the name of theory opposed to practice." His contribution is absent from
+the equation's name, which credits the first and last of its five discoverers.
 
-Last, 1845: George Gabriel Stokes, in Cambridge — the first generation of
-Cambridge mathematicians retrained in the Continental calculus, a century of
-notational loyalty finally paid off. Working from the French literature's
+George Gabriel Stokes published the last of these derivations in 1845. He belonged
+to the first generation of Cambridge mathematicians trained in the Continental
+calculus. Working from the French literature's
 conclusions but distrusting every molecular story in it, he re-derived the equation
 from continuum assumptions alone: no molecules, just smoothness, symmetry, and the
 requirement that internal friction depend linearly on the rate of deformation.
-That derivation is the one in every textbook since. And then Stokes did the thing
-that separates a formula from a law: he staked it on a measurement. His analysis of
+That derivation became the standard textbook approach. Stokes also tested the
+equation against measurements. His analysis of
 a sphere sinking through viscous fluid gave a clean, checkable prediction —
 $F = 6\pi\mu R U$ — and the pendulum data of the age matched it. Two steel balls,
 each in its own column of honey, are released together below; the slider shrinks
@@ -440,11 +581,10 @@ the second one:
 
 Halve the radius and the small ball is a quarter of the way down when the big one
 lands — terminal speed goes as $R^2$, and the pair of bars over each column says
-why. Weight is a volume, so it falls away as $R^3$. Stokes' resistance is
-$6\pi\mu R$: a length, falling away only as $R$. Surrender seven-eighths of your
-weight to keep half your drag and you crawl. Run that backwards — time a ball
-whose size and weight you know — and $\mu$ is the only unknown left in the
-sentence. Navier's $\varepsilon$, which had connected to nothing anyone could
+why. Weight scales with volume, as $R^3$, while the factor
+$6\pi\mu R$ multiplying speed in the drag law scales only as $R$. The smaller ball therefore reaches a lower
+terminal speed. Conversely, timing a ball whose size and weight you know lets
+you determine $\mu$. Navier's $\varepsilon$, which had connected to nothing anyone could
 measure, became a number you could look up for honey, water, and air. The same analysis settled a decades-old argument about the wall:
 the fluid *sticks* — no slip — which is why the previous lesson could state that
 contract with a straight face. (Navier's slip survives in one place: channels a
@@ -453,50 +593,78 @@ few molecules wide, where microfluidics has quietly rehabilitated him.)
 The equation's first exact laboratory triumph had, fittingly, nothing to do with
 any of the five. Jean Poiseuille was a physician measuring blood flow through fine
 glass capillaries in the 1840s; Gotthilf Hagen, a German engineer, found the same
-law in brass pipes independently. Squeeze the pipe below and watch the flux:
+law in brass pipes independently. Both pipes below have the same length, fluid, and
+pressure drop. The upper pipe stays at radius 1; the slider changes the lower one.
+At radius 1 they must collect equal volumes. Narrow the lower pipe and watch how
+quickly that equality disappears:
 
 <PoiseuillePipe />
 
-Halve the radius and the flow doesn't halve — it collapses to a sixteenth. Flux
-runs as the *fourth power* of the radius, a law strange enough that nobody would
-guess it and exact enough that nobody could fudge it. Derived from the new
-equation, it matched the physician's capillaries to the decimal. A doctor handed
-the theorists their first proof that the strange new term was real.
+The columns collect over the same eight-second interval and empty together.
+Changing the radius starts a fresh comparison. Their heights measure fluid volume
+(in units of the reference pipe's volume), integrated from the velocity across
+each circular cross-section; the colored dots trace the flow. The flow readout
+compares the lower pipe with the upper one.
+
+Halve the radius and the flow falls to a sixteenth. Flux scales as the *fourth
+power* of the radius. The equation reproduced the dependence measured in the
+capillaries, giving the viscous term a direct experimental test.
 
 <Waypoint>
-The equation now exists — written five times over, by a bridge engineer's fictional
-molecules, a referee's tensor, and a Cambridge hermit's continuum, verified in
-blood and brass, its constant promoted from fiction to tabulated fact. What nobody
-can do is solve it, except when the flow is slow as honey. Pushed harder, real
-water does something the century's mathematics cannot follow.
+The equation predicts how fast a small sphere falls and how much water passes
+through a narrow pipe. Viscosity is now something we can measure and put into the
+calculation. But these successes concern steady, orderly flows. Send water faster
+through the same pipe and it can start to swirl and mix. The equation still
+applies; finding the motion from it becomes much harder.
 </Waypoint>
 
 ## Direct and Sinuous
 
-What it does was made visible in 1883, in Manchester, by Osborne Reynolds and a
+That change was made visible in 1883, in Manchester, by Osborne Reynolds and a
 piece of glassware: a long transparent tube drawing water from a tank, with a
 thread of dye released on its axis. At low speed the thread runs the length of the
-tube like a stretched wire. Commit to a guess before you touch the speed.
+tube like a stretched wire. The dye is a marker carried by the water: a straight
+thread tells us that water released at the injector stays near the axis.
+If that water moves sideways as well, the thread changes shape.
+
+Both views below continuously release dye at the center of a channel. The upper
+flow carries it straight downstream; the lower flow also moves it sideways.
+Turn **Sideways motion** down to zero to make the views identical, then increase
+it. **Send pink pulse** marks a short batch of dye in both views. Follow that
+batch downstream: the picture shows positions inside the channel, not a graph
+of a signal over time.
 
 <Predict
-  question="The dye filament below runs straight down the tube. Double the flow speed — does the filament survive?"
-  a="It stays a filament, just faster"
-  b="It tears itself apart"
+  question="Can the dye bend while every marked parcel keeps moving downstream?"
+  a="No, a bend needs some backward motion"
+  b="Yes, sideways motion can bend it"
 >
   <ReynoldsTube />
 </Predict>
 
-Past a threshold the filament wavers, folds, and erupts — filling the tube with
-what Reynolds, by flash-light, resolved into "a mass of more or less distinct
+The pink batch travels through the bends and leaves the view. New dye keeps
+arriving behind it, so the thread contains different parcels as time passes. The slider changes
+the imposed sideways motion, while the mean volume flow through each channel
+stays the same. It does not change the viscosity or select a Reynolds number.
+
+This is a two-dimensional dye-transport illustration in prescribed,
+volume-preserving velocity fields. The dye follows those velocities; the
+figure does not calculate how disturbances arise, reproduce turbulent pipe
+flow, or predict its transition. It isolates what a dye filament can reveal.
+
+In Reynolds's experiment, increasing the flow could break the narrow thread
+into what he, by flash-light, resolved into "a mass of more or less distinct
 curls." He named the two regimes *direct* and *sinuous*; we say laminar and
-turbulent. And the threshold was the real discovery. It doesn't sit at a
-particular speed, or width, or temperature — Reynolds found that one combination
-alone decides, speed times size over viscosity, the dimensionless number you spent
-the whole previous lesson dragging:
+turbulent. The relevant comparison combines speed, size, and viscosity rather
+than using speed alone. It is the dimensionless number you met in the previous
+lesson:
 
 $$Re = \frac{UL}{\nu}$$
 
-The slider under the tube is showing you its own value; the christening came later,
+Here $U$ is mean speed, $L$ is pipe diameter, and $\nu$ is kinematic viscosity.
+At fixed diameter and viscosity, increasing speed raises $Re$. Pipe transition
+also depends on the disturbances admitted at the inlet; a single critical
+number cannot describe every preparation of the experiment. The christening came later,
 when Sommerfeld called it the *Reynolds number* in a 1908 lecture, and the name
 stuck. The referee who handled Reynolds's paper at the Royal Society was Stokes —
 sixty-four years old, the man whose own pendulum memoir had carried the number in
@@ -505,54 +673,73 @@ embryo three decades earlier.
 Reynolds also saw what the eruption meant for the mathematics, and in 1895 he made
 the move the field still leans on: split the velocity into a mean and a
 fluctuation, $\mathbf{u} = \bar{\mathbf{u}} + \mathbf{u}'$, and average the
-equation. The split is a concession: above the threshold, we stop computing the
-flow and start computing its *statistics*.
+equation. Averaging describes the flow's *statistics*, introducing correlations
+between the fluctuations that also need to be determined. Turbulent motion
+still obeys the fluid equation; averaging changes what we choose to calculate.
 
-So by 1900 the ledger stood like this: the equation verified, the referee number
-known — and d'Alembert's zero, planted a hundred and fifty years back, still
-unpaid. At high $Re$ friction is tiny and the water is nearly ideal, so the ideal
-theory should be nearly right about drag — and it is spectacularly wrong. Nothing
-written by 1900 says why.
+By 1900 the equation had experimental support, and Reynolds had identified a
+measure of when viscosity matters. Yet d'Alembert's zero drag remained unexplained.
+At high $Re$, viscous forces are small through much of the flow. Why, then, does
+neglecting them give such a poor prediction of drag?
 
 ## Ten Minutes in Heidelberg
 
 On the 12th of August, 1904, at the Third International Congress of Mathematicians
 in Heidelberg, a twenty-nine-year-old engineering professor named Ludwig Prandtl
 was allotted ten minutes. The paper he summarized ran about eight pages, and it
-contained the resolution. Friction at high Reynolds number does not disappear.
-It *concentrates* — into a layer against the surface so thin that a century and a
-half of theorists had reasoned right past it. Drag the loupe around the disc:
+contained the resolution. At high Reynolds number, viscous effects remain strong
+in a thin layer next to the surface. Prandtl added no new force term.
+He separated the near-wall region, where velocity changes rapidly with distance,
+from the outer flow, where viscosity can often be neglected.
+
+Choose **Front**, **Shoulder**, or **Rear** below. The blue probe marks a line
+extending outward from that position on the disc; the chart stays fixed beneath
+it. Its solid blue curve measures the computed velocity along the surface.
+The dashed gray curve gives the frictionless prediction at the same positions.
+Start at the shoulder and compare the curves where they meet the wall:
 
 <BoundaryLayerLoupe />
 
-Away from the wall, the arrows tell Euler's story — the ideal flow, nearly
-frictionless. Slide the loupe to the surface and the story changes inside a
-sliver: the speed plunges from full stream to exactly zero across a skin that
-thins as $1/\sqrt{Re}$ (a scaling stated with a wave of the hand; deriving it
-is a lesson of its own). Inside that skin, friction rules absolutely, no matter how
-large $Re$ grows. And that is enough to break the refund.
+At the wall, the blue curve reaches zero: the no-slip condition fixes the fluid
+to the stationary surface. The frictionless prediction allows it to slide past.
+Farther from the wall the viscous flow moves faster. The chart measures distance
+upward from the wall and speed horizontally; a value of 1 means the inlet speed.
+Use **Probe position** to inspect between the three presets. Moving the probe
+changes the measurement, not the flow, and it works while paused.
+
+This figure samples a numerical flow at a fixed, moderate Reynolds number; its
+few cells across the near-wall region cannot resolve Prandtl's high-Reynolds-number
+limit. The surface point is the imposed no-slip value; points away from it sample
+the computed grid. The dashed reference is an unbounded potential flow, whereas
+the numerical flow has channel boundaries, so their difference is not a pure
+measurement of viscosity alone. For the laminar flat-plate case, boundary-layer
+thickness scales as $1/\sqrt{Re}$ at a fixed downstream position.
+[Friction can remain decisive in that thin layer](https://www1.grc.nasa.gov/beginners-guide-to-aeronautics/boundary-layer/)
+even when it is negligible through much of the surrounding flow.
 
 Recall the parcel that had to climb the back hill on its own returned momentum,
 and how the exactness of the cancellation depended on nothing taking a cut. Inside
 the sliver, something takes a cut. The water there has been rubbing against the
 wall the whole way around, and it arrives at the shoulder already short of speed —
 too short to climb back up to the tail's high pressure. It makes it partway up the
-hill, stalls, and is shoved backwards by the pressure it failed to climb. Hunt
-with the loupe along the back of the disc: wherever the near-wall flow is running
-the wrong way, its arrow flips and turns red. The backflow lives in a thin,
-shifting strip — that is the whole point of it having gone unfound for a century
-and a half — but where it holds, the layer lifts clean off the surface and peels
-into the wake.
+hill, stalls, and is shoved backwards by the pressure it failed to climb. Choose
+**Rear** and inspect the near-wall part of the blue curve. When the sampled flow
+reverses, it crosses left of zero and its negative samples turn red. These values
+use the same speed scale as the forward flow. The region can shift with time;
+the probe lets us inspect it without chasing the moving water with the cursor.
 
-Once the layer has left the wall, the tail never gets its red lobe. The nose is
-still shoved downstream at full pressure and there is nothing on the back pushing
-the other way — so the books do not balance, and the meter, zero since 1752 in this
-article and zero since 1752 in history, finally moves.
+After separation, the rear pressure no longer recovers to the ideal-flow value.
+The front and back pressure forces fail to cancel. The meter integrates that
+imbalance from the simulated pressure field. It shows the dimensionless
+pressure-drag coefficient, excluding the additional force from viscous shear
+at the wall.
 
 The resolution is stranger than "d'Alembert was wrong."
-He wasn't. His theory is *correct* almost everywhere — everywhere but a sliver —
-and the sliver sets the drag for the whole flow. The paradox was never an error to
-be refuted; it was an error of *where to look*.
+The frictionless calculation is internally consistent. What fails is applying
+its attached, symmetric flow to a body with a separated wake. A thin boundary
+layer can change an extended region behind the body and alter the pressure
+forces around it. Prandtl located a small region whose consequences are large;
+he did not confine every discrepancy to that region.
 
 In the Heidelberg audience sat Felix Klein, who recognized ten minutes of talk for
 what it was and pulled Prandtl to Göttingen within the year. Out of that one act of
@@ -581,11 +768,31 @@ compressed everything this section is about into four lines of verse: *big whirl
 have little whirls that feed on their velocity, and little whirls have lesser
 whirls, and so on to viscosity.*
 
+The question is where the motion's energy goes. Start with the same push at a
+large scale in both budgets below. Above, energy stays at that scale until
+viscosity removes it. Below, it can pass to successively smaller scales. Amber
+bars measure energy still in motion; the green strip counts energy converted
+to heat. **Add a large-scale push** and follow it across the lower row. Compare
+how much heat has accumulated in the two views:
+
 <WhorlsCascade />
 
-Energy enters at the largest eddies, cascades down through generations of smaller
-ones, and dies in the smallest, where the green term finally eats it. That picture
-became quantitative on the eve of the war. Kolmogorov's three short papers reached
+Transfer does not destroy energy: it moves energy into scales where viscosity
+can remove it faster. Each row accounts for all the energy supplied, in motion
+plus heat. The percentages use that row's cumulative input, so another push
+changes their denominator. Vary viscous loss to repeat the comparison from a
+fresh start. With weaker loss, more energy reaches the smallest displayed scales
+before becoming heat.
+
+This is a five-compartment model of the proposed forward cascade in
+three-dimensional turbulence. The transfer rates are chosen, not measured or
+derived from Navier–Stokes. Each fixed step sends energy onward or into heat;
+none is silently deleted. Viscous loss increases with the square of wavenumber,
+so halving the represented length quadruples its decay rate. This model isolates
+[transfer and dissipation](https://ocw.mit.edu/courses/16-13-aerodynamics-of-viscous-fluids-fall-2003/pages/lecture-notes/);
+it neither calculates eddies nor establishes a turbulent spectrum.
+
+The cascade picture became quantitative on the eve of the war. Kolmogorov's three short papers reached
 the Doklady between the 28th of December, 1940 and the last day of April, 1941;
 eight weeks after the third, the Wehrmacht crossed the border and the Academy was
 evacuated east. The claim inside them: deep in the cascade, the statistics forget
@@ -600,11 +807,9 @@ where the sea runs at up to fifteen knots and the Reynolds number reaches
 280,000,000 — three orders of magnitude past any laboratory.
 The eddies were larger than the 217-foot ship, which spent the runs being carried
 about by the thing it was measuring. The 1962 spectra track −5/3 across decades of
-wavenumber. A rule written at a Moscow desk from a dimensional argument, holding
-in a tidal channel on the far side of the world. (Turbulence attracted that kind
-of mind: Werner Heisenberg's doctoral thesis, under Sommerfeld in 1923, was on
-exactly this problem — the man who made uncertainty a principle warmed up on the
-equation that still keeps one.)
+wavenumber, supporting a prediction derived from dimensional reasoning.
+(Werner Heisenberg also studied turbulence for his doctoral thesis under
+Sommerfeld in 1923, before his work on quantum mechanics.)
 
 While the physicists climbed into the cascade, a French mathematician quietly asked
 the question underneath all of it. Jean Leray worked on it, the story goes, leaning
@@ -621,60 +826,80 @@ old age it forced the invention of the analysis used to study it.)
 
 Olga Ladyzhenskaya — taught mathematics by her father, a schoolteacher the NKVD
 shot in 1937, and barred for his sake from Leningrad University — later fenced off
-the flat world: in two dimensions, the world of every figure in this article,
+the flat world: in two dimensions, the setting of our planar flow solvers,
 smoothness holds, uniqueness holds, the theory is clean. Every difficulty lives in
 the third dimension, where vortex lines can stretch. Whether three-dimensional
 solutions always stay smooth is, as of this sentence, unknown. In May 2000 the
 Clay Mathematics Institute named it one of seven Millennium Prize Problems — the
 same open question the previous lesson ended on, now with a date, a bounty, and a
-problem statement four pages long. The strongest recent evidence cuts the wrong
+problem statement six pages long. The strongest recent evidence cuts the wrong
 way for optimists: in 2016 Terence Tao showed that a slightly averaged cousin of
 the equation *does* blow up in finite time. Whatever protects the real equation —
 if anything does — is something subtler than anything yet written down.
 
-Richardson's hall of sixty-four thousand computers, though — that part got built.
+Electronic computers eventually made Richardson's plan for numerical forecasting
+practical.
 
 ## The Machine Age
 
-It got built out of vacuum tubes. In 1950, on ENIAC, a team around Jule Charney and
-John von Neumann ran the first computer weather forecast, and the numerical assault
-on the equation began. The solver you played with in the previous lesson is not an
-illustration of that history; it is a late chapter of it, and its four steps carry
-three different birthdays:
+In 1950, a team around Jule Charney and John von Neumann ran the first computer
+weather forecast on ENIAC. The <Link to="../navier-stokes" relative="path">solver you played with in the previous lesson</Link>
+uses numerical methods developed over the following decades. After adding any outside
+pushes, a solver has three jobs: carry motion with the flow, exchange momentum
+between neighboring layers, and find the pressure that keeps volume balanced.
 
-<SolverXray />
+Choose a job below. Each experiment keeps its starting state on the left and
+shows the computed result on the right (stacked on a narrow screen). These are
+three isolated examples, not successive frames of one flow; there is no hidden
+animation to wait for.
 
-The staggered grid those steps live on came from Francis Harlow's group at Los
+<SolverSteps />
+
+Carrying can move and deform a patch without smoothing it. Viscosity reduces
+velocity differences. Pressure can remove convergence while leaving rotation.
+A numerical solver combines these operations at each time step. The examples
+above isolate the mathematics: exact transport in a prescribed shear flow, a
+finite-difference diffusion update, and an exact pressure correction for an
+inward spiral. They do not reproduce a historical implementation. Speeds and
+lengths use normalized units; the last meter sums flow through the four sides of
+the dashed box.
+
+The staggered-grid method came from Francis Harlow's group at Los
 Alamos in 1965. The projection step — advance the velocity freely, then solve for
 the one pressure field that restores incompressibility — is Alexandre Chorin's,
-1968. The unconditionally stable advection that lets the whole thing run in your
-browser without exploding is Jos Stam's, 1999, published not in a physics journal
-but at a computer-graphics conference. Even the equation's compact *face* is
-machine-age typography: all five of its discoverers wrote it as three separate
-scalar equations, and the vector coat it wears on our term stack — the ∇s and the
-boldface — is Gibbs–Heaviside notation, sixty years younger than the equation it
-dresses.
+1968. Jos Stam's 1999 [*Stable Fluids*](https://www.dgp.toronto.edu/public_user/stam/reality/Research/pdf/ns.pdf) put semi-Lagrangian advection and pressure
+projection into a practical graphics solver, published at a computer-graphics
+conference. Backtracing and interpolation keep that advection step bounded even
+at large time steps; they do not guarantee that a coarse calculation is accurate.
+Even the compact notation came later. All five discoverers wrote three separate
+scalar equations. The vector form shown here uses Gibbs–Heaviside notation,
+developed about sixty years after the equation.
 
 Which brings the slider home:
 
 <TimelineHero />
 
-Run it end to end once more. The hail of corpuscles that feels no neighbors. The
-frictionless glide whose meter reads zero. The honey world where the green term
-was born. The threshold where the filament tears. The sliver that pays a
-century-and-a-half-old debt. The dye street running on three dates — 1965, 1968,
-1999. Every nameplate is filled now except the last one, and the last one is not
-waiting on us to finish the article. It is waiting on mathematics.
+Run it end to end once more. The independent particles ricochet; the ideal fluid
+wraps around the wing; the viscous fluid slows at the surface and leaves a wake.
+The last two stops run at the same viscosity. Prandtl's stop isolates the
+near-wall velocity difference; the final stop gives the whole flow back.
+
+This figure uses a 108 × 54 staggered grid, a fixed time step, implicit viscosity,
+and pressure projection. A bounded MacCormack correction reduces the dye smearing
+of first-order semi-Lagrangian transport. It preserves the sampled bounds, which
+prevents that transport step from amplifying extrema; it does not make a coarse
+grid resolve turbulence. The dots follow the calculated velocity, and the pulsing
+dye source only makes their passage easier to see. The ideal stop is a
+zero-circulation Joukowski potential flow around the same rounded section.
 
 ## One Skeleton, Twice Built
 
-History never had a syllabus, but it kept a rhythm. Each theory ran until it
-failed in plain sight, and the next term was whatever it took to stop lying.
-Euler answered d'Alembert's absurdity; Navier answered Euler's honey-equals-water;
-Prandtl answered the meter stuck at zero; the projection method answered a fluid
-that computers kept letting pile up. Field, pressure, and constraint in 1757;
-viscosity in 1822; the solver in 1965–1999 — the ladder assembled itself, rung by
-visible failure.
+The historical sequence resembles the order in which we built the equation in
+the previous lesson. Euler supplied the velocity field, pressure term, and
+incompressibility constraint in 1757. Navier added viscosity in 1822, and Prandtl
+later explained how its effects near a wall could change the drag on a body.
+The numerical methods developed in 1965–1999 made these ideas practical to
+compute, with pressure projection correcting the volume imbalance at each step.
 
 The first PDE in physics was d'Alembert's string, invented inside the argument
 this article just told. Navier–Stokes is the parent equation; sound, ripples, and
@@ -682,32 +907,40 @@ every wave in the lessons ahead are its children, small enough to be gentle.
 
 ## Further Reading
 
-Olivier Darrigol's *Worlds of Flow* is the definitive scholarly history of
+Olivier Darrigol's [*Worlds of Flow*](https://academic.oup.com/book/54747) is the definitive scholarly history of
 everything above — the five derivations, memoir by memoir, with the mathematics
 kept intact rather than paraphrased away; it is where the "discovered five times"
-framing is documented in full. Michael Eckert's *The Dawn of Fluid Dynamics*
-carries the story Darrigol ends, through Prandtl and the Göttingen school. John D.
-Anderson's *Physics Today* article "Ludwig Prandtl's Boundary Layer" reconstructs
-the Heidelberg ten minutes and their consequences in a dozen readable pages.
-Reynolds's 1883 paper is open access at the Royal Society, and worth the visit: the
-engravings of the dye filament are the figure you just played with, drawn by the
-man who built it. Grant, Stewart and Moilliet's "Turbulence spectra from a tidal
-channel" (*Journal of Fluid Mechanics*, 1962) reports the Discovery Passage
-measurement in full, spectra and ship-handling both. Charles Fefferman's official
-Clay problem statement says precisely what "existence and smoothness" demands, in
-four careful pages. And Jos Stam's *Stable Fluids* — already in the previous
-lesson's reading list as the paper behind the solver — re-enters here under a
+framing is documented in full.
+
+Michael Eckert's [*The Dawn of Fluid Dynamics*](https://onlinelibrary.wiley.com/doi/book/10.1002/9783527610730)
+carries the story Darrigol ends, through Prandtl and the Göttingen school.
+
+John D. Anderson's *Physics Today* article ["Ludwig Prandtl's Boundary Layer" (PDF)](https://homepage.ntu.edu.tw/~wttsai/Adv_Fluid/Anderson_Prandtl_2005.pdf)
+reconstructs the Heidelberg ten minutes and their consequences in seven readable pages.
+
+[Reynolds's 1883 paper](https://doi.org/10.1098/rstl.1883.0029)
+was published by the Royal Society. The engravings show the
+dye experiment in its original form, drawn by the man who built it.
+
+Grant, Stewart and Moilliet's ["Turbulence spectra from a tidal channel" (PDF)](https://www.damtp.cam.ac.uk/user/tong/fluids/vancouver.pdf)
+(*Journal of Fluid Mechanics*, 1962) reports the Discovery Passage measurement in
+full, spectra and ship-handling both.
+
+Charles Fefferman's official [Clay problem statement (PDF)](https://www.claymath.org/wp-content/uploads/2022/06/navierstokes.pdf)
+says precisely what "existence and smoothness" demands, in six careful pages.
+
+And Jos Stam's [*Stable Fluids* (PDF)](https://www.dgp.toronto.edu/public_user/stam/reality/Research/pdf/ns.pdf)
+— already in the <Link to="../navier-stokes" relative="path">previous lesson's reading list</Link>
+as the paper behind the solver — re-enters here under a
 different aspect: as a primary source.
 
 ## Final Words
 
-Two hundred years of people are compressed into six letters and a hyphen. Say the
-name slowly now and it unpacks: a bridge engineer whose molecules were fiction and
-whose term was true; a referee who invented the tensor while grading the memoir; a
-courteous engineer the lottery skipped; a Cambridge hermit who made the constant
-measurable; a physician's capillaries; a glass tube in Manchester; ten minutes in
-Heidelberg. The equation was never discovered. It is a two-century argument with a
-naming accident on the cover — and the argument is still open, at any price you
-like, because the right-hand end of the slider is still blank.
+The name Navier–Stokes leaves out much of the work that made the equation useful:
+Cauchy's stress tensor, Saint-Venant's derivation, the measurements in capillaries
+and pipes, and Prandtl's account of the boundary layer. Their contributions changed
+what could be calculated and what could be checked against real water.
 
-It is not waiting for a monument. It is waiting for a name.
+We can now compute flows that none of them could have followed by hand. The
+question of whether smooth three-dimensional solutions always remain smooth
+is still open.
