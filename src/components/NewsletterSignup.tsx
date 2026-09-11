@@ -1,4 +1,4 @@
-import { useId, useState, type FormEvent } from 'react'
+import { useId, useState, type ComponentPropsWithoutRef, type FormEvent } from 'react'
 import { useLocation } from 'react-router-dom'
 import './NewsletterSignup.css'
 
@@ -105,4 +105,15 @@ export default function NewsletterSignup() {
       </div>}
     </form>
   )
+}
+
+// Pages place this after their heading or introductory header.
+export function NewsletterIntro() {
+  const { pathname } = useLocation()
+  return <div id="newsletter"><NewsletterSignup key={pathname} /></div>
+}
+
+// The shared MDX heading keeps the article title ahead of the signup box.
+export function LessonTitle(props: ComponentPropsWithoutRef<'h1'>) {
+  return <><h1 {...props} /><NewsletterIntro /></>
 }

@@ -28,9 +28,6 @@ export default function Layout({ children }: { children: ReactNode }) {
         </nav>
       </header>
       <main className="content">
-        <div id="newsletter" className="newsletter-placement--start">
-          <NewsletterSignup key={`${pathname}-start`} />
-        </div>
         {children}
         <div className="newsletter-placement--end">
           <NewsletterSignup key={`${pathname}-end`} />

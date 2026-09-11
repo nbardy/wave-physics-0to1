@@ -1,6 +1,7 @@
 import { useParams, Link } from 'react-router-dom'
 import { lessonById, seriesById } from '../lessons/registry'
 import { TocList } from '../components/Toc'
+import { NewsletterIntro } from '../components/NewsletterSignup'
 
 export default function SeriesPage() {
   const { id } = useParams<{ id: string }>()
@@ -10,6 +11,7 @@ export default function SeriesPage() {
     return (
       <div className="prose lesson-not-found">
         <h1>Series not found</h1>
+        <NewsletterIntro />
         <p>
           No series with id “{id}”. <Link to="/">Back to the curriculum.</Link>
         </p>
@@ -35,6 +37,7 @@ export default function SeriesPage() {
             {series.inspiration.name} →
           </a>
         </p>
+        <NewsletterIntro />
       </header>
       <TocList label="The parts" items={items} />
     </div>

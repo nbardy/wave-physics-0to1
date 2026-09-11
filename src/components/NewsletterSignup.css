@@ -96,9 +96,7 @@
 .newsletter-rss-help { margin-top: 0.65rem; font-size: 0.75rem; }
 .newsletter-rss-help a { color: #215d91; white-space: nowrap; }
 .newsletter-rss-help input { width: 100%; margin-top: 0.5rem; }
-.newsletter-placement--start .newsletter-signup { margin-top: 0; }
 .newsletter-placement--end .newsletter-signup { margin-top: 3rem; margin-bottom: 0; }
-.newsletter-placement--start + .home .masthead { padding-top: clamp(1rem, 4vw, 2.25rem); }
 
 .newsletter-signup button:disabled { opacity: 0.7; cursor: wait; }
 .newsletter-honeypot { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }

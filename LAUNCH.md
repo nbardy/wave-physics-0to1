@@ -60,9 +60,10 @@ announcements. There is no confirmation email in the collection-only flow.
 ## Shared article template and RSS
 
 Every page uses `NewsletterSignup`, with the copy
-“Get emailed every new visual explainer” in a light-blue box. The shared `Layout`
-puts exactly one before the page content and one after it, including the homepage,
-article index, series pages, and articles. The email button says “Sign up”; the
+“Get emailed every new visual explainer” in a light-blue box. `NewsletterIntro`
+places the first box below the page heading or introductory header. Articles use
+MDX’s shared `LessonTitle` mapping, so their title appears before the box.
+`Layout` adds the second box at the end of every page. The email button says “Sign up”; the
 RSS icon button copies the canonical feed URL and confirms the copy. If the
 browser blocks clipboard access, a selectable URL appears for manual copying.
 Both paths also offer an “Open feed” link. `/subscribe` leads to the homepage form. The two Navier–Stokes articles have
