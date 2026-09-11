@@ -50,9 +50,12 @@ export class FluidSolver {
   p: Float32Array
   div: Float32Array
   solid: Uint8Array
+  readonly discs: { cx: number; cy: number; r: number }[] = []
   private u0: Float32Array
   private v0: Float32Array
   private dye0: Float32Array
+  private advectForward: Float32Array
+  private advectBackward: Float32Array
 
   inflow: number
   inflowLower: number // inflow speed for the lower half of the inlet; equals inflow unless a sim sets shear (Kelvin–Helmholtz)
@@ -60,6 +63,7 @@ export class FluidSolver {
   dyeDecay = 0.9995
   toggles: SolverToggles = { advect: true, diffuse: true, project: true }
   pressureIters = PRESSURE_ITERS
+  advectionScheme: 'semi-lagrangian' | 'maccormack' = 'semi-lagrangian'
 
   constructor(nx: number, ny: number, inflow: number, visc: number) {
     this.nx = nx
@@ -78,6 +82,8 @@ export class FluidSolver {
     this.u0 = new Float32Array(n)
     this.v0 = new Float32Array(n)
     this.dye0 = new Float32Array(n)
+    this.advectForward = new Float32Array(n)
+    this.advectBackward = new Float32Array(n)
   }
 
   idx(i: number, j: number) {
@@ -86,6 +92,7 @@ export class FluidSolver {
 
   /** Carve a solid disc; velocity is zeroed inside it every step (no-slip). */
   addDisc(cx: number, cy: number, r: number) {
+    this.discs.push({ cx, cy, r })
     for (let j = 0; j < this.ny; j++) {
       for (let i = 0; i < this.nx; i++) {
         if ((i - cx) ** 2 + (j - cy) ** 2 <= r * r) this.solid[this.idx(i, j)] = 1
@@ -95,6 +102,7 @@ export class FluidSolver {
 
   /** Replace the obstacle with an airfoil at the given tilt (clears any previous mask). */
   setAirfoil(pivotX: number, pivotY: number, chord: number, angleRad: number) {
+    this.discs.length = 0
     stampAirfoilMask(this.solid, this.nx, this.ny, pivotX, pivotY, chord, angleRad)
   }
 
@@ -151,6 +159,33 @@ export class FluidSolver {
         const by = j - dt * this.v[k]
         dst[k] = this.sample(src, bx, by)
       }
+    }
+  }
+
+  /** Same bounded MacCormack correction as gpu/solver_gpu.ts, opt-in so
+   * existing lesson comparisons keep their original first-order scheme.
+   * Both passes read a FROZEN carrier velocity (including when advecting u,v).
+   * Clamp to the departure stencil's extrema: no new extrema, for any dt.
+   */
+  private advectCorrected(dst: Float32Array, src: Float32Array, dt: number, u: Float32Array, v: Float32Array) {
+    const forward = this.advectForward, backward = this.advectBackward
+    forward.set(src)
+    for (let j = 1; j < this.ny - 1; j++) for (let i = 1; i < this.nx - 1; i++) {
+      const k = this.idx(i, j)
+      forward[k] = this.sample(src, i - dt * u[k], j - dt * v[k])
+    }
+    backward.set(forward)
+    for (let j = 1; j < this.ny - 1; j++) for (let i = 1; i < this.nx - 1; i++) {
+      const k = this.idx(i, j)
+      backward[k] = this.sample(forward, i + dt * u[k], j + dt * v[k])
+    }
+    for (let j = 1; j < this.ny - 1; j++) for (let i = 1; i < this.nx - 1; i++) {
+      const k = this.idx(i, j)
+      const x = Math.max(0.5, Math.min(this.nx - 1.5, i - dt * u[k]))
+      const y = Math.max(0.5, Math.min(this.ny - 1.5, j - dt * v[k]))
+      const q = this.idx(Math.floor(x), Math.floor(y))
+      const a = src[q], b = src[q + 1], c = src[q + this.nx], d = src[q + this.nx + 1]
+      dst[k] = Math.max(Math.min(a, b, c, d), Math.min(Math.max(a, b, c, d), forward[k] + 0.5 * (src[k] - backward[k])))
     }
   }
 
@@ -255,8 +290,13 @@ export class FluidSolver {
     if (advect) {
       this.u0.set(this.u)
       this.v0.set(this.v)
-      this.advectField(this.u, this.u0, dt)
-      this.advectField(this.v, this.v0, dt)
+      if (this.advectionScheme === 'maccormack') {
+        this.advectCorrected(this.u, this.u0, dt, this.u0, this.v0)
+        this.advectCorrected(this.v, this.v0, dt, this.u0, this.v0)
+      } else {
+        this.advectField(this.u, this.u0, dt)
+        this.advectField(this.v, this.v0, dt)
+      }
     }
 
     this.boundaries()
@@ -267,10 +307,12 @@ export class FluidSolver {
 
     // dye rides the (possibly un-projected) flow — that's the point in §9
     this.dye0.set(this.dye)
-    this.advectField(this.dye, this.dye0, dt)
+    if (this.advectionScheme === 'maccormack') this.advectCorrected(this.dye, this.dye0, dt, this.u, this.v)
+    else this.advectField(this.dye, this.dye0, dt)
     for (let k = 0; k < this.dye.length; k++) this.dye[k] *= this.dyeDecay
     this.dye0.set(this.dye2)
-    this.advectField(this.dye2, this.dye0, dt)
+    if (this.advectionScheme === 'maccormack') this.advectCorrected(this.dye2, this.dye0, dt, this.u, this.v)
+    else this.advectField(this.dye2, this.dye0, dt)
     for (let k = 0; k < this.dye2.length; k++) this.dye2[k] *= this.dyeDecay
   }
 }
@@ -278,11 +320,14 @@ export class FluidSolver {
 // ---------------------------------------------------------------- rendering
 
 /** Render dye (amber) and dye2 (rose), solids (gray), optionally pressure or divergence tint. */
+export type DyePalette = readonly [readonly [number, number, number], readonly [number, number, number]]
+const DEFAULT_DYE_PALETTE: DyePalette = [[217, 119, 6], [219, 39, 119]]
+
 export class SolverRenderer {
   private off: HTMLCanvasElement
   private img: ImageData
 
-  constructor(private solver: FluidSolver) {
+  constructor(private solver: Pick<FluidSolver, 'nx' | 'ny' | 'dye' | 'dye2' | 'p' | 'div' | 'solid' | 'discs'>, private drawSolids = true) {
     this.off = document.createElement('canvas')
     this.off.width = solver.nx
     this.off.height = solver.ny
@@ -294,12 +339,13 @@ export class SolverRenderer {
     w: number,
     h: number,
     overlay: 'none' | 'pressure' | 'divergence' = 'none',
+    dyePalette: DyePalette = DEFAULT_DYE_PALETTE,
   ) {
     const s = this.solver
     const d = this.img.data
     for (let k = 0; k < s.dye.length; k++) {
       const o = k * 4
-      if (s.solid[k]) {
+      if (s.solid[k] && this.drawSolids && s.discs.length === 0) {
         d[o] = 107
         d[o + 1] = 114
         d[o + 2] = 128 // wall gray
@@ -310,9 +356,9 @@ export class SolverRenderer {
       // subtractive, so overlap blends like real dyes instead of one hiding the other
       const t1 = Math.min(s.dye[k], 1)
       const t2 = Math.min(s.dye2[k], 1)
-      let r = Math.max(0, 247 - t1 * (247 - 217) - t2 * (247 - 219))
-      let g = Math.max(0, 249 - t1 * (249 - 119) - t2 * (249 - 39))
-      let b = Math.max(0, 252 - t1 * (252 - 6) - t2 * (252 - 119))
+      let r = Math.max(0, 247 - t1 * (247 - dyePalette[0][0]) - t2 * (247 - dyePalette[1][0]))
+      let g = Math.max(0, 249 - t1 * (249 - dyePalette[0][1]) - t2 * (249 - dyePalette[1][1]))
+      let b = Math.max(0, 252 - t1 * (252 - dyePalette[0][2]) - t2 * (252 - dyePalette[1][2]))
       if (overlay === 'pressure') {
         const pv = Math.max(-1, Math.min(1, s.p[k] * 4))
         if (pv > 0) {
@@ -341,5 +387,15 @@ export class SolverRenderer {
     octx.putImageData(this.img, 0, 0)
     ctx.imageSmoothingEnabled = true
     ctx.drawImage(this.off, 0, 0, w, h)
+    // Disc geometry is known analytically: retain the grid mask for physics,
+    // but draw the boundary at display resolution, not as enlarged squares.
+    if (this.drawSolids) {
+      ctx.fillStyle = '#6b7280'
+      for (const { cx, cy, r } of s.discs) {
+        ctx.beginPath()
+        ctx.ellipse(cx / s.nx * w, cy / s.ny * h, r / s.nx * w, r / s.ny * h, 0, 0, 2 * Math.PI)
+        ctx.fill()
+      }
+    }
   }
 }

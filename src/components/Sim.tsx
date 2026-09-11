@@ -13,6 +13,8 @@ export interface Stepper {
 
 export interface SimProps {
   height?: number
+  /** Keep geometric proportions on narrow screens (width / height). */
+  aspectRatio?: number
   /** Build a fresh stepper (with its own state). Called on mount and on Reset. */
   create: (width: number, height: number) => Stepper
   caption?: string
@@ -22,11 +24,17 @@ export interface SimProps {
    * button that visibly does nothing — dead chrome reads as a broken figure.
    */
   animated?: boolean
+  /** Restart the experiment when a parameter changes, preserving control focus. */
+  resetToken?: number
+  /** Name a figure-specific restart action without adding a duplicate button. */
+  resetLabel?: string
+  /** Static parameter studies can return via their controls without a no-op Reset. */
+  resettable?: boolean
   /** Figure-specific controls (bespoke per sim — see AGENTS.md). Rendered beside Play/Reset. */
   children?: ReactNode
 }
 
-export function Sim({ height = 240, create, caption, animated = true, children }: SimProps) {
+export function Sim({ height = 240, aspectRatio, create, caption, animated = true, resetToken, resetLabel = 'Reset', resettable = true, children }: SimProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const [running, setRunning] = useState(true)
   const runningRef = useRef(running)
@@ -39,13 +47,37 @@ export function Sim({ height = 240, create, caption, animated = true, children }
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    const dpr = window.devicePixelRatio || 1
-    const cssWidth = canvas.clientWidth || 600
-    canvas.width = Math.floor(cssWidth * dpr)
-    canvas.height = Math.floor(height * dpr)
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    let cssWidth = canvas.clientWidth || 600
+    let cssHeight = aspectRatio ? cssWidth / aspectRatio : height
+    let dpr = window.devicePixelRatio || 1
+    const resize = () => {
+      cssWidth = canvas.clientWidth || 600
+      cssHeight = aspectRatio ? cssWidth / aspectRatio : height
+      dpr = window.devicePixelRatio || 1
+      const pixelWidth = Math.round(cssWidth * dpr)
+      const pixelHeight = Math.round(cssHeight * dpr)
+      // Assigning even the SAME canvas size clears its bitmap. ResizeObserver
+      // sends an initial notification; it must not erase a paused first frame.
+      if (canvas.width !== pixelWidth) canvas.width = pixelWidth
+      if (canvas.height !== pixelHeight) canvas.height = pixelHeight
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    }
+    resize()
 
-    const stepper = create(cssWidth, height)
+    let stepper = create(cssWidth, cssHeight)
+    stepper.draw(ctx, cssWidth, cssHeight)
+    const resizeObserver = new ResizeObserver(() => {
+      // Some figures build pixel-space geometry in create(). Rebuild that
+      // geometry when the layout changes rather than stretching the old scene.
+      const changed = (canvas.clientWidth || 600) !== cssWidth
+      resize()
+      if (changed) {
+        stepper.dispose?.()
+        stepper = create(cssWidth, cssHeight)
+        stepper.draw(ctx, cssWidth, cssHeight)
+      }
+    })
+    resizeObserver.observe(canvas)
     // Only run figures that are on screen — with dozens of live simulations on
     // one page, stepping them all murders the frame rate (measured: 8 fps).
     // Off-screen figures freeze; time resumes when they scroll back into view.
@@ -62,10 +94,11 @@ export function Sim({ height = 240, create, caption, animated = true, children }
     let last = 0
     const loop = (t: number) => {
       if (visible) {
+        if (dpr !== (window.devicePixelRatio || 1)) resize()
         const dt = last ? Math.min((t - last) / 1000, 0.05) : 1 / 60
         last = t
         if (runningRef.current) stepper.step(dt)
-        stepper.draw(ctx, cssWidth, height)
+        stepper.draw(ctx, cssWidth, cssHeight)
       }
       raf = requestAnimationFrame(loop)
     }
@@ -73,24 +106,25 @@ export function Sim({ height = 240, create, caption, animated = true, children }
     return () => {
       cancelAnimationFrame(raf)
       observer.disconnect()
+      resizeObserver.disconnect()
       stepper.dispose?.()
     }
     // `create` is expected to be stable (module-level fn); reset is driven by resetKey.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resetKey, height])
+  }, [resetKey, height, aspectRatio, resetToken])
 
   return (
     <figure className="sim">
-      <canvas ref={canvasRef} className="sim-canvas" style={{ width: '100%', height }} />
+      <canvas ref={canvasRef} className="sim-canvas" style={{ width: '100%', height: aspectRatio ? 'auto' : height, aspectRatio }} />
       <div className="sim-controls">
         {animated && (
           <button type="button" onClick={() => setRunning((r) => !r)}>
             {running ? 'Pause' : 'Play'}
           </button>
         )}
-        <button type="button" onClick={() => setResetKey((k) => k + 1)}>
-          Reset
-        </button>
+        {resettable && <button type="button" onClick={() => setResetKey((k) => k + 1)}>
+          {resetLabel}
+        </button>}
         {children}
       </div>
       {caption && <figcaption>{caption}</figcaption>}

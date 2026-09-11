@@ -84,6 +84,12 @@ The build output is committed to `gh-pages`; `main` stays free of bundles. There
 deploys are a local command, so whatever you have built is what ships. Push `main` too, or the
 source and the live site drift apart.
 
+Custom-domain builds use a `public/CNAME` file containing the hostname. Vite
+then builds for `/` and carries the file into every deployment; without it,
+the current `/wave-physics-0to1/` address remains the default. The deploy script
+stops if a domain exists on `gh-pages` but its source file is missing.
+Domain activation and newsletter setup are tracked in [LAUNCH.md](LAUNCH.md).
+
 ### Cloudflare Pages (alternative, not currently used)
 
 ```bash

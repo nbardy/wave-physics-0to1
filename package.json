@@ -18,7 +18,21 @@
     "check:photonics": "bun run scripts/check-photonics-spike.ts",
     "check:hero": "bun run scripts/check-learningwall.ts",
     "deploy": "bash scripts/deploy-pages.sh",
-    "ship": "bash scripts/ship.sh"
+    "ship": "bash scripts/ship.sh",
+    "check:history": "bun run scripts/check-history.ts",
+    "check:pressure": "bun run scripts/check-pressure.ts",
+    "check:momentum": "bun run scripts/check-momentum.ts",
+    "check:pipes": "bun run scripts/check-pipes.ts",
+    "check:solver-steps": "bun run scripts/check-solver-steps.ts",
+    "check:barometer": "bun run scripts/check-barometer.ts",
+    "check:mountain": "bun run scripts/check-mountain.ts",
+    "check:prediction": "bun run scripts/check-prediction.ts",
+    "check:timeline": "bun run scripts/check-timeline.ts",
+    "check:loupe": "bun run scripts/check-loupe.ts",
+    "check:filament": "bun run scripts/check-filament.ts",
+    "check:history-followups": "bun run scripts/check-history-followups.ts",
+    "check:ideal": "bun run scripts/check-ideal.ts",
+    "check:construction": "bun run scripts/check-solver-construction.ts"
   },
   "dependencies": {
     "@mdx-js/react": "^3.1.0",

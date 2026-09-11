@@ -47,6 +47,10 @@ carries only the ask and where to look.
 
 ## §3 Publish gates (per lesson, at ship time)
 
+- [ ] **Domain + email launch** (2026-09-10): sign in to Cloudflare for
+  `math.nicholasbardy.com`; choose an existing newsletter list or Buttondown.
+  Build support is prepared; DNS, GitHub domain attachment, and the real
+  signup flow remain pending. See `LAUNCH.md`.
 - [ ] **Browser QA + mobile pass, lesson-03** (real-device touch; deployed site
   predates ALL figure fixes — redeploy on publish flip).
 - [ ] **Browser QA + mobile pass, lesson-04** (PaintTheBulge drag surface,
