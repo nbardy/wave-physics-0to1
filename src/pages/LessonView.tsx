@@ -2,6 +2,8 @@ import { useParams, useSearchParams, Link } from 'react-router-dom'
 import { lessonById, defaultVersion, versionOf } from '../lessons/registry'
 import { SeriesBanner, SeriesNext } from '../components/SeriesNav'
 import { VersionSwitch } from '../components/VersionSwitch'
+import NewsletterSignup from '../components/NewsletterSignup'
+import RelatedArticle from '../components/RelatedArticle'
 
 export default function LessonView() {
   const { id } = useParams<{ id: string }>()
@@ -52,6 +54,8 @@ export default function LessonView() {
       <VersionSwitch lesson={lesson} active={version} />
       <Content key={version.label} />
       <SeriesNext lessonId={lesson.id} />
+      <RelatedArticle lessonId={lesson.id} />
+      <NewsletterSignup key={lesson.id} />
     </article>
   )
 }

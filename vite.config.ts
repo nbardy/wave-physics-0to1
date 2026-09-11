@@ -4,15 +4,20 @@ import mdx from '@mdx-js/rollup'
 import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
-import { copyFileSync } from 'node:fs'
+import { copyFileSync, existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { createRss } from './scripts/rss'
 
-// GitHub Pages serves project sites from a subpath (/<repo>/); Cloudflare
-// Pages serves from root. GITHUB_PAGES (set by scripts/deploy-pages.sh) switches
-// the base so the same build works on both hosts. The router reads this back
-// via import.meta.env.BASE_URL, so links stay correct on either.
+// GitHub Pages project sites use /<repo>/; custom domains serve from root.
+// public/CNAME is the domain's source of truth and Vite copies it into dist,
+// so deploying cannot erase a domain that was configured only on gh-pages.
+// The router reads BASE_URL too, keeping navigation and assets on the same base.
 const onGitHubPages = process.env.GITHUB_PAGES === 'true'
-const base = onGitHubPages ? '/wave-physics-0to1/' : '/'
+const customDomain = existsSync('public/CNAME')
+  ? readFileSync('public/CNAME', 'utf8').trim()
+  : undefined
+if (customDomain === '') throw new Error('public/CNAME must contain the custom domain.')
+const base = onGitHubPages && !customDomain ? '/wave-physics-0to1/' : '/'
 
 // GitHub Pages has no SPA fallback: a deep-link reload (/lesson/foo) 404s
 // unless a 404.html exists. Serving a copy of index.html there lets the
@@ -55,5 +60,11 @@ export default defineConfig({
     },
     react({ include: /\.(mdx|js|jsx|ts|tsx)$/ }),
     spa404,
+    {
+      name: 'lesson-rss',
+      generateBundle() {
+        this.emitFile({ type: 'asset', fileName: 'rss.xml', source: createRss(readFileSync('src/lessons/registry.ts', 'utf8')) })
+      },
+    },
   ],
 })

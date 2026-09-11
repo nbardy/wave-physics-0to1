@@ -68,5 +68,11 @@ carries only the ask and where to look.
 
 ## Resolved (date + one line — retire, don't delete)
 
+- **2026-09-11 · Domain + email collection:** final address is
+  `physics.nicholasbardy.com`; Nick chose an owned Worker + D1 list. Shared
+  signup forms and RSS are implemented. Sending announcements is separate
+  remaining work; operations and verification live in `LAUNCH.md`.
+
+
 - 2026-07-06: lesson-02 epigraph verified against live tweet (verbatim, dated).
 - 2026-07-06: lesson 01 published keeping Final Words → lesson 02 owes ending rewrite.

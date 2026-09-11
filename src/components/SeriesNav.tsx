@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { FIELD_SPEC, lessonById, seriesForLesson } from '../lessons/registry'
+import './SeriesNav.css'
 
 /**
  * The quiet strip above a series lesson: which series this is, which part
@@ -15,7 +16,7 @@ export function SeriesBanner({ lessonId }: { lessonId: string }) {
       <span>
         {FIELD_SPEC[series.field].label} · Part {index + 1} of {series.lessonIds.length}
       </span>
-      <Link to={`/series/${series.id}`}>About this series →</Link>
+      <Link to={`/series/${series.id}`}>Check out the whole series →</Link>
     </p>
   )
 }

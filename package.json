@@ -18,7 +18,10 @@
     "check:photonics": "bun run scripts/check-photonics-spike.ts",
     "check:hero": "bun run scripts/check-learningwall.ts",
     "deploy": "bash scripts/deploy-pages.sh",
-    "ship": "bash scripts/ship.sh"
+    "ship": "bash scripts/ship.sh",
+    "check:newsletter": "bun run workers/newsletter/check.ts",
+    "typecheck:newsletter": "tsc --noEmit -p workers/newsletter/tsconfig.json",
+    "deploy:newsletter": "wrangler deploy --config workers/newsletter/wrangler.jsonc"
   },
   "dependencies": {
     "@mdx-js/react": "^3.1.0",
@@ -40,6 +43,8 @@
     "remark-gfm": "^4.0.1",
     "remark-math": "^6.0.0",
     "typescript": "^5.6.3",
-    "vite": "^6.0.3"
+    "vite": "^6.0.3",
+    "wrangler": "^4.131.0",
+    "miniflare": "5.20260910.0-alpha"
   }
 }

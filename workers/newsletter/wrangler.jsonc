@@ -1,0 +1,23 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "visual-explainers-newsletter",
+  "account_id": "1eb8ec2d2ed13e5ba2a0a228e2d02c56",
+  "main": "index.ts",
+  "compatibility_date": "2026-09-11",
+  "workers_dev": true,
+  "observability": { "enabled": true, "head_sampling_rate": 0.1, "logs": { "invocation_logs": false } },
+  "vars": {
+    "ALLOWED_ORIGINS": "https://physics.nicholasbardy.com,https://math.nicholasbardy.com,https://nbardy.github.io"
+  },
+  "d1_databases": [{
+    "binding": "DB",
+    "database_name": "visual-explainers-newsletter",
+    "database_id": "57cce9ea-ed30-4a0d-ab38-ae29239105cd",
+    "migrations_dir": "migrations"
+  }],
+  "ratelimits": [{
+    "name": "SIGNUP_LIMIT",
+    "namespace_id": "2410911",
+    "simple": { "limit": 10, "period": 60 }
+  }]
+}

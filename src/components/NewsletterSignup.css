@@ -1,6 +1,10 @@
 .newsletter-signup {
-  max-width: 440px;
+  max-width: 620px;
   margin: 1.5rem 0 1.8rem;
+  padding: 1.3rem 1.5rem;
+  border: 1px solid #d2e6f8;
+  border-radius: 10px;
+  background: #eaf4ff;
   font-family: var(--font-ui);
   font-size: 0.85rem;
   line-height: 1.5;
@@ -10,6 +14,9 @@
 .newsletter-signup label {
   display: block;
   margin-bottom: 0.5rem;
+  color: #173d62;
+  font-weight: 600;
+  font-size: 1rem;
 }
 
 .newsletter-signup-controls {
@@ -47,11 +54,14 @@
   font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
+  color: white;
+  background: #215d91;
+  border-color: #215d91;
 }
 
 .newsletter-signup button:hover {
-  border-color: var(--ink-soft);
-  background: var(--paper);
+  background: #194b78;
+  border-color: #194b78;
 }
 
 .newsletter-signup input:focus-visible,
@@ -63,4 +73,17 @@
 .newsletter-signup-note {
   margin-top: 0.4rem;
   font-size: 0.75rem;
+}
+.prose .newsletter-rss, .newsletter-rss {
+  display: inline-block;
+  margin-top: 0.65rem;
+  font-size: 0.75rem;
+  color: #215d91;
+}
+
+.newsletter-signup button:disabled { opacity: 0.7; cursor: wait; }
+.newsletter-honeypot { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+@media (max-width: 440px) {
+  .newsletter-signup { padding: 1.1rem; }
+  .newsletter-signup-controls { flex-direction: column; }
 }

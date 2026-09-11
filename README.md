@@ -71,26 +71,22 @@ House style docs (read in the order AGENTS.md gives): `ESSENCE_OF_VOICE_AND_DESI
 (the studied pole) → `NICKS_VOICE.md` (Nick's pole + the blend) → `SLOP.md` (the
 detector) → `METHODOLOGY.md` (the five-stage process).
 
-## Deploy (GitHub Pages)
+## Deploy
 
-Live at **https://nbardy.github.io/wave-physics-0to1/**.
+The final site is **https://physics.nicholasbardy.com/**, hosted by Cloudflare
+Workers Static Assets. Domain and deployment configuration live in the sibling
+Namesake repository’s `hosting/physics/` directory. It builds a committed source
+revision, keeping ongoing article edits out of a release. See [LAUNCH.md](LAUNCH.md)
+for deployment, the owned Worker + D1 email list, and RSS.
+
+The older GitHub Pages address remains available at
+https://nbardy.github.io/wave-physics-0to1/. These commands update that address:
 
 ```bash
 bun run deploy   # build + publish to the gh-pages branch
-bun run ship     # commit + push main, then deploy (one command; optional message arg)
+bun run ship     # commit + push main, then deploy
 ```
 
-The build output is committed to `gh-pages`; `main` stays free of bundles. There is no CI —
-deploys are a local command, so whatever you have built is what ships. Push `main` too, or the
-source and the live site drift apart.
-
-### Cloudflare Pages (alternative, not currently used)
-
-```bash
-bun run build
-bunx wrangler pages deploy dist --project-name wave-physics-0to1
-# → https://wave-physics-0to1.pages.dev
-```
-
-> The Pages project name is fixed on first deploy and **cannot be renamed** — keep it
-> `wave-physics-0to1`.
+The build output is committed to `gh-pages`; `main` stays free of bundles.
+There is no CI. Review the working tree before shipping, especially while
+other tasks are editing articles.

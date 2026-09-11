@@ -9,13 +9,22 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 WORKTREE=.gh-pages-deploy
 
-# GITHUB_PAGES switches vite's base to /<repo>/ and emits the 404.html SPA
-# fallback. Without it the bundle links to / and every asset 404s on Pages.
+# Refuse to erase a domain added through GitHub's settings. Keep it in
+# public/CNAME so Vite preserves it and builds assets for the domain's root.
+git fetch origin gh-pages
+REMOTE_DOMAIN=$(git show origin/gh-pages:CNAME 2>/dev/null || true)
+if [[ -n "$REMOTE_DOMAIN" && ! -s public/CNAME ]]; then
+  echo "GitHub Pages uses $REMOTE_DOMAIN, but public/CNAME is missing."
+  echo "Add that domain to public/CNAME before deploying."
+  exit 1
+fi
+
+# GITHUB_PAGES emits the 404.html SPA fallback; public/CNAME decides whether
+# assets use the custom domain's root or the default /<repo>/ path.
 GITHUB_PAGES=true bun run build
 
 SHA=$(git rev-parse --short HEAD)
 
-git fetch origin gh-pages
 git worktree add --force "$WORKTREE" gh-pages
 trap 'git worktree remove --force "$WORKTREE" 2>/dev/null || true' EXIT
 
@@ -34,4 +43,9 @@ fi
 
 git -C "$WORKTREE" commit -m "Deploy site (main@${SHA})"
 git -C "$WORKTREE" push origin gh-pages
-echo "Deployed main@${SHA} → https://nbardy.github.io/wave-physics-0to1/"
+if [[ -s dist/CNAME ]]; then
+  DOMAIN=$(tr -d '\r\n' < dist/CNAME)
+  echo "Deployed main@${SHA} → https://${DOMAIN}/"
+else
+  echo "Deployed main@${SHA} → https://nbardy.github.io/wave-physics-0to1/"
+fi

@@ -30,6 +30,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       <footer className="site-colophon">
         <span>Nick&rsquo;s Visual Math Lessons</span>
         <span>Explorable physics and mathematics.</span>
+        <a href={`${import.meta.env.BASE_URL}rss.xml`}>RSS</a>
       </footer>
     </div>
   )
