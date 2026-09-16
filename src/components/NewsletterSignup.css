@@ -82,6 +82,11 @@
   margin-top: 0.4rem;
   font-size: 0.75rem;
 }
+/* The live region stays in the DOM so screen readers announce a result, but
+   it takes no space while it has nothing to say. */
+.newsletter-signup-note:empty {
+  margin-top: 0;
+}
 .newsletter-signup .newsletter-rss-button {
   display: inline-flex;
   align-items: center;

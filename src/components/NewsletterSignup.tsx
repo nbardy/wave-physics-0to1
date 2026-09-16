@@ -5,6 +5,16 @@ import { getAnalyticsContext, trackEvent, trackOnce, type SignupPlacement } from
 
 type SignupState = { kind: 'idle' } | { kind: 'sending' } | { kind: 'success' }
   | { kind: 'error'; message: string }
+
+/** What the live status line says. Empty until the form has something to report. */
+function noteText(state: SignupState): string {
+  switch (state.kind) {
+    case 'idle': return ''
+    case 'sending': return ''
+    case 'success': return 'You’re on the list. See you at the next explainer.'
+    case 'error': return state.message
+  }
+}
 const RSS_URL = 'https://physics.nicholasbardy.com/rss.xml'
 
 export default function NewsletterSignup({ placement = 'top' }: { placement?: SignupPlacement }) {
@@ -113,8 +123,7 @@ export default function NewsletterSignup({ placement = 'top' }: { placement?: Si
         <label>Leave this empty<input name="website" tabIndex={-1} autoComplete="off" /></label>
       </div>
       <div className="newsletter-signup-note" id={noteId} role="status" aria-live="polite">
-        {state.kind === 'success' ? 'You’re on the list. See you at the next explainer.'
-          : state.kind === 'error' ? state.message : 'New explainers only. Unsubscribe anytime.'}
+        {noteText(state)}
       </div>
       {rss !== 'idle' && <div className="newsletter-rss-help">
         <div role="status" aria-live="polite">
