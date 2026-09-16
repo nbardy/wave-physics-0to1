@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>
+<title>Nick’s Visual Math Lessons</title><link>https://physics.nicholasbardy.com/</link>
+<description>New visual explainers in physics and mathematics.</description><language>en</language>
+<atom:link href="https://physics.nicholasbardy.com/rss.xml" rel="self" type="application/rss+xml"/>
+<item><title>A Computer Made of Noise</title><link>https://physics.nicholasbardy.com/lesson/pbits</link><guid isPermaLink="true">https://physics.nicholasbardy.com/lesson/pbits</guid><description>Randomly flipping bits can be connected and trained to generate patterns. Small simulations show how the sampling works and compare its results with exact probabilities.</description></item>
+<item><title>Compiling Into Heat</title><link>https://physics.nicholasbardy.com/lesson/z1-compiler</link><guid isPermaLink="true">https://physics.nicholasbardy.com/lesson/z1-compiler</guid><description>Extropic’s Z1 has fixed wiring. Compiling a probabilistic program onto it means fitting each step to the available connections, then checking how approximation errors accumulate as the steps run.</description></item>
+<item><title>Diffusion on a Dreaming Machine</title><link>https://physics.nicholasbardy.com/lesson/ebm-diffusion</link><guid isPermaLink="true">https://physics.nicholasbardy.com/lesson/ebm-diffusion</guid><description>A diffusion model generates small binary images on a model of Z1. Estimated costs for writing inputs, sampling, readout, and reprogramming show how execution order changes the energy used per image.</description></item>
+<item><title>Building the Navier–Stokes Equations</title><link>https://physics.nicholasbardy.com/lesson/navier-stokes</link><guid isPermaLink="true">https://physics.nicholasbardy.com/lesson/navier-stokes</guid><description>Meet each piece of fluid motion on its own, see why it alone falls short, then assemble the equation and run it live.</description></item>
+</channel></rss>
