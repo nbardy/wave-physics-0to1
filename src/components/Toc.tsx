@@ -66,13 +66,11 @@ function LessonEntry({ lesson, numbered }: { lesson: Lesson; numbered: boolean }
  */
 export function TocList({
   label,
-  blurb,
   more,
   items,
   numbered = true,
 }: {
   label: string
-  blurb?: string
   more?: { to: string; label: string }
   items: Lesson[]
   numbered?: boolean
@@ -81,7 +79,6 @@ export function TocList({
     <nav className={`toc${numbered ? '' : ' toc--unnumbered'}`} aria-label={label}>
       <div className="toc-head-block">
         <p className="toc-eyebrow">{label}</p>
-        {blurb && <p className="toc-eyebrow-blurb">{blurb}</p>}
         {more && (
           <p className="toc-eyebrow-more">
             <Link to={more.to}>{more.label}</Link>

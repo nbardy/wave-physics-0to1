@@ -34,7 +34,6 @@ export interface FieldSpec {
   field: Field
   label: string
   prefix: string
-  blurb: string
 }
 
 // A Record keyed by Field, so adding a field is a compile error until it has a
@@ -44,33 +43,26 @@ export const FIELD_SPEC: Record<Field, FieldSpec> = {
     field: 'physics',
     label: 'Broad physics',
     prefix: 'P',
-    blurb: 'Standalone lessons on whatever the physics is actually doing. No curriculum order.',
   },
   thermo: {
     field: 'thermo',
     label: 'Thermodynamic computing',
     prefix: 'T',
-    blurb:
-      'A series, read in order: chips that compute with the thermal noise every other chip spends its power budget fighting.',
   },
   waves: {
     field: 'waves',
     label: 'Waves, 0 → 1',
     prefix: '',
-    blurb: 'The spine: fluid and wave simulation from the fundamentals up, read in order.',
   },
   maths: {
     field: 'maths',
     label: 'Maths',
     prefix: 'M',
-    blurb: 'The machinery the physics keeps borrowing, taught on its own terms.',
   },
   cad: {
     field: 'cad',
     label: 'CAD maths',
     prefix: 'C',
-    blurb:
-      'The geometry inside every solid modeller: spline bases, the meshes that author them, and the topology that decides which side is metal.',
   },
 }
 
