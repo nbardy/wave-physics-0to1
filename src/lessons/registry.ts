@@ -198,7 +198,7 @@ export const lessons: Lesson[] = [
     blurb:
       'Randomly flipping bits can be connected and trained to generate patterns. Small simulations show how the sampling works and compare its results with exact probabilities.',
     tags: ['probability', 'simulation'],
-    status: { kind: 'published' },
+    status: { kind: 'draft' },
     versions: sole(Physics02),
   },
   {
@@ -212,7 +212,7 @@ export const lessons: Lesson[] = [
     blurb:
       'Extropic’s Z1 has fixed wiring. Compiling a probabilistic program onto it means fitting each step to the available connections, then checking how approximation errors accumulate as the steps run.',
     tags: ['probability', 'simulation'],
-    status: { kind: 'published' },
+    status: { kind: 'draft' },
     versions: sole(Physics03),
   },
   {
@@ -226,7 +226,7 @@ export const lessons: Lesson[] = [
     blurb:
       'A diffusion model generates small binary images on a model of Z1. Estimated costs for writing inputs, sampling, readout, and reprogramming show how execution order changes the energy used per image.',
     tags: ['probability', 'simulation'],
-    status: { kind: 'published' },
+    status: { kind: 'draft' },
     versions: sole(Thermo03),
   },
   {
@@ -285,7 +285,7 @@ export const lessons: Lesson[] = [
     blurb:
       'The partner to lesson 01: the same equation, built again — this time by history. Five discoveries, two strangers in the name, a 152-year paradox, and a million-dollar question still open.',
     tags: ['fluids', 'history', 'pde'],
-    status: { kind: 'draft' },
+    status: { kind: 'published' },
     versions: sole(Lesson03),
   },
   {

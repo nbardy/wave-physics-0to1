@@ -77,7 +77,7 @@ once real lessons exist.
 | P1 | Is Light a Wave or a Particle? | Broad physics | Draft |
 | 01 | Building the Navier–Stokes Equations (part-by-part deep dive) | Waves 0 → 1 | **Published** |
 | 02 | Fiber Bundles, the Universal Medium | Waves 0 → 1 | Draft |
-| 03 | The History of Navier–Stokes (who discovered what, and when) | Waves 0 → 1 | Draft |
+| 03 | The History of Navier–Stokes (who discovered what, and when) | Waves 0 → 1 | **Published** |
 | M1 | The Jacobian and the Hessian | Maths | Draft |
 
 House style docs (read in the order AGENTS.md gives): `ESSENCE_OF_VOICE_AND_DESIGN.md`

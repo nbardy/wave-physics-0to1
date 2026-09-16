@@ -53,14 +53,28 @@ for (const series of production.SERIES) {
   for (const id of series.lessonIds) assert.ok(production.lessonById(id))
 }
 
+// Rewrite one lesson's own status regardless of its current kind. Matching
+// only the expected kind (e.g. `'published'`) lets the lazy `[\s\S]*?` run past
+// a lesson that is already a draft and rewrite the NEXT lesson's status: when
+// the thermo trilogy was unpublished (2026-09-16) the old demotion check
+// silently demoted navier-stokes instead and then crashed on a missing series.
+function withStatus(text: string, id: string, kind: 'draft' | 'published'): string {
+  const pattern = new RegExp(`(id: '${id}'[\\s\\S]*?status: \\{ kind: )'(?:draft|published|planned)'`)
+  assert.match(text, pattern, `${id}: lesson entry with a literal status`)
+  return text.replace(pattern, `$1'${kind}'`)
+}
+
 // Promotion needs only a status edit: no separate production import list.
-const promotedSource = source.replace(/(id: 'learned-solver'[\s\S]*?status: \{ kind: )'draft'/, "$1'published'")
+const promotedSource = withStatus(source, 'learned-solver', 'published')
 const promoted = registry(publishedRegistry(promotedSource).code)
 assert.ok(promoted.lessonById('learned-solver'))
 assert.equal(promoted.lessonById('learned-solver')!.versions.length, 2)
 
 // Demoting a series member removes it from the series links and part counts.
-const demotedSource = source.replace(/(id: 'z1-compiler'[\s\S]*?status: \{ kind: )'published'/, "$1'draft'")
+// Publish the whole trilogy first so the check holds whatever is live today.
+const trilogySource = ['pbits', 'z1-compiler', 'ebm-diffusion']
+  .reduce((text, id) => withStatus(text, id, 'published'), source)
+const demotedSource = withStatus(trilogySource, 'z1-compiler', 'draft')
 const demoted = registry(publishedRegistry(demotedSource).code)
 assert.equal(demoted.seriesById('thermo')!.lessonIds.length, 2)
 assert.equal(demoted.seriesForLesson('z1-compiler'), undefined)
