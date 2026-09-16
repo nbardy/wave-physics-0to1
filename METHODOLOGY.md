@@ -27,7 +27,8 @@ We imitate the essence, not the accidents. Four deliberate departures:
 4. **Named solvers.** We state the numerical scheme and its stability condition in the
    post. For us the simulation *is* subject matter, not stagecraft.
 
-Everything else: his rules are our rules.
+The corpus supplies evidence for these choices, not a requirement to reproduce
+every surface habit. Apply the voice blend and the judgment tests below.
 
 ---
 
@@ -51,16 +52,21 @@ protagonist exists.**
 
 ## Stage 2 — SKELETON
 
-**Output: the section ladder + full figure list. Gate: every section ends on a
-manufactured problem, and the figure count is budgeted.**
+**Output: the section ladder + full figure list. Gate: each section advances a
+question the reader has reason to pursue, and the figures are feasible.**
 
-The skeleton is a **chain of failures repaired**:
+Build a connected argument. A **chain of failures repaired** is one useful form;
+measurement, comparison, and testing a prediction in a new setting can also
+organize it. The subject determines which form fits.
 
-1. Write the **failure chain**: for each section, name (a) the naive thing we'll build,
-   (b) its *visible, simulated* failure, (c) the savior sentence ("This is where X
-   comes in"). If a section has no failure driving into it, it's inventory — cut or
-   merge it. Alternative grains of the same move: constraint-relaxation ladder (remove
-   one impracticality per section) or representation-until-it-breaks.
+1. Write the **connection between sections**: what the reader already knows, what
+   this section lets them observe or calculate, and why the next question follows.
+   When a failed model motivates the next step, show a plausible attempt and the
+   specific defect its repair addresses. Do not invent a failure to satisfy the
+   outline. In a historical article, distinguish the teaching order from what
+   people actually tried; a new derivation, boundary condition, approximation, or
+   numerical method is not necessarily a new force term. Cut or combine sections
+   whose contribution is only another example of something already established.
 2. **Representation section(s) come first.** Teach how to *see* the domain (our arrows,
    markers, color maps) before anything happens in it. Nothing moves until the reader
    can read the display.
@@ -78,9 +84,12 @@ The skeleton is a **chain of failures repaired**:
    add a scene without a discovery. Amortize with **reuse-with-overlay**
    (same scene gaining arrows → markers → colors) and **one-delta sequencing**
    (consecutive figures differ by exactly one element).
-5. **Plant the payoffs**: every early unexplained demo gets a ledger entry and a
-   redemption point ("Recall that…"). Debts unpaid at the end of the skeleton = broken
-   skeleton.
+5. **Connect the opening to the payoff.** Record where each early unexplained
+   observation becomes understandable. Returning to the opening apparatus is
+   useful when the reader can now explain, predict, or operate it differently.
+   Check what the final answer actually requires: if it already follows halfway
+   through, later sections need a further question of their own or a different
+   placement. A repeated picture alone does not establish a completed argument.
 6. **Place the math moments** where the reader has just *been* the solver — the
    equation must arrive as the formalization of something they already did by hand.
 7. **Mark the waypoints** (our deviation #3) at act boundaries, and the **prediction
@@ -124,8 +133,8 @@ argument and the prose is its legend.
 
 Now — and only now — the voice pass. Three source documents govern it:
 `ESSENCE_OF_VOICE_AND_DESIGN.md` for the *philosophy of the moves*,
-`NICKS_VOICE.md` for the *prose temperature* (the blend rule lives in AGENTS.md:
-structure → ESSENCE wins, temperature → NICKS_VOICE wins), and `SLOP.md` as the
+`NICKS_VOICE.md` for the *prose temperature* (the blend rule lives in its §6),
+and `SLOP.md` as the
 detector to read the result against — the slop families and the four tests; judge
 with the tests, never grep for the families. The opening paragraph has its own
 law: `INTROS.md` — the three-move shape, the ranked constitution, and the worked
@@ -151,19 +160,20 @@ The moves:
 - **Emotion lives in discourse structure, not adjectives**: the naive failure gets
   its own turn, the rescue its own beat, the twist its own hinge. (His hinge words —
   "Unfortunately," "Thankfully," "However" — are fingerprint, not requirement.)
-- **One load-bearing metaphor per section**, used hard, then audited for its limits.
-  Analogies are simpler *physical* systems, ideally with their own figure.
+- **Use a metaphor when it explains a relation more clearly.** Develop it far
+  enough to be useful and state its limits. A section may need none. The allowed
+  household and math-native registers are described in NICKS_VOICE §6.
 - **Numbers as dessert**: concrete, astonishing, deployed only after intuition.
 - **Calibrated hedges** on approximate claims only; flat declaratives on hard ones.
 - **Confess every distortion** at the moment it appears.
-- **Long build → short verdict** as the default cadence; no drama fragments;
-  exclamations spent only on counterintuitive truth. (His ~22-word average is *his*
-  music — ours comes from NICKS_VOICE.)
+- **Cadence follows the reasoning.** Give causal connections enough room, then
+  state a conclusion plainly. NICKS_VOICE §6 owns the register; sentence-length
+  targets and fragment quotas do not substitute for reading the paragraph aloud.
 - **Questions: the fork rule** (NICKS_VOICE §6 arbitrates the poles' central
   conflict — his zero question marks vs. Nick's 59%): a question may appear in
   print only as a *genuine fork the article immediately adjudicates* — live
-  candidate mechanisms named, the fight staged, the winner called within the
-  section. Decorative wonder stays declarative; "But what does this really mean?"
+  candidate mechanisms named and distinguished by an observation or calculation
+  within the section. Decorative wonder stays declarative; "But what does this really mean?"
   is a question wearing slop's clothes.
 - **Boundary-value check after every formula.**
 - Close every simplification loop; pay every planted debt; end sections on forward
@@ -213,8 +223,8 @@ arrived while writing; if none arrived, the article ships drier and that's fine.
   a moment needs one; a short article that lands is finished at its own length.
 - **Palette audit**: same quantity = same color in every figure and every prose span;
   no orphan colors.
-- **Ledger audit**: every "we'll get back to this" has its "Recall that…"; the hero
-  figure returns understood.
+- **Ledger audit**: revisit the Stage-2 payoff map; check what the reader can now
+  explain or predict, rather than counting callbacks to earlier pictures.
 - **Reader-respect furniture**: global pause, restart buttons, touch-friendly drags,
   reasonable mobile cost. (No static-fallback sentences — the figures *are* the
   argument; a prose understudy per figure defeats the point. Decided 2026-07.)
@@ -241,10 +251,9 @@ arrived while writing; if none arrived, the article ships drier and that's fine.
   templates** — "by the end of this article you will know/have…", "in this article
   we'll build, piece by piece…", "you'll know exactly what X is": sentences that
   narrate the reading experience instead of the thing (play-test finding, 2026-07).
-  Debts are planted as flat declaratives that carry the content of the promise, not
-  its schedule ("that single number is the oldest debt in this article; it gets
-  paid, but not soon"). This anti-checklist is the corpus-measured subset; the full
-  slop taxonomy with its detection tests lives in `SLOP.md`.
+  Leave the reader with the unexplained observation itself; SLOP family 1 gives
+  the distinction and examples. This anti-checklist is the corpus-measured subset;
+  the full slop taxonomy with its detection tests lives in `SLOP.md`.
 
 **On audits themselves**: an audit may return zero findings — "this is fine" is a
 legitimate, complete result. Finding-counts are not a quality metric, and "all
@@ -261,9 +270,9 @@ a reason.
   Our bets against that cost: the shared `<Sim>` framework, reuse-with-overlay
   sequencing, Canvas-2D by default with WebGL only where irreducible, and building
   figure families (one Stepper, several overlay configurations).
-- **Stage order is load-bearing.** Voice-polishing a section whose skeleton will
-  change is wasted work; building figures for a section with no failure driving it is
-  worse — it locks in inventory. When in doubt, go back a stage; it's cheaper.
+- **Stage order is load-bearing.** Voice-polishing a section whose role will
+  change is wasted work; building its figures before identifying the discovery
+  makes weak material expensive to remove. Revisit that question first.
 - Stage gates are review points to run `/design_review`-style passes with the docs
   open: skeleton against Essence §4/§6, draft against Essence §2, polish against the
   audits.

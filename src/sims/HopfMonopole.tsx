@@ -112,7 +112,7 @@ interface PtrState {
 
 type DragKind = 'none' | 'orbit' | 'base'
 
-function createHopfMonopole(ptr: PtrState): Stepper {
+export function createHopfMonopole(ptr: PtrState): Stepper {
   // camera: a gentle fixed tilt plus slow drift; drag-to-orbit adjusts it
   let yaw = 0.6
   let pitch = -0.45

@@ -2,6 +2,8 @@ import { useParams, useSearchParams, Link } from 'react-router-dom'
 import { lessonById, defaultVersion, versionOf } from '../lessons/registry'
 import { SeriesBanner, SeriesNext } from '../components/SeriesNav'
 import { VersionSwitch } from '../components/VersionSwitch'
+import RelatedArticle from '../components/RelatedArticle'
+import { NewsletterIntro } from '../components/NewsletterSignup'
 
 export default function LessonView() {
   const { id } = useParams<{ id: string }>()
@@ -12,6 +14,7 @@ export default function LessonView() {
     return (
       <div className="prose lesson-not-found">
         <h1>Lesson not found</h1>
+        <NewsletterIntro />
         <p>
           No lesson with id “{id}”. <Link to="/">Back to the curriculum.</Link>
         </p>
@@ -28,6 +31,7 @@ export default function LessonView() {
     return (
       <div className="prose lesson-not-found">
         <h1>No such version</h1>
+        <NewsletterIntro />
         <p>
           “{lesson.title}” has no version “{wanted}”. It has{' '}
           {lesson.versions.map((v, i) => (
@@ -52,6 +56,7 @@ export default function LessonView() {
       <VersionSwitch lesson={lesson} active={version} />
       <Content key={version.label} />
       <SeriesNext lessonId={lesson.id} />
+      <RelatedArticle lessonId={lesson.id} />
     </article>
   )
 }

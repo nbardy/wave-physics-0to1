@@ -1,6 +1,7 @@
 import { Link, useSearchParams } from 'react-router-dom'
 import { allLessons, TAGS, TAG_LABEL, tagsInUse, type Lesson, type Tag } from '../lessons/registry'
 import { TocList } from '../components/Toc'
+import { NewsletterIntro } from '../components/NewsletterSignup'
 
 // What the ?tag= parameter means, as a sum type. A string that isn't a known
 // tag is its own case — the page says so rather than quietly showing everything.
@@ -44,6 +45,7 @@ export default function All() {
           Every lesson from every field, in one list. The tags cut across the fields — a lesson can
           be filed under waves and still be mostly linear algebra.
         </p>
+        <NewsletterIntro />
       </header>
 
       <div className="tagbar" role="group" aria-label="Filter by tag">

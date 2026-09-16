@@ -57,9 +57,17 @@ evidence improves it.
 
 ## Keep neighbouring articles distinct
 
-The history lesson follows changes in what people could explain and measure. The
-construction lesson follows changes in what a computation can do. They can share
-an equation or a solver without sharing a plot.
+Before judging an alternate outline, name the existing article's job and compare
+it with its neighbours. The history lesson follows changes in what people could
+explain and measure. The construction lesson follows changes in what a computation
+can do. They can share an equation or a solver without sharing a plot.
+
+A stronger individual experiment does not by itself justify a new article or
+replacing the old one. Identify what understanding the proposed article adds.
+When its best contribution is a clearer way to teach existing material, fold that
+experiment into the appropriate revision and retire the competing outline from
+active work. Check its placement: a pipe prediction using pressure belongs after
+pressure has been introduced, even if the idea originated in a viscosity sketch.
 
 For the construction lesson, a useful sequence is: store a field, move a quantity,
 discover a numerical failure, choose a better update, exchange momentum, measure
@@ -74,3 +82,15 @@ answering it under ordinary use, and its explanation reads naturally. Preserve
 good sections. Do not replace an article merely because a new outline is possible.
 The separate history version-two sketch was useful precisely because it let us
 explore a different story without continually destabilizing the working article.
+
+Preserve a reproducible baseline before a larger revision. Two MDX versions can
+still share mutable simulation components, so copying the prose does not freeze
+the old experience. Keep enhancements opt-in and checkpoint the complete source
+needed to render the baseline.
+
+Close the record as well as the code. A successful visual pass does not close a
+separate factual review. Reconcile older findings against the current files and
+give surviving issues an owner. Put a short current-state summary above historical
+handoff notes, distinguishing built, checked, committed, and deployed. Otherwise,
+completed work can keep reappearing as a task while unresolved claims disappear
+beneath newer entries.

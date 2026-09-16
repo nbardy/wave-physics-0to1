@@ -383,22 +383,23 @@ before the evidence. Delete it with the sentence after it in view; the
 paragraph opens better on the concrete case. SLOP.md family 24 carries the
 tests.
 
-The full taxonomy — 24 slop families, the four detection tests, and the real
+The full taxonomy — the slop families, the four detection tests, and the real
 before/after pairs from this repo's de-slop commits — lives in **`SLOP.md`**.
 
 ---
 
 ## 6. The blend — the register the articles are written in
 
-The operating formula: **Ciechanowski's discipline, Nick's blood.** The ESSENCE rules
-for structure (figure rhythm, one knob, colored vocabulary, failure-first, planted
-debts, jargon-last) stay fully in force. What changes is the *temperature* of the
-prose. The central conflict — his zero question marks vs. Nick's 59% — resolves like
-this:
+The operating formula: **Ciechanowski's discipline, Nick's blood.** ESSENCE supplies
+the measured philosophy; METHODOLOGY owns its application to structure and
+experiments. This document owns the *temperature* of the prose. Nick's short
+steering messages are evidence of directness and curiosity, not a sentence-length
+target for an explanation. The central conflict — his zero question marks vs.
+Nick's 59% — resolves like this:
 
 **A question may appear in print only if it is a genuine fork the article immediately
-adjudicates.** Nick's move 2.3, promoted to pedagogy: name two or three live candidate
-mechanisms, then stage the fight and call the winner within the section. Decorative
+adjudicates.** Nick's move 2.3, promoted to pedagogy: name live candidate mechanisms,
+then use an observation or calculation to distinguish them within the section. Decorative
 wonder stays declarative (his pole); load-bearing forks may interrogate (Nick's pole).
 Never "But what does this really mean?" — that's a question wearing slop's clothes.
 
@@ -406,9 +407,7 @@ Never "But what does this really mean?" — that's a question wearing slop's clo
 
 1. **Fork questions as section hinges** — sparingly, always answered, candidates
    always physical, and always *live*: hypotheses someone would actually hold before
-   knowing the answer. ("So which term lets go first when the wave steepens? Two
-   candidates have a claim…" is live because the answer is genuinely contested.) A
-   fork whose suspects exist only to be knocked down is manufactured cleverness —
+   knowing the answer. A fork whose suspects exist only to be knocked down is manufactured cleverness —
    SLOP.md family 17, flagged 2026-07-06.
 2. **Blunter verdicts at failures.** Where Ciechanowski writes "The results are
    completely janky," the blend is allowed one notch hotter: "This is just wrong — the
@@ -423,9 +422,10 @@ Never "But what does this really mean?" — that's a question wearing slop's clo
    spit). A good name is a compression win; introduce it Ciechanowski-style
    (phenomenon first, name second) but don't be shy about coining where the literature
    has no word.
-5. **Momentum in the cadence.** Pull the median sentence *below* Ciechanowski's 22
-   words. Allow a short fragment at a verdict or a reveal — one per section at most.
-   The long comma-chained legato is his; ours is allowed a heartbeat.
+5. **Momentum in the cadence.** Keep the reader's thought moving through connected
+   sentences. Give a mechanism enough room to become clear; use a short verdict
+   when it fits. Do not target a median sentence length or allot fragments by
+   section. Read for missing connections and monotonous rhythm, not counts.
 6. **Stated desire.** The article may *want* things: "We want the whole wave — lip,
    barrel, spray — out of one equation." Ciechanowski invites; Nick wants; the blend
    wants out loud, then earns it.
@@ -434,13 +434,13 @@ Never "But what does this really mean?" — that's a question wearing slop's clo
    register — provided each one is audited afterward the Ciechanowski way ("An
    imperfect, but convenient analogy…"). Household analogy for phenomena; math-native
    image for abstractions.
-8. **One aphorism per article, max.** A coined, quotable compression, spent at a
-   payoff moment the way Ciechanowski spends an exclamation mark — earned, never
-   opening. ("Learning to ask questions that you yourself could never answer becomes
-   the new superpower.")
+8. **Compression must carry content.** A short statement can name a relation the
+   reader has just understood. Keep it for that work, not for quotability; there
+   is no aphorism slot to fill. SLOP family 24 gives the test, and INTROS owns the
+   placement of the opening thesis.
 9. **Escalate-then-deflate** is admissible as the humor device — inflate the naive
    conclusion to absurdity, pop it with the physics. At pomposity's expense, never
-   the reader's; 1–2 per article, like his deadpan. **On probation**: it borders the
+   the reader's. **On probation**: it borders the
    disavowed old-blog register (§4 caution). Deploy sparingly and keep only if Nick's
    reactions to drafts endorse it.
 
@@ -469,41 +469,40 @@ entirely.
 
 ## 7. Calibration triptychs
 
-Same moment, three registers. The third column is the target.
+Same kind of moment, contrasting registers. The print samples are editorial
+examples, not quotations from Nick or mandatory sentence patterns. Replaced
+2026-09-11 where the earlier examples themselves staged mystery or narrated
+the article's construction; the source quotations in §§1–5 remain unchanged.
 
-**Introducing the mystery slider:**
+**Introducing a viscosity control:**
 - *Slop:* "In this article, we'll explore the fascinating world of viscosity and
   discover how a single parameter can dramatically change flow behavior."
 - *Nick raw:* "okay so what is that slider actually doing? is it viscosity? or like a
   diffusion number or something? and why does the wake go all wobbly at the low end tbh"
-- **Print:** "The slider changes one number, and we're not saying which. Drag it left
-  and the tidy pair of eddies behind the cylinder unravels into a street of them that
-  never settles. Nothing new was added — the same equation, with one term starved."
+- **Print:** "The left profile shows the starting velocities; the right shows
+  them two seconds later. Increase viscosity and compare the edges of the fast
+  layer: it slows while neighbouring water picks up speed."
 
 **Calling a failure:**
 - *Slop:* "Unfortunately, our naive approach has some limitations that we'll need to
   address in the following sections."
 - *Nick raw:* "It doesn't really line up, maybe we got something wrong, like grads or
   bakrpop, i just see a bunch of random colors"
-- **Print:** "The result is garbage. Dye pours *through* the cylinder as if it weren't
-  there, because our made-up pressure field never pushes back. That's the missing
-  ingredient, and it's worth catching in the act."
+- **Print:** "The cell sends out more water than it receives. With its volume
+  fixed and no source inside, that flow is impossible for incompressible water."
 
-**A section hinge:**
-- *Slop:* "Now that we understand pressure, let's dive into what happens when the wave
-  begins to break!"
+**A section hinge — source question retained, old print example retired:**
 - *Nick raw:* "so is it the pressure that holds the wave up? or the water under it? or
   what? and when does it let go"
-- **Print:** "So what lets go first when the wave steepens — the pressure holding the
-  face up, or the water feeding it from below? Both have a claim, and the next figure
-  stages the fight."
+- The old print version promised that the next figure would "stage the fight"
+  without establishing a test that distinguished the candidates. Preserve the
+  curiosity; write a printed fork only once the experiment can answer it.
 
 **A wanting sentence (no slop equivalent exists — slop can't want):**
 - *Nick raw:* "We want the damn 3d water VIS … that get that barreling with emergent
   physics … no hard coded conditions"
 - **Print:** "We want the whole wave — the steepening, the pitch, the barrel, the
-  spray — to fall out of the equations with nothing hard-coded. That is the standard
-  this article holds itself to."
+  spray — to fall out of the equations with nothing hard-coded."
 
 ---
 
@@ -546,7 +545,6 @@ world-tubes thread; lightly normalized):
 
 ---
 
-*Companions: `ESSENCE_OF_VOICE_AND_DESIGN.md` (the other pole, and all structural
-law), `METHODOLOGY.md` (the production process), `AGENTS.md` (reading order). When
-this guide and ESSENCE disagree about prose temperature, this guide wins; when they
-disagree about structure, ESSENCE wins.*
+*Companions: `ESSENCE_OF_VOICE_AND_DESIGN.md` (the measured source),
+`METHODOLOGY.md` (its structural application and production process), `AGENTS.md`
+(reading order). This guide owns prose temperature; `INTROS.md` owns openings.*

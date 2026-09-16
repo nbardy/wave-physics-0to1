@@ -1,12 +1,31 @@
 # P-BIT SERIES HANDOFF — thread restart entry point
 
-You are the next author of a three-part series on thermodynamic computing:
-0 → 1 physics → Extropic's actual stack → training a diffusion model
-in-browser on a simulator that IS the chip's contract. This document is
-your map. Everything below was built and decided in one long thread
-(2026-08-05); the working tree is canonical and NOTHING IS COMMITTED
-except a concurrent session's WIP snapshot (f51c552) — committing is
-Nick's call, never yours unprompted.
+Restart map for the three-part thermodynamic computing series: p-bit
+physics, Extropic's compiler and hardware, and diffusion with modeled
+energy costs. Dated entries below preserve earlier states; consult the
+latest applicable entry and the working tree when resuming.
+
+## Series-page copy — 2026-09-12
+
+**Complete locally; uncommitted and not deployed by this task.** Changes
+are five strings in `src/lessons/registry.ts`: the series lede, its
+attribution note, and the three lesson blurbs. No lesson bodies or
+simulation behavior changed in this pass.
+
+Nick rejected “One machine, held three ways” / “priced dream” and asked
+for an introduction to Extropic and thermodynamic computing. The lede now
+introduces the company, explains thermal noise and programmable coupling,
+then identifies the three parts. The adjacent blurbs now describe their
+computations and checks directly. Energy costs remain explicitly estimates.
+Company/mechanism grounding was checked against
+[Extropic's introduction](https://extropic.ai/writing/thermodynamic-computing-from-zero-to-one)
+and [Z1/stack announcement](https://extropic.ai/writing/from-one-to-one-billion).
+
+Validation: `bun run typecheck` and `bun run build` passed on 2026-09-12.
+The build reported bundle-size and mixed static/dynamic-import warnings.
+Shipping remains: coordinate with the other tasks editing this working
+tree, including the same registry file, before committing and deploying.
+This is a metadata revision, not a completed prose audit of the three lessons.
 
 ## Read in this order (do not skip; do not skim the voice docs)
 

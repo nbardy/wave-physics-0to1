@@ -1,0 +1,4 @@
+@media (max-width: 640px) {
+  .series-banner { flex-direction: column; gap: 0.5rem; }
+  .series-banner a { white-space: normal; }
+}

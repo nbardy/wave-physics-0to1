@@ -1,5 +1,72 @@
 # HANDOFF — Lesson 01: Building the Navier–Stokes Equations
 
+## Current state — version II built locally, 2026-09-12
+
+I and II are now distinct complete articles. I remains the default reading version;
+II is available at `/lesson/navier-stokes?v=II`. The September 10 computational
+revision is checkpointed in `ca79202`, with the I/II split in `a4f47a3`. This pass
+left I byte-for-byte unchanged from its starting state (SHA256
+`2cc680566d768a62e18fe5ff93b560769f05f1b100669a727af07a1ee43ef620`).
+That starting state already included another task's conditional history link;
+use the older commits for an exact historical checkout.
+
+The [II_REBUILD_PLAN.md](II_REBUILD_PLAN.md) has now been applied. New code lives
+in `src/sims/ns-revision/`; the baseline simulation implementations are untouched:
+
+- **Parcel acceleration:** a steady, divergence-free narrowing channel with exact
+  parcel trajectories. A fixed probe and a travelling parcel report horizontal
+  speed on one graph. The slip-wall prescribed field is explicitly distinguished
+  from a solved viscous nozzle.
+- **Viscosity:** retained the diffusion workbench and replaced the vortex-decay
+  example with matched parcel displacements, with/without viscosity. Added the
+  dynamic/kinematic distinction and separated dye, momentum, and numerical diffusion.
+- **Reynolds similarity:** reference / scaled speed-and-viscosity / scaled speed-only
+  periodic shear flows. Equal dimensionless times and normalized velocity scales;
+  a 48-row finite-difference calculation checked against an exact advected heat mode.
+- **Plate to pipes to wall slip:** a staged, calculated investigation with a fixed
+  synthetic Newtonian liquid. Infer dynamic viscosity at a plate; pass it to equal
+  area tube bundles; vary uniform Navier slip while keeping the material fixed.
+  Collection measures volume over a common interval. The prose explicitly excludes
+  claims of experimental validation and ordinary-coating performance.
+- **Physical qualifications and ending:** pressure acceleration and applied force
+  per unit mass are labelled correctly; divergence-free does not mean only swirl;
+  orderly flow can mix. Removed the wave animations and material-float claims,
+  keeping a short statement of the extra physics waves require. The article ends
+  with the timestep, live workbench, returning wing, and their limits.
+
+**Validation:** `bun run scripts/check-ns-revision.ts` checks trajectories and flux,
+wall compatibility, displacement against an independent sine-series heat solution,
+Reynolds scaling and convergence, pipe flux by radial quadrature, slip sign, SI
+readings, low-Re applicability, actual amber parcel/collection pixels, pure drawing,
+and 720/320px text bounds. The worst normalized velocity errors measured on the
+sampled parameter grid are 0.007995 at 48 rows and 0.002003 at 96 rows. An early
+check caught insufficient accuracy in integrated layer travel; its physics step
+was reduced before the check passed. Existing construction checks remain green
+(142). Typecheck and production build pass; existing bundle-size and unrelated
+mixed-import warnings remain. The production publication filter deliberately
+excludes draft II, so the revision suite also compiles II directly with the same
+MDX/math plugins. Its running page was checked in development.
+
+Chrome QA at desktop and 390px: all seven new sliders change their canvases at
+opposite endpoints and restore the same image on return; tube-count buttons give
+three distinct results; all controls fit with no horizontal overflow. Switching
+I → II unmounts old canvases, restores initial controls, shows the corresponding
+article text, and reaches Final Words in both. New illustrations and desktop/mobile
+screenshots were inspected in `_figure_check/ns-revision/`. These are browser and
+emulated-width checks, not a physical-device test.
+
+The history article remains separate. The learned-solver/simulation-error dependency
+cleanup recorded in `articles/08-learned-solver/HANDOFF.md` remains a separate task;
+this revision does not claim to close it.
+
+This revision is local and uncommitted. Other tasks have extensive uncommitted
+publication, preview, newsletter, and Worker work in the shared tree. No push or
+deployment was performed here. Nick's comparison/read and an intentional release
+remain; this entry does not report the local II draft as the live published default.
+
+Everything below is a dated implementation record; older inventories and pending
+lists are superseded where the later entries above resolve them.
+
 **State: PUBLISHED 2026-07-06.** 5,240 words, 31 figures, 9 earned equations.
 Final numbers from the Stage-5 close-out: "known as" ×2, banned filler ×0,
 exclamations ×0, zero family-16/17 slop findings on the second full scan; both

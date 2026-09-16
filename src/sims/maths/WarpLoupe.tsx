@@ -112,7 +112,7 @@ function drawMatrix(
   ctx.fillText(fmt(m[3]), bx + 54, y + 33)
 }
 
-function createLoupe(mode: LoupeMode, sharedRef: { current: Shared }): Stepper {
+export function createWarpLoupe(mode: LoupeMode, sharedRef: { current: Shared }): Stepper {
   let acc = 0
   let clock = 2 // start the return flow mid-swing so the first frame is already swirled
 
@@ -268,7 +268,7 @@ export function WarpLoupe({ mode }: { mode: LoupeMode }) {
         create={() => {
           sharedRef.current.probe = { x: 0.45, y: 0.3 }
           setZoom(mode === 'plant' ? 0 : 0.55)
-          return createLoupe(mode, sharedRef)
+          return createWarpLoupe(mode, sharedRef)
         }}
       >
         <label className="sim-slider">

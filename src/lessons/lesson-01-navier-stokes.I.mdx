@@ -10,6 +10,7 @@ import { DivergenceLoop } from '../sims/DivergenceLoop'
 import { HelmholtzSplit } from '../sims/HelmholtzSplit'
 import { RippleWaves } from '../sims/RippleWaves'
 import { Link } from 'react-router-dom'
+import { lessonById } from './registry'
 import { BacktraceLab, TransportErrors } from '../sims/solver-lab/TransportLab'
 import { DiffusionLab } from '../sims/solver-lab/DiffusionLab'
 import { CellFlux } from '../sims/solver-lab/CellFlux'
@@ -44,8 +45,8 @@ current came from.
 
 The flows here are two dimensional and incompressible. The small grid experiments
 below expose individual updates; the wing combines them at a higher resolution.
-The <Link to="../navier-stokes-history" relative="path">history lesson</Link>
-follows how these ideas were discovered. Here the question is how to make them
+{lessonById('navier-stokes-history') && <span>The <Link to="../navier-stokes-history" relative="path">history lesson</Link> follows how these ideas were discovered. </span>}
+Here the question is how to make them
 compute a flow, and how to tell when the computation is wrong.
 
 ## Seeing Flow

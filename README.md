@@ -31,7 +31,20 @@ bun run dev            # http://localhost:5173
 bun run build          # → dist/
 bun run typecheck      # tsc --noEmit  (covers src/ and scripts/)
 bun run check:figures  # render every physics-01 figure headlessly and assert what it teaches
+bun run check:previews # verify each listing figure stays still, animates, and freezes
+bun run render:previews # regenerate listing stills after changing a preview or its figure
 ```
+
+`bun run dev` includes planned lessons, drafts, and working reading versions.
+Every build (including GitHub Pages and the custom domain) includes only lessons
+whose registry status is `published`. Unpublished MDX imports are removed before
+bundling, so drafts are absent from listings, direct routes, and site JavaScript.
+`bun run preview` shows that production view locally.
+
+Versions inherit their lesson's status unless explicitly marked otherwise. Set
+`status: { kind: 'draft' }` on an unfinished version of a published lesson to keep
+it local. This controls the built website, not access to source files in Git.
+Run `bun run check:publication` to check catalogue visibility and promotion.
 
 ## Layout
 
@@ -71,32 +84,22 @@ House style docs (read in the order AGENTS.md gives): `ESSENCE_OF_VOICE_AND_DESI
 (the studied pole) → `NICKS_VOICE.md` (Nick's pole + the blend) → `SLOP.md` (the
 detector) → `METHODOLOGY.md` (the five-stage process).
 
-## Deploy (GitHub Pages)
+## Deploy
 
-Live at **https://nbardy.github.io/wave-physics-0to1/**.
+The final site is **https://physics.nicholasbardy.com/**, hosted by Cloudflare
+Workers Static Assets. Domain and deployment configuration live in the sibling
+Namesake repository’s `hosting/physics/` directory. It builds a committed source
+revision, keeping ongoing article edits out of a release. See [LAUNCH.md](LAUNCH.md)
+for deployment, the owned Worker + D1 email list, and RSS.
+
+The older GitHub Pages address remains available at
+https://nbardy.github.io/wave-physics-0to1/. These commands update that address:
 
 ```bash
 bun run deploy   # build + publish to the gh-pages branch
-bun run ship     # commit + push main, then deploy (one command; optional message arg)
+bun run ship     # commit + push main, then deploy
 ```
 
-The build output is committed to `gh-pages`; `main` stays free of bundles. There is no CI —
-deploys are a local command, so whatever you have built is what ships. Push `main` too, or the
-source and the live site drift apart.
-
-Custom-domain builds use a `public/CNAME` file containing the hostname. Vite
-then builds for `/` and carries the file into every deployment; without it,
-the current `/wave-physics-0to1/` address remains the default. The deploy script
-stops if a domain exists on `gh-pages` but its source file is missing.
-Domain activation and newsletter setup are tracked in [LAUNCH.md](LAUNCH.md).
-
-### Cloudflare Pages (alternative, not currently used)
-
-```bash
-bun run build
-bunx wrangler pages deploy dist --project-name wave-physics-0to1
-# → https://wave-physics-0to1.pages.dev
-```
-
-> The Pages project name is fixed on first deploy and **cannot be renamed** — keep it
-> `wave-physics-0to1`.
+The build output is committed to `gh-pages`; `main` stays free of bundles.
+There is no CI. Review the working tree before shipping, especially while
+other tasks are editing articles.

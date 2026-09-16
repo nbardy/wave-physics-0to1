@@ -88,3 +88,11 @@ When a visual changes, update its setup and interpretation in the same pass. Lin
 to the previous lesson at the sentence that invokes it. Further reading should
 lead to the actual resource and explain what the reader can learn there. Internal
 navigation must survive the production base path.
+
+Follow references in the other direction too. After the construction lesson's
+pressure explanation changed, the learned-solver lesson still quoted its former
+wording, and a check still required that obsolete quotation to exist. A local
+correction can leave a neighbouring article describing an experiment the reader
+can no longer find. Search for those quotations and dependent claims when changing
+a technical explanation. Update the referring passage and its evidence together;
+loosening a test alone would leave the contradiction in the article.

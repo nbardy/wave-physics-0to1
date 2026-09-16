@@ -1,8 +1,37 @@
 # HANDOFF — Lesson 03: The History of Navier–Stokes
 
-**State: BUILT END-TO-END (2026-07-06). Stages 1–3 complete plus full prose at
-near-final quality; status `draft` in the registry. Mission of the next thread:
-real-browser QA, the Stage-4 voice pass, Stage-5 audits, then publish.**
+## Current state — reconciled 2026-09-11
+
+The September history revisions, checks, and separate version-two story sketch
+are checkpointed in `7fe705a`; shared infrastructure is in `924c9df`. The lesson
+remains `draft`. The old “browser QA not done” and “not committed” entries below
+describe earlier states. Desktop/emulated-mobile reader checks and the targeted
+physics checks were completed as recorded in the September entries. A physical
+device touch pass remains distinct from those checks.
+
+The version-two sketch is intentionally unimplemented: Nick commissioned a
+parallel story/visual sketch while keeping this article in place. It is not
+unfinished implementation owed by this thread. The sound, momentum, and cascade
+follow-ups formerly listed as RESEARCH_QUEUE Q6 are built; their canonical record
+is “Remaining figure follow-ups — BUILT 2026-09-10” below.
+
+The September 9 source review was broader than the visual repair. A small factual
+follow-up is still owed: the Poiseuille paragraph still describes blood in the
+capillaries, the slip paragraph still says “survives in one place,” and the Tao
+paragraph retains the “strongest recent evidence”/“anything yet written down”
+overstatement identified by the review. Verify and correct those passages against
+their sources. Mathematical-status claims also need a fresh primary-source check
+at publication; the review's time-sensitive announcement is not established by
+this handoff audit. Most old figure findings are superseded by the rebuilt
+components and must not be reapplied from stale line numbers.
+
+Publication remains a separate step. The local Pages branch still records the
+September 6 deployment; no claim about the current live site was verified here.
+Current shared-tree work also includes a separate construction-article version II
+and signup infrastructure. No deployment was attempted during this audit.
+
+The dated notes below preserve implementation details and measurements. Their
+older todo lists are historical where this summary or later entries close them.
 
 ## Prose copyedit — 2026-09-10, local
 

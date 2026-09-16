@@ -53,9 +53,18 @@ State is part of the teaching. Decide what happens when a control changes:
   cached states. Recreating the slider during a drag breaks the experiment.
 
 Test the return trip. A control that works only on the first drag is broken.
-Test it while paused. Static investigations need no Play button. Do not erase an
-interesting failure with an unexplained automatic reset; let the reader inspect it
-and restart deliberately.
+Test it while paused. A parameter sets the rule for future evolution; a direct
+intervention changes the current state. In the construction workbench, adding dye
+or applying a push works while paused, so the reader can inspect the change before
+resuming time. The push is projected immediately to preserve incompressibility;
+adding dye leaves velocity unchanged.
+
+Static investigations need no Play button. They also need no Reset button if
+recreating the figure just redraws the selected parameter values: that button has
+no observable effect. Give a restart a precise meaning, such as restoring initial
+conditions or starting a new collection interval. Do not erase an interesting
+failure with an unexplained automatic reset; let the reader inspect it and restart
+deliberately.
 
 ## Make the evidence legible
 
@@ -95,7 +104,12 @@ Then inspect the rendered evidence. Measure the relevant dye, column, arrow, or
 bar rather than “non-background pixels.” Exercise endpoints, a middle value,
 rapid reversals, reset, pause, keyboard control, and a narrow viewport where they
 apply. Check that an off-screen or visibility-hidden canvas is actually advancing
-before diagnosing a frozen solver.
+before diagnosing a frozen solver. A changed DOM readout does not establish that
+the canvas has drawn that state yet. In this thread, sampling too soon produced
+false failures on every slider's return trip. Wait for the requested value to
+appear in the rendered figure before comparing images. Reload after code changes
+when an existing stepper still holds an old closure; do not diagnose hot-reload
+state as a physics failure.
 
 Finally, state the limits at the point of inference: prescribed motion is an
 illustration, a coarse two-dimensional wake is not resolved three-dimensional

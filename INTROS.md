@@ -25,9 +25,9 @@ Three moves, in order, and nothing else:
    of the familiar side — "a chip now exists that runs on the noise instead."
    The wonder gap is the distance between move 1 and move 2, and the reader
    crosses it alone; the prose never says "surprisingly."
-3. **The thesis, last.** One aphorism-weight line the whole article will spend
-   itself earning — "The flipping is the computation." The intro terminates on
-   it. It is the intro's only fragment and only quotable.
+3. **The thesis, last.** State the concrete relation the article explains —
+   "The flipping is the computation." The intro terminates on that claim.
+   It need not be a fragment or an aphorism; SLOP family 24 still applies here.
 
 Then the hero figure, playable, within ~150 words of the top.
 
@@ -50,7 +50,8 @@ real drafts; the rest shape survivors.
    every candidate: the winner was the only draft with zero such sentences.)
 4. **Open cold on a concrete thing** — a transistor, a current, a watt. Never
    on stakes, wars, or significance; drama belongs to the phenomenon (SLOP 20).
-5. **One aphorism maximum, and it is the thesis, and it comes last.**
+5. **One thesis, stated last.** Keep it for what it claims about the subject;
+   do not add a quotable flourish after the claim.
 6. **Hands, never imagination.** "Imagine" is banned; show it below or point at
    something already in the reader's world.
 7. **A metaphor in the intro is almost always net-negative** — it must be
@@ -110,5 +111,6 @@ feels flat, the fix is a sharper fact in move 1 — never a hotter word.
 taxonomies — personal fascination, anachronism-wonder, ubiquity+mystery,
 anti-hype concession — all remain legal ways to pick move 1's subject),
 `SLOP.md` families 1 and 20 (the two intro-specific failure modes),
-`NICKS_VOICE.md` §5 (the flagged lines, verbatim). Structure conflicts →
-ESSENCE wins; temperature → NICKS_VOICE wins; openings → this doc wins.*
+`NICKS_VOICE.md` §5 (the flagged lines, verbatim). `METHODOLOGY.md` owns the
+structural application of the measured source; NICKS_VOICE owns temperature;
+this doc owns openings.*

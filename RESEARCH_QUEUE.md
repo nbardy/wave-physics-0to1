@@ -225,13 +225,3 @@ explicit yes; `02_INDEX.md` also lists physics lines the main loop already
 flagged for hand-fixing before any revise agent runs (the wave-particle
 half-wave-plate angle, the p-bits number order, the photonics "real matrix"
 qualifier).
-
-
-## Q6 — history figures' discovery and interaction pass — BUILT 2026-09-10
-
-Sound compression, matched momentum exchange and a conservative energy-transfer
-model are implemented and checked. Nick authorized following through on the useful
-remaining changes. Completion details, limits and verification now live in
-`articles/03-navier-stokes-history/HANDOFF.md` under “Remaining figure follow-ups.”
-This closes the three concrete candidates; it is not a claim that every historical
-assertion or unrelated review proposal has received a fresh audit.

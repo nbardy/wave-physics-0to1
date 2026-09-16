@@ -1,0 +1,13 @@
+.related-article {
+  margin: 2.5rem 0 1.2rem;
+  padding: 1.2rem 1.5rem;
+  border-left: 3px solid #9ecbf0;
+  border-radius: 0 8px 8px 0;
+  background: #eff7ff;
+  font-family: var(--font-ui);
+  line-height: 1.55;
+}
+.related-article-kicker { display: block; margin-bottom: 0.35rem; font-size: 0.78rem; color: #536c83; }
+.prose .related-article a { color: #215d91; font-size: 1.02rem; font-weight: 600; }
+.prose .related-article p { margin: 0.4rem 0 0; font-size: 0.87rem; color: #405b74; }
+@media (max-width: 440px) { .related-article { padding: 1.1rem; } }

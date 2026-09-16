@@ -8,6 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
+    "check:previews": "bun run scripts/check-lesson-previews.ts",
+    "render:previews": "bun run scripts/check-lesson-previews.ts --write",
     "check:figures": "bun run scripts/check-physics-figures.ts",
     "check:grossmann": "bun run scripts/check-grossmann.ts",
     "check:pbits": "bun run scripts/check-pbit-figures.ts && bun run scripts/check-pbit-act1.ts && bun run scripts/check-pbit-act2.ts && bun run scripts/check-pbit-act3.ts && bun run scripts/check-pbit-act4.ts",
@@ -32,28 +34,39 @@
     "check:filament": "bun run scripts/check-filament.ts",
     "check:history-followups": "bun run scripts/check-history-followups.ts",
     "check:ideal": "bun run scripts/check-ideal.ts",
-    "check:construction": "bun run scripts/check-solver-construction.ts"
+    "check:construction": "bun run scripts/check-solver-construction.ts",
+    "check:publication": "bun run scripts/check-publication.ts",
+    "check:newsletter": "bun run workers/newsletter/check.ts",
+    "typecheck:newsletter": "tsc --noEmit -p workers/newsletter/tsconfig.json",
+    "deploy:newsletter": "wrangler deploy --config workers/newsletter/wrangler.jsonc",
+    "analytics": "bun run scripts/analytics.ts",
+    "check:analytics": "bun run scripts/check-analytics-browser.ts"
   },
   "dependencies": {
     "@mdx-js/react": "^3.1.0",
     "katex": "^0.16.11",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.28.0"
+    "react-router-dom": "^6.28.0",
+    "@nick/analytics": "file:vendor/nick-analytics-0.3.0.tgz"
   },
   "devDependencies": {
     "@mdx-js/rollup": "^3.1.0",
     "@napi-rs/canvas": "^1.0.3",
+    "@types/jsdom": "21.1.7",
     "@types/katex": "^0.16.7",
     "@types/node": "^26.1.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
     "@webgpu/types": "^0.1.71",
+    "jsdom": "26.1.0",
+    "miniflare": "5.20260910.0-alpha",
     "rehype-katex": "^7.0.1",
     "remark-gfm": "^4.0.1",
     "remark-math": "^6.0.0",
     "typescript": "^5.6.3",
-    "vite": "^6.0.3"
+    "vite": "^6.0.3",
+    "wrangler": "^4.131.0"
   }
 }

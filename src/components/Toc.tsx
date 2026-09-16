@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { LessonPreview } from './LessonPreview'
 import {
   lessonNumber,
   TAG_LABEL,
@@ -31,6 +33,32 @@ function TagRow({ tags }: { tags: readonly Tag[] }) {
   )
 }
 
+function LessonEntry({ lesson, numbered }: { lesson: Lesson; numbered: boolean }) {
+  const [hovered, setHovered] = useState(false)
+  const [focused, setFocused] = useState(false)
+  return (
+    <li className="toc-item">
+      <Link to={`/lesson/${lesson.id}`} className="toc-link"
+        onPointerEnter={e => { if (e.pointerType !== 'touch') setHovered(true) }}
+        onPointerLeave={() => setHovered(false)}
+        onFocus={e => setFocused(e.currentTarget.matches(':focus-visible'))}
+        onBlur={() => setFocused(false)}>
+        {numbered && <span className="toc-num">{lessonNumber(lesson)}</span>}
+        <span className="toc-head">
+          <span className="toc-title">{lesson.title}</span>
+          <StatusTag status={lesson.status} />
+        </span>
+        <span className="toc-arrow" aria-hidden="true">→</span>
+        <LessonPreview id={lesson.id} spec={lesson.preview} active={hovered || focused} />
+        <span className="toc-main">
+          <span className="toc-blurb">{lesson.blurb}</span>
+          <TagRow tags={lesson.tags} />
+        </span>
+      </Link>
+    </li>
+  )
+}
+
 /**
  * One list of lessons under an eyebrow. Home passes one field's lessons per
  * list; /all passes the filtered flat set. The numbers come from the registry,
@@ -41,14 +69,16 @@ export function TocList({
   blurb,
   more,
   items,
+  numbered = true,
 }: {
   label: string
   blurb?: string
   more?: { to: string; label: string }
   items: Lesson[]
+  numbered?: boolean
 }) {
   return (
-    <nav className="toc" aria-label={label}>
+    <nav className={`toc${numbered ? '' : ' toc--unnumbered'}`} aria-label={label}>
       <div className="toc-head-block">
         <p className="toc-eyebrow">{label}</p>
         {blurb && <p className="toc-eyebrow-blurb">{blurb}</p>}
@@ -59,24 +89,7 @@ export function TocList({
         )}
       </div>
       <ol className="toc-list">
-        {items.map((l) => (
-          <li key={l.id} className="toc-item">
-            <Link to={`/lesson/${l.id}`} className="toc-link">
-              <span className="toc-num">{lessonNumber(l)}</span>
-              <span className="toc-main">
-                <span className="toc-head">
-                  <span className="toc-title">{l.title}</span>
-                  <StatusTag status={l.status} />
-                </span>
-                <span className="toc-blurb">{l.blurb}</span>
-                <TagRow tags={l.tags} />
-              </span>
-              <span className="toc-arrow" aria-hidden="true">
-                →
-              </span>
-            </Link>
-          </li>
-        ))}
+        {items.map(l => <LessonEntry key={l.id} lesson={l} numbered={numbered} />)}
       </ol>
     </nav>
   )

@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react'
+import type { LessonPreviewSpec } from '../components/previewSpec'
 import Lesson01I from './lesson-01-navier-stokes.I.mdx'
 import Lesson01II from './lesson-01-navier-stokes.II.mdx'
 import Lesson02 from './lesson-02-fiber-bundles.mdx'
@@ -128,6 +129,8 @@ export interface LessonVersion {
   label: string
   author: string
   note: string
+  /** Omitted versions inherit the lesson's status. Working rewrites stay draft. */
+  status?: LessonStatus
   Content: ComponentType
 }
 
@@ -149,11 +152,17 @@ export interface Lesson {
   tags: readonly Tag[]
   status: LessonStatus
   versions: LessonVersions
+  preview: LessonPreviewSpec
 }
 
+// Vite's published-lessons-only build plugin strips unpublished entries and MDX
+// imports. Dev sees this full catalogue; production lookups cannot reach drafts.
 export const lessons: Lesson[] = [
   {
     id: 'wave-particle-duality',
+    preview: { poster: new URL('../assets/lesson-previews/wave-particle-duality.png', import.meta.url).href,
+      width: 720, height: 360, warmup: 6,
+      load: () => import('../sims/physics/PhotonRain').then(m => m.createPhotonRain({ current: 500 })) },
     field: 'physics',
     order: 1,
     title: 'Is Light a Wave or a Particle?',
@@ -165,6 +174,9 @@ export const lessons: Lesson[] = [
   },
   {
     id: 'einstein-grossmann',
+    preview: { poster: new URL('../assets/lesson-previews/einstein-grossmann.png', import.meta.url).href,
+      width: 720, height: 360, warmup: 96,
+      load: () => import('../sims/physics/MercuryGrade').then(m => m.createMercuryGrade({ current: 0.45 })) },
     field: 'physics',
     order: 2,
     title: 'The Draft That Had to Fail',
@@ -176,39 +188,52 @@ export const lessons: Lesson[] = [
   },
   {
     id: 'pbits',
+    preview: { poster: new URL('../assets/lesson-previews/pbits.png', import.meta.url).href,
+      width: 720, height: 460, warmup: 3,
+      crop: { x: 12, y: 30, width: 432, height: 344 },
+      load: () => import('../sims/pbits/BilledWall').then(m => m.createBilledWall(false)) },
     field: 'thermo',
     order: 1,
     title: 'A Computer Made of Noise',
     blurb:
-      'A chip that computes with the thermal noise every other chip fights. Build it from one flickering coin — and build the instrument that catches a fast sampler telling a confident lie.',
+      'Randomly flipping bits can be connected and trained to generate patterns. Small simulations show how the sampling works and compare its results with exact probabilities.',
     tags: ['probability', 'simulation'],
     status: { kind: 'published' },
     versions: sole(Physics02),
   },
   {
     id: 'z1-compiler',
+    preview: { poster: new URL('../assets/lesson-previews/z1-compiler.png', import.meta.url).href,
+      width: 720, height: 380, warmup: 3,
+      load: () => import('../sims/pbits/WalkHero').then(m => m.createWalkHero(true)) },
     field: 'thermo',
     order: 2,
     title: 'Compiling Into Heat',
     blurb:
-      'The sequel to the noise computer: Extropic’s actual stack. Compile a stochastic program onto the real Z1 fabric and pay the three taxes — embedding, context, mixing — with every tax measured on an exact meter.',
+      'Extropic’s Z1 has fixed wiring. Compiling a probabilistic program onto it means fitting each step to the available connections, then checking how approximation errors accumulate as the steps run.',
     tags: ['probability', 'simulation'],
     status: { kind: 'published' },
     versions: sole(Physics03),
   },
   {
     id: 'ebm-diffusion',
+    preview: { poster: new URL('../assets/lesson-previews/ebm-diffusion.png', import.meta.url).href,
+      width: 720, height: 460, warmup: 3,
+      load: () => import('../sims/pbits/BilledWall').then(m => m.createBilledWall(false)) },
     field: 'thermo',
     order: 3,
     title: 'Diffusion on a Dreaming Machine',
     blurb:
-      'The finale: train and run a diffusion model under the chip’s actual economics. Every noise level is a kernel, every kernel a reflash, every sample a readout — and the wall of dreams returns with a bill you can read, cut, and defend.',
+      'A diffusion model generates small binary images on a model of Z1. Estimated costs for writing inputs, sampling, readout, and reprogramming show how execution order changes the energy used per image.',
     tags: ['probability', 'simulation'],
     status: { kind: 'published' },
     versions: sole(Thermo03),
   },
   {
     id: 'navier-stokes',
+    preview: { poster: new URL('../assets/lesson-previews/navier-stokes.png', import.meta.url).href,
+      width: 720, height: 360, warmup: 2,
+      load: () => import('../sims/history/flow').then(m => m.createHistoryFlow('yours')) },
     field: 'waves',
     order: 1,
     title: 'Building the Navier–Stokes Equations',
@@ -226,13 +251,20 @@ export const lessons: Lesson[] = [
       {
         label: 'II',
         author: 'working draft',
-        note: 'Starting copy of I · the next revision has not been applied yet',
+        status: { kind: 'draft' },
+        note: 'Revised experiments · parcels, viscosity, matched flows, and plate-to-pipe prediction',
         Content: Lesson01II,
       },
     ],
   },
   {
     id: 'fiber-bundles',
+    preview: { poster: new URL('../assets/lesson-previews/fiber-bundles.png', import.meta.url).href,
+      width: 720, height: 340, warmup: 1,
+      crop: { x: 0, y: 30, width: 720, height: 270 },
+      load: () => import('../sims/HopfMonopole').then(m => m.createHopfMonopole({
+        down: false, pressed: false, fx: 0, fy: 0,
+      })) },
     field: 'waves',
     order: 2,
     title: 'Fiber Bundles, the Universal Medium',
@@ -244,6 +276,9 @@ export const lessons: Lesson[] = [
   },
   {
     id: 'navier-stokes-history',
+    preview: { poster: new URL('../assets/lesson-previews/navier-stokes-history.png', import.meta.url).href,
+      width: 720, height: 360, warmup: 1,
+      load: () => import('../sims/history/flow').then(m => m.createHistoryFlow('euler')) },
     field: 'waves',
     order: 3,
     title: 'The History of Navier–Stokes',
@@ -255,6 +290,11 @@ export const lessons: Lesson[] = [
   },
   {
     id: 'learned-solver',
+    preview: { poster: new URL('../assets/lesson-previews/learned-solver.png', import.meta.url).href,
+      width: 720, height: 300, warmup: 0,
+      load: () => import('../sims/learned/WarmStartRace').then(m => m.createWarmStartRace({
+        spec: m.RACE_CASES[0], tolRef: { current: 0.001 },
+      })) },
     field: 'waves',
     order: 4,
     title: 'Teaching a Solver to Guess',
@@ -279,6 +319,9 @@ export const lessons: Lesson[] = [
   },
   {
     id: 'where-the-simulation-is-wrong',
+    preview: { poster: new URL('../assets/lesson-previews/where-the-simulation-is-wrong.png', import.meta.url).href,
+      width: 720, height: 300, warmup: 1,
+      load: () => import('../sims/learned/SmearRace').then(m => m.createSmearRace({ current: 4 })) },
     field: 'waves',
     order: 5,
     title: 'Where the Simulation Is Wrong',
@@ -290,6 +333,11 @@ export const lessons: Lesson[] = [
   },
   {
     id: 'jacobian-hessian',
+    preview: { poster: new URL('../assets/lesson-previews/jacobian-hessian.png', import.meta.url).href,
+      width: 720, height: 300, warmup: 0,
+      load: () => import('../sims/maths/WarpLoupe').then(m => m.createWarpLoupe('return', { current: {
+        probe: { x: 0.45, y: 0.3 }, zoom: 0.55, preset: 'swirl', flowK: 0.9,
+      } })) },
     field: 'maths',
     order: 1,
     title: 'The Jacobian and the Hessian',
@@ -301,6 +349,9 @@ export const lessons: Lesson[] = [
   },
   {
     id: 'cad-primitives',
+    preview: { poster: new URL('../assets/lesson-previews/cad-primitives.png', import.meta.url).href,
+      width: 720, height: 330, warmup: 0,
+      load: () => import('../sims/cad/OneObject').then(m => m.createOneObjectPreview()) },
     field: 'cad',
     order: 1,
     title: 'Basis, Cage, and Boundary',
@@ -327,22 +378,28 @@ export interface Series {
   lessonIds: readonly string[]
 }
 
-export const SERIES: readonly Series[] = [
+const seriesCatalog: readonly Series[] = [
   {
     id: 'thermo',
     field: 'thermo',
     title: 'Thermodynamic Computing — the trilogy',
     lede:
-      'One machine, held three ways: a chip that computes with the thermal noise every other chip fights, the compiler that makes its one fixed graph speak for machines it never contained, and the bill a diffusion model runs up when it dreams on real fabric. Each part stands alone; read in order, they are one derivation — from a single flickering coin to a priced dream.',
+      'Extropic is a hardware company building chips for probabilistic AI. Its approach to thermodynamic computing uses thermal noise to make bits flip at random, while programmable connections control which patterns are likely to appear. Those patterns can represent samples from a trained model, including images. The three parts explain the physics, how a compiler maps programs onto the chip, and how to estimate the energy cost of generating an image.',
     inspiration: {
       name: 'Extropic',
       url: 'https://extropic.ai',
       note:
-        'This series was inspired by Extropic, the company building the Z1 — a quarter-million-p-bit chip whose native act is Gibbs sampling driven by thermal noise — and by the two papers documenting its stack: Torx (arXiv:2608.01612) and Thermalizers (arXiv:2608.01615). The lessons are independent and unaffiliated: everything here was rebuilt from the papers at sizes an exact oracle can audit.',
+        'The simulations are based on Extropic’s published Z1 design and its Torx (arXiv:2608.01612) and Thermalizers (arXiv:2608.01615) papers. This series is independent and unaffiliated.',
     },
     lessonIds: ['pbits', 'z1-compiler', 'ebm-diffusion'],
   },
 ]
+
+// Navigation and part counts use only lessons present in this build.
+export const SERIES: readonly Series[] = seriesCatalog.map(series => ({
+  ...series,
+  lessonIds: series.lessonIds.filter(id => lessons.some(lesson => lesson.id === id)),
+})).filter(series => series.lessonIds.length > 0)
 
 // Absence is meaningful for both lookups (unknown URL id; lesson outside any
 // series), so Option is honest.

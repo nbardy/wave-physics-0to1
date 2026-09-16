@@ -205,3 +205,17 @@ wake it was 11%" — the held-out average; asserted to round to 11.
    triples (3.38× @1e-3 vs GS on h1; cold CG 420 passes beats warm GS 792).
    Sign-offs owed by Nick: [ ] tour→paradox spine swap (03),
    [ ] hero assignments, [ ] survey-article spine if the closure rung is cut.
+# Construction-lesson dependency audit — 2026-09-11
+
+Open follow-up for the next learned-solver editor: the construction lesson was
+revised in `ca79202` and is now being split into I/II reading copies. The prose
+guard in `scripts/check-learned.ts` still requires “the divergence is gone” and
+“Jacobi iterations,” words no longer present in the revised baseline. This is a
+real reference mismatch, not permission to delete the guard: lesson-04 II's
+“Forty sweeps” passage quotes that former wording. Lesson-04 I and lesson 05 also
+describe lesson 01 through its old fixed-sweep solver. Review those attributions
+against the current lesson, distinguish a retained legacy-solver experiment from
+the new pressure workbench, update their claims and checks together, then run the
+learned suite. This audit confirmed the source mismatch but did not rerun that
+suite or edit those articles. Construction's 142 passing checks cover its own
+experiments, not these dependent explanations.

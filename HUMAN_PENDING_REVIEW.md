@@ -43,12 +43,9 @@ carries only the ask and where to look.
 
 ## §3 Publish gates (per lesson, at ship time)
 
-- [ ] **Domain + email launch** (2026-09-10): sign in to Cloudflare for
-  `math.nicholasbardy.com`; choose an existing newsletter list or Buttondown.
-  Build support is prepared; DNS, GitHub domain attachment, and the real
-  signup flow remain pending. See `LAUNCH.md`.
-- [ ] **Browser QA + mobile pass, lesson-03** (real-device touch; deployed site
-  predates ALL figure fixes — redeploy on publish flip).
+- [ ] **Physical-device touch pass, lesson-03**: September desktop and emulated
+  mobile QA is complete. A phone check and publication of the chosen final tree
+  remain; see the current summary in `articles/03-navier-stokes-history/HANDOFF.md`.
 - [ ] **Browser QA + mobile pass, lesson-04** (PaintTheBulge drag surface,
   WarmStartRace residual plot at height 350, three-pane figures <400px,
   SlowModes legend overlap).
@@ -67,6 +64,12 @@ carries only the ask and where to look.
   knob to both ends.
 
 ## Resolved (date + one line — retire, don't delete)
+
+- **2026-09-11 · Domain + email collection:** final address is
+  `physics.nicholasbardy.com`; Nick chose an owned Worker + D1 list. Shared
+  signup forms and RSS are implemented. Sending announcements is separate
+  remaining work; operations and verification live in `LAUNCH.md`.
+
 
 - **2026-09-11 · Lesson-03 structure:** Nick accepted preserving the improved
   history article; selected *Predicting Water* ideas move to the construction

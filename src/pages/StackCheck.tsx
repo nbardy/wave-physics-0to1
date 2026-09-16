@@ -1,6 +1,7 @@
 import { StringWaveDemo } from '../sims/StringWaveDemo'
 import { TeX } from '../components/TeX'
 import { GpuParityCheck } from '../components/GpuParityCheck'
+import { NewsletterIntro } from '../components/NewsletterSignup'
 
 // This page exists only to prove the toolchain renders correctly:
 // React + router + KaTeX math + a canvas sim — plus the live solver
@@ -13,6 +14,7 @@ export default function StackCheck() {
   return (
     <div className="prose">
       <h1>Stack check</h1>
+      <NewsletterIntro />
       <p>
         A scaffold self-test — it confirms math and sims render. It is not lesson content; delete
         it once the curriculum is under way.

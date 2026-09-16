@@ -42,12 +42,14 @@ before/after from the fix (commit `b78d9f6`):
 
 > ✗ "The top picture is the one the textbooks print. By the end of this article you
 > will know why the bottom one is the more honest of the two."
-> ✓ "The top picture is the familiar one. The bottom picture is the honest one — and
+> Historical fix, now also failing family 18: "The top picture is the familiar one.
+> The bottom picture is the honest one — and
 > the distance between those two sentences is this whole article."
 
-The fix in general: **flat declaratives that carry the promise's content, not its
-schedule** ("that single number is the oldest debt in this article; it gets paid,
-but not soon"). Debts are planted as facts, not as reading itineraries.
+The fix in general: **state the unexplained observation itself.** "The meter
+reads zero although water is moving around the disc" leaves a concrete question
+without scheduling its answer. The older debt-and-payment phrasing is retained
+in the record, not recommended as a replacement template.
 
 **2. Generic placeholder.** The topic-swap failures: "the fascinating world of X",
 "X plays a crucial role in Y", "X has captivated scientists for centuries". Any
@@ -83,8 +85,9 @@ must call the winner. A question that's just cadence is slop wearing curiosity's
 clothes.
 
 **8. Summary-itis and the moral.** Recap paragraphs restating what was just read;
-"In conclusion"; section-ending life lessons. Sections end with forward hooks — the
-freshly created problem the next section answers (ESSENCE §4.2). The one sanctioned
+"In conclusion"; section-ending life lessons. A transition follows from the
+question still open; it need not invent a fresh failure (METHODOLOGY Stage 2).
+The one sanctioned
 consolidation is the Waypoint, and it inventories *what you can now do*, not what
 was said.
 
@@ -113,6 +116,9 @@ METHODOLOGY's Stage-4 pastiche guard and Stage-5 sibling audit.)
 ("It's X. It's Y. It's Z."); the wisdom-fragment cadence (Short. Punchy. Empty.);
 em-dash aphorisms three per paragraph. Any *detectable periodicity* in sentence
 music is the tell — including Ciechanowski's own 22-word legato applied as a meter.
+The opposite error also fails: chopping every causal explanation into short
+sentences to imitate Nick's steering messages. Read for connections and pace;
+removing a dramatic fragment does not require making the paragraph flat.
 
 **13. Process slop.** Hitting figure quotas, word bands, or checklist counts as
 numbers instead of judgments — "the plan says ~80 figures, so densify." Mechanical
@@ -158,6 +164,9 @@ the fork license (family 7, NICKS_VOICE §6): a printed fork is legitimate only 
 its candidates are *live* — hypotheses the author or a reasonable reader would hold
 before knowing the answer. Test: did writing the fork require feigning uncertainty?
 Then it's theater, and the plain declarative sentence was already the better one.
+The same test applies to an outline that invents one failed theory per section.
+Use the connected-argument test in METHODOLOGY Stage 2; a historical sequence
+does not become more truthful by fitting a tidier chain of repairs.
 
 **18. The methodology speaking (design rationale as prose).** Flagged 2026-07-06 on
 a lesson-02 line: "One more demonstration belongs on the table before we build

@@ -131,6 +131,9 @@ a:hover {
 }
 
 /* home — front matter set like a manuscript, no boxes */
+.home--index {
+  margin-top: -40px;
+}
 .masthead {
   padding: clamp(2rem, 9vw, 5.5rem) 0 clamp(1.75rem, 5vw, 3rem);
 }
@@ -196,6 +199,37 @@ a:hover {
 .toc-link:hover {
   text-decoration: none;
 }
+.toc--unnumbered .toc-link {
+  grid-template-columns: 1fr auto;
+}
+.toc-main {
+  grid-column: 1 / -1;
+}
+.lesson-preview {
+  grid-column: 1 / -1;
+  display: block;
+  position: relative;
+  width: 70%;
+  aspect-ratio: 2 / 1;
+  overflow: hidden;
+  margin: 1rem auto 0.8rem;
+  background: var(--paper);
+  pointer-events: none;
+}
+.lesson-preview img,
+.lesson-preview canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.lesson-preview canvas {
+  position: absolute;
+  inset: 0;
+  visibility: hidden;
+}
+.lesson-preview.is-ready canvas { visibility: visible; }
+.lesson-preview.is-ready img { visibility: hidden; }
 .toc-num {
   font-family: var(--font-display);
   font-variant-numeric: oldstyle-nums;
@@ -482,11 +516,6 @@ a:hover {
 .masthead--compact {
   padding-top: clamp(1.5rem, 6vw, 3.5rem);
   padding-bottom: 1.75rem;
-}
-.masthead-links {
-  font-family: var(--font-ui);
-  font-size: 0.85rem;
-  margin: 1.4rem 0 0;
 }
 .all-empty,
 .all-fields {

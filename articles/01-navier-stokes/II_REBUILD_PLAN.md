@@ -9,9 +9,12 @@ Version I is the complete construction-lesson revision checkpointed at `ca79202`
 It already includes the September 10 transport, diffusion, cell-flux, pressure,
 term-comparison, timestep, and live-solver workbenches. Preserve those gains.
 
-Version II starts as a byte-for-byte copy of that article. Its note in the
-version switch says so. This document specifies the next work; no new experiment
-below is represented as built by creating the copy.
+Version II was initially copied from that article. The revision below was built
+on 2026-09-12; its version note now names the revised experiments. Current
+implementation, verification, and release state live in [HANDOFF.md](HANDOFF.md).
+The implementation uses a matched periodic shear flow for Reynolds similarity
+and calculated plate/pipe readings for the material transfer; neither is presented
+as a turbulence experiment or laboratory validation.
 
 The existing selector is reused: `/lesson/navier-stokes` opens I and
 `/lesson/navier-stokes?v=II` opens II. The history lesson remains a separate

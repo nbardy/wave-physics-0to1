@@ -68,7 +68,7 @@ function layerName(lens: number): string {
   return 'boundary topology — four faces, two wires circling the hole'
 }
 
-export function createOneObject(sharedRef: { current: Shared }): Stepper {
+export function createOneObject(sharedRef: { current: Shared }, showHints = true): Stepper {
   return {
     step() {},
     draw(ctx, w, h) {
@@ -174,11 +174,25 @@ export function createOneObject(sharedRef: { current: Shared }): Stepper {
 
       ctx.font = FONT_LABEL
       ctx.fillStyle = 'rgba(85,96,111,0.9)'
-      ctx.fillText('drag to orbit', r.x + 10, r.y + 18)
+      if (showHints) ctx.fillText('drag to orbit', r.x + 10, r.y + 18)
       ctx.font = FONT_METER
       ctx.fillStyle = aWires > 0.5 ? PALETTE.topo : aSurface > 0.5 ? PALETTE.curve : PALETTE.ctrl
       ctx.fillText(layerName(s.lens), r.x + 10, r.y + r.h - 10)
     },
+  }
+}
+
+/** Rotate the existing camera; the surface and subdivision stay unchanged. */
+export function createOneObjectPreview(): Stepper {
+  const shared = { current: freshOneObjectState() }
+  const figure = createOneObject(shared, false)
+  let time = 0
+  return {
+    step(dt) {
+      time += dt
+      shared.current.yaw = 0.7 + 0.35 * Math.sin(time * 0.6)
+    },
+    draw: figure.draw,
   }
 }
 
