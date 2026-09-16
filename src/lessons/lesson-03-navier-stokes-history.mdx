@@ -62,16 +62,20 @@ I use a rounded wing section for all six stops. The dates mark changes in our
 understanding, not six simulations those scientists actually ran. Newton's
 independent particles cannot exchange momentum with their neighbors. The Euler
 view chooses a steady, irrotational solution; it does not represent every flow
-Euler's equations allow. The viscous stops use the same modern solver, with
-decreasing viscosity, and 1904 adds a
-near-wall comparison. Its blue strokes show the computed streamwise velocity;
-the gray strokes show the frictionless value at the same locations. Under the
-canvas, each term gains its author's name. The separate smoothness plate stays
-open; 1999 at the end of the slider dates the numerical method.
+Euler's equations allow. The four viscous stops use the same modern solver. At
+1822 the fluid may slide along the wing, as Navier assumed; at 1845 it sticks to
+the surface, as Stokes concluded. The viscosity then falls through 1883 and 1904,
+and 1904 adds a near-wall comparison. Its blue strokes show the computed
+streamwise velocity; the gray strokes show the frictionless value at the same
+locations. The meter in the corner integrates the pressure around the wing at
+every stop. In Newton's model it counts the impacts on the front of the wing; in
+Euler's it reads zero. Under the canvas, each term gains its author's name, and
+the lower row dates the mathematics the equation borrowed. The separate
+smoothness plate stays open.
 
 The later views can shed vortices, but this is a coarse two-dimensional flow,
 not a resolved simulation of three-dimensional turbulence. No new "turbulence
-term" switches on at 1883 or 1999. I advance the viscous equations on a staggered
+term" switches on at 1883 or 1904. I advance the viscous equations on a staggered
 108 × 54 grid and solve for pressure until the remaining volume imbalance is
 small; the drawing's smooth outline does not add resolution to that grid.
 
@@ -879,10 +883,12 @@ Which brings the slider home:
 
 <TimelineHero />
 
-Run it end to end once more. The independent particles ricochet; the ideal fluid
-wraps around the wing; the viscous fluid slows at the surface and leaves a wake.
-The last two stops run at the same viscosity. Prandtl's stop isolates the
-near-wall velocity difference; the final stop gives the whole flow back.
+Run it end to end once more, watching the meter. The independent particles
+ricochet and register a drag. The ideal fluid wraps around the wing and the meter
+reads zero. Navier's fluid slides along the surface and Stokes's sticks to it.
+From there the viscosity falls, the wake wavers, and at Prandtl's stop it
+separates. The meter then shows the resistance the frictionless calculation
+missed.
 
 This figure uses a 108 × 54 staggered grid, a fixed time step, implicit viscosity,
 and pressure projection. A bounded MacCormack correction reduces the dye smearing
@@ -890,7 +896,10 @@ of first-order semi-Lagrangian transport. It preserves the sampled bounds, which
 prevents that transport step from amplifying extrema; it does not make a coarse
 grid resolve turbulence. The dots follow the calculated velocity, and the pulsing
 dye source only makes their passage easier to see. The ideal stop is a
-zero-circulation Joukowski potential flow around the same rounded section.
+zero-circulation Joukowski potential flow around the same rounded section. The
+1822 stop differs from 1845 only at the wall, where the diffusion step lets the
+fluid slip instead of holding it still. The meter integrates pressure alone and
+leaves out the shear on the wing.
 
 ## One Skeleton, Twice Built
 

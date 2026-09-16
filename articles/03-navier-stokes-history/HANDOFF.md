@@ -33,6 +33,40 @@ and signup infrastructure. No deployment was attempted during this audit.
 The dated notes below preserve implementation details and measurements. Their
 older todo lists are historical where this summary or later entries close them.
 
+## Hero re-spine: six discovery stops, no solver stop — 2026-09-16
+
+Nick: the slider ended on "1999 · your solver", which is not a discovery about
+the equation, and the last three stops changed nothing on screen but viscosity.
+The intent is the mathematical journey: each part of the equation, what each
+step got right and wrong, and where borrowed mathematics came in.
+
+Built (`src/sims/history/{timeline,flow,wake}.ts`, `src/sims/TimelineHero.tsx`):
+- Stops are now 1687 Newton · 1757 Euler · 1822 Navier · 1845 Stokes · 1883
+  Reynolds · 1904 Prandtl. The numerical-method credits (Harlow, Chorin, Stam)
+  left the hero; they stay in the Machine Age prose.
+- `WakeSolver` takes a `WallCondition`. Navier's stop runs a slip wall (the
+  diffusion sweep mirrors the tangential neighbor at solid faces instead of
+  reading the zeroed wall face); every other stop is no-slip. 1822 and 1845 share
+  Re 12, so the wall is the only difference. Measured after 12 s: speed 1.4 units
+  off the shoulder 3.78 (slip) vs 0.96 (no-slip); 90k pixels differ.
+- A pressure-drag meter (top-left) runs at every stop. Newton: the elastic
+  impact sum over the drawn outline, 0.93. Euler: the Bernoulli integral over a
+  3072-sample surface, −2.8e-4 (192 outline segments under-resolve the tail
+  spike and read −0.30; samples closer than 1e-6 to the surface trip the solid
+  test and fake a zero). Viscous stops after 12 s: Navier 2.81, Stokes 3.04,
+  Reynolds 1.68, Prandtl 2.19 (chord-normalized, 42% channel blockage, pressure
+  only). The faded comparison era draws no meter.
+- Term strip: plates are dated. The viscous term shows "Newton · 1687 ·
+  hypothesis" in muted color until Navier, then "Navier · 1822 · Stokes · 1845".
+  A second row dates borrowed mathematics: d'Alembert 1747, Fourier 1822,
+  Cauchy 1823, Stokes 1845, Reynolds 1883.
+- Captions around both hero instances rewritten to the meter reading; the
+  "1999 dates the numerical method" and "last two stops share a viscosity"
+  sentences are gone. `scripts/check-history.ts` covers slip vs no-slip and the
+  meter at every stop (63 checks); `check:timeline` unchanged at 40.
+
+Not done: a physical-device touch pass on the six-notch scrubber.
+
 ## Prose copyedit — 2026-09-10, local
 
 Nick requested modest prose improvements across this article and its lesson-01

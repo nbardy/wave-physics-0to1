@@ -5,9 +5,9 @@ export const ERAS: { year: number; kind: EraKind; name: string }[] = [
   { year: 1687, kind: 'newton', name: 'Newton' },
   { year: 1757, kind: 'euler', name: 'Euler / d’Alembert' },
   { year: 1822, kind: 'navier', name: 'Navier' },
+  { year: 1845, kind: 'stokes', name: 'Stokes' },
   { year: 1883, kind: 'reynolds', name: 'Reynolds' },
   { year: 1904, kind: 'prandtl', name: 'Prandtl' },
-  { year: 1999, kind: 'yours', name: 'your solver' },
 ]
 
 export function timelineMix(position: number) {

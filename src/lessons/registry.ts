@@ -225,7 +225,7 @@ export const lessons: Lesson[] = [
     id: 'navier-stokes',
     preview: { poster: new URL('../assets/lesson-previews/navier-stokes.png', import.meta.url).href,
       width: 720, height: 360, warmup: 2,
-      load: () => import('../sims/history/flow').then(m => m.createHistoryFlow('yours')) },
+      load: () => import('../sims/history/flow').then(m => m.createHistoryFlow('prandtl')) },
     field: 'waves',
     order: 1,
     title: 'Building the Navier–Stokes Equations',

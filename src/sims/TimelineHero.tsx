@@ -5,18 +5,41 @@ import { TeX } from '../components/TeX'
 import { createTimeline, ERAS, timelineMix, timelinePresentation } from './history/timeline'
 import { HISTORY_COMPARISON_COLOR } from './history/flow'
 
+// A nameplate a term carries from a given year on. `written` says whether the
+// term stood in an equation of motion by then: Newton stated the shear law as a
+// hypothesis in 1687 and never wrote it into one, so the viscous term keeps its
+// muted color under his plate until Navier.
+interface Plate {
+  year: number
+  label: string
+  written: boolean
+}
 interface Term {
   tex: string
   color: string
-  who: string
-  bornYear: number
+  plates: Plate[]
 }
+const EULER: Plate[] = [{ year: 1757, label: 'Euler · 1757', written: true }]
 const TERMS: Term[] = [
-  { tex: '\\frac{\\partial u}{\\partial t}', color: PALETTE.vel, who: 'Euler', bornYear: 1757 },
-  { tex: '+\\,(u\\cdot\\nabla)u', color: PALETTE.dye, who: 'Euler', bornYear: 1757 },
-  { tex: '=\\,-\\frac{\\nabla p}{\\rho}', color: PALETTE.pHi, who: 'Euler', bornYear: 1757 },
-  { tex: '+\\,\\nu\\nabla^2 u', color: PALETTE.visc, who: 'Navier', bornYear: 1822 },
-  { tex: '\\text{with}\\;\\nabla\\cdot u = 0', color: PALETTE.div, who: 'Euler', bornYear: 1757 },
+  { tex: '\\frac{\\partial u}{\\partial t}', color: PALETTE.vel, plates: EULER },
+  { tex: '+\\,(u\\cdot\\nabla)u', color: PALETTE.dye, plates: EULER },
+  { tex: '=\\,-\\frac{\\nabla p}{\\rho}', color: PALETTE.pHi, plates: EULER },
+  { tex: '+\\,\\nu\\nabla^2 u', color: PALETTE.visc, plates: [
+    { year: 1687, label: 'Newton · 1687 · hypothesis', written: false },
+    { year: 1822, label: 'Navier · 1822', written: true },
+    { year: 1845, label: 'Navier · 1822 · Stokes · 1845', written: true },
+  ] },
+  { tex: '\\text{with}\\;\\nabla\\cdot u = 0', color: PALETTE.div, plates: EULER },
+]
+// Mathematics the equation borrowed, dated by when it arrived. Absence before
+// the first plate is the meaning: nothing had been written yet.
+const plateAt = (plates: Plate[], year: number): Plate | undefined => plates.filter(p => p.year <= year).at(-1)
+const TOOLS: { year: number; label: string }[] = [
+  { year: 1747, label: 'd’Alembert · 1747 · partial differential equation' },
+  { year: 1822, label: 'Fourier · 1822 · heat operator' },
+  { year: 1823, label: 'Cauchy · 1823 · stress tensor' },
+  { year: 1845, label: 'Stokes · 1845 · viscosity measured' },
+  { year: 1883, label: 'Reynolds · 1883 · UL/ν' },
 ]
 
 const SEPIA = '#78716c' // lesson-03 palette contract: history furniture
@@ -35,14 +58,14 @@ function TermStrip({ year }: { year: number }) {
         }}
       >
         {TERMS.map((term, i) => {
-          const born = year >= term.bornYear
+          const plate = plateAt(term.plates, year)
           return (
             <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.2rem' }}>
-              <span style={{ color: born ? term.color : MUTED }}>
+              <span style={{ color: plate?.written ? term.color : MUTED }}>
                 <TeX>{term.tex}</TeX>
               </span>
               <span style={{ color: SEPIA, fontSize: '0.7rem', fontFamily: 'ui-monospace, monospace' }}>
-                {born ? `${term.who} · ${term.bornYear}` : '—'}
+                {plate ? plate.label : '—'}
               </span>
             </div>
           )
@@ -55,11 +78,11 @@ function TermStrip({ year }: { year: number }) {
           </span>
         </div>
       </div>
-      {year >= 1999 && (
-        <div style={{ color: SEPIA, fontSize: '0.7rem', marginTop: '0.5rem', fontFamily: 'ui-monospace, monospace' }}>
-          advection · Stam 1999 — projection · Chorin 1968 — grid · Harlow &amp; Welch 1965
-        </div>
-      )}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.2rem 1rem', marginTop: '0.55rem', fontSize: '0.7rem', fontFamily: 'ui-monospace, monospace' }}>
+        {TOOLS.map(tool => (
+          <span key={tool.year} style={{ color: year >= tool.year ? SEPIA : MUTED }}>{tool.label}</span>
+        ))}
+      </div>
     </div>
   )
 }

@@ -79,7 +79,8 @@ const plain = transport('semi-lagrangian'), corrected = transport('maccormack')
 check(corrected.min >= 0 && corrected.max <= 1, 'corrected dye transport preserves bounds')
 check(Math.abs(corrected.mean - 38.4) < 0.5, 'limited transport phase error stays below half a grid cell')
 check(corrected.error < plain.error * 0.35, `correction reduces translation error (${plain.error.toFixed(3)} → ${corrected.error.toFixed(3)})`)
-const eras: EraKind[] = ['newton', 'euler', 'navier', 'reynolds', 'prandtl', 'yours']
+const eras: EraKind[] = ['newton', 'euler', 'navier', 'stokes', 'reynolds', 'prandtl']
+const drags = new Map<EraKind, number>()
 const frames = new Map<EraKind, Uint8ClampedArray>()
 for (const kind of eras) {
   const start = performance.now(), s = createHistoryFlow(kind), first = shot(s), ink = colors(first)
@@ -91,7 +92,7 @@ for (const kind of eras) {
       const m = s.measure()
       maxFluxError = Math.max(maxFluxError, Math.abs(m.outletRatio - 1))
       maxDivergence = Math.max(maxDivergence, m.divergenceRMS)
-      if (kind === 'yours' && i === 159) check(m.reverseCells > 25, `modern wake has measurable reverse flow within 4s (${m.reverseCells} cells)`)
+      if (kind === 'prandtl' && i === 159) check(m.reverseCells > 25, `modern wake has measurable reverse flow within 4s (${m.reverseCells} cells)`)
     }
   }
   if (kind !== 'newton' && kind !== 'euler') {
@@ -99,6 +100,7 @@ for (const kind of eras) {
     check(maxDivergence < 1e-3, `${kind}: measured volume imbalance remains small (${maxDivergence.toExponential(2)})`)
   }
   const a = shot(s)
+  drags.set(kind, s.measure().drag)
   writeFileSync(`${out}/${kind}.png`, canvas.toBuffer('image/png'))
   for (let i = 0; i < 40; i++)
     s.step(DT)
@@ -110,7 +112,7 @@ for (const kind of eras) {
   const reset = createHistoryFlow(kind)
   check(changed(first, shot(reset)) === 0, `${kind}: deterministic reset`)
   frames.set(kind, a)
-  if (kind === 'euler' || kind === 'yours') {
+  if (kind === 'euler' || kind === 'prandtl') {
     const before = s.measure(), velocity = s.velocityAt(130, 58)
     s.markWake()
     const marked = shot(s)
@@ -129,8 +131,29 @@ for (const kind of eras) {
   console.log(`${kind}: ${(performance.now() - start).toFixed(0)}ms for 13s simulation`)
 }
 check(changed(frames.get('navier')!, frames.get('reynolds')!) > 6000, 'viscosity changes the visible flow across eras')
-check(changed(frames.get('euler')!, frames.get('yours')!) > 6000, 'ideal and no-slip models show different paths')
-for (const kind of ['newton', 'yours'] as EraKind[]) {
+check(changed(frames.get('euler')!, frames.get('prandtl')!) > 6000, 'ideal and no-slip models show different paths')
+// The wall condition is the only difference between 1822 and 1845. The fluid
+// beside the shoulder must move faster when it may slide than when it sticks,
+// and the dye must show it.
+const shoulder = surface(140 * Math.PI * 2 / 192)
+const beside = (kind: EraKind) => {
+  const s = createHistoryFlow(kind)
+  for (let i = 0; i < 480; i++) s.step(DT)
+  const v = s.velocityAt(shoulder.x, shoulder.y - 1.4)
+  return Math.hypot(v.x, v.y)
+}
+const slide = beside('navier'), stick = beside('stokes')
+check(slide > 1.5 * stick, `slip wall moves the fluid beside the wing faster than no-slip (${slide.toFixed(2)} vs ${stick.toFixed(2)})`)
+check(changed(frames.get('navier')!, frames.get('stokes')!) > 2000, `the wall condition changes the visible flow (${changed(frames.get('navier')!, frames.get('stokes')!)} pixels)`)
+// The meter. Newton's impacts give a definite drag; Euler's pressure integrates
+// to zero (d'Alembert's paradox) rather than being replaced by a constant; every
+// viscous stop reads a finite positive pressure drag.
+const drag = (kind: EraKind) => drags.get(kind)!
+check(drag('newton') > 0.2, `Newton's impact drag is definite (${drag('newton').toFixed(3)})`)
+check(Math.abs(drag('euler')) < 1e-3, `ideal pressure drag integrates to zero (${drag('euler').toExponential(2)})`)
+for (const kind of ['navier', 'stokes', 'reynolds', 'prandtl'] as EraKind[])
+  check(Number.isFinite(drag(kind)) && drag(kind) > 0.05, `${kind}: viscous pressure drag is finite and positive (${drag(kind).toFixed(3)})`)
+for (const kind of ['newton', 'prandtl'] as EraKind[]) {
   const a = createHistoryFlow(kind), b = createHistoryFlow(kind)
   for (let i = 0; i < 60; i++)
     a.step(1 / 30)
@@ -140,7 +163,7 @@ for (const kind of ['newton', 'yours'] as EraKind[]) {
 }
 // Independent long-run guard on the actual face fields, including exact solid
 // flux and convergence. A colored wake alone cannot pass this check.
-const wake = new WakeSolver(U * CHORD / 1800)
+const wake = new WakeSolver(U * CHORD / 1800, 'no-slip')
 let maxFlux = 0, maxWall = 0, maxSpeed = 0
 for (let i = 0; i < 1200; i++) {
   wake.step(DT)

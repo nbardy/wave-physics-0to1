@@ -4,6 +4,9 @@ import { createWingProjector, type FaceFlow } from './pressure'
 // The MAC solve uses 108×54 cells; vector parcels/body render at screen resolution.
 // Scale BOTH speed and viscosity so Re and physical time survive coarsening.
 export const WAKE_SPACING = 2
+// What the wing does to the fluid touching it. Navier's 1822 memoir let the
+// fluid slide along the wall; Stokes's 1845 analysis settled that it sticks.
+export type WallCondition = 'no-slip' | 'slip'
 const NX = WORLD_NX / WAKE_SPACING, NY = WORLD_NY / WAKE_SPACING, U = WORLD_U / WAKE_SPACING
 const ui = (x: number, y: number) => x + y * (NX + 1)
 const vi = (x: number, y: number) => x + y * NX
@@ -32,7 +35,13 @@ export class WakeSolver {
   private readonly nextDye = new Float64Array(NX * NY)
   private readonly source = new Float64Array((NX + 1) * (NY + 1))
   lastProjection = { relativeResidual: 0, iterations: 0 }
-  constructor(readonly visc: number) {
+  // Tangential neighbor of a fluid face during diffusion. Solid faces are held
+  // at zero, so reading one puts the velocity profile through zero half a cell
+  // inside the wall (no-slip). Slip mirrors the fluid face instead: the wall
+  // then exerts no shear. Normal neighbors always read the zeroed solid face.
+  private readonly tangential: (a: Float64Array, free: Uint8Array, j: number, k: number) => number
+  constructor(readonly visc: number, readonly wall: WallCondition) {
+    this.tangential = wall === 'slip' ? (a, free, j, k) => free[j] ? a[j] : a[k] : (a, _free, j) => a[j]
     for (let k = 0; k < this.faces.u.length; k++) this.faces.u[k] = this.projector.freeU[k] ? U : 0
     this.lastProjection = this.projector.project(this.faces, 1e-7)
     this.centers()
@@ -86,7 +95,13 @@ export class WakeSolver {
       for (let y = 0; y < h; y++) for (let x = 1; x < w - 1; x++) {
         const k = x + y * w
         if (!free[k]) { a[k] = 0; continue }
-        const value = (this.source[k] + alpha * (a[k - 1] + a[k + 1] + a[k + (y > 0 ? -w : 0)] + a[k + (y < h - 1 ? w : 0)])) / (1 + 4 * alpha)
+        const up = k + (y > 0 ? -w : 0), down = k + (y < h - 1 ? w : 0)
+        // u faces shear against the rows above and below; v faces against the
+        // columns beside them. The channel rows already mirror themselves.
+        const sum = horizontal
+          ? a[k - 1] + a[k + 1] + this.tangential(a, free, up, k) + this.tangential(a, free, down, k)
+          : this.tangential(a, free, k - 1, k) + this.tangential(a, free, k + 1, k) + a[up] + a[down]
+        const value = (this.source[k] + alpha * sum) / (1 + 4 * alpha)
         change = Math.max(change, Math.abs(value - a[k])); a[k] = value
       }
       for (let y = 0; y < h; y++) { a[y * w] = horizontal ? U : 0; a[w - 1 + y * w] = a[w - 2 + y * w] }
