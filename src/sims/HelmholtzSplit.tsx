@@ -19,6 +19,9 @@ function gradPart(x: number, y: number) {
 }
 
 export type HelmholtzMode = 'both' | 'swirl' | 'gradient'
+// Button words match the prose ("swirl" and "piling" sheets); the mode key
+// 'gradient' stays because it names the math, not the reader-facing word.
+const BUTTON_LABEL: Record<HelmholtzMode, string> = { both: 'both', swirl: 'swirl', gradient: 'piling' }
 
 function fieldOf(mode: HelmholtzMode): FlowField {
   return (x, y, t) => {
@@ -51,10 +54,10 @@ function createHelmholtz(mode: HelmholtzMode): Stepper {
       ctx.font = '12px ui-sans-serif, system-ui'
       const label =
         mode === 'both'
-          ? 'the full field = swirl + pile-up'
+          ? 'the full field = swirl + piling'
           : mode === 'swirl'
-            ? 'divergence-free part: pure swirl, no crime'
-            : 'gradient part: all of the divergence lives here'
+            ? 'swirl part: no piling'
+            : 'piling part: all of the divergence lives here'
       ctx.fillText(label, 10, 20)
     },
   }
@@ -72,7 +75,7 @@ export function HelmholtzSplit({ height = 260 }: { height?: number }) {
             className={mode === m ? 'seg-active' : ''}
             onClick={() => setMode(m)}
           >
-            {m}
+            {BUTTON_LABEL[m]}
           </button>
         ))}
       </div>
