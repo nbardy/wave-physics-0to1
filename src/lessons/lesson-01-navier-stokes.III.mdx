@@ -4,49 +4,50 @@ import { FlowVis } from '../sims/FlowVis'
 import { ParticleBox } from '../sims/ParticleBox'
 import { ParcelProbe } from '../sims/ParcelProbe'
 import { DyeCarry } from '../sims/DyeCarry'
+import { AdvectionSchemes } from '../sims/AdvectionSchemes'
+import { ViscosityDemo } from '../sims/ViscosityDemo'
+import { ShearBlend } from '../sims/ShearBlend'
 import { VortexDecay } from '../sims/VortexDecay'
 import { PressureLandscape } from '../sims/PressureLandscape'
 import { DivergenceLoop } from '../sims/DivergenceLoop'
+import { PressureFix } from '../sims/PressureFix'
 import { HelmholtzSplit } from '../sims/HelmholtzSplit'
+import { GaussSeidelRelax } from '../sims/GaussSeidelRelax'
+import { TermToggle } from '../sims/TermToggle'
+import { SolverXray } from '../sims/SolverXray'
 import { RippleWaves } from '../sims/RippleWaves'
-import { Link } from 'react-router-dom'
-import { BacktraceLab, TransportErrors } from '../sims/solver-lab/TransportLab'
-import { DiffusionLab } from '../sims/solver-lab/DiffusionLab'
-import { CellFlux } from '../sims/solver-lab/CellFlux'
-import { ProjectionLab } from '../sims/solver-lab/ProjectionLab'
-import { SolverCycle, TermExperiment, LiveSolverLab } from '../sims/solver-lab/SolverWorkbench'
 
 # Building the Navier–Stokes Equations
 
-Stir cream into coffee and a pale ribbon stretches around the spoon. The spoon
-stops, but the coffee keeps turning; the ribbon folds into finer threads until its
-edges disappear. The motion comes from interactions throughout the cup, including
-places the spoon never touched.
+In 1822 a French bridge engineer named Claude-Louis Navier wrote down an equation for
+how water moves. It is short enough to fit on a single line, and it works — it flies
+airplanes, forecasts hurricanes, and renders every ocean Pixar has ever animated. It
+is also, two hundred years later, still not understood: there is a standing prize of
+one million dollars for anyone who can prove its solutions don't secretly break, and
+nobody has claimed it.
 
-A computer can produce a similar flow while storing only a few numbers at each
-point of a grid. It needs rules for carrying those numbers, exchanging momentum
-between neighbours, and keeping fluid from accumulating in a cell that is already
-full. The wake below is the result of those updates, repeated.
+That unproven line is running right now, a few centimeters below this paragraph.
+Mathematics has not yet decided whether the equation deserves to work. The wing flies
+anyway.
 
 <WingFlow variant="hero" />
 
 The two currents of <C k="dye">dye</C> part at the wing's nose, slide along its two
-faces, and fold into the trail behind it. Increase the viscosity and the velocity
-differences fade more quickly. The flow needs a few seconds to respond, and dye
-already in the channel takes longer to leave.
+faces, and braid into the trail of eddies behind it. The slider changes exactly one
+property of the stream, and that single number is the oldest debt in this article;
+it gets paid, but not soon.
 
-Every quantity in this article is color-coded, so <C k="vel">velocity</C> is always this blue,
+The mathematics of fluids has a reputation. Every quantity in
+this article is color-coded, so <C k="vel">velocity</C> is always this blue,
 <C k="dye">dye and drifting parcels</C> are always amber — the wing's lower current
 wears <C k="dye2">rose</C> — and when something goes physically wrong you will see it
 in <C k="div">violet</C>. The prose and the pictures speak the same colors. The amber
 and the rose are the same water wearing different shirts; a color only marks where a
 current came from.
 
-The flows here are two dimensional and incompressible. The small grid experiments
-below expose individual updates; the wing combines them at a higher resolution.
-<IfLesson id="navier-stokes-history"><span>The <Link to="../navier-stokes-history" relative="path">history lesson</Link> follows how these ideas were discovered. </span></IfLesson>
-Here the question is how to make them
-compute a flow, and how to tell when the computation is wrong.
+The flows in this article are two dimensional, and the fluid never compresses. Real
+water lives in three dimensions, but everything we'll build survives the upgrade —
+the flat versions are the ones we can see whole. We'll begin by learning to see them.
 
 ## Seeing Flow
 
@@ -114,9 +115,10 @@ than the average it reports, and the particles pass through each other instead o
 colliding — a particle's direction is re-randomized now and then to stand in for the
 collisions real molecules are having constantly.
 
-With a small averaging box the readout is jittery because it samples only a few
-particles. Make the box bigger and the average settles to almost exactly zero.
-The molecules keep moving even when the water as a whole is at rest.
+With a small averaging box the readout is jittery — a handful of particles is a noisy
+committee. Make the box bigger and the average settles to almost exactly zero. All
+that frantic motion, and the water as a whole goes nowhere. This is what still water
+is: not stillness, but perfectly balanced commotion.
 
 Now let's add a current. In the demonstration below the second slider superimposes a
 drift on every particle — and notice the numbers before you touch it: the drift is
@@ -127,7 +129,8 @@ tiny compared to the thermal speed of the particles themselves.
 Watching individual particles, you can barely tell the difference between still water
 and a strong current. However, the averaging box is not fooled. Even a drift far
 smaller than the thermal chaos shows up immediately and unmistakably in the average.
-Averaging around different points gives the local velocity at each one.
+Out of all the disorder, order emerges — and it emerges *per region*: average around
+one spot and you get that spot's arrow; average around another and you get another.
 
 That is what our arrow grid has been all along: every <C k="vel">arrow</C> is the
 average velocity of the swarm of molecules near a point — and with that, we can leave
@@ -197,8 +200,8 @@ prescribed current sweeps an amber blob downstream:
 
 <DyeCarry field="uniform" />
 
-A uniform current moves the blob without changing its shape or sharp edges.
-Differences in velocity across the blob deform it. A shearing current draws it into a
+A uniform current only relocates the blob — same shape, same sharp edges, somewhere
+else. Structure in the flow is what deforms. A shearing current draws the blob into a
 slanted streak: the amber inside is exactly as concentrated as before, but its
 boundary has grown longer.
 
@@ -221,41 +224,25 @@ Velocity is itself carried by the flow. A gust of fast water doesn't stay behind
 while the river moves on — the fast water *is* water, and it goes where the water
 goes. So $q$ above can be $\mathbf{u}$ itself, and the advection term becomes
 $(\mathbf{u}\cdot\nabla)\,\mathbf{u}$: **the field carrying the field**. The equation
-feeds on its own output. This is a *nonlinearity*: doubling velocity multiplies
-this term by four. A prescribed current can deform dye, as the earlier figures
-showed; carrying velocity also changes the current that does the deforming.
+feeds on its own output. This self-reference is *nonlinearity*, and it is the single
+reason fluids can braid, swirl, and surprise — and the reason no one has fully tamed
+the equation we're building.
 
-On a computer, dye concentration is a list of numbers. In the row below, a full bar
-means concentration one and an empty cell means zero. The blue outline selects one
-destination cell. Change how far the fluid travels during a timestep, and the blue
-arrow traces that cell's incoming fluid back to its old position:
+We compute all of this on a grid, so let's watch the computation itself. Below, the
+same blob of dye enters the same vortex twice, moved by two different schemes. On the
+left is the obvious one: estimate the local slopes, nudge each cell accordingly. On
+the right, every cell instead asks *whose fluid arrives here?* — trace the velocity
+backward one step and take the answer waiting there, the question the dashed
+<C k="vel">blue arrow</C> is asking:
 
-<BacktraceLab />
+<AdvectionSchemes />
 
-At a whole number of cells, the destination can copy a stored value directly.
-Between cells, it combines two neighbouring values in proportion to their
-distances. The readout shows that weighted average. This is *semi-Lagrangian
-advection*: look backward along the flow, then interpolate the old field. In two
-dimensions, the interpolation uses four surrounding samples.
-
-There is another plausible update: estimate the slope in each cell and use the
-advection equation directly. Both methods below start with the same rectangular
-pulse in a uniform current. Scrub through the updates; the dashed gray outline is
-the exact translated pulse, averaged over the cells. The horizontal axis is
-position, and the vertical axis is dye concentration:
-
-<TransportErrors />
-
-The local-slope method produces negative concentrations and peaks above one, then
-grows without bound. This particular combination of forward time stepping and
-centered spatial differences is unstable for pure advection. A smaller timestep
-delays the failure but does not remove it.
-
-Backward tracing stays between the values it samples. It remains bounded, but its
-edges spread away from the exact outline as interpolation is repeated. That is
-*numerical diffusion*: the update blurs dye even though this experiment contains
-no physical diffusion. Stability keeps the calculation from blowing up; accuracy
-asks how faithfully it follows the intended motion.
+The obvious update tears itself apart. The <C k="div">violet</C> is *negative dye*, a
+thing that cannot exist, and it appears within seconds — not because our timestep is
+sloppy, but because that scheme is unstable for transport no matter how small the step
+gets. Tracing backward, the fix due to Jos Stam, is stable at any timestep. Nothing is
+free, though: the price is a gentle blurring, and you'll notice our simulations are
+slightly softer than reality on that account.
 
 So the flow carries everything, including itself. But a real drop of dye in real water
 does something none of our prescribed currents did — even in perfectly still water, a
@@ -268,32 +255,35 @@ with the stirring.
 
 ## Viscosity
 
-Layers sliding past each other exchange momentum, pulling slow layers along
-while holding fast ones back. That internal friction is
+Fluids can't keep secrets. Push on one part of a fluid and its neighbours find out
+immediately: layers sliding past each other rub, and the rubbing pulls slow layers
+along while holding fast ones back. That internal friction is
 <C k="visc">viscosity</C>.
 
-The left profile below is a *jet*: a band of fluid moving right between still
-layers. The right profile shows the same fluid two seconds later. Increase the
-viscosity while keeping that observation time fixed, or try the two other initial
-profiles. Arrow length is horizontal speed; the dashed outline preserves the start:
+The demonstration below shows a *jet* — a band of fluid moving to the right,
+sandwiched between still fluid, with a stationary wall at the top and bottom. Each
+arrow is the velocity of one layer. Watch what happens to the sharp edges of the jet,
+and drag the slider to change how strongly the layers grip each other:
 
-<DiffusionLab />
+<ViscosityDemo />
 
-Near each edge of the jet, a fast layer slows while its slower neighbour speeds up.
-The thin stripes disappear much faster than the broad jet because momentum has a
-shorter distance to travel between fast and slow layers. The stationary walls hold
-their adjacent layers at zero speed — the *no-slip condition* — and absorb momentum
-as it reaches them. Viscosity also dissipates kinetic energy, shown beneath the
-profiles. The viscosity here is measured in grid-cell units, so the dial controls
-the calculation without claiming to select a particular liquid.
+The sharp corners go first — friction attacks
+*differences* between neighbours, and nowhere do neighbours disagree more than at an
+edge. And the fluid never slips along the walls: real fluid sticks to solid
+surfaces — the *no-slip condition* — and the walls quietly bleed momentum out of the
+jet until nothing is left.
 
-Viscosity also weakens vortices. In the next figure, the blue rings encode the
-current speed and the amber markers follow it. Increasing viscosity makes those
-speeds decay faster:
+The same smoothing acts wherever two speeds meet. Fast water flowing over slow water
+blends across the seam:
+
+<ShearBlend />
+
+And it is the assassin of every vortex. The swirl below survives for a long time in
+water; in honey it dies while you watch:
 
 <VortexDecay />
 
-What you're watching is momentum spreading through the
+What you're watching in all three demonstrations is momentum spreading through the
 fluid exactly the way heat spreads through a metal bar, and it obeys the same
 equation:
 
@@ -312,13 +302,14 @@ and barely flows at all. At room temperature, water's viscosity is about 1 mPa·
 oil's about 80, honey's about 5,000 — and air's is about 0.02, which is not zero, and
 that small number will matter more than you'd think.
 
-Advection carries and deforms the flow, while viscosity smooths velocity
-differences. Their relative strengths help determine the shape of a wake.
+We now have two competing forces of character: advection stirs, viscosity smooths.
+Everything a flow becomes depends on which one is winning.
 
 ## The Competition
 
-To compare those effects, the demonstration below replaces the wing with a
-cylinder and keeps one slider. At the honey end, viscosity dominates: the
+Let's give the competition a stage. The wing that opened this article is a
+complicated shape, so the demonstration below swaps in the simplest obstacle
+there is — a plain cylinder — and one slider. At the honey end, viscosity wins: the
 flow oozes around the obstacle and reunites, orderly and symmetric. Drag toward the
 other end and advection takes over — the wake begins to waver, then rolls up into an
 alternating street of eddies like the two-colored trail braiding off the wing at the
@@ -326,8 +317,8 @@ top of this article, and beyond that it frays toward chaos:
 
 <CylinderFlow variant="regime" />
 
-These flows can be compared using a single number. Double the speed of the flow and
-double the viscosity, and their ratio stays the same. What
+This entire zoo is governed by a single number. Double the speed of the flow and
+halve the viscosity, and the wake looks the same. What
 matters is only the *ratio* of stirring to smoothing — how much momentum the flow
 carries versus how quickly viscosity can iron it flat. That ratio is known as the
 *Reynolds number*:
@@ -336,9 +327,9 @@ $$Re \;=\; \frac{U L}{\nu}$$
 
 where $U$ is the flow speed and $L$ is the size of the obstacle. (Getting from "the
 ratio of two effects" to this exact expression takes a scaling argument we're waving
-past; the further reading gives the derivation.) At small $Re$, viscosity
-dominates. At large $Re$, flows can develop eddies and turbulence. The label on
-the demonstration gives an order-of-magnitude estimate for our grid.
+past; the further reading walks it properly.) Small $Re$: honey world. Large $Re$:
+eddies and turbulence. The label on the demonstration above is this number,
+order-of-magnitude, for our little grid.
 
 The Reynolds number is why a bacterium and a jumbo jet inhabit different universes. A
 swimming bacterium lives at $Re$ around $10^{-5}$ — to it, water is thicker than honey
@@ -351,8 +342,9 @@ comfortably in eddy country, as the spiral off your spoon confirms.
 <Waypoint>
 You now hold a velocity field $\mathbf{u}$, a derivative $D/Dt$ that rides it, the
 term that stirs $-(\mathbf{u}\cdot\nabla)\mathbf{u}$, the term that smooths
-$\nu\nabla^2\mathbf{u}$, and one number, $Re$, that compares their strengths.
-So far, though, none of these terms prevents fluid from piling up.
+$\nu\nabla^2\mathbf{u}$, and one number, $Re$, that referees the fight. What's missing
+is the term that keeps fluid honest — because so far, nothing we've built stops fluid
+from piling up.
 </Waypoint>
 
 ## Pressure
@@ -414,19 +406,17 @@ declare victory.
 
 ## The Broken Fluid
 
-Carrying and smoothing give us new velocities, but those velocities can disagree
-about how much fluid should cross a cell. Below, the arrows lie on the cell's
-faces, where we store the velocity components used to count flow. Pressure will
-live at the centre. The cell has a fixed volume of one cubic metre; adjust its
-right-hand outflow until the accounting works:
+Let's try it. The demonstration below runs our cylinder channel with carrying and
+smoothing switched on, and nothing else — no pressure, no constraint. Physics as we've
+built it so far. The <C k="div">violet</C> glow marks places where fluid is being
+created or destroyed:
 
-<CellFlux />
+<CylinderFlow variant="broken" />
 
-If 1.5 cubic metres enter each second and 2.2 leave, the cell would have to supply
-the missing 0.7 cubic metres itself. If less leaves than enters, fluid must
-accumulate. Neither is allowed in our fixed, completely filled, incompressible
-cell. The velocities must change. A plausible-looking dye image would not reveal
-this error reliably; counting flow through the faces does.
+This is just wrong. Dye piles up against the cylinder and *soaks into it*; the
+stream stacks water into heaps as if it were sand. Real water does not pile up in a
+corner of the cup — push water into a spot that's already full and it pushes back,
+instantly, and goes around.
 
 What we've violated is easier to see with a counting argument. Draw any closed loop in
 a real flow and tally the water crossing it — in through some parts, out through
@@ -441,35 +431,34 @@ a spot that manufactures new fluid out of nothing. Catch it inside the loop:
 
 <DivergenceLoop withSource={true} />
 
-The loop measures a surplus, and the <C k="div">violet</C> shading marks its source.
-The local, per-point version of this counting rule is the
+The loop catches a stubborn surplus, and the <C k="div">violet</C> shading marks the
+scene of the crime. The local, per-point version of this counting rule is the
 *divergence*, written $\nabla\cdot\mathbf{u}$ — roughly, the net outflow from a tiny
 neighbourhood. For real, incompressible fluid the law is stark:
 
 $$\nabla\cdot\mathbf{u} \;=\; 0$$
 
-This constraint holds everywhere at every instant in our incompressible model.
-A proposed velocity field can have nonzero divergence even when its arrows look smooth.
-A pressure correction must bring that divergence back to zero.
+everywhere, always. This is not a suggestion the flow gradually satisfies; it holds at
+every instant. Our broken simulation glows violet precisely where its divergence is
+nonzero. Something must cancel divergence the moment it tries to appear — and we've
+already met the only actor fast enough.
 
-## Solving for Pressure
+## Pressure, the Instant Fixer
 
-The proposed field below combines circulation with an outward flow from the
-middle. Its violet cells have an imbalance between incoming and outgoing fluid.
-The right pane applies a fraction of the pressure correction computed for that
-same field. Move from zero correction through 100%, then try going farther:
+You take the controls first. The demonstration below has a spring pumping fluid
+outward from one spot — <C k="div">violet</C> everywhere around it. The slider raises
+a <C k="pHi">pressure hill</C> centered on the same spot. The hill's slope pushes
+fluid away; your job is to cancel the crime:
 
-<ProjectionLab />
+<PressureFix />
 
-The pressure is **lower** near the centre, shown in cyan. Its inward push cancels
-the outward component. At 100% the unbalanced flow disappears while circulation
-remains. Beyond that, the correction introduces an imbalance of the opposite sign.
-The meter measures the root-mean-square divergence across the grid, relative to
-the original error; it does not count visible dye.
-
-Where a proposed update sends too much fluid into a region, a pressure hill can
-push it out. Here the error points the other way, so the repair needs a pressure
-depression. The sign of the gradient matters as much as its size.
+Too low a hill, and fluid keeps piling up. Too high, and you've overcorrected — the
+hill hollows the spot out, divergence with the opposite sign. There is exactly one
+height at which the books balance. You have just done by eye what real pressure does
+everywhere in every fluid, continuously, with no one at the slider:
+where fluid begins to pile, pressure rises and pushes it apart; where fluid begins to
+thin, pressure falls and draws it back. Any imbalance corrects itself before it can
+grow.
 
 The fix you did by eye is not a lucky trick. Picture any flow as two transparent
 sheets stacked together. One sheet holds only swirl: whirlpools that spin forever and
@@ -499,100 +488,80 @@ equation*, and a computer solves it by patient negotiation: every cell repeatedl
 updates its pressure toward what its four neighbours (and the local divergence)
 suggest. Scrub through that negotiation yourself:
 
-<ProjectionLab iterations />
+<GaussSeidelRelax />
 
-Ten sweeps leave about 26% of the initial imbalance; forty leave about 4.4%; 160
-leave less than 0.1%. Each setting starts from the same proposed velocities, so
-scrubbing backward really removes iterations rather than continuing an old solve.
-These are *Gauss–Seidel iterations*: each cell uses its neighbours' freshest
-pressure values. Other algorithms reach a small residual faster. The useful
-stopping criterion is the remaining imbalance, not a special number of sweeps.
+At zero sweeps: all <C k="div">divergence</C>, no pressure. A few dozen sweeps of
+neighbourly negotiation later, the <C k="pHi">hill</C> has risen and the divergence has
+fallen to about a fifth of its opening value — and eighty sweeps leave a tenth.
+These sweeps are *Gauss–Seidel iterations*, each cell taking its neighbours'
+freshest numbers, and our simulations run forty of them at every cell of the grid,
+every frame — a budget, not a solution.
 
-There is a second requirement hidden in the grid. The pressure gradient used to
-correct face velocities and the divergence used to check cells must compose to
-the same Laplacian that the pressure solver uses. Otherwise, accurately solving
-the pressure equation can still leave an inaccurate correction. The little grids
-here use matching face and cell operators, and check the corrected velocities
-directly.
-
-Pressure has no independent time-evolution equation here: there is no
-$\partial p/\partial t$ term. At each instant, we solve for the pressure field
-that keeps $\nabla\cdot\mathbf{u} = 0$.
+Pressure has no equation of its own — no $\partial p/\partial t$ anywhere.
+It is not a substance with momentum and history. It is whatever field, at each
+instant, keeps $\nabla\cdot\mathbf{u} = 0$ true. Ask a fluid "why this pressure?" and
+the only answer is: *because that is what it took*.
 
 <Waypoint>
-The constraint $\nabla\cdot\mathbf{u} = 0$ determines the pressure field through a
-Poisson solve. We can now combine that correction with advection and viscosity.
+You now hold the constraint $\nabla\cdot\mathbf{u} = 0$, and its enforcer — a pressure
+field conjured fresh at every instant by a Poisson solve. Nothing more is missing.
 </Waypoint>
 
 ## Assembling Navier–Stokes
 
-Newton's law says that a fluid parcel's mass times its acceleration equals the
-sum of the forces on it. Combining the terms above gives:
+Newton, for a parcel of fluid: mass times acceleration equals the sum of forces. We
+have the acceleration a parcel feels, and every force. Written out:
 
 $$\underbrace{\frac{\partial \mathbf{u}}{\partial t}}_{\text{change at a point}} \;=\; \underbrace{-(\mathbf{u}\cdot\nabla)\,\mathbf{u}}_{\text{the flow carries itself}} \;-\; \underbrace{\frac{1}{\rho}\nabla p}_{\text{downhill from pressure}} \;+\; \underbrace{\nu\,\nabla^2\mathbf{u}}_{\text{neighbours drag on neighbours}} \;+\; \underbrace{\mathbf{f}}_{\text{outside pushes}} \qquad \text{with} \qquad \nabla\cdot\mathbf{u} = 0$$
 
 These are the incompressible Navier–Stokes equations — Claude-Louis Navier and George
 Gabriel Stokes arrived at them a century and a half before anyone could compute with
-them. The outside force $\mathbf{f}$ can come from gravity, a propeller, or a spoon.
+them. There is no term in that line you have not personally dragged a slider through.
+($\mathbf{f}$ is any push from outside — gravity, a propeller, your spoon.)
 
-Now compare complete calculations. Both panes below start with identical swirls,
-dye, and one local push. The left runs all three operations; the right omits the
-one you select. Scrub time forward and backward to compare equal elapsed times.
-These small grids wrap at their edges, so fluid leaving one side returns on the
-opposite side:
+And because every term is now a friend, we can do something textbooks can't: perform
+surgery on the equation while it runs. The demonstration below is our channel with
+each term on its own switch:
 
-<TermExperiment />
+<TermToggle />
 
-Without pressure correction, the local imbalance survives. Without viscosity,
-more kinetic energy remains in the swirls. Without velocity advection, the
-velocity pattern can smooth and undergo pressure correction, but cannot carry
-itself across the grid; dye still moves through that field. Removing one operation
-isolates its contribution without changing the start or the observation time.
-
-Even with viscosity disabled, interpolating velocity and dye still loses detail.
-The difference between the panes is the effect of explicit viscosity in this
-calculation, not a comparison between perfectly inviscid and viscous fluids.
+Switch off the carrying term and you enter the Stokes world: honey physics, every
+disturbance ironed flat, stately and orderly — this is the bacterium's whole life.
+Switch off viscosity instead and you get the Euler world, sharp filaments that refuse
+to blur (in principle forever; in practice our backward-tracing scheme sneaks in a
+little blur of its own — the same price we paid for stability back in Advection).
+Switch off pressure and you recognize the violet catastrophe of the broken fluid —
+now as a diagnosis rather than a mystery.
 
 Whether solutions of these equations, in three dimensions, always remain smooth — or
-can develop a singularity — is not known. This is the million-dollar question
-posed by one of the Clay Millennium Prize Problems. A finite grid producing a
-bounded animation does not settle that question about the continuous equations.
+can spontaneously concentrate infinite velocity into a point — is not known. Not
+"hard": *unknown*. That is the million dollars from the first paragraph — one of the
+seven Clay Millennium Prize Problems — and the equation you just assembled with
+sliders is the one nobody can prove makes sense.
 
 ## Running the Equation
 
-The numerical solvers here belong to the family popularized by Jos Stam's
-*Stable Fluids*: split a timestep into smaller operations, then apply them in
-sequence. The prescribed currents earlier in the lesson were simpler experiments
-used to isolate those operations.
+An equation nobody can solve by hand can still be *walked* by a machine, one small
+step at a time. Everything you've watched in this article runs on a scheme called
+*Stable Fluids*, published by Jos Stam in 1999, and you already know all four of its
+moves — each one is a section of this article. Every frame, for every cell: add the
+outside pushes, carry the field backward-tracing style, smooth it by viscosity, then
+solve the pressure puzzle and cancel the divergence.
 
-Below is one timestep, lasting 1/40 of a second. Each button selects an operation
-and shows its input beside its result. Start with the push, then carry velocity,
-smooth it, and correct pressure. The final step carries dye using the corrected
-velocity. For changes too small to see at the normal scale, enlarge the change in
-velocity tenfold:
+The demonstration below lets you watch each move in isolation, running repeatedly on
+the same channel. None of the three alone is water: carrying stretches and folds but
+lets divergence accumulate, because nothing is enforcing the constraint yet;
+smoothing melts everything toward stillness; the pressure step hunts divergence and
+touches nothing else. Water is what you get by running them in order, every frame —
+and the pressure step is the expensive one: forty neighbourly sweeps across every
+cell of a 120-by-72 grid before each frame can be drawn.
 
-<SolverCycle />
+<SolverXray />
 
-The push is local, but pressure changes velocities farther away because the cells
-must agree on the fluid crossing their shared faces. Smoothing reduces velocity
-differences without updating the dye. Carrying dye changes its stored concentrations
-without changing velocity at all. The buttons inspect successive states from one
-calculation; they do not run each selected operation repeatedly on its own.
-
-That distinction is useful when debugging. If dye transport changes velocity,
-the code has coupled states that should be separate. If pressure leaves a large
-divergence, the next pretty frame does not make the update correct.
-
-Release the timestep and those same operations produce a moving flow. Drag across
-the grid to push the fluid, or use **Push upward**. **Add dye** only marks the
-fluid near the centre; it gives the flow no extra momentum. Changing viscosity
-affects subsequent updates, so a disturbed flow takes time to settle:
-
-<LiveSolverLab />
-
-The wing from the opening uses the same combination of terms. Its slider controls
-the Reynolds number, changing the balance between advection and viscosity.
-Here you can also stir the stream with your pointer:
+With that, the wing from the top of this article surrenders its mystery. Here it is
+again — same solver, same two currents, no term left in it you haven't built — and
+the oldest debt comes due: the slider was the Reynolds number all along. This time
+you can also stir the stream with your pointer:
 
 <WingFlow variant="finale" />
 
@@ -602,22 +571,18 @@ one color into the other until you cannot say where the upper current ends: the 
 stretching-until-the-gap-vanishes you watched a blob of dye perform, now happening to
 the wing's own two currents.
 
-The small workbench uses a 48-by-32 grid, backward tracing with bilinear
-interpolation, explicit diffusion within its stability limit, and a pressure solve
-stopped by its residual. Its grid lines make the stored samples visible; hiding
-them does not add resolution. The wing uses a larger grid and a different
-implementation of the same operations, with a lower-resolution fallback on
-browsers without WebGPU.
-
-Both lose fine detail to interpolation, and both omit the third dimension. The
-constraint can be satisfied accurately while a coarse grid still misses an eddy.
-These are useful models for examining a calculation; they are not measurements
-of an aircraft's performance.
+Fair warnings, so you know exactly what you're holding: the backward-tracing step
+blurs fine detail, so our flows are a touch more viscous than the dial admits; true
+turbulence cascades down to scales far below any grid; a plane channel a few hundred
+cells long is not the ocean; and on a browser without WebGPU the whole thing runs at
+a quarter of the resolution, where the street softens into a gentle waver. I would
+advise against using this solver to design a submarine. But every term in it is
+honest, and every one of them is yours now.
 
 ## Where Waves Live
 
-Our fixed, incompressible domain excludes sound and has no free surface on which
-water waves can travel. Those motions need additional parts of the model.
+This is a wave-physics course, and we've spent the whole first lesson on an equation
+with no waves in it. Navier–Stokes is the parent, and the waves are its children.
 
 Take still water and disturb it *slightly*. With disturbances so small, the
 self-carrying term — small velocity times small variation — is smallness squared,
@@ -636,43 +601,46 @@ while the shape sweeps past. The wave travels; the water mostly doesn't:
 
 <RippleWaves mode="surface" />
 
-Small sound waves obey the familiar wave equation. Surface waves also carry energy
-through oscillating fluid, but their speed can depend on wavelength and water
-depth. The ripple animations show the distinction between a travelling disturbance
-and the motion of individual parcels; they do not extend our incompressible grid
-solver into a complete wave model.
+Both obey the *wave equation* — the small, well-behaved child of the giant we built
+today. A string, a column of air, the surface of the sea: the same equation runs
+under all of them, and every one is a place where energy travels while the material
+stays home.
 
 ## Further Reading and Watching
 
-Lorena Barba's [*CFD Python: 12 Steps to Navier–Stokes*](https://github.com/barbagroup/CFDPython)
-builds a solver through executable notebooks, beginning with transport and ending
-with two-dimensional cavity and channel flows. It is a good next step if you want
-to implement the updates yourself.
+Lorena Barba's *12 Steps to Navier–Stokes* is the finest computational on-ramp there
+is: twelve Jupyter notebooks that rebuild this article's mathematics with your own
+hands on the keyboard, ending at a working solver. If this lesson made you want to
+*compute*, go there next.
 
-Jos Stam's [*Stable Fluids*](https://graphics.stanford.edu/courses/cs448-01-spring/papers/stam.pdf)
-describes the splitting and backward tracing behind this family of graphics
-solvers. Compare its treatment of stability with the numerical blurring in our
-transport experiment.
+Jos Stam's paper *Real-Time Fluid Dynamics for Games* (2003) is the friendliest
+description of the exact solver running our demonstrations — a rare paper you can read
+with one hand and implement with the other. His original *Stable Fluids* (1999) is the
+formal version.
 
-Robert Bridson and Matthias Müller-Fischer's
-[*Fluid Simulation* course notes](https://www.cs.ubc.ca/~rbridson/fluidsimulation/)
-develop staggered grids, pressure projection, boundary conditions, and more
-accurate transport methods. They are especially useful for understanding why the
-discrete gradient and divergence must agree.
+Robert Bridson's *Fluid Simulation for Computer Graphics* is the book behind nearly
+every fluid you've seen in a film. It treats the pressure projection with a care and
+clarity no online tutorial matches.
 
-Bartosz Ciechanowski's [*Airfoil*](https://ciechanow.ski/airfoil/) develops the
-physical intuition behind pressure, viscosity, and flow around a wing through
-interactive experiments. Its approach to making mechanics visible helped shape
-this lesson.
+Bartosz Ciechanowski's *Airfoil* is the finest interactive exposition of fluid
+intuition ever put on the web, and this lesson is openly in conversation with it — he
+builds the physical feel for pressure and viscosity with a patience I can only point
+at, and stops exactly where this article begins: at the equations. The wing at the
+top of this page tips its hat to his.
+
+And braintruffle's video series *Mastering fluid dynamics* climbs from molecules to
+continuum with visuals that justify the watch time on their own.
 
 ## Final Words
 
-The next time you stir your coffee, watch the ribbon of cream after the spoon stops.
-The moving fluid keeps carrying it, differences in velocity stretch it, and
-viscosity gradually weakens the motion. Pressure couples regions of the cup that
-the spoon never touched.
+The next time you stir your coffee, watch the spiral peel off the spoon. That curl is
+the carrying term feeding on itself; the smooth fading of it afterward is $\nu$ at
+work; and the reason the coffee never piles up against the cup's wall is a pressure
+field being conjured and dissolved, instant by instant, to keep a divergence of
+exactly zero — the same silent bookkeeping running in every faucet, every river, and
+every breath of wind you've ever felt.
 
-In a simulation, each of those statements becomes an update to stored numbers.
-You can stop between updates, inspect a cell, remove an operation, and measure
-what no longer works. I like that the same flow can be watched as a whole and
-taken apart that way, one calculation at a time.
+I find it steadying that beneath all that motion sits one line of mathematics — and
+that the line is still, in the deepest sense, open. Understanding it hasn't drained
+the water of its magic. You now know what the swirl *is*, and it is more astonishing,
+not less: an unsolved equation, performing itself flawlessly, in your cup.

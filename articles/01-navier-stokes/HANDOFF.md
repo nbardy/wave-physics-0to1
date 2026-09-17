@@ -1,5 +1,71 @@
 # HANDOFF — Lesson 01: Building the Navier–Stokes Equations
 
+## Version III mounted for reading — 2026-09-16
+
+Nick read the live article (version I, Astra's 10 September construction
+revision) against the rebuilt history lesson and judged it much worse: flat
+prose, the same wing hero, and an opening he rejected outright ("the cream
+coffee opening sucks"). Session logs show the same `gpt-6-astra` Codex thread
+wrote both the history rebuild and this revision, so the gap is the brief, not
+the model.
+
+To read the candidates side by side, the pre-September article is mounted as
+`src/lessons/lesson-01-navier-stokes.III.mdx`: byte-for-byte the file at
+`6b46b4f` (the 30 July reader-ToM redraft plus the 6 September history link).
+It is `draft`, so the publication filter strips it from production exactly as
+it strips II. I and II are unchanged. Typecheck and build pass; III renders
+through Final Words with no console errors. Note III still carries the
+pressure-sign and Reynolds-example errors the 9 September review found; I has
+the fixes.
+
+**`?draft=true` — 2026-09-17.** Nick chose to ship drafts in the same build and
+gate them in the browser rather than run a second deployment. The build-time
+strip plugin (`scripts/published-lessons.ts`) is gone; the registry now builds
+two catalogues, reader and editor, and every page asks `useCatalogue()` for
+the one its visitor gets (`src/lessons/registry.ts`, `src/lessons/audience.ts`,
+`src/lessons/AudienceContext.tsx`). A reader sees published lessons and
+published versions only and never sees the version switch. `?draft=true` on
+any address makes an editor, remembered in localStorage until `?draft=false`;
+`bun run dev` defaults to editor and shows a one-line banner. The MDX link to
+the history lesson now goes through `<IfLesson>` so it follows the same rule.
+`check:publication` was rewritten around the two catalogues and the flag.
+Verified on the production build (`bun run preview`): reader default, `?v=III`
+and `/lesson/pbits` miss loudly for a reader, `?draft=true` reveals all twelve
+lessons and I · II · III, and the choice survives a flagless reload. Not
+committed, not deployed. Once deployed, II and III are reachable on prod by
+anyone who adds the flag.
+
+Directions recorded, nothing built yet:
+- Replace the wing hero. Nick's candidate is a Tesla valve: same inflow, the
+  valve stamped forward in one pane and mirrored in the other, a pressure-drop
+  meter on each, viscosity on the slider. At the honey end the two meters
+  agree (reversible Stokes flow); at the water end the reverse pane reads
+  higher. That is the nonlinear term made visible, and it is the spine Fable's
+  2 September REIMAGINE proposed with a different object. Needs a numerical
+  check that the coarse 2D solver shows diodicity above 1 at reachable Re
+  before any prose is written around it.
+  **Checked 2026-09-17** (`scripts/tesla-valve-feasibility.ts`, log beside it):
+  a port of the history hero's MAC + IC(0)-PCG solver with an arbitrary mask,
+  300×52 cells, channel 12 wide, three crude loop stages, same inflow, reverse
+  = mirrored mask. Plain channel gives Di = 1.000 exactly; the valve gives
+  1.000 at Re 1 and 5, 1.006 at 50, 1.019 at 200, 1.030 at 500, 1.050 at 1000,
+  with outlet/inlet flux 1.000 throughout. So the solver resolves the effect
+  and the honey-end reversibility is real, but this quick shape is a weak
+  valve: a five-percent difference is not a hero. The site's fixed-sweep CPU
+  solver (`lib/solver.ts`) cannot be used for this at all: its 40–120 sweeps do
+  not converge along a 300-cell channel and the outlet flux stalls near zero.
+  Next step, if the hero goes ahead: a proper Tesla geometry (the patent's
+  bucket partitions or Nguyen et al. 2021's T45-R) and finer channels, rerun
+  the same script, and require Di well above 1 before any prose.
+- Nick asked whether this lesson and the history are really different. As
+  they stand, not enough: both build the same equation term by term with an
+  experiment per term, share the wing, the arrows figure, a pressure-removed
+  figure, a layers figure, a Reynolds figure, and a solver-steps ending. The
+  history's own blurb calls itself "the same equation, built again". What
+  only this lesson owns today is the numerical middle (backtrace, transport
+  error, cell flux, sweeps, one timestep). A hero whose question the history
+  never asks is what would separate them.
+
 ## Current state — version II built locally, 2026-09-12
 
 I and II are now distinct complete articles. I remains the default reading version;

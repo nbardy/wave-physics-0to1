@@ -97,6 +97,9 @@ document (measured: it truncated two sections of physics-02, 2026-08-05).
 - **Versions (A/B reading).** A lesson carries `versions: LessonVersions` — one or
   more complete drafts, the first being what the site shows by default; the rest
   are reached from the I · II · III switch above the article (`/lesson/<id>?v=II`).
+  The switch, draft versions, and draft lessons are editor-only: every build ships
+  the whole registry, and `?draft=true` on any address (remembered until
+  `?draft=false`) turns a visitor into an editor. `bun run dev` defaults to editor.
   A single-version lesson keeps `<name>.mdx` and `versions: sole(Content)`. When a
   rewrite lands, the files become `<name>.I.mdx` (baseline) and `<name>.II.mdx`,
   and the registry entry lists both with an author and a one-line note. Adding a

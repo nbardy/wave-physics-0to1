@@ -1,5 +1,6 @@
 import { Link, useSearchParams } from 'react-router-dom'
-import { allLessons, TAGS, TAG_LABEL, tagsInUse, type Lesson, type Tag } from '../lessons/registry'
+import { allLessons, TAGS, TAG_LABEL, tagsInUse, type Catalogue, type Lesson, type Tag } from '../lessons/registry'
+import { useCatalogue } from '../lessons/AudienceContext'
 import { TocList } from '../components/Toc'
 import { NewsletterIntro } from '../components/NewsletterSignup'
 
@@ -15,8 +16,8 @@ function parseFilter(raw: string | null): Filter {
   return { kind: 'unknown', raw }
 }
 
-function selectLessons(filter: Filter): Lesson[] {
-  const all = allLessons()
+function selectLessons(c: Catalogue, filter: Filter): Lesson[] {
+  const all = allLessons(c)
   if (filter.kind === 'all') return all
   if (filter.kind === 'tag') return all.filter((l) => l.tags.includes(filter.tag))
   return []
@@ -29,9 +30,10 @@ function heading(filter: Filter, count: number): string {
 }
 
 export default function All() {
+  const c = useCatalogue()
   const [params, setParams] = useSearchParams()
   const filter = parseFilter(params.get('tag'))
-  const items = selectLessons(filter)
+  const items = selectLessons(c, filter)
   const active = filter.kind === 'tag' ? filter.tag : null
 
   const select = (tag: Tag | null) => setParams(tag ? { tag } : {}, { replace: true })
@@ -57,7 +59,7 @@ export default function All() {
         >
           All
         </button>
-        {tagsInUse().map(({ tag, count }) => (
+        {tagsInUse(c).map(({ tag, count }) => (
           <button
             key={tag}
             type="button"

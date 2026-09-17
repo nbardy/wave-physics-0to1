@@ -2,6 +2,7 @@ import type { ComponentType } from 'react'
 import type { LessonPreviewSpec } from '../components/previewSpec'
 import Lesson01I from './lesson-01-navier-stokes.I.mdx'
 import Lesson01II from './lesson-01-navier-stokes.II.mdx'
+import Lesson01III from './lesson-01-navier-stokes.III.mdx'
 import Lesson02 from './lesson-02-fiber-bundles.mdx'
 import Lesson03 from './lesson-03-navier-stokes-history.mdx'
 import Lesson04I from './lesson-04-learned-solver.I.mdx'
@@ -21,6 +22,10 @@ export type LessonStatus =
   | { kind: 'planned' }
   | { kind: 'draft' }
   | { kind: 'published' }
+
+// Who is looking. A reader is anyone on the public site; an editor turned on
+// `?draft=true` (see audience.ts) and sees drafts and every reading version.
+export type Audience = { kind: 'reader' } | { kind: 'editor' }
 
 // ---------------------------------------------------------------------------
 // Fields — the top-level clusters. Home renders one group per field, in this
@@ -147,8 +152,8 @@ export interface Lesson {
   preview: LessonPreviewSpec
 }
 
-// Vite's published-lessons-only build plugin strips unpublished entries and MDX
-// imports. Dev sees this full catalogue; production lookups cannot reach drafts.
+// The authoring table. Every build ships all of it; what a visitor can reach
+// is decided by `catalogue(audience)` below. Pages never read this array.
 export const lessons: Lesson[] = [
   {
     id: 'wave-particle-duality',
@@ -246,6 +251,13 @@ export const lessons: Lesson[] = [
         status: { kind: 'draft' },
         note: 'Revised experiments · parcels, viscosity, matched flows, and plate-to-pipe prediction',
         Content: Lesson01II,
+      },
+      {
+        label: 'III',
+        author: 'baseline',
+        status: { kind: 'draft' },
+        note: 'As it stood before the September revision · 30 July reader-ToM redraft, mounted 16 September for side-by-side reading',
+        Content: Lesson01III,
       },
     ],
   },
@@ -387,31 +399,76 @@ const seriesCatalog: readonly Series[] = [
   },
 ]
 
-// Navigation and part counts use only lessons present in this build.
-export const SERIES: readonly Series[] = seriesCatalog.map(series => ({
-  ...series,
-  lessonIds: series.lessonIds.filter(id => lessons.some(lesson => lesson.id === id)),
-})).filter(series => series.lessonIds.length > 0)
+// ---------------------------------------------------------------------------
+// Catalogue — what one audience can reach. A reader gets published lessons
+// and their published versions; an editor gets the whole authoring table.
+// Series membership and part counts follow the same cut, so navigation never
+// points at a lesson the visitor cannot open. Both catalogues are built once,
+// at load, so an authoring mistake fails the site rather than one route.
+// ---------------------------------------------------------------------------
 
-// Absence is meaningful for both lookups (unknown URL id; lesson outside any
-// series), so Option is honest.
-export function seriesById(id: string): Series | undefined {
-  return SERIES.find((s) => s.id === id)
+export interface Catalogue {
+  readonly audience: Audience
+  readonly lessons: readonly Lesson[]
+  readonly series: readonly Series[]
+}
+
+const ADMITS: Record<Audience['kind'], (status: LessonStatus) => boolean> = {
+  reader: (status) => status.kind === 'published',
+  editor: () => true,
+}
+
+/** A version without its own status inherits the lesson's. */
+function versionStatus(lesson: Lesson, version: LessonVersion): LessonStatus {
+  return version.status ?? lesson.status
+}
+
+function admitted(lesson: Lesson, audience: Audience): Lesson {
+  const admits = ADMITS[audience.kind]
+  const [first, ...rest] = lesson.versions.filter((v) => admits(versionStatus(lesson, v)))
+  if (!first) {
+    throw new Error(`${lesson.id}: a ${lesson.status.kind} lesson needs at least one ${lesson.status.kind} version`)
+  }
+  return { ...lesson, versions: [first, ...rest] }
+}
+
+function build(audience: Audience): Catalogue {
+  const admits = ADMITS[audience.kind]
+  const visible = lessons.filter((l) => admits(l.status)).map((l) => admitted(l, audience))
+  const series = seriesCatalog
+    .map((s) => ({ ...s, lessonIds: s.lessonIds.filter((id) => visible.some((l) => l.id === id)) }))
+    .filter((s) => s.lessonIds.length > 0)
+  return { audience, lessons: visible, series }
+}
+
+const CATALOGUES: Record<Audience['kind'], Catalogue> = {
+  reader: build({ kind: 'reader' }),
+  editor: build({ kind: 'editor' }),
+}
+
+export function catalogue(audience: Audience): Catalogue {
+  return CATALOGUES[audience.kind]
+}
+
+// Absence is meaningful for these lookups (an id the visitor cannot reach;
+// a lesson outside any series), so Option is honest.
+export function lessonById(c: Catalogue, id: string): Lesson | undefined {
+  return c.lessons.find((l) => l.id === id)
+}
+
+export function seriesById(c: Catalogue, id: string): Series | undefined {
+  return c.series.find((s) => s.id === id)
 }
 
 export function seriesForLesson(
+  c: Catalogue,
   lessonId: string,
 ): { series: Series; index: number } | undefined {
-  for (const series of SERIES) {
+  for (const series of c.series) {
     const index = series.lessonIds.indexOf(lessonId)
     if (index !== -1) return { series, index }
   }
   return undefined
-}
-
-// Absence is meaningful here (unknown lesson id from the URL), so Option is honest.
-export function lessonById(id: string): Lesson | undefined {
-  return lessons.find((l) => l.id === id)
 }
 
 /** The version the site shows when the URL names none. */
@@ -430,16 +487,16 @@ export function lessonNumber(lesson: Lesson): string {
   return prefix ? `${prefix}${lesson.order}` : String(lesson.order).padStart(2, '0')
 }
 
-/** Only tags some lesson actually carries, in TAGS order, with their counts. */
-export function tagsInUse(): Array<{ tag: Tag; count: number }> {
+/** Only tags some reachable lesson carries, in TAGS order, with their counts. */
+export function tagsInUse(c: Catalogue): Array<{ tag: Tag; count: number }> {
   return TAGS.map((tag) => ({
     tag,
-    count: lessons.filter((l) => l.tags.includes(tag)).length,
+    count: c.lessons.filter((l) => l.tags.includes(tag)).length,
   })).filter((t) => t.count > 0)
 }
 
-/** Every lesson, field order first, then per-field order. */
-export function allLessons(): Lesson[] {
+/** Every reachable lesson, field order first, then per-field order. */
+export function allLessons(c: Catalogue): Lesson[] {
   const rank = (f: Field) => FIELD_ORDER.indexOf(f)
-  return [...lessons].sort((a, b) => rank(a.field) - rank(b.field) || a.order - b.order)
+  return [...c.lessons].sort((a, b) => rank(a.field) - rank(b.field) || a.order - b.order)
 }

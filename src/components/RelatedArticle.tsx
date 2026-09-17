@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { lessonById } from '../lessons/registry'
+import { useCatalogue } from '../lessons/AudienceContext'
 import './RelatedArticle.css'
 
 const RELATED: Record<string, { to: string; title: string; description: string }> = {
@@ -16,8 +17,9 @@ const RELATED: Record<string, { to: string; title: string; description: string }
 }
 
 export default function RelatedArticle({ lessonId }: { lessonId: string }) {
+  const c = useCatalogue()
   const related = RELATED[lessonId]
-  if (!related || !lessonById(related.to)) return null
+  if (!related || !lessonById(c, related.to)) return null
   return (
     <aside className="related-article" aria-label="Related article">
       <span className="related-article-kicker">You might also enjoy</span>

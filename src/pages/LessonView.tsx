@@ -1,5 +1,6 @@
 import { useParams, useSearchParams, Link } from 'react-router-dom'
 import { lessonById, defaultVersion, versionOf } from '../lessons/registry'
+import { useCatalogue } from '../lessons/AudienceContext'
 import { SeriesBanner, SeriesNext } from '../components/SeriesNav'
 import { VersionSwitch } from '../components/VersionSwitch'
 import RelatedArticle from '../components/RelatedArticle'
@@ -8,7 +9,8 @@ import { NewsletterIntro } from '../components/NewsletterSignup'
 export default function LessonView() {
   const { id } = useParams<{ id: string }>()
   const [params] = useSearchParams()
-  const lesson = id ? lessonById(id) : undefined
+  const c = useCatalogue()
+  const lesson = id ? lessonById(c, id) : undefined
 
   if (!lesson) {
     return (
@@ -53,7 +55,7 @@ export default function LessonView() {
   return (
     <article className="prose lesson">
       <SeriesBanner lessonId={lesson.id} />
-      <VersionSwitch lesson={lesson} active={version} />
+      <VersionSwitch audience={c.audience} lesson={lesson} active={version} />
       <Content key={version.label} />
       <SeriesNext lessonId={lesson.id} />
       <RelatedArticle lessonId={lesson.id} />

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { FIELD_SPEC, lessonById, seriesForLesson } from '../lessons/registry'
+import { useCatalogue } from '../lessons/AudienceContext'
 import './SeriesNav.css'
 
 /**
@@ -8,7 +9,7 @@ import './SeriesNav.css'
  * outside any series.
  */
 export function SeriesBanner({ lessonId }: { lessonId: string }) {
-  const hit = seriesForLesson(lessonId)
+  const hit = seriesForLesson(useCatalogue(), lessonId)
   if (!hit) return null
   const { series, index } = hit
   return (
@@ -26,11 +27,12 @@ export function SeriesBanner({ lessonId }: { lessonId: string }) {
  * finale — the way back to the whole arc.
  */
 export function SeriesNext({ lessonId }: { lessonId: string }) {
-  const hit = seriesForLesson(lessonId)
+  const c = useCatalogue()
+  const hit = seriesForLesson(c, lessonId)
   if (!hit) return null
   const { series, index } = hit
   const nextId = series.lessonIds[index + 1]
-  const next = nextId ? lessonById(nextId) : undefined
+  const next = nextId ? lessonById(c, nextId) : undefined
   return (
     <nav className="series-next" aria-label="series navigation">
       {next ? (

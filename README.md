@@ -35,16 +35,22 @@ bun run check:previews # verify each listing figure stays still, animates, and f
 bun run render:previews # regenerate listing stills after changing a preview or its figure
 ```
 
-`bun run dev` includes planned lessons, drafts, and working reading versions.
-Every build (including GitHub Pages and the custom domain) includes only lessons
-whose registry status is `published`. Unpublished MDX imports are removed before
-bundling, so drafts are absent from listings, direct routes, and site JavaScript.
-`bun run preview` shows that production view locally.
+Every build ships the whole registry. What a visitor can reach is decided in
+the browser by their audience. A reader sees published lessons and their
+published versions only, with no version switch. Add `?draft=true` to any
+address to become an editor: drafts, every reading version, and the
+I · II · III switch appear, and the choice is remembered in that browser until
+`?draft=false`. `bun run dev` defaults to the editor's view and says so in a
+line at the top of each page; `bun run preview` serves the production build,
+whose default is the reader's view. Drafts are therefore in the site
+JavaScript and reachable by anyone who knows the flag. It is a reading
+convenience, not access control.
 
 Versions inherit their lesson's status unless explicitly marked otherwise. Set
 `status: { kind: 'draft' }` on an unfinished version of a published lesson to keep
-it local. This controls the built website, not access to source files in Git.
-Run `bun run check:publication` to check catalogue visibility and promotion.
+it out of the reader's view. A published lesson with no published version fails
+the build. Run `bun run check:publication` to check catalogue visibility, the
+flag, and promotion.
 
 ## Layout
 

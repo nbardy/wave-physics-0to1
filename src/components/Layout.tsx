@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useEffect, useState, type ReactNode } from 'react'
 import NewsletterSignup from './NewsletterSignup'
+import { DraftBanner } from './DraftBanner'
 
 // Keep the site navigation tucked away until the reader starts scrolling.
 const REVEAL_AFTER = 120 // px scrolled before the header slides in
@@ -28,6 +29,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         </nav>
       </header>
       <main className="content">
+        <DraftBanner />
         {children}
         <div className="newsletter-placement--end">
           <NewsletterSignup key={`${pathname}-end`} placement="bottom" />

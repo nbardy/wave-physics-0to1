@@ -1,14 +1,19 @@
 import { Link } from 'react-router-dom'
-import type { Lesson, LessonVersion } from '../lessons/registry'
+import type { ReactElement } from 'react'
+import type { Audience, Lesson, LessonVersion } from '../lessons/registry'
+
+interface Props {
+  lesson: Lesson
+  active: LessonVersion
+}
 
 /**
  * The strip above a lesson that carries more than one version: one button per
  * version (I · II · III), the active one filled, and the active version's
- * note under it so a reader knows which draft they are holding. Renders
- * nothing for a lesson with a single version — the default reader never sees
- * that versions exist.
+ * note under it so the editor knows which draft they are holding. Renders
+ * nothing for a lesson with a single version.
  */
-export function VersionSwitch({ lesson, active }: { lesson: Lesson; active: LessonVersion }) {
+function EditorSwitch({ lesson, active }: Props): ReactElement | null {
   if (lesson.versions.length < 2) return null
   return (
     <nav className="version-switch" aria-label="lesson versions">
@@ -31,4 +36,15 @@ export function VersionSwitch({ lesson, active }: { lesson: Lesson; active: Less
       </p>
     </nav>
   )
+}
+
+// Versions are an editing device. A reader is shown one article and never
+// learns that others exist; an editor gets the switch.
+const SWITCH: Record<Audience['kind'], (props: Props) => ReactElement | null> = {
+  reader: () => null,
+  editor: EditorSwitch,
+}
+
+export function VersionSwitch({ audience, ...props }: Props & { audience: Audience }) {
+  return SWITCH[audience.kind](props)
 }

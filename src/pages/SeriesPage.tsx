@@ -1,11 +1,13 @@
 import { useParams, Link } from 'react-router-dom'
 import { lessonById, seriesById } from '../lessons/registry'
+import { useCatalogue } from '../lessons/AudienceContext'
 import { TocList } from '../components/Toc'
 import { NewsletterIntro } from '../components/NewsletterSignup'
 
 export default function SeriesPage() {
   const { id } = useParams<{ id: string }>()
-  const series = id ? seriesById(id) : undefined
+  const c = useCatalogue()
+  const series = id ? seriesById(c, id) : undefined
 
   if (!series) {
     return (
@@ -22,7 +24,7 @@ export default function SeriesPage() {
   // The registry declares the ids; a missing one is a build-time authoring
   // error, surfaced loudly by the filter never silently rendering short.
   const items = series.lessonIds
-    .map((lid) => lessonById(lid))
+    .map((lid) => lessonById(c, lid))
     .filter((l): l is NonNullable<typeof l> => l !== undefined)
 
   return (

@@ -9,10 +9,11 @@ import StackCheck from './pages/StackCheck'
 import { Sim } from './components/Sim'
 import { TeX } from './components/TeX'
 import { C, Waypoint, Predict } from './components/Prose'
+import { IfLesson } from './components/IfLesson'
 import { LessonTitle } from './components/NewsletterSignup'
 
 // Components made available to every lesson's MDX without an explicit import.
-const mdxComponents = { Sim, TeX, C, Waypoint, Predict, h1: LessonTitle }
+const mdxComponents = { Sim, TeX, C, Waypoint, Predict, IfLesson, h1: LessonTitle }
 
 export default function App() {
   return (

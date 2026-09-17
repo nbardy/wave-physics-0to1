@@ -7,7 +7,6 @@ import rehypeKatex from 'rehype-katex'
 import { copyFileSync, existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { createRss } from './scripts/rss'
-import { publishedLessons } from './scripts/published-lessons'
 
 // GitHub Pages project sites use /<repo>/; custom domains serve from root.
 // public/CNAME is the domain's source of truth and Vite copies it into dist,
@@ -51,7 +50,6 @@ export default defineConfig({
   // honor PORT so preview tooling can assign a free port when 5173 is taken
   server: process.env.PORT ? { port: Number(process.env.PORT) } : undefined,
   plugins: [
-    publishedLessons(),
     {
       enforce: 'pre',
       ...mdx({

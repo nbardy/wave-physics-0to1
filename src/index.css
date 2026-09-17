@@ -320,6 +320,19 @@ a:hover {
   margin: 0.5rem 0 0;
 }
 
+/* editor mode — the quiet line at the top of every page while drafts are visible */
+.draft-banner {
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  border-bottom: 1px solid var(--rule);
+  padding: 0.5rem 0;
+  margin: 0 0 1.5rem;
+}
+.draft-banner code {
+  font-size: 0.78rem;
+}
+
 /* versions — the switch above a lesson that carries more than one draft */
 .version-switch {
   margin: 0 0 2.2rem;

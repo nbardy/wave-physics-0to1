@@ -1,8 +1,10 @@
-import { FIELDS, lessons, SERIES } from '../lessons/registry'
+import { FIELDS } from '../lessons/registry'
+import { useCatalogue } from '../lessons/AudienceContext'
 import { TocList } from '../components/Toc'
 import { NewsletterIntro } from '../components/NewsletterSignup'
 
 export default function Home() {
+  const { lessons, series: allSeries } = useCatalogue()
   return (
     <div className="home home--index">
       <header className="masthead">
@@ -17,7 +19,7 @@ export default function Home() {
       {FIELDS.map(({ field, label }) => {
         const items = lessons.filter((l) => l.field === field).sort((a, b) => a.order - b.order)
         if (items.length === 0) return null
-        const series = SERIES.find((s) => s.field === field)
+        const series = allSeries.find((s) => s.field === field)
         const more = series && { to: `/series/${series.id}`, label: 'Read it as a series →' }
         return <TocList key={field} label={label} numbered={field !== 'physics'} more={more} items={items} />
       })}
