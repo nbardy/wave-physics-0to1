@@ -1022,3 +1022,64 @@ figure fixes — redeploy whenever publish flips.
 - Paradox-spine rebuild (proposed 2026-09-04 worker synthesis: tour→paradox
   re-spine with cut list; standing plan remains editorial read + Stage-4 voice
   pass + publish). Rebuild-vs-publish is Nick's call — no sections cut until then.
+
+## Barometer tilt and SoundRace figures cut — 2026-09-17
+
+Nick asked a second time what the tilted tube was for, and called the
+compression figure boring and unrelated. Both were answers to questions the
+lesson never asks: the tilt demonstrated a lab nuance (height, not tube length)
+that nothing downstream uses, and the mercury-transfer paragraphs then explained
+a side effect of that nuance. The sound figure was a frozen equilibrium snapshot
+with a slider; the lesson's water is incompressible, so the thermal correction
+never returns. Both figures are now one paragraph of prose each; Pascal's
+mountain is the pressure chapter's single instrument. `Barometer.tsx` and
+`SoundRace.tsx` stay on disk (PascalMountain imports MERCURY from Barometer; the
+check scripts import both), just no longer mounted. Rule for next time: a figure
+here must vary something the story later needs, not demonstrate a nuance.
+
+Also fixed CorpuscleHail: the stream-speed slider only reached corpuscles at
+respawn, so the knob read as dead; the meter now shows a 0.2 s "now" bar that
+kicks per impact beside a 6 s average.
+
+## Claims, voice, and structure pass — 2026-09-17
+
+Three tiers applied to the mdx, minimal-sentence style (Nick, 2026-09-16: keep
+the current voice, no Fable patterns). No check script reads the mdx; all
+thirteen history checks and typecheck pass.
+
+Facts fixed: sound paragraph cut to one sentence (the 1.4 vs sqrt 1.4 error went
+with it; the lesson's water is incompressible and the correction never
+returned); Klein had secured Prandtl for Göttingen before the August talk
+(Eckert); Daniel Bernoulli's 1743 letter went to Euler in Berlin; the calculus
+wars began with the *Principia* rather than "happened in 1687"; Stokes was one
+of two referees (with Rayleigh) and 63; Cauchy refereed Navier's earlier
+elastic-solids memoir; slip lives in nanometre channels (nanofluidics); 760 mm
+qualified "at sea level"; spark light, "sixteen years on" (1768), Stokes's
+sphere dated 1851; CorpuscleHail prose now names the averaged reading and the
+gray ideal-flow lines. `CorpuscleHail.tsx`: average bar clipped at the slider's
+top at ×1.3 headroom; now ×1.7 (peak 0.86 of scale at U=140 over 40 s), comments
+corrected.
+
+Voice: "Which brings the slider home", "Pressure's second career", "warning
+shot", "parent equation … children", "at its birth … in its old age", "finally
+at peace with ships", "in a straight line, the aerodynamic century", "Now the
+uncomfortable part", and the article-as-subject lines are gone or flat. The
+eight standalone figure-caveat paragraphs are folded to one clause each inside
+the readout (the one real lie per figure survives; the rest is deleted).
+Waypoints 1 and 3 now follow Waypoint 2's shape (capabilities, then the open
+problem). Seven "previous lesson" pointers re-taught in place or cut; one
+`<Link>` kept (Machine Age, the solver). "One Skeleton, Twice Built" cut.
+
+Structure: "The Zero" retitled "The Prize Question"; the meter's per-stop values
+left the hero caption; the "Could this one?" pre-question dropped; Predict 1's
+option (b) reads "No net force". The ReynoldsTube Predict wrapper is removed
+(its fork had no live candidate; the figure only varies imposed sideways
+motion) and the figure stands with a plain readout. Heidelberg: Prandtl's
+resolution now comes after the Loupe inspection (shoulder, rear, red samples),
+in a paragraph opening "This is what the eight pages contained." The
+Kolmogorov → Tao stretch lost the Heisenberg and Pont Neuf trivia. SolverSteps
+is unmounted (its readout was the sibling lesson's operations with no
+historical content; the Harlow/Chorin/Stam credits stay) — the sim file stays
+on disk and `check:solver-steps` still passes. The closing solver-caveat
+paragraph after the hero's return is deleted; the section ends on the meter.
+The hero crossfade caption is trimmed to what the slider needs.
