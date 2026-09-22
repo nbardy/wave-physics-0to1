@@ -28,7 +28,9 @@ SHA=$(git rev-parse --short HEAD)
 git worktree add --force "$WORKTREE" gh-pages
 trap 'git worktree remove --force "$WORKTREE" 2>/dev/null || true' EXIT
 
-rsync -a --delete --exclude .git "dist/" "$WORKTREE/"
+# A freshly checked-out HTML file can share size and second-resolution mtime
+# with the new build. Compare contents so asset references cannot remain stale.
+rsync -a --checksum --delete --exclude .git "dist/" "$WORKTREE/"
 
 # Vite never emits .nojekyll, but --delete above would drop it. Without it
 # GitHub runs the build through Jekyll, which refuses to publish paths starting
