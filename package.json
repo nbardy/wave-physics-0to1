@@ -11,6 +11,7 @@
     "check:previews": "bun run scripts/check-lesson-previews.ts",
     "render:previews": "bun run scripts/check-lesson-previews.ts --write",
     "check:figures": "bun run scripts/check-physics-figures.ts",
+    "check:bundles-v3": "bun scripts/check-bundles-v3.ts && bun scripts/check-phase-landscape.ts && bun scripts/check-vacuum-field.ts",
     "check:bundles-v2": "bun run scripts/check-bundles-v2.ts",
     "check:relativity-v2": "bun run scripts/check-relativity-v2.ts",
     "check:grossmann": "bun run scripts/check-grossmann.ts",

@@ -1,3 +1,7 @@
+> **Version III:** [REBUILD_III.md](REBUILD_III.md) restores the quoted seed and
+> develops the interferometer story. It governs Version III; the text below is
+> preserved as the original Version I inspiration, including its superseded claims.
+
 > **Version scope (2026-09-22):** This is the historical Version I brief.
 > The authorized Version II rewrite uses [REBUILD_II.md](REBUILD_II.md), which
 > supersedes this brief for that version, including its corrected scientific claims.

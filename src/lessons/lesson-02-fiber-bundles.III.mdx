@@ -1,0 +1,178 @@
+import { FiberStoryHeader } from '../sims/bundles-v3/FiberStoryHeader'
+import { ABBanner } from '../sims/bundles-v3/ABBanner'
+import { PhaseLandscape } from '../sims/bundles-v3/PhaseLandscape'
+import { VacuumField } from '../sims/bundles-v3/VacuumField'
+
+<FiberStoryHeader />
+
+A magnetic field can bend an electron's path. But an electron interference experiment can also respond to a magnetic field confined somewhere the electrons cannot enter. Two routes pass around a sealed core and meet at a detector. Change the flux inside the core, and the bright and dark bands outside shift. The paths need not cross any magnetic field for their relative phase to change.
+
+Move the flux control below. The two routes stay fixed. The detector shows the interference for the selected flux, alongside a faint reference for zero flux.
+
+<ABBanner />
+
+At half a period, a bright band occupies a place that was dark. After a full period, the pattern returns. The flux has changed, but the detector repeats its answer.
+
+The drawing is a schematic of the **magnetic Aharonov–Bohm effect**. Its route shapes, fringe spacing, and envelope are chosen for legibility. The detector is calculated by adding two complex amplitudes; it is not a particle-trajectory simulation. Each slider position selects a stationary configuration. Actually changing magnetic flux in time would also induce an electric field, which this comparison does not model.
+
+That leaves a precise problem. A local magnetic force along the routes cannot account for the flux-dependent shift in this idealized setup. Something about comparing the two routes matters. The geometry in Weinstein's quote gives us a way to describe that comparison, down to the phase that moves the bands.
+
+## Two contributions to one arrival
+
+The detector counts electron arrivals. The calculation that predicts those counts combines the alternatives before taking a probability: an amplitude for the upper route plus an amplitude for the lower one.
+
+Each amplitude is a complex number. We can draw it as an arrow whose length gives its magnitude and whose angle gives its phase. These arrows do not point along the electron's direction of motion. They live in a plane of possible amplitude values.
+
+For equal magnitudes, two aligned arrows add to twice the length. Two opposite arrows cancel. At a particular detector position, choose a common phase reference so the lower contribution is $1$ and the upper is $e^{i\delta}$. The relative detection intensity, normalized to its constructive maximum, is
+
+$$I=\frac{|1+e^{i\delta}|^2}{4}=\frac{1+\cos\delta}{2}.$$
+
+When $\delta=0$, that point is bright. When $\delta=\pi$, it is dark. Moving across the screen changes the path-length contribution to $\delta$, so the detector alternates between reinforcement and cancellation. The confined flux adds a further relative phase. That shifts the bands without changing the drawn routes.
+
+There are two distinct kinds of angle change to keep apart. Changing the angle *between* the arriving amplitudes changes their sum. Rotating both arrows through the same angle rotates the sum but leaves its length untouched. The detector cannot distinguish those common rotations.
+
+At a single position, we are therefore free to change the reference from which both phases are measured. The difficulty comes when there is a different reference at every position along the route.
+
+## The space above a point
+
+A wave on a string has one displacement at each position. The possible displacements form a line: above the resting position, below it, or zero. A particular wave chooses one of those values at every position.
+
+The charged amplitude has a richer set of possible values. Instead of a line, each position gets a complex plane. An amplitude can change its angle, its length, or both. Below, the outlines mark unit circles in those local planes. The amber arrows select values, and the connecting curve makes the selected field visible across the row.
+
+Change the phase gradient. The selection changes from place to place while the planes of allowed values remain fixed.
+
+<div className="bundle-v3-study"><PhaseLandscape mode="fibers" /></div>
+
+Each local space of values is a **fiber**. The positions underneath form the **base space**. A continuous choice of a value in every fiber is a **section**. Together, the fibers and the way their local descriptions fit together form a **fiber bundle**.
+
+The circles in the planes mark unit magnitude. They do not restrict the amplitude to a circle: shorter arrows, longer arrows, and zero are also possible. That matters at an interference minimum, where the sum can vanish and no phase angle can be assigned to it.
+
+Drawing all the complex planes in one shared room makes it look as though they arrive with their axes aligned. That alignment is convenient drawing data. The physical construction must say how values at different positions are compared, and what happens to that comparison when we change their local references.
+
+There is a global issue here too. Small pieces of a bundle look like position times value, but the pieces may join in a way that has no single product description. Closing a strip with a half twist gives the familiar Möbius example: a continuous nonzero displacement cannot stay positive all the way around and also match at the joining. The allowed values return with their signs reversed.
+
+Our interference problem does not require that kind of topologically twisted bundle. Even on a trivial bundle, the rule for transporting values can have a measurable effect around a loop. We need that rule before we need more exotic shapes.
+
+## Moving the zero marks
+
+Suppose we label an amplitude at position $x$ by an angle $\theta(x)$. Now rotate the local zero mark by an amount that varies with position. The same arrow gets a different numerical angle at each site. A graph of those numbers changes even though the selected physical field has not.
+
+The two rows below show the same field in different local references. Change the references in the lower row. Watch the zero marks move while the amber selection remains aligned with the upper row. Neighboring coordinate angles can change their difference; the comparison that includes transport remains the same.
+
+<div className="bundle-v3-study"><PhaseLandscape mode="gauge" /></div>
+
+An ordinary derivative subtracts neighboring values. That is fine when their coordinate frames have already been identified consistently. Here, subtracting the displayed numbers alone would mix a change in the field with a change in the local references.
+
+A **connection** specifies how to transport a value from one fiber to the next before comparing them. For a short link from site $j$ to site $j+1$, let the transport rotate an amplitude by angle $a_j$. Multiplication by $U_j=e^{ia_j}$ performs that rotation. The comparison in the destination fiber is
+
+$$\delta_j\psi=\psi_{j+1}-U_j\psi_j.$$
+
+If the neighboring value agrees with the transported one, this difference is zero. Otherwise its size measures their disagreement. It compares values in one fiber after the connection has brought them together.
+
+Under a local change of phase reference, write $\psi'_j=e^{i\chi_j}\psi_j$. The transport must change too: undo the extra phase at the starting site, then apply the extra phase at the destination. Thus
+
+$$U'_j=e^{i\chi_{j+1}}U_j e^{-i\chi_j}.$$
+
+Substitution gives $\delta_j\psi'=e^{i\chi_{j+1}}\delta_j\psi$. The difference rotates as a whole, so its magnitude is unchanged. The figure isolates the angular part of this comparison: its readout is the neighboring phase difference minus the link angle, $\Delta\theta-a$. The added local phases cancel there too. That angular residual stays fixed; it is not a meter of the full complex difference, which also depends on the two magnitudes.
+
+Changing only the amplitude's position-dependent phase while holding the connection fixed is a different operation. It can change current and kinetic energy. A **gauge transformation** is the coordinated change of description of both the amplitude and the connection.
+
+For a tiny spatial step $dx$, write the transport as $U=e^{ia_xdx}$. Expand the exponential and take the derivative limit:
+
+$$D_x\psi=\lim_{dx\to0}\frac{\psi(x+dx)-e^{ia_xdx}\psi(x)}{dx}=\partial_x\psi-ia_x\psi.$$
+
+The **covariant derivative** measures change relative to the connection. Its extra term compensates for transport between the fibers. The continuous reference change is $a'_x=a_x+\partial_x\chi$, which makes $D'_x\psi'=e^{i\chi}D_x\psi$. If $a_x=0$ in the chosen description, the expression reduces to the ordinary derivative.
+
+On an open interval we can choose references that remove a smooth connection along that direction. Two routes between the same endpoints impose a stronger test. They must use the same starting reference and the same ending reference. Their transport need not agree.
+
+## Going around both sides
+
+Return to the interferometer. The arrows along its routes now expose the electromagnetic phase contributed by transport, in one chosen gauge. They are not the full quantum phase, which also has contributions from the rest of the particle's evolution.
+
+First change the enclosed flux. Then hold it fixed and change the phase references. Both operations alter some of the displayed phase data. Only the flux control moves the fringes.
+
+<ABBanner mode="transport" />
+
+Transport along the upper route gives a factor $U_\mathrm{upper}$; transport along the lower gives $U_\mathrm{lower}$. To compare the routes, follow one forward and the other backward. The resulting closed-loop factor is
+
+$$W=U_\mathrm{lower}^{-1}U_\mathrm{upper}.$$
+
+A local change of references multiplies both route factors by the same endpoint factor, $e^{i(\chi_D-\chi_S)}$, where $S$ is the source and $D$ is the detector. That factor cancels from their ratio. Intermediate reference changes have already canceled between consecutive links along each route.
+
+This is **holonomy**: transport around a loop, compared with where it started. For phase rotations it is a complex number of unit length. Its angle can vary continuously, but adding $2\pi$ gives the same returned rotation.
+
+In electromagnetism the spatial connection for a particle of charge $q$ is $\mathbf a=(q/\hbar)\mathbf A$, where $\mathbf A$ is the vector potential. Transport around a loop $C$ gives
+
+$$W(C)=\exp\left(\frac{iq}{\hbar}\oint_C\mathbf A\cdot d\mathbf x\right).$$
+
+For a surface spanning that loop, Stokes' theorem relates the integral to magnetic flux. Using $\mathbf B=\nabla\times\mathbf A$,
+
+$$W(C)=\exp\left(\frac{iq}{\hbar}\int_S\mathbf B\cdot d\mathbf S\right)=e^{iq\Phi_B/\hbar}.$$
+
+The flux control is measured in $f=q\Phi_B/h$. The extra relative phase is therefore $2\pi f$. At $f=1/2$, the amplitudes acquire a half-turn relative to the zero-flux setup. At $f=1$, the phase has made a full turn and the interference repeats. For an electron, $q=-e$; its charge and the chosen loop orientation determine which way the pattern shifts. The magnitude of a full flux period is $h/e$, approximately $4.14\times10^{-15}$ webers.
+
+This also explains why field-free routes do not make the answer zero. The surface spanning the closed loop crosses the excluded core, where the flux is. A vanishing magnetic field along the routes does not imply vanishing flux through the region they enclose.
+
+The result was developed by Aharonov and Bohm in 1959. It gives a physical measurement of a gauge-invariant loop quantity. It does not make the potential's value at an individual point observable: the gauge control can change those local descriptions while the same detector pattern remains.
+
+## What the loop sees locally
+
+Shrink a loop down to a small rectangle. Transport along opposite sides almost cancels. The part that survives comes from how the connection changes between those sides:
+
+$$\delta\theta\simeq\left(\partial_xa_y-\partial_ya_x\right)\Delta x\,\Delta y.$$
+
+The coefficient is a component of the connection's **curvature**. For the electromagnetic connection it is proportional to the corresponding magnetic field component. Curvature here describes phase transport, even when the underlying physical space is flat.
+
+The sealed-core experiment separates two ideas that are easy to conflate. Curvature is local: a sufficiently small loop measures it. Holonomy belongs to a complete loop: in a region with a hole, a loop around that hole can retain a nontrivial phase even if curvature vanishes everywhere accessible to the particle.
+
+Fiber bundles provide room for these local descriptions and their joining. Connections provide transport. The loop gives a quantity independent of the references we use to describe either one. The mathematics has reached the bright bands at the detector, rather than stopping at a drawing of circles above points.
+
+But the opening quote was about waves. So far the electromagnetic connection has been a stationary background that affects a charged particle. A wave of light requires the electromagnetic field itself to evolve.
+
+## When the field moves
+
+Water waves involve moving water; a string wave involves moving string. The electromagnetic field has its own evolution law. Its electric and magnetic fields can propagate through vacuum, without a material displacement underneath them.
+
+The pulse below is computed from the vacuum Maxwell equations. The red electric arrows point along one transverse direction; the cyan magnetic arrows point along the other. Both directions are perpendicular to the propagation axis. The surfaces join neighboring arrow tips so their profiles are visible. The faint initial pulse shows how far the live pulse has traveled.
+
+<div className="bundle-v3-study"><VacuumField /></div>
+
+The two profiles move together. For this right-moving pulse, electric and magnetic peaks occur at the same positions. They are not alternating stages in which one field disappears and the other replaces it. The projection puts two perpendicular directions on a flat screen; the arrows are fields at positions, not paths traveled by light.
+
+With variation only along $x$, choose $\mathbf E=E_y(x,t)\hat{\mathbf y}$ and $\mathbf B=B_z(x,t)\hat{\mathbf z}$. Maxwell's curl equations reduce to
+
+$$\partial_tE_y=-c^2\partial_xB_z,\qquad\partial_tB_z=-\partial_xE_y.$$
+
+Differentiate the first equation again in time and substitute the second:
+
+$$\partial_t^2E_y=c^2\partial_x^2E_y.$$
+
+The magnetic field obeys the same wave equation. In the figure's units $c=1$, the initial choice $E_y=B_z=f(x)$ evolves into $E_y=B_z=f(x-t)$. The solver approximates that evolution with centered spatial differences and fixed-time Runge–Kutta steps. The domain is periodic: the pulse leaving the right edge returns at the left.
+
+This dynamical law is additional physics. A connection and gauge freedom alone do not force Maxwell's equations. They describe how to compare values and identify field strength; the law determining how that field strength evolves must also be supplied.
+
+The connection enters this wave through the potentials. In a gauge with electric scalar potential $V=0$ and only $A_y(x,t)$ nonzero,
+
+$$E_y=-\partial_tA_y,\qquad B_z=\partial_xA_y.$$
+
+These are two curvature components of the same spacetime connection: one involving time and one involving space. This $A_y$ specifies the spatial transport contribution for steps along $y$, even though its value varies along $x$. It would be wrong to integrate it along an $x$-directed line and call that the phase transported down the line.
+
+The pulse can thus be described through a changing connection, with electric and magnetic fields as its gauge-invariant derivatives. Merely changing the gauge in time produces no radiation. In the figure the field strength itself propagates, and Maxwell's equations determine the propagation.
+
+## A medium made of what?
+
+The word *medium* usually means material: something with parts that can move, strain, or carry momentum as the disturbance passes. A fiber bundle is not that substance. It organizes the possible local values of fields and the relationships between their descriptions.
+
+There is nevertheless a real unification behind the phrase. A string displacement is a section of a bundle with real-valued fibers. A charged spinless amplitude takes values in complex-line fibers. Its electromagnetic coupling uses a connection, and the connection can have dynamics of its own. Different fibers and different dynamical laws describe different systems; writing them in one geometric language does not make their physical differences disappear.
+
+The circles of phase references form a related principal $U(1)$ bundle, while the amplitude lives in its associated complex line bundle. That distinction lets us keep the field separate from the freedom to choose its local coordinates. Wu and Yang's 1975 paper sets out the correspondence between this geometry and gauge theory explicitly.
+
+The interferometer gives the abstract language an experimental consequence. Change the references, and the fringes stay. Change the enclosed flux by half a period, and bright places become dark. The connection matters through comparisons that survive our freedom to describe it differently. Giving the electromagnetic field Maxwell dynamics then adds a second phenomenon: its disturbances can travel through empty space as light.
+
+## Further reading
+
+[Aharonov and Bohm's original paper](https://journals.aps.org/pr/abstract/10.1103/PhysRev.115.485) develops the interference effect underlying the banner. The drawing here retains its flux-dependent relative phase while simplifying the geometry and envelope.
+
+[Wu and Yang, “Concept of nonintegrable phase factors and global formulation of gauge fields”](https://journals.aps.org/prd/abstract/10.1103/PhysRevD.12.3845), supplies the explicit dictionary between gauge fields and fiber-bundle geometry, including phase factors and overlapping descriptions.
+
+[David Tong's discussion of the Maxwell action](https://www.davidtong.org/teaching/general-relativity/grhtml/S3#S3.SS2.SSS5) develops the distinction between geometric field strength and the action supplying its dynamics. [Eric Weinstein's post](https://x.com/ericweinstein/status/2072746828731384136) supplied the question that led to this article.

@@ -5,6 +5,7 @@ import Lesson01II from './lesson-01-navier-stokes.II.mdx'
 import Lesson01III from './lesson-01-navier-stokes.III.mdx'
 import Lesson02I from './lesson-02-fiber-bundles.I.mdx'
 import Lesson02II from './lesson-02-fiber-bundles.II.mdx'
+import Lesson02III from './lesson-02-fiber-bundles.III.mdx'
 import Lesson03 from './lesson-03-navier-stokes-history.mdx'
 import Lesson04I from './lesson-04-learned-solver.I.mdx'
 import Lesson04II from './lesson-04-learned-solver.II.mdx'
@@ -284,6 +285,7 @@ export const lessons: Lesson[] = [
     versions: [
       { label: 'I', author: 'baseline', note: 'Original universal-medium draft', Content: Lesson02I },
       { label: 'II', author: 'Astra', note: 'Fresh rewrite · fibers, gauge transport, interference, and Maxwell dynamics', status: { kind: 'draft' }, Content: Lesson02II },
+      { label: 'III', author: 'Astra', note: 'The interferometer story · flux, phase, and a wave in the connection', status: { kind: 'draft' }, Content: Lesson02III },
     ],
   },
   {

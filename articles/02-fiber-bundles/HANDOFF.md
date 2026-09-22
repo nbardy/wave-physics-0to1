@@ -1,3 +1,37 @@
+# Current state — Version III, 2026-09-22
+
+**Version III is the current reader-review draft.** User rejected Version II's
+visual quality and loss of interest; requested the Weinstein quote back and a
+substantial Aharonov–Bohm banner with a new story. I and II remain unchanged.
+Open `?v=III&draft=true`. Default remains I; no publication status changed.
+
+[REBUILD_III.md](REBUILD_III.md) owns this version's story and figure intentions.
+The new article follows the two-path experiment into fibers, local references,
+connection, loop transport and curvature, then Maxwell dynamics. The quoted post
+is restored verbatim in substance and linked, with a local header keeping the
+quote and opening experiment together. Shared site newsletter behavior is untouched.
+
+Three Astra builders implemented isolated `bundles-v3` figures; main wrote the
+article and assembled the page. Five figure slots: dark AB banner; light complex
+section; simultaneous original/relabeled section; AB replay with gauge control;
+transverse numerical Maxwell pulse. No old figure implementation changed.
+
+Checked: `check:bundles-v3` (all three suites), typecheck/build; source/model audit;
+1440px desktop and390px browser renders, all slider endpoints and return trips,
+wave pause/reset/reference checkbox, no page overflow or KaTeX errors. Source audit
+caught angular-residual versus full-complex-difference wording; prose now identifies
+exactly what the gauge meter measures. Renderer checks compare actual detector
+pixels under flux and gauge changes, rather than arbitrary nonblank pixels.
+
+Reader review is still Nick's judgment. Passing math checks does not establish that
+this version succeeds editorially; that was the specific failure in Version II.
+Draft deployment uses a clean checkout excluding other sessions' construction,
+p-bit, review, and methodology edits, including their separate registry additions.
+
+---
+
+## Previous Version II handoff
+
 # Current state — Version II, 2026-09-22
 
 **Built and checked; draft status retained for reader review.** Fresh article: *Fiber Bundles and Electromagnetism*.

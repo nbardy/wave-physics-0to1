@@ -1,0 +1,9 @@
+.ab-banner { width: min(1040px, calc(100vw - 40px)); margin: 2.5rem 0 2.5rem 50%; transform: translateX(-50%); background: #090e1d; border: 1px solid #27304a; border-radius: 18px; overflow: hidden; box-shadow: 0 22px 65px #0d17321a; }
+.ab-banner .sim { margin: 0; padding: 0; border: 0; background: transparent; }
+.ab-banner .sim-canvas { display: block; border: 0; border-radius: 0; background: #090e1d; }
+.ab-banner .sim-controls { margin: 0; padding: 18px 26px; border-top: 1px solid #27304a; background: #11182a; color: #dbe5ff; gap: 18px; justify-content: center; }
+.ab-banner .ab-slider { display: flex; align-items: center; gap: 12px; font: 12px system-ui; }
+.ab-banner .ab-slider input { width: clamp(100px, 23vw, 240px); accent-color: #a78bfa; }
+.ab-banner .ab-slider output { min-width: 44px; font-variant-numeric: tabular-nums; color: #c4b5fd; }
+.ab-banner .sim-controls button { background: #1b2540; color: #dbe5ff; border: 1px solid #3d4b70; min-height: 36px; }
+@media (max-width: 600px) { .ab-banner { width: calc(100vw - 24px); border-radius: 12px; } .ab-banner .sim-controls { padding: 16px 12px; gap: 14px; } .ab-banner .ab-slider { flex-wrap: wrap; justify-content: center; } }
