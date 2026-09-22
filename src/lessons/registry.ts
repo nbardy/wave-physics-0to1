@@ -3,14 +3,16 @@ import type { LessonPreviewSpec } from '../components/previewSpec'
 import Lesson01I from './lesson-01-navier-stokes.I.mdx'
 import Lesson01II from './lesson-01-navier-stokes.II.mdx'
 import Lesson01III from './lesson-01-navier-stokes.III.mdx'
-import Lesson02 from './lesson-02-fiber-bundles.mdx'
+import Lesson02I from './lesson-02-fiber-bundles.I.mdx'
+import Lesson02II from './lesson-02-fiber-bundles.II.mdx'
 import Lesson03 from './lesson-03-navier-stokes-history.mdx'
 import Lesson04I from './lesson-04-learned-solver.I.mdx'
 import Lesson04II from './lesson-04-learned-solver.II.mdx'
 import Lesson05 from './lesson-05-where-simulation-is-wrong.mdx'
 import Maths01 from './maths-01-jacobian-hessian.mdx'
 import Physics01 from './physics-01-wave-particle.mdx'
-import Physics02G from './physics-02-einstein-grossmann.mdx'
+import Physics02GI from './physics-02-einstein-grossmann.I.mdx'
+import Physics02GII from './physics-02-einstein-grossmann.II.mdx'
 import Physics02 from './physics-02-pbits.mdx'
 import Physics03 from './physics-03-z1.mdx'
 import Thermo03 from './thermo-03-diffusion.mdx'
@@ -178,10 +180,13 @@ export const lessons: Lesson[] = [
     order: 2,
     title: 'The Draft That Had to Fail',
     blurb:
-      'Einstein had the physics of gravity and no mathematics to write it in; his classmate Grossmann answered with curved geometry. Their joint draft got the shape right and the law wrong — and Mercury graded it.',
+      'Einstein and Grossmann developed metric gravity before its final field equations. Compare coordinate descriptions, measure tidal separation, and calculate Mercury’s precession.',
     tags: ['geometry', 'history'],
     status: { kind: 'draft' },
-    versions: sole(Physics02G),
+    versions: [
+      { label: 'I', author: 'baseline', note: 'Original September draft', Content: Physics02GI },
+      { label: 'II', author: 'Astra', note: 'Fresh rewrite · metric, tides, collaboration, and calculated Mercury precession', status: { kind: 'draft' }, Content: Physics02GII },
+    ],
   },
   {
     id: 'pbits',
@@ -273,10 +278,13 @@ export const lessons: Lesson[] = [
     order: 2,
     title: 'Fiber Bundles, the Universal Medium',
     blurb:
-      'Light waves in no substance ever found. Build the geometric object that is its true medium — and earn the derivative that makes it move.',
+      'Values in fibers, transport between them, and phases measured around loops. Explore how this geometry describes electromagnetism and how Maxwell’s equations produce waves.',
     tags: ['geometry', 'waves', 'electromagnetism'],
     status: { kind: 'draft' },
-    versions: sole(Lesson02),
+    versions: [
+      { label: 'I', author: 'baseline', note: 'Original universal-medium draft', Content: Lesson02I },
+      { label: 'II', author: 'Astra', note: 'Fresh rewrite · fibers, gauge transport, interference, and Maxwell dynamics', status: { kind: 'draft' }, Content: Lesson02II },
+    ],
   },
   {
     id: 'navier-stokes-history',

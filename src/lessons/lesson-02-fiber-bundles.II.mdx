@@ -1,0 +1,169 @@
+import { PhaseInterference, FiberSection, GaugeLinks, LoopFlux, MaxwellWave } from '../sims/bundles-v2'
+
+# Fiber Bundles and Electromagnetism
+
+Two paths to the same detector can give a quantum particle a lower probability of arriving than either path alone. The contributions from the paths have directions as well as sizes: they add like arrows, and opposite arrows cancel. Electromagnetism can change that cancellation by changing the relative phase accumulated along the paths. Fiber bundles describe how those phases are compared from place to place.
+
+Below, the blue arrow stays fixed while the amber arrow turns. Their sum is violet. Turn the relative phase halfway around and watch the sum shrink to zero. The bar measures its squared length, normalized so that aligned arrows give one.
+
+<PhaseInterference />
+
+An arrow in this picture is a complex number. Its length is the amplitude's magnitude; its angle is its *phase*. The arrows live in a plane of possible complex values, not in the physical space the particle travels through. Rotating one does not mean steering the particle to the left.
+
+For two equal contributions, we can choose the first to be $1$ and write the second as $e^{i\theta}$. Adding first and squaring afterward gives
+
+$$\frac{I}{I_{\max}}=\frac{|1+e^{i\theta}|^2}{4}=\frac{1+\cos\theta}{2}.$$
+
+At $\theta=0$, the amplitudes reinforce. At $\theta=\pi$, they cancel. The stripes in the figure repeat this calculation with a phase difference that varies across a screen; they are an interference calculation, not a simulation of individual particles flying through an apparatus.
+
+This is already a reason to care about phase, even though a single amplitude's angle is not itself a detector reading. The measurable quantity involves a comparison. To make that comparison at different positions, we need to say what the possible values are at each position and how values at neighboring positions relate.
+
+## Values above positions
+
+A vibrating string has a displacement at every position along it. Fix one position and list all its possible displacements: positive, negative, or zero. That list forms a line of values. Give every position its own copy of that line, and the string's shape selects one value from each copy.
+
+The faint vertical lines below are the possible values. The colored curve selects the current values. Change the shape and the selection moves while the space of possibilities stays put.
+
+<FiberSection />
+
+Each line of possible values is a **fiber**. The positions form the **base space**. The collection of fibers, together with the way neighboring pieces fit together, is a **fiber bundle**. A selection of one value at each position is a **section**. The string's displacement field is a section; a changing string is a section that changes with time.
+
+In this example the bundle is a product: position times displacement. That is the simplest case, and it is enough for the local calculations below. In a general bundle, a small neighborhood still looks like a product, but those local descriptions need not fit together as one global product.
+
+A concrete example is a strip closed into a loop. Join its ends without a flip and a displacement can remain positive all the way around. Join them with a half twist and the same continuous, nonzero choice cannot return to itself: the joining identifies a positive displacement at one end with a negative displacement at the other. This is the line-bundle version of the Möbius strip. The global joining matters even when every small piece looks ordinary.
+
+For the charged, spinless quantum amplitude we will use, the fiber is a **complex plane** instead of a real line. Each value has both magnitude and phase. A circle represents only the unit-length values in that plane; it leaves out other magnitudes and the zero at the center. This distinction matters wherever amplitudes cancel.
+
+The closely related *principal $U(1)$ bundle* keeps track of choices of phase reference. Here $U(1)$ means the complex numbers of length one, which act by rotation. The charged amplitude is a section of the associated complex line bundle. These are related objects with different jobs: possible amplitude values in one, phase-reference choices in the other.
+
+## Comparing neighboring fibers
+
+Within one complex plane, subtracting two arrows is straightforward. Between different fibers, subtraction also requires a way to identify their phase references. Choosing a zero angle separately at every position gives us numbers to write down, but changing those choices should not change a physical prediction.
+
+The upper row below shows five unit complex values and four links connecting them. A link specifies how much a value rotates when transported from the site on its left to the site on its right. The lower row describes the same configuration using different local phase references. Move the local-basis slider and compare the two bars in each row.
+
+<GaugeLinks />
+
+The ordinary-difference bar changes. It subtracts neighboring numerical values directly, ignoring that their local references have changed by different amounts. The transported-difference bar stays equal in both descriptions. It transports the left value into the right fiber before subtracting.
+
+Write the values at neighboring sites as $\psi_j$ and $\psi_{j+1}$. If the link rotates by an angle $a_j$, its transport factor is $U_j=e^{ia_j}$. The difference measured in the destination fiber is
+
+$$\delta_j\psi=\psi_{j+1}-U_j\psi_j.$$
+
+The bar sums $|\delta_j\psi|^2$ over the four links. A zero contribution means that the neighboring value agrees exactly with the transported value. A nonzero contribution records a disagreement, including a possible difference in magnitude.
+
+Now relabel the value at each site by a local phase $\chi_j$:
+
+$$\psi'_j=e^{i\chi_j}\psi_j.$$
+
+The link must change with the references at **both** ends. It has to undo the extra rotation at the starting site and apply the extra rotation at the destination:
+
+$$U'_j=e^{i\chi_{j+1}}U_j e^{-i\chi_j}.$$
+
+Substituting these two transformations gives
+
+$$\psi'_{j+1}-U'_j\psi'_j=e^{i\chi_{j+1}}\bigl(\psi_{j+1}-U_j\psi_j\bigr).$$
+
+The whole difference rotates in its destination plane, so its length stays the same. This is the cancellation responsible for the stationary bar. It works for arbitrary local choices of $\chi_j$, not just the smooth pattern supplied by the slider.
+
+Changing the wavefunction alone would be a different operation. A position-dependent phase change with the connection held fixed can change currents and kinetic energy. A **gauge transformation** changes the amplitude's description and the connection's description together.
+
+## From links to a derivative
+
+The continuous version of the link data is a **connection**. Along a short step $dx$, let the transport angle be $a_x(x)dx$. For a sufficiently short step,
+
+$$U_{x\to x+dx}=e^{ia_xdx}=1+ia_xdx+O(dx^2).$$
+
+Subtract the transported value from the neighboring value, divide by $dx$, and take the limit:
+
+$$D_x\psi=\lim_{dx\to0}\frac{\psi(x+dx)-e^{ia_xdx}\psi(x)}{dx}=\partial_x\psi-ia_x\psi.$$
+
+This is the **covariant derivative**. It measures change relative to the specified transport. In a gauge where $a_x=0$, it reduces to the ordinary derivative along that direction. A different gauge can make $a_x$ nonzero while leaving the size of the covariant derivative unchanged.
+
+The continuous transformation laws are
+
+$$\psi'=e^{i\chi}\psi,\qquad a'_x=a_x+\partial_x\chi,\qquad D'_x\psi'=e^{i\chi}D_x\psi.$$
+
+The derivative transforms like the field it differentiates. Expressions such as $|D_x\psi|^2$ therefore do not depend on our phase references.
+
+On an open interval, a smooth connection can be removed from that direction by choosing $\partial_x\chi=-a_x$. But a plane offers multiple routes between points. Choosing references to simplify transport along one route need not simplify every other route. A closed loop provides a way to check.
+
+## What survives a trip around a loop
+
+The four links below form an oriented loop. Starting with an arrow at the first corner, transport it along every link and compare the returned arrow with the original. The two panels use different local references. The enclosed-phase control changes the loop's transport; the local-basis control only changes its description.
+
+<LoopFlux />
+
+The corner angles and individual link angles can change under relabeling. The final rotation does not. Each intermediate reference appears once with a positive sign and once with a negative sign, so those changes cancel around the loop.
+
+For four links, the combined transport is the product
+
+$$W=U_3U_2U_1U_0=e^{i\varphi}.$$
+
+This returned rotation is **holonomy**. Because phases repeat after a full turn, $W$ measures $\varphi$ modulo $2\pi$. The interference bar compares a transported amplitude with a reference amplitude using the same addition as the first figure. At a half turn they cancel; at a full turn they reinforce again.
+
+For a continuous loop $C$,
+
+$$W(C)=\exp\left(i\oint_C\mathbf a\cdot d\mathbf x\right).$$
+
+For a small rectangle in a plane, traversing its four sides cancels the parts of the connection that are constant. The leading term comes from how the connection changes across the rectangle:
+
+$$\varphi\simeq\left(\partial_xa_y-\partial_ya_x\right)\Delta x\,\Delta y.$$
+
+The coefficient is a component of the connection's **curvature**. It measures rotation per small enclosed area. This is curvature of phase transport; the physical plane underneath can remain flat.
+
+In electromagnetism, a particle of charge $q$ couples to the vector potential $\mathbf A$ through $\mathbf a=(q/\hbar)\mathbf A$. Since $\mathbf B=\nabla\times\mathbf A$, a loop bounding a suitable surface $S$ has
+
+$$W(C)=\exp\left(\frac{iq}{\hbar}\oint_C\mathbf A\cdot d\mathbf x\right)=\exp\left(\frac{iq}{\hbar}\int_S\mathbf B\cdot d\mathbf S\right).$$
+
+The surface integral is magnetic flux, $\Phi_B$. The electromagnetic contribution to the relative phase of two paths forming that loop is $q\Phi_B/\hbar$. For an electron $q=-e$; reversing the path orientation also reverses the sign.
+
+This is the magnetic **Aharonov–Bohm effect**: interference can depend on flux confined to a region the two paths go around. The magnetic field can vanish throughout the accessible region while transport around its hole remains nontrivial. There is no contradiction with the flux integral: a surface spanning the loop crosses the excluded region containing the flux.
+
+The loop figure computes this transport and the two-amplitude interference formula. It does not calculate the full wavefunction in an experimental apparatus. In an experiment, path lengths and other dynamical phases also contribute; changing the enclosed flux while holding the rest fixed isolates the electromagnetic shift. Nor does this make the potential's value at one point observable. Local potential values change under gauge transformations; the loop factor survives them.
+
+## Which part can wave?
+
+So far the connection has been specified by hand. Its geometry tells us how charged amplitudes couple to it and how to form quantities independent of gauge. It does not yet say how the electromagnetic field evolves.
+
+For that we add Maxwell's equations. In flat spacetime, in vacuum without charges or currents, they are
+
+$$\nabla\cdot\mathbf E=0,\qquad\nabla\cdot\mathbf B=0,\qquad\partial_t\mathbf B=-\nabla\times\mathbf E,\qquad\partial_t\mathbf E=c^2\nabla\times\mathbf B.$$
+
+The last two equations couple spatial variation in one field to time variation in the other. Take one more time derivative of the electric-field equation and substitute the magnetic-field equation:
+
+$$\partial_t^2\mathbf E=-c^2\nabla\times(\nabla\times\mathbf E)=c^2\nabla^2\mathbf E.$$
+
+The last equality uses $\nabla\times(\nabla\times\mathbf E)=\nabla(\nabla\cdot\mathbf E)-\nabla^2\mathbf E$ and the vacuum condition $\nabla\cdot\mathbf E=0$. The magnetic field obeys the same wave equation.
+
+Below, the fields vary only along $x$. The electric field points along $y$ and the magnetic field along $z$. The plots show their signed values, not a wavy trajectory through space. In units where $c=1$, their evolution reduces to $\partial_tE_y=-\partial_xB_z$ and $\partial_tB_z=-\partial_xE_y$. Both start with the same pulse, which travels to the right. The dashed curves retain its initial position.
+
+<MaxwellWave />
+
+The two peaks travel together. Electric and magnetic fields in a traveling vacuum wave are in phase; they do not take turns disappearing and recreating one another. The domain wraps around at its ends, so the pulse eventually reenters on the left.
+
+The simulation updates the two fields on 320 evenly spaced points using centered spatial differences and fourth-order Runge–Kutta steps of fixed duration. The timestep is independent of display frame rate. This numerical pulse can be checked against the translated initial profile: the exact continuum solution is $E_y(x,t)=B_z(x,t)=f(x-t)$ in these units.
+
+To connect this back to the bundle, use the electromagnetic potentials:
+
+$$\mathbf E=-\nabla V-\partial_t\mathbf A,\qquad\mathbf B=\nabla\times\mathbf A.$$
+
+For this transverse wave, we may choose $V=0$ and only $A_y(x,t)$ nonzero. Then $E_y=-\partial_tA_y$ and $B_z=\partial_xA_y$. These are the time-space and space-space curvature components of the electromagnetic connection. A changing connection can therefore describe an electromagnetic wave, with radiation carried by the propagating, gauge-independent fields in this solution. A time-dependent change of gauge alone does not emit light.
+
+The transverse choice in the figure is one family of solutions. For a vacuum plane wave, the divergence equations themselves require the varying electric and magnetic fields to be perpendicular to its propagation direction. That physical constraint comes from Maxwell's equations, not from drawing the arrows sideways.
+
+## The scope of the geometric description
+
+A string displacement, a charged amplitude, and an electromagnetic connection are different physical objects. Bundle language helps organize them: values live in fibers, fields select values, connections compare them, and curvature measures local failure of transport to agree around loops. The equations governing those objects still have to be supplied and checked against experiment.
+
+That distinction is what makes the framework useful. It separates a change of description from a change in the field, and separates the field's geometric structure from the physical law that evolves it. It also explains why a description of light needs no material carrying displacement from one point to the next. The field has its own dynamics; no hidden string is part of Maxwell's vacuum equations.
+
+The phrase “universal medium” was the provocation behind the first version of this article, inspired by [Eric Weinstein's post](https://x.com/ericweinstein/status/2072746828731384136). Taken as a shared mathematical language for fields, it points toward a substantial connection. Taken as a physical substance, or as a claim that local phase conventions alone force light to exist, it goes beyond the argument.
+
+## Further reading
+
+[Wu and Yang's 1975 paper](https://journals.aps.org/prd/abstract/10.1103/PhysRevD.12.3845) gives the explicit dictionary between gauge fields and connections on principal bundles. Its treatment of phase transport and overlapping descriptions is the technical foundation of the middle of this article.
+
+[Aharonov and Bohm's 1959 paper](https://journals.aps.org/pr/abstract/10.1103/PhysRev.115.485) develops the interference consequences of electromagnetic potentials, including regions inaccessible to the charged particle.
+
+[David Tong's discussion of the Maxwell action](https://www.davidtong.org/teaching/general-relativity/grhtml/S3#S3.SS2.SSS5) makes the additional dynamics precise: the connection defines field strength, while the metric and Maxwell action supply the field equation. His [quantum mechanics notes](https://www.davidtong.org/teaching/quantum-mechanics/qmhtml/S1) explain why changing a wavefunction's local phase alone is generally a physical change.

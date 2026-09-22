@@ -1,3 +1,7 @@
+> **Version scope (2026-09-22):** This is the historical Version I brief.
+> The authorized Version II rewrite uses [REBUILD_II.md](REBUILD_II.md), which
+> supersedes this brief for that version, including its corrected scientific claims.
+
 # DENSE CORE — Fiber Bundles, the Universal Medium
 
 The compressed inspiration of the article: the hook, the payoff, and the ranked

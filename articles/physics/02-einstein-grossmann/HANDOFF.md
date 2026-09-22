@@ -1,3 +1,41 @@
+# Current state — Version II, 2026-09-22
+
+**Built and checked; draft status retained for reader review.** Fresh article: *Einstein, Grossmann, and the Geometry of Gravity*.
+Read it with `?v=II&draft=true`; Version I remains the default and is preserved
+byte-for-byte from HEAD, with its original simulation dependencies untouched.
+Version II uses 4 isolated new figures under `src/sims/relativity-v2/`.
+
+The user rejected the old articles' quality and authorized a fresh rewrite with
+Astra subagents. Main wrote the prose; Astra builders implemented simulations and
+an independent source audit checked the scientific and historical claims.
+[REBUILD_II.md](REBUILD_II.md) is the current concept/skeleton and accuracy contract.
+
+Validation: `bun run check:relativity-v2`, typecheck, production build, publication
+visibility checks; desktop and 390px browser review, control endpoints and return
+trips, keyboard control, animation pause/reset. No KaTeX errors or page overflow.
+Headless checks validate the phenomena, frame cadence independence, pure drawing,
+and quantity-specific pixels. The source audit's corrections were incorporated.
+Existing Vite mixed-import/chunk-size warnings remain unrelated to these articles.
+
+Remaining: Nick's reading and editorial choice of default/published version.
+No publish status was changed. Other sessions have uncommitted p-bit/review edits,
+so shipping uses a clean checkout of the article commit, excluding those edits.
+
+## Revision ledger
+
+- Invented historical simplifications: removed the finished-physics/Grossmann-
+  translator story; notebook, collaboration, Besso, and 1915 chronology sourced.
+- Coordinate coefficients confused with curvature: same arc in two coordinates;
+  independent Cartesian polygon quadrature versus polar integral.
+- Flat metric/gravity conflation: distinguish common free-fall acceleration from
+  tidal separation; local constant-gradient model disclosed.
+- Fitted18/43 Mercury lane: replaced with RK4 Schwarzschild versus Newton, detected
+  perihelia, separate physical leading-order42.98 arcsec/century; historical18 cited.
+
+---
+
+## Historical Version I handoff
+
 # Handoff — The Draft That Had to Fail (physics P2)
 
 Canonical state for this article. AGENTS.md carries one line pointing here

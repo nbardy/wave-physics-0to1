@@ -1,0 +1,165 @@
+import { MetricCoordinates, SphericalTransport, TidalFall, MercuryOrbit } from '../sims/relativity-v2'
+
+# Einstein, Grossmann, and the Geometry of Gravity
+
+A circle has the same circumference whether its points are labeled by horizontal and vertical coordinates or by radius and angle. The formulas for distance look different, but a ruler gives the same answer. Einstein and Marcel Grossmann's gravitational theory made the distance-measuring structure itself a physical field. Finding a law for that field took them into a theory they published in 1913 and Einstein abandoned in 1915.
+
+The two pictures below show the same circular arc. One uses a square coordinate grid; the other uses radial lines and circles. Change the radius. Both descriptions give the same length: the Cartesian panel sums 4,096 short straight segments from their coordinate differences, while the polar panel evaluates the arc-length integral.
+
+<MetricCoordinates />
+
+For Cartesian coordinates, the tiny distance between neighboring points obeys $ds^2=dx^2+dy^2$. In polar coordinates it obeys
+
+$$ds^2=dr^2+r^2d\varphi^2.$$
+
+Moving outward by $dr$ covers distance $dr$. Moving around a circle by a small angle $d\varphi$ covers distance $r\,d\varphi$: the same angular change covers more ground farther from the center. Along the arc in the figure, $dr=0$, so its length is $r\Delta\varphi$, with $\Delta\varphi=\pi/3$.
+
+The factor $r^2$ varies with position even though this plane is flat. A varying coefficient in a distance formula does not, by itself, establish curvature. We need to distinguish the coordinates used to describe a geometry from the geometry being measured.
+
+## What Grossmann brought
+
+Einstein returned to Zurich in 1912 with physical reasons to connect gravity to acceleration and to abandon a single, fixed geometry of spacetime. He did not arrive with a finished gravitational theory waiting for someone to translate it into symbols. Grossmann, his former classmate and now a mathematician at the ETH, helped investigate the differential geometry and tensor calculus the problem required.
+
+The **metric** was central. It assigns the coefficients in the local interval formula. In two-dimensional space we can write
+
+$$ds^2=g_{xx}dx^2+2g_{xy}dx\,dy+g_{yy}dy^2.$$
+
+These coefficients say how coordinate displacements become measured lengths and angles. The Cartesian plane has $g_{xx}=g_{yy}=1$ and $g_{xy}=0$. The polar plane has $g_{rr}=1$, $g_{\varphi\varphi}=r^2$, and $g_{r\varphi}=0$. They describe the same metric in different coordinates.
+
+Gravity requires spacetime rather than just space. With coordinates $x^\mu=(ct,x,y,z)$, the corresponding formula is
+
+$$ds^2=g_{\mu\nu}\,dx^\mu dx^\nu.$$
+
+Repeated indices here mean that we sum over the four spacetime coordinates. In a local inertial frame our sign convention gives $ds^2=-c^2dt^2+dx^2+dy^2+dz^2$. For a massive body's trajectory, its own clock measures proper time through $ds^2=-c^2d\tau^2$.
+
+The metric therefore concerns clocks as well as rulers. A curved surface is useful for learning its geometry, but a picture of a ball rolling down a dented sheet does not explain why gravity acts: that picture already uses an external gravitational force to make the ball roll.
+
+Einstein and Grossmann's 1913 paper, the *Entwurf* or “Outline,” explicitly separated Einstein's physical part from Grossmann's mathematical part. Their collaboration developed a metric theory of gravity and equations governing it. The eventual failure concerned those field equations, not the entire move to metric geometry.
+
+## Transport before curvature
+
+On a flat plane, an arrow can be carried around a triangle without rotating it. At the end it points in its original direction. On a sphere, an arrow constrained to lie in the tangent plane has no single, fixed external direction available all along a curved path. There is still a precise local version of “do not turn”: keep its change free of any component within the tangent plane. This is **parallel transport**.
+
+The right-hand triangle below runs from the north pole to the equator, follows the equator, and returns along another meridian. The blue arrows show transported directions on the path. The returned amber arrow is compared with its starting direction at the pole. Change the longitude span and compare it with transport around the flat triangle.
+
+<SphericalTransport />
+
+A $90^\circ$ longitude span makes a spherical triangle with three right angles. Its angle sum is $270^\circ$, and a transported arrow returns rotated by $90^\circ$. Narrowing the triangle reduces both the angle excess and the returned rotation. The flat triangle has no returned rotation.
+
+On a sphere of radius $R$, the curvature is $K=1/R^2$. The pole-to-equator triangle with longitude span $\alpha$ has area $R^2\alpha$, where $\alpha$ is in radians. Its returned rotation is
+
+$$\Delta\theta=\int_{\text{triangle}}K\,dS=\frac{1}{R^2}R^2\alpha=\alpha.$$
+
+The figure transports each arrow by rotations along the great-circle edges and measures the final angle. The formula explains the result. A larger sphere gives the same rotation for the same angular triangle because its larger enclosed area exactly compensates its smaller curvature.
+
+The local transport rule is called a **connection**. For the geometry used in general relativity, the metric determines a particular connection: it preserves the metric's lengths and angles under transport and has zero torsion. Its coefficients are the Christoffel symbols, $\Gamma^\mu_{\alpha\beta}$.
+
+Those coefficients can be nonzero in flat spacetime when the coordinates curve or accelerate. Curvature is the stronger statement exposed by small loops: transport around different routes fails to agree. The **Riemann curvature tensor** collects these directional disagreements. In Einstein's Zurich notebook, Grossmann's name appears beside the fourth-rank curvature tensor. This was a concrete mathematical candidate in their search, not a decorative language added after the physics was solved.
+
+The sphere above is spatial geometry. Gravitational tidal effects involve spacetime curvature, including components connecting time with spatial separation. The next experiment makes that distinction visible without drawing four dimensions.
+
+## Falling together, separating anyway
+
+Drop two small objects close together. In the approximation of a uniform gravitational field, they gain the same velocity. An observer falling alongside them sees both remain at rest. Removing the common acceleration removes the apparent gravitational force in that local experiment.
+
+A varying field leaves something behind. Near a spherical mass, the closer object accelerates toward the mass more strongly. In a frame falling with the middle of the pair, the objects separate along the radial direction.
+
+Both panels below use a frame falling with their center. The left pair experiences a uniform field; the right pair experiences a field with a fixed local gradient. Scrub time from zero while watching the dashed initial positions and the changing separation.
+
+<TidalFall />
+
+The uniform case retains its initial separation. The gradient case stretches even though its common acceleration has been removed. A change of coordinates can make the center freely falling, but it cannot make the two particles maintain a separation they do not physically maintain.
+
+For a simple local model, let $z$ measure displacement from the falling center and let the relative acceleration be $kz$, with constant $k>0$. Subtracting the accelerations of the two particles gives an equation for their separation $d$:
+
+$$\ddot d=kd.$$
+
+Starting with separation $d_0$ and no relative velocity gives
+
+$$d(t)=d_0\cosh(\sqrt{k}\,t).$$
+
+That is the solution drawn above. Setting $k=0$ recovers constant separation. For a small radial region near a spherical Newtonian mass, $k\simeq2GM/r^3$. The figure keeps this gradient fixed to isolate the local effect; it is not a simulation of a long fall toward Earth.
+
+In general relativity, this relative acceleration is described by **geodesic deviation**. A freely falling body follows a geodesic of spacetime. Nearby geodesics can approach or separate, with their relative acceleration determined by spacetime curvature. The sphere's transport experiment and this tidal experiment expose different consequences of curvature; a spatial sphere is not being substituted for Earth's spacetime.
+
+Given a metric, a freely falling trajectory satisfies
+
+$$\frac{d^2x^\mu}{d\tau^2}+\Gamma^\mu_{\alpha\beta}\frac{dx^\alpha}{d\tau}\frac{dx^\beta}{d\tau}=0.$$
+
+The second term corrects for how the coordinate directions change along the path. Setting the covariant acceleration to zero does not require the coordinate acceleration in the first term to vanish. This is why “straight” in the geometric sense can describe a falling trajectory whose plotted coordinates accelerate.
+
+But this equation still needs a metric as input. It tells us how a small freely falling body moves in a specified spacetime. It does not yet tell us which spacetime the Sun produces.
+
+## The equation they were missing
+
+Einstein and Grossmann needed a field equation relating the metric to matter. It had to recover the successful Newtonian limit, account for energy and momentum, and treat changes of coordinates consistently. These requirements constrained one another, and their interpretation of them changed during the search.
+
+In a weak, slowly varying gravitational field, one part of the metric is approximately
+
+$$g_{00}\simeq-\left(1+\frac{2\Phi}{c^2}\right),$$
+
+where $\Phi$ is the Newtonian gravitational potential and $x^0=ct$. For a slowly moving body in a nearly static field, the spatial geodesic equation then reduces to
+
+$$\frac{d^2\mathbf x}{dt^2}\simeq-\nabla\Phi.$$
+
+A candidate field equation must also reduce to Poisson's equation, $\nabla^2\Phi=4\pi G\rho$, for a suitable weak source of density $\rho$. Recovering an acceleration law alone would not be enough; the source must generate the right potential.
+
+Einstein’s Zurich notebook shows that they examined curvature expressions closely related to the eventual theory. It also records restrictive assumptions about the weak, static metric and attempts to reconcile coordinate conditions with conservation. Historians disagree about the precise reasons some candidates were rejected. Reducing this work to “Einstein chose physics, Grossmann chose mathematics” loses the difficulty: they were using mathematics to determine which physical expectations could coexist.
+
+The 1913 *Entwurf* equations had restricted covariance. One significant later failure involved describing flat spacetime in uniformly rotating coordinates. This is a time-dependent change of coordinates, not simply turning the axes on a sheet of paper. Einstein initially thought the theory passed that check; a later recalculation contributed to its collapse in 1915.
+
+The final field equation, presented in November 1915, can be written without a cosmological constant as
+
+$$R_{\mu\nu}-\frac12g_{\mu\nu}R=\frac{8\pi G}{c^4}T_{\mu\nu}.$$
+
+Here $R_{\mu\nu}$ is the Ricci tensor, a contraction of the Riemann tensor; $R$ is its scalar contraction. The right-hand side is the stress-energy tensor, containing energy density, momentum density, and stresses. The left-hand combination has an identically vanishing covariant divergence, matching the covariant conservation law for stress-energy.
+
+Writing this equation does not derive it from the preceding pictures. The pictures distinguish the objects it relates. The metric determines transport and curvature; this field equation constrains the metric in relation to matter. Solving it also requires the physical setup and appropriate initial or boundary conditions.
+
+Outside an isolated spherical source, $T_{\mu\nu}=0$. This makes the Ricci tensor vanish there, but it does **not** make the entire Riemann tensor vanish. Empty space outside the Sun can have tidal curvature. That distinction is essential for calculating a planet's orbit.
+
+## Mercury as a quantitative test
+
+A Newtonian planet orbiting an isolated spherical Sun follows a closed ellipse. Other planets perturb Mercury's orbit, so its closest-approach direction, the perihelion, moves even in Newtonian astronomy. After accounting for the known Newtonian contributions, an anomalous advance of roughly $43$ arcseconds per century remained.
+
+In 1913, Einstein and Michele Besso calculated the prediction of the *Entwurf* theory and obtained about $18$ arcseconds per century. Besso is the collaborator in that calculation; Grossmann is the mathematical co-author of the gravitational theory. Einstein did not immediately abandon the theory because of the mismatch. In November 1915 he reused work from the earlier calculation with the new theory and obtained the successful value.
+
+The calculation below uses a modern route through the Schwarzschild geometry outside a spherical, nonrotating mass. It is not a reconstruction of Einstein's historical calculation. Let $u=1/r$ and let $\ell=r^2d\varphi/d\tau$ be angular momentum per unit mass. The orbit equation is
+
+$$\frac{d^2u}{d\varphi^2}+u=\frac{GM}{\ell^2}+\frac{3GM}{c^2}u^2.$$
+
+Removing the final term recovers the Newtonian orbit equation. Keeping it changes the radial oscillation slightly, so the planet does not return to closest approach after exactly one full revolution.
+
+Both panels start from matched positions and radial derivatives. The right panel includes the relativistic term. The control varies its strength, $\mu=GM/(ac^2)$, where $a$ sets the reference orbital scale. The displayed values are much larger than Mercury's actual value so that the changing perihelion direction is visible. Set the control to zero to make the two models agree.
+
+<MercuryOrbit />
+
+The orbit traces are integrated, and the advance is measured from successive closest approaches. The animation advances by fixed angular increments rather than equal intervals of a planet's orbital time. Its speed around the curve is therefore not an orbital-speed prediction. The physical Mercury estimate underneath is separate from the exaggerated animation.
+
+For a weak relativistic correction, insert the Newtonian solution $u_0=[1+e\cos\varphi]/p$, where $p=a(1-e^2)$. The squared term contains a part proportional to $\cos\varphi$, which shifts the frequency of the radial oscillation. To leading order, the resulting advance per orbit is
+
+$$\Delta\varphi\simeq\frac{6\pi GM}{a(1-e^2)c^2}.$$
+
+Using Mercury's orbital scale and eccentricity, this is about $0.1035$ arcseconds per orbit. Mercury completes about $415$ orbits per century, giving approximately $42.98$ arcseconds per century. The inputs are properties of the Sun and Mercury, not a parameter fitted to the missing advance.
+
+The historical $18$-arcsecond result is not another lane in this simulation. Reproducing it would require implementing the *Entwurf* calculation itself; multiplying the relativistic correction by $18/43$ would merely draw the answer already supplied. The comparison here is between a measured Newtonian orbit, a measured Schwarzschild orbit, and the weak-field formula evaluated with Mercury's parameters.
+
+Einstein presented the Mercury result on November 18, 1915, before the November 25 presentation of the final matter field equations. Schwarzschild's solution came afterward. Those dates matter because the successful theory was still being assembled; the final formula was not sitting intact behind every earlier calculation.
+
+## What survived the draft
+
+The failure of the 1913 theory was not inevitable. It was a serious proposal that Einstein continued to defend despite a known quantitative shortfall. Its eventual rejection required reconsidering assumptions and calculations, not simply waiting for Mercury to announce a verdict.
+
+What survived was substantial: gravity represented by a spacetime metric, free fall described geometrically, and tensor calculus used to connect physical measurements across coordinate descriptions. Grossmann helped develop that structure while the correct field equation was still unknown. Besso helped carry a demanding astronomical calculation far enough to test it.
+
+The distinction between the structure and the law remains useful when reading the finished theory. A metric tells clocks and rulers what they measure. Its connection defines free fall. Its curvature controls tidal effects. The field equation determines which of those geometries can accompany a given distribution of matter. Mercury's orbit tests their combination.
+
+## Sources and further reading
+
+The [original 1913 *Entwurf*](https://zenodo.org/records/7092832) identifies Einstein's physical contribution and Grossmann's mathematical contribution in the paper itself.
+
+[John Norton's annotated Zurich notebook](https://sites.pitt.edu/~jdnorton/Goodies/Zurich_Notebook/) reproduces the working pages. Folio 14L associates Grossmann with the curvature tensor; the discussion of later pages explains both their Newtonian-limit difficulties and the scholarly disagreement about the rejection of curvature candidates.
+
+[Michel Janssen and Jürgen Renn's study of the Einstein–Besso manuscript](https://arxiv.org/abs/2111.11238) traces the 1913 Mercury calculation and its reuse in 1915. [Janssen's account of the move from special to general relativity](https://philsci-archive.pitt.edu/archive/00002123/01/annalen.pdf), especially page 17, documents the rotating-coordinate problem.
+
+[David Tong's general relativity notes, section 1.3.3](https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S1.html), derive the modern orbit equation used in the figure and the leading perihelion correction. They provide the calculation behind the number, beyond the geometric introduction given here.
