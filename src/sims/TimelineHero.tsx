@@ -74,7 +74,7 @@ function TermStrip({ year }: { year: number }) {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.2rem' }}>
           <span style={{ color: SEPIA, fontSize: '0.9rem' }}>smoothness</span>
           <span style={{ color: SEPIA, fontSize: '0.7rem', fontFamily: 'ui-monospace, monospace' }}>
-            open (2000–)
+            under review (2026)
           </span>
         </div>
       </div>

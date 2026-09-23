@@ -78,10 +78,12 @@ export function createTransportErrors(step: { current: number }): Stepper {
         ctx.strokeStyle = color; ctx.lineWidth = dashed ? 1.6 : 2.3; ctx.setLineDash(dashed ? [4, 4] : [])
         ctx.beginPath(); values.forEach((v, i) => { const x = p.x + i / (values.length - 1) * p.w, y = toY(Math.max(ymin, Math.min(ymax, v))); if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y) }); ctx.stroke(); ctx.setLineDash([])
       }
-      curve(f.exact, '#94a3b8', true); curve(a, n === 0 ? C.div : C.dye)
+      // Both curves are dye concentration, so both wear the dye colour. The
+      // unstable pane used to be violet, which the lesson reserves for divergence.
+      curve(f.exact, '#94a3b8', true); curve(a, C.dye)
       const error = a.reduce((sum, q, i) => sum + Math.abs(q - f.exact[i]), 0) / a.length
       const peak = Math.max(...a), low = Math.min(...a)
-      label(ctx, `Range ${low.toFixed(2)} to ${peak.toFixed(2)}`, p.x, p.y + p.h - 27, n === 0 ? C.div : C.dye, 13, true)
+      label(ctx, `Range ${low.toFixed(2)} to ${peak.toFixed(2)}`, p.x, p.y + p.h - 27, C.dye, 13, true)
       label(ctx, `Mean error ${error.toFixed(3)}${peak > ymax || low < ymin ? ' · curve clipped' : ''}`, p.x, p.y + p.h - 7, MUTED, 12)
     })
   } }

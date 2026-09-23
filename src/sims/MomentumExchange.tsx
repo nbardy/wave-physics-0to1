@@ -45,7 +45,8 @@ export function createExchange(nu = .012): Stepper & { measure(): { u: number[];
           ctx.fillStyle = color
           for (let j = 0; j < 7; j++) { const x = (((marks[pane][i]+j/7)%1+1)%1)*(w*.53)+8; ctx.beginPath(); ctx.arc(x,y,2,0,Math.PI*2); ctx.fill() }
           const end = profileX+span*speed
-          ctx.strokeStyle = color; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(profileX,y); ctx.lineTo(end,y)
+          // Velocity is blue in this article's key; the dye colours stay on the markers.
+          ctx.strokeStyle = PALETTE.vel; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(profileX,y); ctx.lineTo(end,y)
           if (Math.abs(speed) > .03) { const d=Math.sign(speed); ctx.moveTo(end-d*4,y-3);ctx.lineTo(end,y);ctx.lineTo(end-d*4,y+3) } ctx.stroke()
         }
         ctx.fillStyle = '#64748b'; ctx.font = '12px system-ui'

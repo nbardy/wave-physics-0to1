@@ -38,6 +38,7 @@
     "check:history-followups": "bun run scripts/check-history-followups.ts",
     "check:ideal": "bun run scripts/check-ideal.ts",
     "check:construction": "bun run scripts/check-solver-construction.ts",
+    "check:construction-v4": "bun run scripts/check-construction-v4.ts",
     "check:publication": "bun run scripts/check-publication.ts",
     "check:newsletter": "bun run workers/newsletter/check.ts",
     "typecheck:newsletter": "tsc --noEmit -p workers/newsletter/tsconfig.json",

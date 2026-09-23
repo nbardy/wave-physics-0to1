@@ -68,8 +68,9 @@ for(const w of [640,340]){
    const cold=ownInk(PALETTE.vel,12,202,w/2-12,214),hot=ownInk(PALETTE.dye,w/2+12,202,w-12,214)
    check(hot>cold*1.4&&cold>100,`${w}px sound: hotter gas has a visibly larger pressure-rise bar on the same scale`)
   }else if(kind==='exchange'){
-   const top=ownInk(PALETTE.dye,w*.62,28,w,174),bottom=ownInk(PALETTE.dye,w*.62,232,w,378)
-   check(top>bottom*1.3&&bottom>50,`${w}px exchange: actual upper-layer velocity arrows shorten in the coupled specimen`)
+   // Velocity arrows are blue (the article's key) since 2026-09-23; the dye colours stay on the markers.
+   const top=ownInk(PALETTE.vel,w*.62,28,w,174),bottom=ownInk(PALETTE.vel,w*.62,232,w,378)
+   check(top>bottom*1.3&&bottom>50,`${w}px exchange: actual velocity arrows shorten in the coupled specimen`)
   }else{
    const top=ownInk(PALETTE.visc,14,178,w-14,187),bottom=ownInk(PALETTE.visc,14,391,w-14,400)
    check(bottom>top*2&&top>50,`${w}px cascade: actual heat strip is larger with interscale transfer`)

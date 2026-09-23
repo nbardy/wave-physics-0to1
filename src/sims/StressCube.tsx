@@ -97,10 +97,30 @@ function createCube(sigmaRef: { current: number }): Stepper {
     draw(ctx, w, h) {
       const sigma = sigmaRef.current
       ctx.clearRect(0, 0, w, h)
-      const cx = w * 0.32
+      // Layout (visual audit 2026-09-23): the element takes the left column and
+      // everything else — matrix, captions, ghosts — lives in a right column
+      // that starts past the element's widest skew. Captions wrap to the
+      // column, so nothing runs off a 340 px canvas.
+      const s = Math.min(w * 0.19, h * 0.28) // half-side of the square
+      const cx = w * 0.26
       const cy = h * 0.52
-      const s = Math.min(w, h) * 0.28 // half-side of the square
       const skew = sigma * SHEAR_VIS * s // horizontal offset of the top edge
+      const colX = cx + s * (1 + SHEAR_VIS) + 18
+      const colW = w - colX - 8
+      ctx.font = '600 11px ui-monospace, monospace'
+      const wrap = (text: string, x: number, y: number) => {
+        let line = ''
+        for (const word of text.split(' ')) {
+          const next = line ? `${line} ${word}` : word
+          if (ctx.measureText(next).width > colW && line) {
+            ctx.fillText(line, x, y)
+            y += 14
+            line = word
+          } else line = next
+        }
+        ctx.fillText(line, x, y)
+        return y + 14
+      }
 
       // element sheared into a parallelogram: top edge slides right by +skew,
       // bottom edge by −skew (pure shear, symmetric about the center)
@@ -148,25 +168,31 @@ function createCube(sigmaRef: { current: number }): Stepper {
       // sepia 2×2 matrix readout: [[σxx, σxy],[σyx, σyy]], σxx=σyy=0 for pure shear
       ctx.fillStyle = SEPIA
       ctx.font = '600 11px ui-monospace, monospace'
-      const bx = w * 0.66
-      const by = h * 0.1
-      ctx.fillText('σ =', bx - 26, by + 22)
+      const sxy = sigma.toFixed(2)
+      const cell = (v: string) => (v.startsWith('-') ? v : ` ${v}`)
+      const row1 = `${cell('0.00')}  ${cell(sxy)}`
+      const row2 = `${cell(sxy)}  ${cell('0.00')}`
+      const labelW = ctx.measureText('σ = ').width
+      const boxW = ctx.measureText(row1).width + 12
+      const bx = colX + labelW
+      const by = 12
+      ctx.fillText('σ =', colX, by + 24)
       ctx.strokeStyle = SEPIA
       ctx.lineWidth = 1
-      ctx.strokeRect(bx, by, 96, 40)
-      const sxy = sigma.toFixed(2)
-      ctx.fillText(`  0.00   ${sigma >= 0 ? ' ' : ''}${sxy}`, bx + 4, by + 16)
-      ctx.fillText(`  ${sigma >= 0 ? ' ' : ''}${sxy}   0.00`, bx + 4, by + 32)
-      ctx.fillText('σyx = σxy — sits still', bx - 26, by + 56)
+      ctx.strokeRect(bx, by, boxW, 40)
+      ctx.fillText(row1, bx + 6, by + 16)
+      ctx.fillText(row2, bx + 6, by + 32)
+      const captionEnd = wrap('σyx = σxy — sits still', colX, by + 58)
 
       // THE GHOSTS — same σxy, but σyx pinned at 0: an unbalanced couple, so
       // they spin, and the smaller one spins faster (ω ∝ 1/side). This is the
       // counterfactual the symmetry rule forbids, running live beside the rule.
-      const gx = w * 0.78
-      const gy = h * 0.66
+      // Spread across the column; a spinning square sweeps √2 × its half-side.
+      const gy = Math.max(captionEnd + s * GHOST_SIZES[0] * 1.45 + 4, h * 0.6)
+      const ghostW = Math.min(colW, 220)
       GHOST_SIZES.forEach((rel, gi) => {
         const gs = s * rel
-        const gcx = gx + (gi === 0 ? -gs * 1.4 : gs * 3.2)
+        const gcx = gi === 0 ? colX + gs * 1.45 : colX + ghostW - gs * 1.45
         ctx.save()
         ctx.translate(gcx, gy)
         ctx.rotate(angles[gi])
@@ -182,8 +208,7 @@ function createCube(sigmaRef: { current: number }): Stepper {
       })
       ctx.fillStyle = SEPIA
       ctx.font = '600 11px ui-monospace, monospace'
-      ctx.fillText('σyx pinned at 0 — they spin,', gx - s * 0.9, gy + s * 0.62)
-      ctx.fillText('the smaller one faster', gx - s * 0.9, gy + s * 0.62 + 14)
+      wrap('σyx pinned at 0 — they spin, the smaller one faster', colX, gy + s * GHOST_SIZES[0] * 1.45 + 16)
     },
   }
 }

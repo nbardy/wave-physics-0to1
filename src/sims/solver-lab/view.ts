@@ -31,23 +31,31 @@ export function arrow(ctx: CanvasRenderingContext2D, x: number, y: number, dx: n
   ctx.lineTo(x + dx - head * Math.cos(a - .5), y + dy - head * Math.sin(a - .5))
   ctx.lineTo(x + dx - head * Math.cos(a + .5), y + dy - head * Math.sin(a + .5)); ctx.fill()
 }
-export type FieldView = 'dye' | 'divergence' | 'pressure' | 'velocity'
+// 'pressure-residual' is the pressure wash with the remaining divergence laid
+// over it in violet, so a partial or over-correction shows where its leftover
+// imbalance sits instead of only reporting a meter number (audit 2026-09-23, IV 08).
+export type FieldView = 'dye' | 'divergence' | 'pressure' | 'pressure-residual' | 'velocity'
+const divergenceInk = (d: number) => `rgba(124,58,237,${Math.min(.72, Math.abs(d) * 1.2)})`
+const pressureInk = (p: number) => p < 0 ? `rgba(8,145,178,${Math.min(.7, Math.abs(p) / 25)})` : `rgba(220,38,38,${Math.min(.7, p / 25)})`
+const dyeInk = (amber: number, rose: number) => {
+  const a = amber * .8, b = rose * .8, t = Math.min(1, a + b), mix = b / Math.max(1e-8, a + b)
+  return `rgb(${255 * (1 - t) + (217 * (1 - mix) + 219 * mix) * t},${255 * (1 - t) + (119 * (1 - mix) + 39 * mix) * t},${255 * (1 - t) + (6 * (1 - mix) + 119 * mix) * t})`
+}
+// One cell painter per view; each returns the fills for a cell, back to front.
+const painters: Record<FieldView, (f: LabFluid, div: Float64Array, k: number) => string[]> = {
+  dye: (f, _, k) => [dyeInk(f.dye[k], f.rose[k])],
+  divergence: (_, div, k) => [divergenceInk(div[k])],
+  pressure: (f, _, k) => [pressureInk(f.pressure[k])],
+  'pressure-residual': (f, div, k) => [pressureInk(f.pressure[k]), divergenceInk(div[k])],
+  velocity: () => ['#fff'],
+}
 export function field(ctx: CanvasRenderingContext2D, f: LabFluid, box: Pane, mode: FieldView, grid = false) {
   const { x, y, w, h } = box, cw = w / f.nx, ch = h / f.ny
-  const div = mode === 'divergence' ? f.divergence() : null
+  const div = f.divergence(), paint = painters[mode]
   ctx.fillStyle = '#fff'; ctx.fillRect(x, y, w, h)
   ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip()
   for (let j = 0; j < f.ny; j++) for (let i = 0; i < f.nx; i++) {
-    const k = f.index(i, j)
-    if (mode === 'dye') {
-      const a = f.dye[k] * .8, b = f.rose[k] * .8, t = Math.min(1, a + b), mix = b / Math.max(1e-8, a + b)
-      ctx.fillStyle = `rgb(${255 * (1 - t) + (217 * (1 - mix) + 219 * mix) * t},${255 * (1 - t) + (119 * (1 - mix) + 39 * mix) * t},${255 * (1 - t) + (6 * (1 - mix) + 119 * mix) * t})`
-    } else if (div) {
-      ctx.fillStyle = `rgba(124,58,237,${Math.min(.72, Math.abs(div[k]) * 1.2)})`
-    } else if (mode === 'pressure') {
-      ctx.fillStyle = f.pressure[k] < 0 ? `rgba(8,145,178,${Math.min(.7, Math.abs(f.pressure[k]) / 25)})` : `rgba(220,38,38,${Math.min(.7, f.pressure[k] / 25)})`
-    } else ctx.fillStyle = '#fff'
-    ctx.fillRect(x + i * cw, y + j * ch, cw + .3, ch + .3)
+    for (const ink of paint(f, div, f.index(i, j))) { ctx.fillStyle = ink; ctx.fillRect(x + i * cw, y + j * ch, cw + .3, ch + .3) }
   }
   if (grid) {
     ctx.strokeStyle = '#cbd5e155'; ctx.lineWidth = .6; ctx.beginPath()

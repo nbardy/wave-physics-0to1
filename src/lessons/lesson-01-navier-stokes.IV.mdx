@@ -1,0 +1,441 @@
+import { Link } from 'react-router-dom'
+import { ReturnExperiment, CellStorage } from '../sims/construction-v4/ReturnExperiment'
+import { BacktraceLab, TransportErrors } from '../sims/solver-lab/TransportLab'
+import { ParcelAcceleration } from '../sims/ns-revision/ParcelAcceleration'
+import { DiffusionLab } from '../sims/solver-lab/DiffusionLab'
+import { CellFlux } from '../sims/solver-lab/CellFlux'
+import { ProjectionLab } from '../sims/solver-lab/ProjectionLab'
+import { SolverCycle, TermExperiment, LiveSolverLab } from '../sims/solver-lab/SolverWorkbench'
+
+# Building a Fluid Simulation
+
+Below, a current carries two patches of dye along a set of paths, then sends every
+point back along the same paths in reverse. With no diffusion along the way, the
+dye returns to its original shape, however thin the strips it was stretched into
+on the way out.
+
+Two calculations make that trip. Both use the same prescribed current, six
+shears that slide neighbouring rows and columns by different amounts, then the
+same six undone in reverse order. Opposite edges of each square join, so dye leaving
+one side enters the other. One calculation can evaluate the paths exactly. The
+other stores dye on a grid. Even with no molecular
+diffusion in either calculation, they disagree about what comes back. A fluid
+simulation needs rules for moving numbers between grid points, and those rules
+can change the flow we think we are seeing.
+
+<ReturnExperiment />
+
+Choose **Start**, then **Stretched**, then **Returned**. The <C k="dye">amber</C> and
+<C k="dye2">rose</C> patches recover their shapes on the left. On the right, much of
+their colour remains spread around the square. The overlap bars count dye that
+coincides with its starting pattern; 100% means a complete return. The grid
+returns only about 16% overlap.
+
+There is no hidden fading effect. The dye total under each square stays at 100%:
+this grid update preserves the amount of dye to roundoff. It loses *where the dye
+was*, while keeping how much there was.
+
+The slider visits saved moments. The second half of the trip, from three to six
+seconds, actually reverses the motion. Neither pane calculates what forces
+produce the current. The velocity is given in both; only the dye is computed.
+
+## What the Computer Keeps
+
+At each location, the dye has a concentration $q$: zero for clear fluid, one for
+the strongest initial colour. Its velocity has two components,
+$\mathbf{u}=(u,v)$, telling us how fast fluid moves horizontally and vertically.
+Both quantities vary over space and time. The grid replaces those continuous
+fields with finite lists of numbers.
+
+Here is a coarse view of the initial dye. Select a cell to read its amber and
+rose concentrations. The dot at its centre marks where we sample the dye. The blue dots
+on its edges show where we will store the velocity components that carry fluid
+across those edges.
+
+<CellStorage />
+
+The cell boundary stays put when fluid moves through it. At the next update, a
+different parcel may occupy the centre, so we need a new concentration there.
+We store values at fixed places and never follow an individual parcel.
+
+The arrangement of centre values and face velocities is called a *staggered grid*.
+For the moment, take the velocity as given, as it was in the return experiment,
+and find the concentration that arrives at a grid point during one timestep.
+
+## Follow the Arrival Backward
+
+Suppose the current carries dye to the right. The dye arriving at a grid point
+came from somewhere to its left. Follow that motion backward by one timestep,
+look up the old concentration there, and use it as the new value.
+
+For a constant horizontal speed $u$, timestep $\Delta t$, and target position
+$x_i$, this gives
+
+$$q_i^{n+1}=q^n(x_i-u\Delta t).$$
+
+The superscripts count updates, not powers. The departure point
+$x_i-u\Delta t$ usually falls between stored samples. In the next figure, the
+blue arrow runs from the selected arrival cell back to that point. Change the
+travel distance and watch which old values contribute.
+
+<BacktraceLab />
+
+When the departure lies a fraction $a$ of the way from sample $j$ to sample
+$j+1$, linear interpolation supplies the missing value:
+
+$$q_i^{n+1}=(1-a)q_j^n+a q_{j+1}^n,\qquad 0\leq a\leq1.$$
+
+A departure halfway between concentrations zero and one receives one half. At an
+integer-cell displacement, no blending is needed: we can copy a stored value
+directly. Between those positions, every new sample averages neighbouring values.
+
+This procedure is *semi-Lagrangian advection*: follow the arriving parcel for one
+step, then store its value back on the fixed grid. In two dimensions, a departure
+point can lie between four samples. Bilinear interpolation weights those four
+values by its position within their square.
+
+The averaging is useful. Provided the old concentrations lie between zero and
+one, positive weights that sum to one cannot produce a negative concentration or
+one greater than the old maximum. The update remains bounded even if the parcel
+crosses several cells in a step. That does not mean a large step follows a
+complicated current accurately.
+
+## An Update That Goes Wrong
+
+We can also derive an update by looking at how concentration changes at a fixed
+point. With constant speed and no diffusion, a profile simply translates:
+$q(x,t)=q(x-ut,0)$. Differentiating gives the advection equation,
+
+$$\frac{\partial q}{\partial t}+u\frac{\partial q}{\partial x}=0.$$
+
+Replace the time derivative with a forward difference and estimate the spatial
+slope from the samples on either side. With grid spacing $h$, the resulting rule
+is
+
+$$q_i^{n+1}=q_i^n-\frac{u\Delta t}{2h}\left(q_{i+1}^n-q_{i-1}^n\right).$$
+
+This is a natural approximation: subtract the amount implied by the local slope.
+It is also unstable. Compare it with backtracing below. Both start with the same
+block of dye and move it 0.65 cells per update. The dashed curve marks the exact
+translated block, sampled as cell averages so a partially occupied edge cell has
+an intermediate value.
+
+<TransportErrors />
+
+After only a few updates, the local slope method produces negative concentrations
+beside the block and concentrations above one. These are errors in the values,
+not ripples in real dye. Continue the run and they grow; the printed range keeps
+reporting their size after the curve leaves the plotting window.
+
+The problem persists at smaller timesteps. Applied to a sinusoidal error, this
+combination of forward time and centred space differences multiplies
+its amplitude by a factor whose magnitude is
+$\sqrt{1+(u\Delta t/h)^2\sin^2(kh)}$. For modes with a nonzero sine, that exceeds
+one. Here $k$ is the error's spatial wavenumber. Reducing the timestep slows the
+growth but does not make this scheme stable.
+
+Backtracing keeps the concentration in range. Its edges gradually soften, however,
+and its peak falls as the block spreads. We have exchanged an unstable update for
+one whose error is quieter and much easier to mistake for fluid behaviour.
+
+## Where the Pattern Went
+
+Interpolation explains the failed return. Once a thin strip lies between grid
+points, its samples no longer describe its full shape. Averaging spreads some of
+its colour to its neighbours. Reversing the velocity makes another sequence of
+averages; it does not reconstruct the earlier values from those averages.
+
+Repeat the same trip with more samples. The controls below change the *simulation
+grid*, while the displayed square, the prescribed current, the elapsed time, and
+the number of updates stay fixed.
+
+Before selecting $96\times96$, make an estimate: will four times as many samples
+as $48\times48$ recover most of the original pattern?
+
+<ReturnExperiment refine />
+
+At **Returned**, overlap rises from about 9% on a $24\times24$ grid to 16% on
+$48\times48$ and 38% on $96\times96$. At **Stretched**, the exact calculation
+shows why recovery is difficult: some strips are already much thinner than a
+coarse cell. Even the finest offered grid loses detail. Interpolating from more
+than two neighbours, or measuring this backward error and correcting for it,
+recovers more of the pattern; both refine the same update.
+
+To measure overlap, we take the lesser of the starting and current concentrations
+at each point, sum that shared dye for both colours, and divide by their starting
+total. Dye in the wrong place cannot raise the score merely by becoming brighter.
+
+Three checks now give different answers. The concentrations remain bounded, so
+this update passes the stability check. The dye total stays at 100%, so this
+test passes a conservation check. Yet the returned shape is wrong.
+Neither of the first two checks establishes accuracy.
+
+The conservation result has a specific reason here: each shear shifts every
+sample in a row or column by the same amount, with opposite edges joined. The
+interpolation weights redistribute its sum exactly. General semi-Lagrangian
+transport in a varying velocity field does not have that guarantee.
+
+Real dye also spreads through molecular diffusion. We left it out to isolate
+the numerical error. Adding it would require another term in the dye equation;
+blur from interpolation is already present before we do that.
+
+## Where Velocity Comes From
+
+So far we have supplied the motion. For a fluid simulation, we must calculate how
+that motion changes. A parcel of fluid accelerates under forces, just as any
+other piece of matter does. The complication is that our grid records velocity at
+fixed places while the parcel moves between them.
+
+Consider a steady current through a narrowing channel. Every blue arrow below
+stays fixed in time. The amber parcel moves from a slower part of the current to
+a faster part. A gray probe remains at one location. Scrub time to compare what
+they measure.
+
+<ParcelAcceleration />
+
+The probe stays at 2.20 metres per second. The parcel's horizontal speed grows
+from about 1.05 to 3.49 metres per second over the displayed trip. A steady field
+can therefore contain accelerating fluid. This figure prescribes a convenient
+incompressible narrowing flow; it does not solve the forces inside a real nozzle.
+
+Following a parcel changes both its position and the time at which we evaluate
+the field. The chain rule combines those changes:
+
+$$\frac{D\mathbf{u}}{Dt}=\frac{\partial\mathbf{u}}{\partial t}+u\frac{\partial\mathbf{u}}{\partial x}+v\frac{\partial\mathbf{u}}{\partial y}=\frac{\partial\mathbf{u}}{\partial t}+(\mathbf{u}\cdot\nabla)\mathbf{u}.$$
+
+The first term is the change at a fixed probe. The remaining terms account for
+the parcel travelling into places with different velocities. Their compact name
+is *advection of velocity*. The same backtracing operation that carried dye can
+carry a velocity component; we now update the field that will determine the next
+departure points.
+
+That accounts for motion through a varying field. To determine the parcel's
+acceleration, we still need its forces.
+
+## Exchanging Momentum
+
+Adjacent layers of a viscous fluid exert tangential forces on each other. A fast
+layer pulls a slower neighbour along, while the slower layer holds the fast one
+back. For a Newtonian fluid, the shear stress is proportional to the velocity
+gradient between them.
+
+For equally spaced horizontal layers, the net effect on one layer depends on how
+its speed compares with the layers above and below:
+
+$$\frac{du_j}{dt}=\nu\frac{u_{j-1}-2u_j+u_{j+1}}{h^2}.$$
+
+Here $\nu$ is the kinematic viscosity, with units of length squared per time. The
+numerator is zero along a linear velocity profile: the pulls from the two sides
+balance. A narrow peak has a negative value there and loses speed while its slower
+neighbours gain it.
+
+Below, each comparison begins with the same profile and runs for two seconds.
+Increase viscosity, then switch between an isolated jet, layers, and stripes.
+The gray outline preserves the starting profile.
+
+<DiffusionLab readout="differences" />
+
+The jet spreads momentum into neighbouring layers. The alternating stripes lose
+their sharp velocity differences quickly. This experiment changes velocity,
+shown by blue arrows; it does not blur a dye image. Its stationary outer walls can
+also absorb momentum, so the fluid's total momentum need not remain constant.
+
+In two dimensions, the corresponding second differences in both directions
+approximate the Laplacian $\nabla^2\mathbf{u}$. Viscosity contributes an
+acceleration $\nu\nabla^2\mathbf{u}$. The explicit update above has its own
+timestep restriction: in one dimension, $\nu\Delta t/h^2$ must be at most
+$1/2$. The figure uses smaller steps within that limit. Bounded advection does not
+remove a restriction imposed by a different operation.
+
+## The Water Has to Fit
+
+Our cells are already full of water. Under the incompressible approximation,
+their fluid density remains constant. If more volume leaves a fixed cell than
+enters it, the proposed velocities cannot describe that fluid.
+
+Adjust the right-face outflow below until the cell balances. The other three
+flows stay fixed. All numbers are volume per second; the cell has a volume of one
+cubic metre.
+
+<CellFlux pressureMark={false} />
+
+The top and bottom flows cancel. The right face must therefore carry out the
+same one cubic metre per second that enters from the left. Changing the dye
+concentration inside the cell would not solve an imbalance in water volume.
+
+For a square grid of spacing $h$, write the normal velocity components on the
+right, left, top, and bottom faces as $u_R,u_L,v_T,v_B$. Dividing net outward
+volume flow by cell volume gives the discrete divergence,
+
+$$D\mathbf{u}=\frac{u_R-u_L}{h}+\frac{v_T-v_B}{h}.$$
+
+Positive divergence means more volume would leave than enter; negative divergence
+means the reverse. Incompressibility requires $D\mathbf{u}=0$ in every cell.
+This is why storing normal velocities on faces is useful: a shared face supplies
+one cell's outflow and its neighbour's inflow with the same number.
+
+Balancing one cell by hand was easy. On a grid, changing its right-face velocity
+changes the neighbouring cell's balance too. We need a correction that satisfies
+all of those constraints together.
+
+## Pressure as a Grid-Wide Correction
+
+A pressure difference accelerates fluid from higher pressure toward lower
+pressure. For constant density $\rho$, that acceleration is
+$-\nabla p/\rho$. Suppose advection, viscosity, and an external push have already
+produced proposed velocities $\mathbf{u}^{*}$. A pressure update over one
+timestep would give
+
+$$\mathbf{u}^{n+1}=\mathbf{u}^{*}-\frac{\Delta t}{\rho}G p.$$
+
+$G$ is our discrete gradient: the pressure difference between neighbouring cell
+centres divided by their spacing. Apply the divergence operator to this equation
+and require the corrected velocities to balance:
+
+$$D G p=\frac{\rho}{\Delta t}D\mathbf{u}^{*}.$$
+
+The product $DG$ is a discrete Laplacian. This is the pressure Poisson equation.
+The known right-hand side is the imbalance in the proposed flow; the unknowns are
+pressures at all the cell centres. We solve for those pressures, then use their
+differences to correct the shared face velocities.
+
+The next figure supplies a deliberately unbalanced proposal. Blue arrows show
+velocity and violet marks the size of the local volume imbalance. On the right,
+cyan shows the low-pressure region needed to draw the outward-moving fluid back.
+The slider scales the computed correction. Before trying 150%, predict whether it
+will leave less imbalance than 100%.
+
+<ProjectionLab />
+
+At 100%, the meter reads 0.00%: the measured imbalance is below one billionth of
+its starting value. At 150%, the same pressure pattern overcorrects and creates
+imbalance again. The meter reports the
+root-mean-square divergence across the cells relative to the original proposal;
+it is not a measure of how closely the entire simulation matches real water.
+
+These pressure experiments join opposite edges of the domain. Fluid leaving the
+right re-enters on the left, and the top joins the bottom. There are no solid
+walls to handle here. Walls would add boundary conditions to both the velocities
+and the pressure solve.
+
+We also have to decide how accurately to solve that coupled equation. One simple
+method repeatedly updates each pressure from its neighbours and the local
+divergence. A sweep visits all the cells. The next comparison shows the velocity
+correction available after different numbers of Gauss–Seidel sweeps, always
+starting with the same proposal and zero pressure guess.
+
+<ProjectionLab iterations />
+
+Early sweeps reduce the strong local imbalance; a weaker, broader error remains.
+On this small grid, forty sweeps leave about 4% of the original root-mean-square
+divergence. At 160 sweeps it is about 0.07%. There is no universal number of sweeps
+that makes pressure correct: the required work depends on the grid and the input.
+
+The final live solver below uses conjugate gradients instead, stopping when the
+pressure residual is small relative to its starting value, with an iteration
+limit. Its gradient, divergence, and pressure operator use the same discrete
+differences. Solving one Laplacian accurately would not help if we corrected the
+velocities with an incompatible gradient.
+
+In the code, the stored pressure variable includes the factor $\Delta t/\rho$.
+Its differences are therefore velocity corrections directly. The colours above
+show relative pressure; they are not a scale in pascals.
+
+## One Timestep
+
+We can now assemble the equation for a two-dimensional, constant-density,
+incompressible Newtonian fluid:
+
+$$\frac{\partial\mathbf{u}}{\partial t}+(\mathbf{u}\cdot\nabla)\mathbf{u}=-\frac{1}{\rho}\nabla p+\nu\nabla^2\mathbf{u}+\mathbf{f},\qquad \nabla\cdot\mathbf{u}=0.$$
+
+$\mathbf{f}$ denotes an external force per unit mass, such as a push. Dye obeys
+its own transport equation,
+
+$$\frac{\partial q}{\partial t}+(\mathbf{u}\cdot\nabla)q=0,$$
+
+because we are treating it as a passive marker without molecular diffusion. It
+does not change the density, exert a force, or determine the pressure.
+
+The computer approximates one timestep by applying the operations separately.
+Below, each button exposes an intermediate state from the same update. The input
+on the left becomes the result on the right. Step through from the stored state
+to carrying the dye; enlarge the velocity change when an individual operation
+is too small to see clearly.
+
+<SolverCycle />
+
+The push changes velocity first. Backtracing then carries velocity, viscosity
+smooths its spatial differences, and pressure corrects the resulting volume
+imbalance. Finally the corrected velocity carries both dyes. A single timestep
+is only $1/40$ of a second, so an accurate-looking step need not contain a dramatic
+change. The optional magnification shows the *difference* in velocity, multiplied
+by ten, rather than a faster version of the whole flow.
+
+This separation of operations is called *operator splitting*. It approximates
+effects that act together in the continuous equation. The order and timestep
+therefore contribute error, alongside the grid spacing, interpolation, and
+incomplete pressure solve.
+
+Now leave one operation out. Both runs below
+begin with the same state and push, and advance for the same amount of time.
+The left includes all three velocity operations. On the right, select one to
+omit. Dye transport remains enabled in every case.
+
+<TermExperiment />
+
+Without pressure correction, the arrows allow water to accumulate or disappear
+locally; the violet view exposes that violation. Without viscosity, sharp
+velocity differences persist longer. Without velocity advection, the velocity
+field no longer carries its own components through space, although it still
+transports dye. The moving colour alone can hide that last omission; the arrows
+and the left pane show it.
+
+Omitting the pressure solve does not make a compressible-flow solver: nothing
+here evolves density or supplies an equation of state in place of the missing
+constraint.
+
+## Let the Grid Evolve
+
+The final grid now computes its own velocity. Drag across it to push the fluid,
+or use **Push upward** for a repeatable impulse. **Add dye** marks the current
+without pushing it. Pause to inspect the arrows, then resume and follow the
+colour they carry.
+
+<LiveSolverLab />
+
+Increase viscosity and small velocity differences smooth more quickly. The
+control is measured in cell widths squared per second, with this grid fixed at
+$48\times32$ cells. At zero viscosity, the interpolation error still softens
+structures: zero physical viscosity does not give us an exact inviscid solver.
+Opposite edges join here too, so this is a periodic patch of fluid, not water
+inside a tank.
+
+The simulation advances with a fixed physical timestep independent of the
+screen's refresh rate. Each step backtraces velocity, diffuses it with stable
+substeps, solves pressure, and transports dye. Pointer pushes receive a pressure
+correction immediately, including while paused, so a new impulse respects the
+volume constraint before the next step.
+
+The imbalance readout in the corner can be tiny while the dye looks increasingly
+washed out. That readout checks whether the face flows balance. The return
+experiment checks how much spatial detail survives a known trip.
+
+For a flow whose answer we do not know, repeating the calculation with smaller
+cells and timesteps is part of finding out whether a feature belongs to the
+fluid or to the method, and the comparison has to be made on the quantity in
+question: a transported shape, a force on a surface, a mixing rate. Here that
+quantity was two patches of dye. The averaging that washes out the dye in this
+grid is the averaging that returned 16% of them at the top of the page.
+
+<IfLesson id="navier-stokes-history"><span>The <Link to="../navier-stokes-history" relative="path">history of Navier–Stokes</Link> follows how the physical equation took shape. Here we have made one finite approximation to it, and seen how much work remains between writing the equation and trusting its answer.</span></IfLesson>
+
+## Further Reading
+
+[Jos Stam's *Stable Fluids* (1999)](https://graphics.stanford.edu/courses/cs468-05-fall/Papers/p121-stam.pdf)
+develops the semi-Lagrangian approach that made stable interactive fluid animation
+practical. The solver here shares that idea but uses its own staggered grid,
+diffusion update, and pressure solve.
+
+[Robert Bridson's fluid simulation course](https://www.cs.ubc.ca/~rbridson/fluidsimulation/)
+provides notes on advection, pressure projection, boundary conditions, and the
+numerical errors that remain after a simulation becomes stable.

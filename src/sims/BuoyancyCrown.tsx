@@ -168,17 +168,20 @@ function createTank(ratioRef: { current: number }): Stepper {
       }
       ctx.setLineDash([])
 
-      drawArrow(ctx, cx, cyPx, cyPx + weight * arrowScale, PALETTE.wall, -1, `weight ${weight.toFixed(2)}`)
-      drawArrow(ctx, cx, cyPx, cyPx - buoy * arrowScale, PALETTE.pLo, 1, `buoyancy ${buoy.toFixed(2)}`)
-      // the floor's push, drawn from the contact point; zero-length when floating
+      drawArrow(ctx, cx, cyPx, cyPx + weight * arrowScale, PALETTE.wall, -1, `weight ${weight.toFixed(2)}`, bx)
+      drawArrow(ctx, cx, cyPx, cyPx - buoy * arrowScale, PALETTE.pLo, 1, `buoyancy ${buoy.toFixed(2)}`, bx + blockW)
+      // the floor's push, drawn from the contact point just outside the block's
+      // right edge; zero-length when floating
+      const floorX = bx + blockW + 12
       drawArrow(
         ctx,
-        cx + 30,
+        floorX,
         py(yc - halfH),
         py(yc - halfH) - normal * arrowScale,
         PALETTE.wall,
         1,
         `floor ${normal.toFixed(2)}`,
+        floorX,
       )
 
       // sepia readout box — density above submerged fraction, so the two numbers
@@ -201,7 +204,10 @@ function createTank(ratioRef: { current: number }): Stepper {
 }
 
 // A vertical force arrow with its magnitude on the label. `side` is +1 to hang the
-// label off the right, −1 off the left, so an opposed pair never overprints.
+// label off the right, −1 off the left, so an opposed pair never overprints;
+// `labelX` is the edge the label hangs from (visual audit 2026-09-23: labels
+// hung 8 px off the arrow sat on the gray block and were unreadable, so they now
+// hang off the block's edge, with a white halo for the water behind them).
 // A force of (almost) zero draws nothing — otherwise a bare arrowhead would sit on
 // the canvas claiming a force that isn't there.
 function drawArrow(
@@ -212,6 +218,7 @@ function drawArrow(
   color: string,
   side: 1 | -1,
   label: string,
+  labelX: number,
 ) {
   if (Math.abs(y1 - y0) < 1.5) return
   ctx.strokeStyle = color
@@ -228,9 +235,13 @@ function drawArrow(
   ctx.lineTo(x + 4, y1 - dir * 6)
   ctx.closePath()
   ctx.fill()
-  ctx.font = '10px ui-sans-serif, sans-serif'
+  ctx.font = '600 11px ui-sans-serif, sans-serif'
   ctx.textAlign = side === 1 ? 'left' : 'right'
-  ctx.fillText(label, x + side * 8, (y0 + y1) / 2)
+  const ly = (y0 + y1) / 2 + 4
+  ctx.lineWidth = 3
+  ctx.strokeStyle = 'rgba(255,255,255,0.9)'
+  ctx.strokeText(label, labelX + side * 6, ly)
+  ctx.fillText(label, labelX + side * 6, ly)
   ctx.textAlign = 'left'
 }
 

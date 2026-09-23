@@ -9,7 +9,7 @@ import { PALETTE } from './lib/palette'
 // looks like "smaller ball, roughly the same fall." Two spheres released on the
 // same line, with the LEFT one pinned at R_BIG forever, turns the exponent into a
 // gap you can measure with a finger. Fixing the reference is load-bearing: the
-// leader's terminal speed never changes, so the race always takes the same 1.96 s
+// leader's terminal speed never changes, so the race always takes the same 1.81 s
 // (no slider-dependent playback rate), and the challenger's final depth is exactly
 // 1/k² of the column at EVERY slider position — a hand-check at every setting.
 //
@@ -19,7 +19,7 @@ import { PALETTE } from './lib/palette'
 //   v_t = 2(ρs − ρf) g R² / (9μ)        →  v_t ∝ R²
 //   τ   = m/(6πμR) = 2 ρs R² / (9μ)     →  τ   ∝ R²
 // With the SI constants below, v_t(R) = 556.34·R² m/s, so v_t(8 mm) = 35.6 mm/s
-// and τ(8 mm) = 4.44 ms. Fall height H = 244 px = 69.7 mm → race = 1.96 s.
+// and τ(8 mm) = 4.44 ms. Fall height H = 226 px = 64.6 mm → race = 1.81 s.
 //
 // STABILITY — why the exponential update is not a shortcut here. dt/τ = 0.94 for
 // the 8 mm sphere: forward Euler on the same step would sit right at the edge of
@@ -58,7 +58,7 @@ import { PALETTE } from './lib/palette'
 //
 // • THE TRANSIENT IS NOT SLOWED DOWN, AND UNIFORM STROBE SPACING IS THE PAYLOAD.
 //   τ = 4.4 ms means terminal velocity is reached inside the first 0.16 mm of a
-//   69.7 mm column — 0.23% of the fall. So every strobe gap is equal from the very
+//   64.6 mm column — 0.25% of the fall. So every strobe gap is equal from the very
 //   first stamp, and that equality is the visible signature of "drag has already
 //   caught weight." We deliberately do NOT stretch the transient to animate it:
 //   faking a visible acceleration phase would be inventing a physical régime the
@@ -89,13 +89,16 @@ const HOLD_STEPS = 420 // 1.75 s frozen tableau at the finish, then restage
 const SEPIA = '#78716c' // history furniture (lesson-03 palette addition): readouts, gridline labels
 
 // --- layout (canvas height 360) -------------------------------------------
+// The floor sits at 282, not 300, and the readout strip starts a full big-ball
+// radius (28 px) below it: a landed ball is centred on the floor line, and at
+// 300 it covered its own "v … mm/s" reading (visual audit 2026-09-23).
 const GAUGE_TOP = 8 // y 8–46: the two-bar "why" gauge per column
 const RELEASE_Y = 56 // solid release line, both columns
-const FLOOR_Y = 300 // solid floor line
-const H_PX = FLOOR_Y - RELEASE_Y // 244 px of fall
-const H_M = H_PX / PX_PER_M // 0.06971 m = 69.7 mm
+const FLOOR_Y = 282 // solid floor line
+const H_PX = FLOOR_Y - RELEASE_Y // 226 px of fall
+const H_M = H_PX / PX_PER_M // 0.06457 m = 64.6 mm
 const GUTTER = 28 // px between the two columns; depth labels live here
-const READOUT_Y = 310 // y 310–352: symbolic meter strip
+const READOUT_Y = 314 // y 314–356: symbolic meter strip
 
 function terminalV(R: number): number {
   return (2 * (RHO_S - RHO_F) * G * R * R) / (9 * MU)

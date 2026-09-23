@@ -109,7 +109,8 @@ export function createLiveLab(viscosity: { current: number }, grid: { current: b
     label(ctx, 'A grid of velocities carries two dyes', 16, 26, INK, w < 400 ? 13 : 15, true)
     field(ctx, f, { x: 16, y: 43, w: w - 32, h: h - 89 }, 'dye', grid.current)
     label(ctx, `${f.nx} × ${f.ny} cells · opposite edges join`, 16, h - 23, MUTED, 12)
-    ctx.textAlign = 'right'; label(ctx, `${f.metrics().divergence.toExponential(1)} /s`, w - 16, h - 6, C.div, 11); ctx.textAlign = 'left'
+    // IV's prose calls this "the imbalance readout in the corner"; it was an unlabelled number.
+    ctx.textAlign = 'right'; label(ctx, `Imbalance ${f.metrics().divergence.toExponential(1)} /s`, w - 16, h - 6, C.div, 11); ctx.textAlign = 'left'
   } }
 }
 export function LiveSolverLab() {

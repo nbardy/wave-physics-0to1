@@ -60,11 +60,12 @@ Euler's equations allow. The four viscous stops use the same modern solver. At
 1822 the fluid may slide along the wing, as Navier assumed; at 1845 it sticks to
 the surface, as Stokes concluded. The viscosity then falls through 1883 and 1904,
 and 1904 adds a near-wall comparison. Its blue strokes show the computed
-streamwise velocity; the gray strokes show the frictionless value at the same
-locations. The meter in the corner integrates the pressure around the wing at
-every stop. Under the canvas, each term gains its author's name, and
-the lower row dates the mathematics the equation borrowed. The separate
-smoothness plate stays open.
+streamwise velocity, red where it runs backward; the gray strokes show the
+frictionless value at the same locations. The meter in the corner sums the particle impacts at Newton's stop
+and integrates the pressure around the wing at every later one. Under the
+canvas, each term gains its author's name, and the lower row dates the
+mathematics the equation borrowed. The separate
+smoothness plate marks the prize question, now under review.
 
 The later views can shed vortices, but this is a coarse two-dimensional flow,
 not a resolved simulation of three-dimensional turbulence. No new "turbulence
@@ -125,8 +126,8 @@ century away.
 
 Moving water posed a harder demand. Leonardo's [studies of flowing water,
 around 1510–13](https://www.rct.uk/collection/912663/recto-studies-of-flowing-water-with-notes-verso-the-head-of-a-woman)
-trace curling waves through cascades. A drawing can record where water went.
-But push the water somewhere else, and what happens next?
+trace curling waves through cascades. A drawing can record where water went,
+not where it goes next.
 
 Both views below start with the same four eddies and the same colored markers.
 In the upper view, each place keeps its starting velocity forever. In the lower
@@ -176,8 +177,7 @@ term. Newton stated it in passing, as a hypothesis, and
 made no attempt to put it inside an equation of motion. It waited a hundred and
 thirty-five years for one.
 
-His actual theory of fluid resistance went differently, and it is worth watching
-fail. Newton computed drag by treating a fluid as a hail of independent particles
+His actual theory of fluid resistance went differently. Newton computed drag by treating a fluid as a hail of independent particles
 striking the front of the body:
 
 <CorpuscleHail />
@@ -215,10 +215,10 @@ Where the pipe narrows, the markers speed up and the pressure falls. Where it
 widens, they slow down and the pressure rises. Bernoulli's energy balance relates
 these changes, but it does not determine the full velocity field.
 
-What the book could not do is as important as what it could. An energy ledger along
+An energy ledger along
 a pipe says nothing about water in the open — it cannot tell you what the stream
 around our gray disc *does*, point by point — and it carries no friction at all.
-It also nearly didn't survive its own family. Daniel's father Johann, one of the
+The book also nearly didn't survive its own family. Daniel's father Johann, one of the
 great mathematicians of Europe, published his own treatise, *Hydraulica*, dated it
 1732 — six years before it was actually written — and claimed the subject as his.
 "I am robbed of my entire Hydrodynamica," Daniel wrote to a friend in Berlin,
@@ -234,7 +234,7 @@ d'Alembert, studying a plucked string, produced the first partial differential
 equation in physics — an equation relating how a shape changes in time to how it
 curves in space:
 
-<StringSection stage="string" />
+<StringSection stage="plucked" />
 
 The instrument was built *for a wave*: the string got its equation a decade before
 fluids got theirs.
@@ -288,7 +288,7 @@ doesn't change the drag. A low-pressure patch can therefore contribute an outwar
 *pull* in this accounting. Color tells you the direction of the horizontal force;
 it does not divide the cylinder into a front half and a back half.
 
-Why do the pressures match? Follow the paths around the cylinder. Water slows
+To see why the pressures match, follow the paths around the cylinder. Water slows
 near the nose, speeds up around the shoulders, then slows again toward the rear.
 By Bernoulli's law, pressure falls as speed rises and recovers as speed falls.
 **In this solution the flow stays attached all the way around.** Nothing takes a
@@ -306,31 +306,27 @@ leave to future Geometers to elucidate." The Academy never awarded the 1749 priz
 to anyone, on the grounds that no entrant had backed the theory with experiment;
 Euler sat among the judges.
 
-Keep your eye on that back hill.
-
 <Waypoint>
 Exact statics, an energy ledger for pipes, and a new mathematics of change
-invented for a vibrating string: that is what 1752 holds. Applied to the
+invented for a vibrating string: that is what 1749 holds. Applied to the
 resistance of a body, the frictionless calculation gives zero, and every rower
 feels otherwise. There is still no equation for the water itself, point by point.
 </Waypoint>
 
 ## Euler's Field
 
-Euler's answer came in a burst of memoirs around 1757, and its deepest move is one
-your hands already know.
+Euler's answer came in a burst of memoirs around 1757.
 Stop following individual bits of water. Stand still, and ask instead: at *this*
 point, at *this* instant, how fast is the water moving?
 
-<FlowVis mode="arrows" />
+<FlowVis mode="arrows" field="eddy" probe />
 
 This picture — a velocity attached to every point of space, $\mathbf{u}(x, y, t)$ —
 is Euler's invention. So is the second field standing behind it: he took pressure,
 Torricelli's static weight, and set it free to vary from point to point *inside*
 moving water, pushing every parcel from its high side toward its low side. Then he
 wrote Newton's law, force equals mass times acceleration, for an infinitesimal
-parcel carried by the flow — and the pieces snapped together for the first time
-in history:
+parcel carried by the flow — and the pieces snapped together:
 
 <TermStack
   items={[
@@ -430,23 +426,21 @@ the heat operator, learned from Fourier and written into water. The stack is com
   ]}
 />
 
-**The molecules were fiction, and the term was right.** Navier's intermolecular
-model was wrong in its details, and his constant — he called it $\varepsilon$ —
-was a molecular quantity he could not connect to a measured viscosity. The
-correct equation did not settle the dispute over its foundations. Four more
-derivations followed, each starting from different assumptions about the fluid.
+Navier's intermolecular model was wrong in its details, and his constant — he
+called it $\varepsilon$ — was a molecular quantity he could not connect to a
+measured viscosity. The term itself was right. The correct equation did not
+settle the dispute over its foundations. Four more derivations followed, each
+starting from different assumptions about the fluid.
 
 (One more of Navier's headaches: at the wall, he assumed the fluid *slides*. The
 1822 and 1845 stops of the first figure differ in exactly this wall condition.
-The century's pipe experiments would say otherwise — but keep a little sympathy
-for the slip condition; it has a modern afterlife.)
+The century's pipe experiments would say otherwise.)
 
 ## Five Times
 
-What followed was not five isolated flashes of genius. It was one long, in-person
-Paris argument about what a fluid actually *is* — molecules or continuum — carried
-out in memoirs, referee reports, and open polemic, with the same equation falling
-out the end every time.
+What followed was one long Paris argument about what a fluid actually *is* —
+molecules or continuum — carried out in memoirs, referee reports, and open
+polemic, with the same equation falling out the end every time.
 
 Cauchy entered the argument in 1823 while refereeing an earlier memoir of
 Navier's, on elastic solids. He asked a
@@ -463,8 +457,7 @@ spin — the smaller one faster, because torque shrinks with a parcel's volume w
 its resistance to turning shrinks faster still. Follow that to an infinitesimal
 parcel and the spin rate diverges. That object — nine numbers at every point, describing every possible
 internal push — is the container into which you can drop *any* material's law:
-steel, honey, water, air. Cauchy built the container; the fluid law is one thing
-you can put in it.
+steel, honey, water, air.
 
 Poisson re-derived the equation in 1829 by his own molecular route, compressibility
 included, satisfied with nobody else's foundations — and said so in print. In the
@@ -504,15 +497,20 @@ why. Weight scales with volume, as $R^3$, while the factor
 $6\pi\mu R$ multiplying speed in the drag law scales only as $R$. The smaller ball therefore reaches a lower
 terminal speed. Conversely, timing a ball whose size and weight you know lets
 you determine $\mu$. Navier's $\varepsilon$, which had connected to nothing anyone could
-measure, became a number you could look up for honey, water, and air. The same analysis settled a decades-old argument about the wall:
-the fluid *sticks* — no slip. (Navier's slip survives in one place: channels a
-few nanometres wide, where nanofluidics has quietly rehabilitated him.)
+measure, became a number you could look up for honey, water, and air. The same
+analysis took one side of a decades-old argument about the wall: the fluid
+*sticks* — no slip. The argument ran on through the century before no-slip won
+for ordinary liquids at ordinary scales. (Navier's slip condition survives
+wherever slip does matter: rarefied gases, water on water-repellent surfaces,
+channels a few nanometres wide. It is still the standard model there.)
 
-The equation's first exact laboratory triumph had, fittingly, nothing to do with
-any of the five. Jean Poiseuille was a physician measuring blood flow through fine
-glass capillaries in the 1840s; Gotthilf Hagen, a German engineer, found the same
-law in brass pipes independently. Both pipes below have the same length, fluid, and
-pressure drop. The upper pipe stays at radius 1; the slider changes the lower one.
+The equation's first exact laboratory test had nothing to do with any of the
+five. Jean Poiseuille was a physician interested in the circulation of the
+blood; between 1838 and 1846 he measured water flowing through glass tubes a
+fraction of a millimetre wide. Gotthilf Hagen, a Berlin hydraulic engineer,
+found the same law in brass tubes independently, and published first, in 1839.
+Both pipes below have the same length, fluid, and pressure drop. The upper pipe
+stays at radius 1; the slider changes the lower one.
 At radius 1 they must collect equal volumes. Narrow the lower pipe and watch how
 quickly that equality disappears:
 
@@ -525,8 +523,9 @@ each circular cross-section; the colored dots trace the flow. The flow readout
 compares the lower pipe with the upper one.
 
 Halve the radius and the flow falls to a sixteenth. Flux scales as the *fourth
-power* of the radius. The equation reproduced the dependence measured in the
-capillaries, giving the viscous term a direct experimental test.
+power* of the radius. Both men measured that law before anyone derived it.
+Around 1860 it was worked out from the equation with a non-slipping wall, and
+it matched the tubes; that was the viscous term's direct experimental test.
 
 <Waypoint>
 The equation predicts how fast a small sphere falls and how much water passes
@@ -616,7 +615,7 @@ paused.
 
 Recall the parcel that had to climb the back hill on its own returned momentum,
 and how the exactness of the cancellation depended on nothing taking a cut. Inside
-the sliver, something takes a cut. The water there has been rubbing against the
+the slowed layer, something takes a cut. The water there has been rubbing against the
 wall the whole way around, and it arrives at the shoulder already short of speed —
 too short to climb back up to the tail's high pressure. It makes it partway up the
 hill, stalls, and is shoved backwards by the pressure it failed to climb. Choose
@@ -637,7 +636,6 @@ next to the surface. Prandtl added no new force term. He separated the near-wall
 region, where velocity changes rapidly with distance, from the outer flow, where
 viscosity can often be neglected.
 
-The resolution is stranger than "d'Alembert was wrong."
 The frictionless calculation is internally consistent. What fails is applying
 its attached, symmetric flow to a body with a separated wake. A thin boundary
 layer can change an extended region behind the body and alter the pressure
@@ -722,14 +720,22 @@ existed.
 Olga Ladyzhenskaya — taught mathematics by her father, a schoolteacher the NKVD
 shot in 1937, and barred for his sake from Leningrad University — later fenced off
 the flat world: in two dimensions, the setting of our planar flow solvers,
-smoothness holds, uniqueness holds, the theory is clean. Every difficulty lives in
-the third dimension, where vortex lines can stretch. Whether three-dimensional
-solutions always stay smooth is, as of this sentence, unknown. In May 2000 the
-Clay Mathematics Institute named it one of seven Millennium Prize Problems, with
-a bounty and a problem statement six pages long. The strongest recent evidence cuts the wrong
-way for optimists: in 2016 Terence Tao showed that a slightly averaged cousin of
-the equation *does* blow up in finite time. Whatever protects the real equation —
-if anything does — is something subtler than anything yet written down.
+smoothness holds, uniqueness holds, the theory is clean (Leray had proved it for
+the whole plane; she extended it to bounded domains in 1959). Every difficulty
+lives in the third dimension, where vortex lines can stretch. In May 2000 the
+Clay Mathematics Institute named the three-dimensional question one of seven
+Millennium Prize Problems, with a bounty and a problem statement six pages long;
+the statement counts breakdown under a smooth external force as an answer. In
+2016 Terence Tao showed that an averaged cousin of the equation, one that still
+conserves energy, *does* blow up in finite time, so energy conservation alone
+cannot be what keeps the real equation smooth. As of September 2026 the answer to
+the smoothness question appears to be no, at least when a force is allowed. On the 7th of September,
+Alpöge and Buckmaster proved finite-time blowup with smooth forcing for
+three-dimensional Euler and two related models; on the 8th, OpenAI posted a
+Lean-checked proof of forced blowup for three-dimensional Navier–Stokes itself,
+starting from rest; on the 11th, the Clay Institute said the problem "has
+apparently been settled," with verification pending and no prize awarded.
+Whether smooth flow can break down with no force at all remains open.
 
 ## The Machine Age
 
@@ -759,8 +765,8 @@ Here is the first figure again:
 Run it end to end once more, watching the meter. The independent particles
 ricochet and register a drag. The ideal fluid wraps around the wing and the meter
 reads zero. Navier's fluid slides along the surface and Stokes's sticks to it.
-From there the viscosity falls, the wake wavers, and at Prandtl's stop it
-separates. The meter then shows the resistance the frictionless calculation
+From there the viscosity falls, the wake wavers, and by Prandtl's stop it has
+separated. The meter then shows the resistance the frictionless calculation
 missed.
 
 ## Further Reading
@@ -787,16 +793,21 @@ full, spectra and ship-handling both.
 Charles Fefferman's official [Clay problem statement (PDF)](https://www.claymath.org/wp-content/uploads/2022/06/navierstokes.pdf)
 says precisely what "existence and smoothness" demands, in six careful pages.
 
+The Clay Institute's [September 2026 announcement](https://www.claymath.org/news/navier-stokes-announcement)
+is the institute's own statement that the problem has apparently been settled,
+and that its review is still to come.
+
 And Jos Stam's [*Stable Fluids* (PDF)](https://www.dgp.toronto.edu/public_user/stam/reality/Research/pdf/ns.pdf)
 is the paper behind the solver in the figures above, here as a primary source.
 
 ## Final Words
 
 The name Navier–Stokes leaves out much of the work that made the equation useful:
-Cauchy's stress tensor, Saint-Venant's derivation, the measurements in capillaries
-and pipes, and Prandtl's account of the boundary layer. Their contributions changed
+Cauchy's stress tensor, Saint-Venant's derivation, the measurements in glass tubes
+and brass pipes, and Prandtl's account of the boundary layer. Their contributions changed
 what could be calculated and what could be checked against real water.
 
-We can now compute flows that none of them could have followed by hand. The
-question of whether smooth three-dimensional solutions always remain smooth
-is still open.
+We can now compute flows that none of them could have followed by hand. As of
+September 2026, a proof that smooth three-dimensional flow can break down under
+a smooth force is awaiting verification; whether it can break down with no
+force at all is still open.

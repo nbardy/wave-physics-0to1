@@ -1,5 +1,82 @@
 # HANDOFF — Lesson 01: Building the Navier–Stokes Equations
 
+## Current state — reconciled 2026-09-22
+
+**2026-09-23 — IV pre-share edit pass applied (uncommitted).** The detection
+audit at `redrafts/publish-2026-09-23/building-iv-audit.md` was applied to
+`lesson-01-navier-stokes.IV.mdx`: all 7 MUSTs (opening per INTROS, no scheduling
+after the hero, no rhetorical hinge, committee lines, referee paragraph, ending
+rings back to the two dye patches and the 16%), 11 of 12 SHOULDs, 3 COULDs;
+each item's disposition is at the foot of that ledger. IV-owned component
+changes in `src/sims/construction-v4/ReturnExperiment.tsx`: a "Dye total"
+readout under each overlap bar (the prose's conservation claim is now visible;
+exact pane's sampled total is 0.999784 at maximum stretch and prints 100.0%),
+slider relabelled "Forward → return", cell label "Centre: dye concentration",
+and `createReturnPreview()` for the index card. Shared solver-lab components
+were not touched; joins were fixed in prose instead (meter reads 0.00% / 4%;
+"imbalance readout" not "pressure residual"). Checks: typecheck, 1490 IV
+checks (one new dye-total tripwire), 142 construction, publication — all pass.
+**Promotion package** (registry entry, check-publication edits, history
+cross-link wording, poster re-shoot) is written but not applied:
+`redrafts/publish-2026-09-23/building-iv-promotion.md`. Nick's end-to-end read
+decides. Queued after that: seed `LabFluid` with the two discs so act 2 carries
+the hero's dye.
+
+**Published default: I. Completed reading alternatives: II, III, and local IV.** I is the
+September construction revision plus the September 17 audit (`d63e4a5`). II is
+the September 12 experiment rebuild, committed in `680c583`. III restores the
+pre-September article for comparison; it is older, and retains the pressure-sign
+and Reynolds-example errors recorded below. No VI or VII exists.
+
+The I/II split was committed in `a4f47a3`; III and browser draft gating in
+`73edcec`. During this reconciliation, the public `/build-info.json` reported
+`d63e4a588ad5046cb017479a87396b5592ed18b2`. These Navier–Stokes changes are
+therefore committed and deployed. All versions ship; readers get I, and
+`?draft=true&v=II` or `?draft=true&v=III` enables the alternatives. Older notes
+about stripping drafts, uncommitted II, or pending deployment are historical.
+
+Fresh local checks on September 22: TypeScript, 742 revision checks, and 142
+construction checks pass. Prior desktop/emulated-mobile QA is recorded below;
+this reconciliation was not a new browser or physical-device pass.
+
+**IV completed locally after that audit, 2026-09-22:**
+`src/lessons/lesson-01-navier-stokes.IV.mdx`, *Building a Fluid Simulation*, is a
+complete ~3,400-word draft with 13 figure slots. Four opening candidates and
+three prose openings were compared in `IV_STORY_AND_REVIEW.md`. The selected
+experiment applies prescribed shears and their inverses: exact paths return the
+two dyes; interpolation loses their shape despite preserving the dye sum. Grid
+refinement improves overlap. The story then builds from dye transport to velocity
+advection, viscosity, cell balance, pressure, and the live timestep. It does not
+repeat the history's chronology or wing. I–III and shared existing figures were
+left unchanged; new figures live in `src/sims/construction-v4/`.
+
+IV is registered as `draft` at `/lesson/navier-stokes?v=IV&draft=true`. Its new
+numerical/render suite (`bun run check:construction-v4`), the 142 construction
+checks, publication checks, TypeScript, and production build pass. A complete
+1280px/390px browser figure pass, slider return trips, continuous drags, keyboard,
+option buttons, paused interventions, and reset pass; no browser errors or KaTeX
+errors. Numerical evidence and rendered screenshots are in
+`_figure_check/construction-v4/`. The story/review document records the per-figure
+reader pass, accepted and declined criticisms, and technical limits.
+**This IV work is uncommitted and not deployed.** The deployed build described
+above includes I–III. Production continues to show I by default; ordinary reader
+mode cannot select IV even in the local build.
+
+Remaining:
+
+- **Editorial choice with Nick:** read the completed IV against the history and
+  existing reading copies. Compare II's experiments with I's later corrections;
+  do not treat the labels as a chronological ladder.
+- **Optional research:** the Tesla geometry experiment remains deferred; it is
+  not a prerequisite for IV or an unfinished part of this build.
+- **Next learned-solver editor:** repair the dependent lesson-04/05 claims and
+  quotation guard recorded in `articles/08-learned-solver/HANDOFF.md`.
+- **Reader/device review:** judge the chosen result and exercise touch controls
+  on a physical phone before calling that part of QA complete.
+
+The dated entries below preserve implementation history. This summary supersedes
+their status and pending-work statements where they conflict.
+
 ## Version III mounted for reading — 2026-09-16
 
 Nick read the live article (version I, Astra's 10 September construction

@@ -3,6 +3,7 @@ import type { LessonPreviewSpec } from '../components/previewSpec'
 import Lesson01I from './lesson-01-navier-stokes.I.mdx'
 import Lesson01II from './lesson-01-navier-stokes.II.mdx'
 import Lesson01III from './lesson-01-navier-stokes.III.mdx'
+import Lesson01IV from './lesson-01-navier-stokes.IV.mdx'
 import Lesson02I from './lesson-02-fiber-bundles.I.mdx'
 import Lesson02II from './lesson-02-fiber-bundles.II.mdx'
 import Lesson02III from './lesson-02-fiber-bundles.III.mdx'
@@ -265,6 +266,13 @@ export const lessons: Lesson[] = [
         note: 'As it stood before the September revision · 30 July reader-ToM redraft, mounted 16 September for side-by-side reading',
         Content: Lesson01III,
       },
+      {
+        label: 'IV',
+        author: 'working draft',
+        status: { kind: 'draft' },
+        note: 'Put the dye back · how grid updates move fluid, lose detail, and correct volume',
+        Content: Lesson01IV,
+      },
     ],
   },
   {
@@ -297,7 +305,7 @@ export const lessons: Lesson[] = [
     order: 3,
     title: 'The History of Navier–Stokes',
     blurb:
-      'The partner to lesson 01: the same equation, built again — this time by history. Five discoveries, two strangers in the name, a 152-year paradox, and a million-dollar question still open.',
+      'The partner to lesson 01: the same equation, built again — this time by history. Five discoveries, two strangers in the name, a 152-year paradox, and a million-dollar question now under review.',
     tags: ['fluids', 'history', 'pde'],
     status: { kind: 'published' },
     versions: sole(Lesson03),

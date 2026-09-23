@@ -18,9 +18,9 @@ export function createProjectionLab(value: { current: number }, iterations = fal
       label(ctx, 'Proposed velocity', a.x, a.y + 14, undefined, 15, true)
       label(ctx, iterations ? `${Math.round(value.current)} pressure sweeps` : `${Math.round(value.current)}% correction`, b.x, b.y + 14, undefined, 15, true)
       label(ctx, 'Violet: local imbalance', a.x, a.y + 34, MUTED, 12)
-      label(ctx, iterations ? 'Same input, corrected again' : 'Cyan: lower pressure', b.x, b.y + 34, MUTED, 12)
+      label(ctx, iterations ? 'Same input, corrected again' : 'Cyan low, pink high pressure · violet: imbalance left', b.x, b.y + 34, MUTED, 12)
       field(ctx, original, { x: a.x, y: a.y + 48, w: a.w, h: a.h - 103 }, 'divergence', true)
-      field(ctx, f, { x: b.x, y: b.y + 48, w: b.w, h: b.h - 103 }, iterations ? 'divergence' : 'pressure', true)
+      field(ctx, f, { x: b.x, y: b.y + 48, w: b.w, h: b.h - 103 }, iterations ? 'divergence' : 'pressure-residual', true)
       meter(ctx, a, reference, reference)
       meter(ctx, b, f.metrics().divergence, reference)
     },

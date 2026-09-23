@@ -291,37 +291,59 @@ export function createHistoryFlow(kind: EraKind, comparison: () => boolean = () 
       if (kind === 'prandtl' && solver) {
         // Near-wall velocities, sampled from this solve (blue forward, red
         // backward). An ideal-flow reference in gray shows the no-slip contrast.
-        const x0 = w - 120, y0 = 24
+        // Visual audit 2026-09-23: a fixed 122×112 box covered a third of the
+        // 340 px mobile canvas, wake included, and 1.6 px blue strokes were
+        // unreadable. The inset now scales with the canvas and, below 560 px,
+        // sits bottom-left over the undisturbed inlet stripes instead of the wake.
+        const scale = Math.max(.7, Math.min(1, w / 640))
+        const bw = 122 * scale, bh = 112 * scale
+        const narrow = w < 560
+        const bx = narrow ? 8 : w - bw - 8
+        const by = narrow ? h - bh - 8 : 8
+        const x0 = bx + 12 * scale, y0 = by + 16 * scale
+        const wall = x0 + 12 * scale
         ctx.fillStyle = 'rgba(255,255,255,0.92)'
-        ctx.fillRect(x0 - 12, y0 - 16, 122, 112)
-        ctx.font = '11px ui-sans-serif, system-ui'
+        ctx.fillRect(bx, by, bw, bh)
+        ctx.font = `${11 * scale}px ui-sans-serif, system-ui`
         ctx.fillStyle = '#78716c'
         ctx.fillText('near the wing', x0, y0)
         const shoulder = OUTLINE[140]
+        // Samples 2.6 cells apart, not 1.4: measured 2026-09-23, the stalled
+        // layer above the shoulder is 12–14 cells deep (|u| < 0.25 U), so a
+        // 0–8 cell span showed seven near-zero strokes. 0–16 cells reaches the
+        // free stream, and the profile — stopped, reversed, then full speed —
+        // is the contrast the prose describes.
         for (let i = 0; i < 7; i++) {
-          const x = shoulder.x, y = shoulder.y - i * 1.4
-          const actual = velocity(x, y).x / U * 34
-          const ideal = idealVelocity(x, y).x / U * 34
-          const py = y0 + 80 - i * 10
+          const x = shoulder.x, y = shoulder.y - i * 2.6
+          const actual = velocity(x, y).x / U * 34 * scale
+          const ideal = idealVelocity(x, y).x / U * 34 * scale
+          const py = y0 + (80 - i * 10) * scale
           ctx.strokeStyle = '#c9c5be'
-          ctx.lineWidth = 3
+          ctx.lineWidth = 4 * scale
           ctx.beginPath()
-          ctx.moveTo(x0 + 12, py)
-          ctx.lineTo(x0 + 12 + ideal, py)
+          ctx.moveTo(wall, py)
+          ctx.lineTo(wall + ideal, py)
           ctx.stroke()
           ctx.strokeStyle = actual < 0 ? PALETTE.pHi : PALETTE.vel
-          ctx.lineWidth = 1.6
+          ctx.lineWidth = 2.5 * scale
           ctx.beginPath()
-          ctx.moveTo(x0 + 12, py)
-          ctx.lineTo(x0 + 12 + actual, py)
+          ctx.moveTo(wall, py)
+          ctx.lineTo(wall + actual, py)
           ctx.stroke()
         }
+        // The wall itself, so a zero-length stroke reads as "stopped at the wall".
+        ctx.strokeStyle = '#4b5563'
+        ctx.lineWidth = 2
+        ctx.beginPath()
+        ctx.moveTo(wall, y0 + 8 * scale)
+        ctx.lineTo(wall, y0 + 86 * scale)
+        ctx.stroke()
         ctx.strokeStyle = '#78716c'
         ctx.setLineDash([3, 4])
         ctx.lineWidth = 1
         ctx.beginPath()
         ctx.moveTo(shoulder.x * sx, shoulder.y * sy)
-        ctx.lineTo(x0 - 12, y0 + 90)
+        ctx.lineTo(narrow ? bx + bw : bx, narrow ? by : by + bh - 6)
         ctx.stroke()
         ctx.setLineDash([])
       }

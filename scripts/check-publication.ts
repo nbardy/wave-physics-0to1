@@ -51,8 +51,10 @@ for (const lesson of published) {
 const readerBuilding = table.lessonById(reader, 'navier-stokes')!
 const editorBuilding = table.lessonById(editor, 'navier-stokes')!
 assert.deepEqual(readerBuilding.versions.map(v => v.label), ['I'])
-assert.deepEqual(editorBuilding.versions.map(v => v.label), ['I', 'II', 'III'])
+assert.deepEqual(editorBuilding.versions.map(v => v.label), ['I', 'II', 'III', 'IV'])
 assert.equal(table.versionOf(readerBuilding, 'II'), undefined)
+assert.equal(table.versionOf(readerBuilding, 'IV'), undefined)
+assert.ok(table.versionOf(editorBuilding, 'IV'))
 assert.ok(table.versionOf(editorBuilding, 'III'))
 assert.equal(table.defaultVersion(readerBuilding).label, 'I')
 assert.ok(!table.tagsInUse(reader).some(({ tag }) => tag === 'quantum'))

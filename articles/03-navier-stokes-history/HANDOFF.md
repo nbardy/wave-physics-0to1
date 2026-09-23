@@ -1,13 +1,58 @@
 # HANDOFF — Lesson 03: The History of Navier–Stokes
 
-## Current state — reconciled 2026-09-11
+## Current state — pre-share edit pass 2026-09-23 (uncommitted, pending Nick's read)
 
-The September history revisions, checks, and separate version-two story sketch
-are checkpointed in `7fe705a`; shared infrastructure is in `924c9df`. The lesson
-remains `draft`. The old “browser QA not done” and “not committed” entries below
-describe earlier states. Desktop/emulated-mobile reader checks and the targeted
-physics checks were completed as recorded in the September entries. A physical
-device touch pass remains distinct from those checks.
+**The factual follow-up below is closed in the working tree; nothing is
+committed.** Edited: the MDX, the registry blurb (id `navier-stokes-history`
+only), and this file. Ledgers: `redrafts/publish-2026-09-23/history-factcheck.md`
+and `history-audit.md`; the audit's appended "Disposition" section records
+every item as applied or skipped with a reason.
+
+What changed in the MDX:
+- Poiseuille measured **water** in glass tubes 0.015–0.6 mm wide (1838–1846), as
+  a physician interested in circulation; Hagen (Berlin hydraulic engineer, brass
+  tubes) published first in 1839; the fourth-power law was measured before the
+  ~1860 no-slip derivation matched it. "Triumph" → "test"; Final Words
+  "capillaries and pipes" → "glass tubes and brass pipes".
+- Stokes 1851 "settled" the wall argument → "took one side of"; Navier's slip
+  "survives in one place" → the standard model wherever slip matters (rarefied
+  gases, water-repellent surfaces, nanometre channels).
+- Ladyzhenskaya sentence now credits Leray for the whole plane (1933) and her
+  for bounded domains (1959).
+- **September 2026 status update** (Millennium paragraph and Final Words, both
+  dated "As of September 2026"): Tao 2016 recast as a barrier (energy
+  conservation alone cannot protect the equation), not evidence about the real
+  equation; Alpöge–Buckmaster 7 Sep (forced blowup, 3D Euler + two models);
+  OpenAI 8 Sep (Lean-checked forced blowup for 3D Navier–Stokes from rest, which
+  targets Fefferman's breakdown alternatives, which allow a smooth force); Clay
+  11 Sep "has apparently been settled", verification pending, no prize awarded;
+  unforced question stated open. Clay announcement added to Further Reading
+  next to the Fefferman statement. No credit dispute named. Registry blurb:
+  "a million-dollar question now under review".
+- Audit MUSTs: hero meter caption now says impacts at Newton, pressure
+  integral at every later stop (matches `flow.ts`); "Inside the sliver" →
+  "Inside the slowed layer"; "not five isolated flashes … in-person Paris" cut.
+- Audit SHOULDs all applied (S-1..S-12), plus C-5 and C-9 as pure cuts. S-12
+  measured: the Reynolds stop (Re 180) already shows ~140–260 reverse-flow
+  cells, so the hero's return now says "by Prandtl's stop it has separated".
+- Left for Nick: Cauchy "1823" (factcheck: soft, 1822 safer); the hero's
+  smoothness plate label "open (2000–)" in `TimelineHero.tsx` (component, not
+  touched); C-1/C-11 optional voice items.
+
+Checks after the edits: `bun run typecheck`, `check:history` (63), 
+`check:history-followups` (40), `check:publication` — all pass. No check reads
+the MDX, so none needed a quotation-guard update.
+
+## Previous state — reconciled 2026-09-22
+
+**Published, committed, and deployed.** The September rebuild and separate
+version-two sketch were checkpointed in `7fe705a`; publication is recorded in
+`06769b3`, the six-discovery hero in `1fb5c04`, and the September 17 cuts and
+factual/voice audit in `6cc4c41`. During this reconciliation, the public
+`/build-info.json` reported `d63e4a588ad5046cb017479a87396b5592ed18b2`, which
+includes those commits. No publication flip or deployment of those changes is
+still owed. Desktop/emulated-mobile and targeted physics checks are recorded
+below; a physical-device touch pass on the six-notch scrubber remains distinct.
 
 The version-two sketch is intentionally unimplemented: Nick commissioned a
 parallel story/visual sketch while keeping this article in place. It is not
@@ -15,20 +60,17 @@ unfinished implementation owed by this thread. The sound, momentum, and cascade
 follow-ups formerly listed as RESEARCH_QUEUE Q6 are built; their canonical record
 is “Remaining figure follow-ups — BUILT 2026-09-10” below.
 
-The September 9 source review was broader than the visual repair. A small factual
-follow-up is still owed: the Poiseuille paragraph still describes blood in the
-capillaries, the slip paragraph still says “survives in one place,” and the Tao
-paragraph retains the “strongest recent evidence”/“anything yet written down”
-overstatement identified by the review. Verify and correct those passages against
-their sources. Mathematical-status claims also need a fresh primary-source check
-at publication; the review's time-sensitive announcement is not established by
-this handoff audit. Most old figure findings are superseded by the rebuilt
-components and must not be reapplied from stale line numbers.
-
-Publication remains a separate step. The local Pages branch still records the
-September 6 deployment; no claim about the current live site was verified here.
-Current shared-tree work also includes a separate construction-article version II
-and signup infrastructure. No deployment was attempted during this audit.
+**Open factual follow-up, verified against the current MDX on September 22; owner:
+next history editor.** Despite the September 17 audit, the Poiseuille paragraph
+still describes blood in the glass capillaries, the slip paragraph still says
+“survives in one place,” and the Tao paragraph retains “strongest recent evidence”
+and “anything yet written down.” These are the three outstanding flags from the
+September 9 source review. Verify and correct them against primary sources, and
+recheck time-sensitive mathematical-status claims for the next content release.
+This reconciliation confirms the wording remains; it is not a fresh source audit.
+Most old figure findings are superseded by rebuilt components and must not be
+reapplied from stale line numbers. Reader feedback may still improve the published
+article; the completed audit does not substitute for Nick's judgment.
 
 The dated notes below preserve implementation details and measurements. Their
 older todo lists are historical where this summary or later entries close them.

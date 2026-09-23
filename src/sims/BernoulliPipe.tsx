@@ -143,14 +143,16 @@ function createPipe(ratioRef: { current: number }): Stepper {
     ctx.lineTo(cx + radius * 0.9 * Math.cos(ang), cy + radius * 0.9 * Math.sin(ang))
     ctx.stroke()
 
+    // Label and value both sit above the arc, outside the needle's sweep
+    // (visual audit 2026-09-23: a value at the pivot was struck through).
     ctx.fillStyle = SEPIA
     ctx.font = '600 10px ui-sans-serif, system-ui'
     ctx.textAlign = 'center'
-    ctx.fillText(label, cx, cy - radius - 6)
+    ctx.fillText(label, cx, cy - radius - 18)
     ctx.font = '600 11px ui-monospace, SFMono-Regular, monospace'
     ctx.fillStyle = color
     const rel = p / (0.5 * RHO * U0 * U0) // in units of the inlet dynamic head
-    ctx.fillText(`${rel >= 0 ? '+' : ''}${rel.toFixed(2)}`, cx, cy - 6)
+    ctx.fillText(`${rel >= 0 ? '+' : ''}${rel.toFixed(2)}`, cx, cy - radius - 6)
     ctx.textAlign = 'left'
   }
 
@@ -168,7 +170,9 @@ function createPipe(ratioRef: { current: number }): Stepper {
       const ratio = ratioRef.current
       ctx.clearRect(0, 0, w, h)
       const padX = 24
-      const midY = h * 0.56
+      // 0.6, not 0.56: the gauge label and value stack above the bulge dial
+      // need the headroom, and the bottom of the canvas was empty.
+      const midY = h * 0.6
       // Pixels per unit of `boreHalf` (full bore = 0.5, so the inlet half-height is
       // `halfPix`). Sized so the widest bulge — 1/0.45 = 2.22× full bore at the
       // slider's narrow end — still fits between the canvas edges.

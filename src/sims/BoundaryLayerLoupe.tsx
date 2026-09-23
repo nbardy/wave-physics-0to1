@@ -62,7 +62,12 @@ export function createLoupe(probe: { current: number }): LoupeStepper {
     drag += (1 - Math.exp(-LOUPE_DT / .5)) * (cd - drag)
   }
   // Start with developed motion. Moving a probe never resets this flow.
+  // The reversed run at the Rear preset (160°) only forms after about 8 s
+  // (360 steps) of flow, and the prose promises it on arrival. Running all 360
+  // here froze the page ~3 s at mount (Sim builds every figure on load), so 200
+  // run now and the remaining 160 catch up over the first visible frames.
   for (let i = 0; i < 200; i++) advance()
+  let catchUp = 160
   const sampleProfile = () => {
     const theta = Math.PI + probe.current * Math.PI / 180
     const nx = Math.cos(theta), ny = Math.sin(theta)
@@ -84,6 +89,7 @@ export function createLoupe(probe: { current: number }): LoupeStepper {
   return {
     measure: () => ({ time, angle: probe.current, drag, samples: sampleProfile() }),
     step(dt) {
+      for (let i = 0; i < 6 && catchUp > 0; i++, catchUp--) advance()
       acc += dt
       while (acc + 1e-12 >= LOUPE_DT) { advance(); acc -= LOUPE_DT }
     },
@@ -203,7 +209,10 @@ export function BoundaryLayerLoupe({ height = 490 }: { height?: number }) {
     <div className="boundary-probe">
       <Sim height={height} create={() => createLoupe(probe)}>
         <div className="boundary-probe-presets" role="group" aria-label="Probe location">
-          {([['Front', 45], ['Shoulder', 90], ['Rear', 145]] as const).map(([label, value]) => (
+          {/* Rear sits at 160, not 145: measured over 40 s (2026-09-23), 145°
+              averages 1.8 reversed samples and 160° averages 11, so the red
+              run the prose promises is visible at the preset. */}
+          {([['Front', 45], ['Shoulder', 90], ['Rear', 160]] as const).map(([label, value]) => (
             <button type="button" key={label} aria-pressed={angle === value} onClick={() => setAngle(value)}>{label}</button>
           ))}
         </div>

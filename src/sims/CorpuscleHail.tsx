@@ -34,7 +34,14 @@ const CX_FRAC = 0.32
 const CY_FRAC = 0.5
 const R_FRAC = 0.16 // radius as a fraction of height
 
-const N_PARTICLES = 150
+// One corpuscle per 400 px² (400 on a 620×260 canvas), not a fixed 150
+// (2026-09-23): the 6 s average is a count of ~30 impacts at 150 corpuscles,
+// so it wandered ±20% at a fixed speed (1.25 vs 1.89 in two captures at 2×)
+// while the prose says it "settles on a perfectly definite drag". Impacts
+// scale with density; see also the stratified inflow in `spawn`. Measured
+// after the change: the average holds within ±3% at 1× and ±1% at 2×.
+const PARTICLES_PER_PX2 = 1 / 400
+const particleCount = (w: number, h: number) => Math.round(w * h * PARTICLES_PER_PX2)
 
 // Fixed physics step, decoupled from RAF cadence. The only "integration" here is
 // straight-line ballistic motion (x += v·dt) plus a specular reflection at the
@@ -68,7 +75,7 @@ const DRAG_NORM = 900
 // So ⟨drag⟩ = (8/3)·ρ·R·U², quadratic in U (the readout only shows it; no prose
 // figure tests it).
 function expectedDrag(scene: Scene, w: number, h: number, U: number): number {
-  const rho = N_PARTICLES / (w * h)
+  const rho = particleCount(w, h) / (w * h)
   return ((8 / 3) * rho * scene.R * U * U) / DRAG_NORM
 }
 
@@ -137,8 +144,13 @@ function makeRand(seed: number) {
   }
 }
 
-export function createCorpuscleHail(uRef: { current: number }, width: number, height: number): Stepper {
+export interface HailStepper extends Stepper {
+  measure(): { time: number; now: number; avg: number; impacts: number }
+}
+
+export function createCorpuscleHail(uRef: { current: number }, width: number, height: number): HailStepper {
   const scene = sceneOf(width, height)
+  const N_PARTICLES = particleCount(width, height)
   const rand = makeRand(0x517a)
   const ghost = traceGhostStreamlines(scene, width, height)
 
@@ -152,10 +164,10 @@ export function createCorpuscleHail(uRef: { current: number }, width: number, he
   // Bars' full scale. Measured steady state runs ~1.2–1.3× the uniform-hail
   // formula: a corpuscle that strikes the disc bounces out the left edge and is
   // recycled in ~2·cx/U, while one that misses takes w/U, so the upstream
-  // density sits above N/(w·h); on top of that the 6 s average sees only ~30
-  // impacts at U_MAX, so it wanders ±20%. At ×1.3 the average bar clipped at
-  // the slider's top (93–100% of scale at U=140); at ×1.7 a 40 s run at U=140
-  // on a 640×360 canvas peaks at 0.86 of scale (2026-09-17).
+  // density sits above N/(w·h). At ×1.3 the average bar clipped at the
+  // slider's top (93–100% of scale at U=140); at ×1.7 a 40 s run at U=140
+  // on a 640×360 canvas peaked at 0.86 of scale (2026-09-17). With the
+  // stratified inflow the same run sits near 0.7 of scale.
   const fullScale = expectedDrag(scene, width, height, U_MAX) * 1.7
 
   // rolling impact log: momentum transfers with the sim-time they happened at
@@ -166,10 +178,15 @@ export function createCorpuscleHail(uRef: { current: number }, width: number, he
   // −8 recycle cutoff below, or it would be culled again on the next step and
   // never make it into frame. The inflow staggers itself: particles come back at
   // whatever moment they left.
+  // Heights come from a golden-ratio sequence, not the random stream: the
+  // inflow is then evenly stratified across the front face, so the impact
+  // count per window varies far less than a Poisson count would.
+  let spawned = 0
   const spawn = (i: number, atLeft: boolean) => {
     const U = uRef.current
+    spawned++
     xs[i] = atLeft ? -rand() * 7 : rand() * width
-    ys[i] = rand() * height
+    ys[i] = ((spawned * 0.61803398875) % 1) * height
     vx[i] = U
     vy[i] = 0
     bounced[i] = 0
@@ -247,6 +264,7 @@ export function createCorpuscleHail(uRef: { current: number }, width: number, he
   let acc = 0
 
   return {
+    measure: () => ({ time: simTime, now: dragOver(WINDOW_NOW_S), avg: dragOver(WINDOW_AVG_S), impacts: impacts.length }),
     step(dt) {
       acc += dt
       let guard = 0
