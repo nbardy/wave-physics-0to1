@@ -69,16 +69,21 @@ export function TocList({
   more,
   items,
   numbered = true,
+  compact = false,
+  headingLevel = 2,
 }: {
   label: string
   more?: { to: string; label: string }
   items: Lesson[]
   numbered?: boolean
+  compact?: boolean
+  headingLevel?: 2 | 3
 }) {
+  const Heading = headingLevel === 3 ? 'h3' : 'h2'
   return (
-    <nav className={`toc${numbered ? '' : ' toc--unnumbered'}`} aria-label={label}>
+    <nav className={`toc${compact ? ' toc--compact' : ''}${numbered ? '' : ' toc--unnumbered'}`} aria-label={label}>
       <div className="toc-head-block">
-        <p className="toc-eyebrow">{label}</p>
+        <Heading className="toc-eyebrow">{label}</Heading>
         {more && (
           <p className="toc-eyebrow-more">
             <Link to={more.to}>{more.label}</Link>

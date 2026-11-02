@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { FIELDS } from '../lessons/registry'
 import { useCatalogue } from '../lessons/AudienceContext'
 import { TocList } from '../components/Toc'
@@ -13,6 +14,7 @@ export default function Home() {
           Every lesson is a derivation you can poke at: rigorous where it has to be, and built
           around simulations that run the physics rather than illustrate it.
         </p>
+        <p className="topics-home-link"><Link to="/topics">Browse topics &amp; series →</Link></p>
         <NewsletterIntro />
       </header>
 

@@ -24,7 +24,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         </Link>
         <nav className="site-nav">
           <Link to="/">Fields</Link>
-          <Link to="/all">All</Link>
+          <Link to="/topics">Topics</Link>
           <Link to="/stack-check">Stack&nbsp;check</Link>
         </nav>
       </header>

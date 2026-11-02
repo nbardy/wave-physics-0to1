@@ -22,6 +22,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/all" element={<All />} />
+          <Route path="/topics" element={<All />} />
           <Route path="/lesson/:id" element={<LessonView />} />
           <Route path="/series/:id" element={<SeriesPage />} />
           <Route path="/stack-check" element={<StackCheck />} />
