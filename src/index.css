@@ -903,3 +903,11 @@ a:hover {
   .sim-controls button { min-height: 44px; }
   .sim-slider input[type='range'] { min-height: 28px; }
 }
+
+/* Long display equations scroll inside the article on narrow screens. */
+.katex-display {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.25em 0;
+}

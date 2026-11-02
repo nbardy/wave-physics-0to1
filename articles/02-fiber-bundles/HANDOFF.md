@@ -1,3 +1,11 @@
+# Publication — 2026-11-03
+
+Published Version III as the public default. Versions I and II remain editor drafts. The index preview now uses the Aharonov–Bohm banner from III. Existing source, figure, desktop, and 390px audits pass in the release checkout.
+
+Nick authorized publishing all ready physics-site work in this chat. Release uses an isolated checkout; unrelated shared-tree edits are excluded. The historical notes below describe earlier states.
+
+---
+
 # Current state — Version III, 2026-09-22
 
 **Version III is the current reader-review draft.** User rejected Version II's

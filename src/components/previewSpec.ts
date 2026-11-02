@@ -9,6 +9,8 @@ export interface LessonPreviewSpec {
   crop?: { x: number; y: number; width: number; height: number }
   /** Seconds of the same fixed-step simulation used to make the poster. */
   warmup: number
+  /** Static experiments keep their poster on hover. Omitted means animated. */
+  animated?: boolean
   load: () => Promise<Stepper>
 }
 

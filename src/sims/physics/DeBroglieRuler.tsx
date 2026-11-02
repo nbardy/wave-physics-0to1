@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { usePhysicsWidth } from './layout'
 import { Sim, type Stepper } from '../../components/Sim'
 import { PALETTE } from '../lib/palette'
 import { FONT_LABEL, FONT_METER, paneFrame } from '../lib/chrome'
@@ -113,7 +114,8 @@ export function createRuler(sel: { current: Mover }): Stepper {
       ctx.clearRect(0, 0, w, h)
       const padX = 14
       const plotW = w - 2 * padX
-      const axisY = 92
+      const narrow = w < 520
+      const axisY = narrow ? 110 : 92
       const toPxX = (x: number) =>
         padX + ((Math.log10(x) - LOG_MIN) / (LOG_MAX - LOG_MIN)) * plotW
 
@@ -138,17 +140,19 @@ export function createRuler(sel: { current: Mover }): Stepper {
       }
 
       // landmarks below the line
-      for (const lm of LANDMARKS) {
+      for (const [i, lm] of LANDMARKS.entries()) {
         const px = toPxX(lm.at)
+        const landmarkY = axisY + (narrow ? 38 + (i % 2) * 16 : 38)
         ctx.strokeStyle = 'rgba(107,114,128,0.5)'
         ctx.setLineDash([2, 3])
         ctx.beginPath()
         ctx.moveTo(px, axisY + 4)
-        ctx.lineTo(px, axisY + 26)
+        ctx.lineTo(px, landmarkY - 12)
         ctx.stroke()
         ctx.setLineDash([])
         ctx.fillStyle = 'rgba(107,114,128,0.95)'
-        ctx.fillText(lm.label, px - ctx.measureText(lm.label).width / 2, axisY + 38)
+        const labelW = ctx.measureText(lm.label).width
+        ctx.fillText(lm.label, Math.max(2, Math.min(w - labelW - 2, px - labelW / 2)), landmarkY)
       }
 
       // specimens above the line
@@ -177,31 +181,45 @@ export function createRuler(sel: { current: Mover }): Stepper {
       const m = sel.current
       const lam = wavelength(m)
       const spacing = (lam * BENCH.L) / BENCH.d
-      const box = { x: 2, y: axisY + 48, w: w - 4, h: h - axisY - 52 }
+      const boxY = axisY + (narrow ? 70 : 48)
+      const box = { x: 2, y: boxY, w: w - 4, h: h - boxY - 4 }
       paneFrame(ctx, box)
       ctx.font = FONT_METER
       ctx.fillStyle = PALETTE.amp
       ctx.fillText(`λ = h/p = ${formatLength(lam)}`, box.x + 10, box.y + 20)
       ctx.fillStyle = PALETTE.pdf
       ctx.fillText(
-        `fringes on this bench: ${formatLength(spacing)} apart`,
+        `${narrow ? 'fringes on bench' : 'fringes on this bench'}: ${formatLength(spacing)} apart`,
         box.x + 10,
         box.y + 40,
       )
       ctx.font = FONT_LABEL
       ctx.fillStyle = 'rgba(85,96,111,0.9)'
-      ctx.fillText(m.note, box.x + 10, box.y + 60)
+      const words = m.note.split(' ')
+      let line = ''
+      let noteY = box.y + 60
+      for (const word of words) {
+        const next = line ? `${line} ${word}` : word
+        if (line && ctx.measureText(next).width > box.w - 20) {
+          ctx.fillText(line, box.x + 10, noteY)
+          noteY += 15
+          line = word
+        } else line = next
+      }
+      ctx.fillText(line, box.x + 10, noteY)
       // One ratio, always in the same direction, so the reader compares numbers
       // rather than parsing which way round the sentence went this time.
       const versus = `${sci(spacing / PROTON_WIDTH)} proton widths`
       ctx.fillStyle = 'rgba(107,114,128,0.95)'
-      ctx.fillText(versus, box.x + 10, box.y + 78)
+      ctx.fillText(versus, box.x + 10, noteY + 18)
 
       ctx.font = FONT_LABEL
       ctx.fillStyle = 'rgba(85,96,111,0.9)'
       ctx.fillText('de Broglie wavelength, metres', padX, 14)
-      const note = `fringe spacing quoted for λL/d, L = ${BENCH.L} m, d = ${(BENCH.d * 1e3).toFixed(2)} mm`
-      ctx.fillText(note, w - padX - ctx.measureText(note).width, 14)
+      const note = narrow
+        ? `bench: λL/d · L = ${BENCH.L} m · d = ${(BENCH.d * 1e3).toFixed(2)} mm`
+        : `fringe spacing quoted for λL/d, L = ${BENCH.L} m, d = ${(BENCH.d * 1e3).toFixed(2)} mm`
+      ctx.fillText(note, narrow ? padX : w - padX - ctx.measureText(note).width, narrow ? 30 : 14)
       // fringeSpacing() is the formula the rest of the article quotes for light;
       // selecting the red photon should reproduce it exactly, which is a live
       // check that this figure and the optics kit are describing one bench.
@@ -209,20 +227,21 @@ export function createRuler(sel: { current: Mover }): Stepper {
       ctx.fillText(
         `red light on this bench: ${formatLength(fringeSpacing(BENCH))} apart`,
         box.x + 10,
-        box.y + 96,
+        noteY + 36,
       )
     },
   }
 }
 
 export function DeBroglieRuler() {
+  const [container, width] = usePhysicsWidth()
   const [sel, setSel] = useState<Mover>(MOVERS[1])
   const ref = useRef(sel)
   ref.current = sel
 
   return (
-    <Sim height={310} create={() => createRuler(ref)}>
-      <div className="sim-seg" style={{ marginLeft: 0 }}>
+    <div ref={container}><Sim height={width < 520 ? 390 : 310} animated={false} create={() => createRuler(ref)}>
+      <div className="sim-seg" style={{ marginLeft: 0, flexWrap: 'wrap', maxWidth: '100%' }}>
         {MOVERS.map((m) => (
           <button
             key={m.id}
@@ -234,6 +253,6 @@ export function DeBroglieRuler() {
           </button>
         ))}
       </div>
-    </Sim>
+    </Sim></div>
   )
 }

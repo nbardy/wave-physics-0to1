@@ -3,6 +3,7 @@ import { Sim, type Stepper } from '../../components/Sim'
 import { PALETTE } from '../lib/palette'
 import { FONT_LABEL, FONT_METER, drawArrow, fmt, paneFrame } from '../lib/chrome'
 import { BENCH, SCREEN_HALF, envelope, intensityBoth, intensityOne, pathPhase } from './optics'
+import { usePhysicsWidth } from './layout'
 
 // PLAN figure 3 — why adding a second way to arrive can make a place darker.
 //
@@ -27,9 +28,14 @@ export function createPhasorSum(xRef: { current: number }): Stepper {
       ctx.clearRect(0, 0, w, h)
       const x = xRef.current
       const gap = 12
+      const narrow = w < 520
       const paneW = Math.min(200, w * 0.42)
-      const left = { x: 2, y: 20, w: paneW, h: h - 44 }
-      const right = { x: paneW + gap, y: 20, w: w - paneW - gap - 2, h: h - 44 }
+      const left = narrow
+        ? { x: 2, y: 20, w: w - 4, h: 170 }
+        : { x: 2, y: 20, w: paneW, h: h - 44 }
+      const right = narrow
+        ? { x: 2, y: 238, w: w - 4, h: h - 282 }
+        : { x: paneW + gap, y: 20, w: w - paneW - gap - 2, h: h - 44 }
 
       // --- left: the two arrows, tip to tail --------------------------------
       const amp = Math.sqrt(envelope(BENCH, x))
@@ -76,11 +82,11 @@ export function createPhasorSum(xRef: { current: number }): Stepper {
 
       ctx.font = FONT_LABEL
       ctx.fillStyle = 'rgba(85,96,111,0.9)'
-      ctx.fillText('amplitudes, tip to tail', left.x + 4, 14)
+      ctx.fillText('amplitudes, tip to tail', left.x + 4, left.y - 6)
       const turns = delta / (2 * Math.PI)
       ctx.font = FONT_METER
       ctx.fillStyle = PALETTE.slitB
-      ctx.fillText(`path difference ${fmt(turns, 2)} λ`, left.x + 4, h - 10)
+      ctx.fillText(`path difference ${fmt(turns, 2)} λ`, left.x + 4, left.y + left.h + 16)
 
       // --- right: the two totals, across the whole screen -------------------
       const base = right.y + right.h - 4
@@ -132,22 +138,25 @@ export function createPhasorSum(xRef: { current: number }): Stepper {
       paneFrame(ctx, right)
       ctx.font = FONT_LABEL
       ctx.fillStyle = 'rgba(85,96,111,0.9)'
-      ctx.fillText('arrivals per second, across the screen', right.x + 4, 14)
+      ctx.fillText('arrivals per second, across the screen', right.x + 4, right.y - 6)
       ctx.font = FONT_METER
       ctx.fillStyle = PALETTE.pdf
-      const meter = `both slits ${fmt(I, 2)}   ·   one at a time, doubled ${fmt(2 * intensityOne(BENCH, x), 2)}`
-      ctx.fillText(meter, right.x + 4, h - 10)
+      const meter = narrow
+        ? `both slits ${fmt(I, 2)} · separate, doubled ${fmt(2 * intensityOne(BENCH, x), 2)}`
+        : `both slits ${fmt(I, 2)}   ·   one at a time, doubled ${fmt(2 * intensityOne(BENCH, x), 2)}`
+      ctx.fillText(meter, right.x + 4, right.y + right.h + 16)
     },
   }
 }
 
 export function PhasorSum() {
+  const [container, width] = usePhysicsWidth()
   const [x, setX] = useState(0)
   const xRef = useRef(x)
   xRef.current = x
 
   return (
-    <Sim height={280} create={() => createPhasorSum(xRef)}>
+    <div ref={container}><Sim height={width < 520 ? 490 : 280} animated={false} create={() => createPhasorSum(xRef)}>
       <label className="sim-slider">
         <span>−30 mm</span>
         <input
@@ -161,6 +170,6 @@ export function PhasorSum() {
         <span>+30 mm</span>
       </label>
       <span className="sim-readout">{fmt(x * 1e3, 1)} mm</span>
-    </Sim>
+    </Sim></div>
   )
 }

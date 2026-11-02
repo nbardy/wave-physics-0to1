@@ -1,3 +1,11 @@
+# Publication — 2026-11-03
+
+Published the current complete article. The existing mathematics and mobile layout checks pass in the release checkout.
+
+Nick authorized publishing all ready physics-site work in this chat. Release uses an isolated checkout; unrelated shared-tree edits are excluded. The historical notes below describe earlier states.
+
+---
+
 # HANDOFF — cad/01: Basis, Cage, and Boundary
 
 Canonical per-article state. Created 2026-08-16, when the `cad` field was opened.

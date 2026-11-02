@@ -17,6 +17,7 @@ export function LessonPreview({ id, spec, active }: {
 
   useEffect(() => {
     setReady(false)
+    if (spec.animated === false) return
     const canvas = canvasRef.current!
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)')
     const bounds = previewBounds(spec)

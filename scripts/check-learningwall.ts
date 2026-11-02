@@ -27,13 +27,14 @@
  *   4. STATIC IS STATIC: a wall fed only coin-toss weights (epochs = 0)
  *      dreams ≥ 20 px from any glyph — nothing on the opening frame is a
  *      picture yet.
- *   5. RENDERING, one wall photographed at 640 and 360, twice: at epoch 20
+ *   5. RENDERING, one wall photographed at 640, 600 (the lesson column's
+ *      real width) and 360, twice: at epoch 20
  *      and trained. Cells ≥ 7 px; spin inks on the wall and on the
  *      training-set row; the fabric inset paints (wide); meter ink in the
  *      curve pane, and MORE of it trained than at epoch 20 (the curve is
  *      drawn progressively — the knob driven to both ends); the curve's last
- *      point falls; blocks do not overlap and the last text line sits inside
- *      the canvas.
+ *      point falls; blocks do not overlap, the last text line sits inside
+ *      the canvas, and no label runs off its right edge.
  */
 
 import { createCanvas, type Canvas } from '@napi-rs/canvas'
@@ -249,15 +250,18 @@ function renderFrames(): Record<number, { early: Frame; late: Frame }> {
     return { canvas, probe: { ...probe, curve: probe.curve.slice() } }
   }
   for (let i = 0; i < 2; i++) stepper.step(0.05)
-  const early = { 640: shoot(640), 360: shoot(360) }
+  const shootAll = () => ({ 640: shoot(640), 600: shoot(600), 360: shoot(360) })
+  const early = shootAll()
   for (let i = 0; i < 158; i++) stepper.step(0.05)
-  const late = { 640: shoot(640), 360: shoot(360) }
-  return { 640: { early: early[640], late: late[640] }, 360: { early: early[360], late: late[360] } }
+  const late = shootAll()
+  return Object.fromEntries([640, 600, 360].map((w) => [w, { early: early[w as 640], late: late[w as 640] }]))
 }
 
 const frames = renderFrames()
 
-for (const w of [640, 360]) {
+// 600 is the lesson column's actual CSS width (canvas 1200 px at DPR 2) —
+// the live capture of 2026-09-17 caught head-column labels clipping there
+for (const w of [640, 600, 360]) {
   const L = learningWallLayout(w, H)
   const { early, late } = frames[w]
   writeFileSync(join(OUT, `learningwall-early-${w}.png`), early.canvas.toBuffer('image/png'))
@@ -284,6 +288,15 @@ for (const w of [640, 360]) {
   ok(meterLate > 40, `fig${w}/curve-ink`, `${meterLate} px of meter ink in the curve pane`)
   ok(meterLate > meterEarly + 20, `fig${w}/curve-grows`, `curve ink ${meterEarly} px at epoch 20 → ${meterLate} px trained — drawn progressively`)
   ok(inkInRegion(late.canvas, PALETTE.meter, L.head) > 40, `fig${w}/readouts`, 'epoch and wall readouts in meter ink')
+  // nothing drawn in the head column may run off the canvas: the last 3 px
+  // column must carry no text ink (labels are gray or meter; dreams never
+  // reach it). Measured strings, not guessed widths, keep this true.
+  const edge = { x: w - 3, y: 28, w: 3, h: H - 28 }
+  const edgeInk =
+    inkInRegion(late.canvas, PALETTE.meter, edge) +
+    inkInRegion(late.canvas, '#55606f', edge, 60) +
+    inkInRegion(late.canvas, '#1a1f2b', edge, 60)
+  ok(edgeInk === 0, `fig${w}/no-clip`, `${edgeInk} px of label ink in the canvas's last 3 px column`)
   const lastEarly = early.probe.curve[early.probe.curve.length - 1].meanPx
   const lastLate = late.probe.curve[late.probe.curve.length - 1].meanPx
   ok(lastLate < lastEarly - 5, `fig${w}/curve-falls`, `curve's last point ${lastEarly.toFixed(1)} px at epoch 20 → ${lastLate.toFixed(1)} px trained`)

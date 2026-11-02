@@ -7,6 +7,10 @@ Suggested batch order: reads (§1) → structural decisions (§2) → publish
 gates (§3). Per-article state stays canonical in each `HANDOFF.md`; this file
 carries only the ask and where to look.
 
+## 2026-11-03 release
+
+Nick authorized publication of ready work. Building IV, fiber bundles III, Einstein–Grossmann II, the thermodynamic computing trilogy, CAD, and wave–particle duality are promoted in the isolated release. Their prior publish/default-choice requests below are resolved; further reader feedback and physical-device review remain useful follow-up. Learned-solver, the simulation-error survey, and Jacobian/Hessian remain drafts with substantive outstanding work.
+
 ## §1 Reads (short — do these first)
 
 - [ ] **P-bits fourth paragraph** (Nick's draft, 2026-09-04): fix "this lesson

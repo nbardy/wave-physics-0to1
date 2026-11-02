@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { usePhysicsWidth } from './layout'
 import { Sim, type Stepper } from '../../components/Sim'
 import { PALETTE } from '../lib/palette'
 import { FONT_LABEL, FONT_METER, fmt, paneFrame } from '../lib/chrome'
@@ -56,9 +57,14 @@ export function createPhotoelectric(k: Knobs): Stepper {
       const emits = nu > nu0
 
       const gap = 14
+      const narrow = w < 520
       const plotW = Math.max(150, w * 0.58)
-      const plot = { x: 2, y: 20, w: plotW, h: h - 44 }
-      const bars = { x: plotW + gap, y: 20, w: w - plotW - gap - 2, h: h - 44 }
+      const plot = narrow
+        ? { x: 2, y: 20, w: w - 4, h: 200 }
+        : { x: 2, y: 20, w: plotW, h: h - 44 }
+      const bars = narrow
+        ? { x: 2, y: 270, w: w - 4, h: h - 292 }
+        : { x: plotW + gap, y: 20, w: w - plotW - gap - 2, h: h - 44 }
 
       // --- left: the straight line the data falls on ------------------------
       const px = (f: number) => plot.x + ((f - NU_MIN) / (NU_MAX - NU_MIN)) * plot.w
@@ -103,10 +109,10 @@ export function createPhotoelectric(k: Knobs): Stepper {
       paneFrame(ctx, plot)
       ctx.font = FONT_LABEL
       ctx.fillStyle = 'rgba(85,96,111,0.9)'
-      ctx.fillText('fastest electron (eV) vs frequency', plot.x + 4, 14)
-      ctx.fillText('750 nm', plot.x + 4, h - 10)
+      ctx.fillText('fastest electron (eV) vs frequency', plot.x + 4, plot.y - 6)
+      ctx.fillText('750 nm', plot.x + 4, plot.y + plot.h + 14)
       const uv = '182 nm'
-      ctx.fillText(uv, plot.x + plot.w - ctx.measureText(uv).width, h - 10)
+      ctx.fillText(uv, plot.x + plot.w - ctx.measureText(uv).width, plot.y + plot.h + 14)
 
       // --- right: the two bars, and the ghost that disagrees ----------------
       const barW = Math.min(46, (bars.w - 24) / 2)
@@ -130,9 +136,9 @@ export function createPhotoelectric(k: Knobs): Stepper {
       }
 
       const rate = emits ? bright : 0
-      drawBar(bars.x + 4, rate, PALETTE.pdf, 'electrons/s', emits ? `${Math.round(rate * 100)}%` : '0')
+      drawBar(bars.x + (narrow ? 30 : 4), rate, PALETTE.pdf, 'electrons/s', emits ? `${Math.round(rate * 100)}%` : '0')
 
-      const gx = bars.x + 4 + barW + 16
+      const gx = narrow ? bars.x + 150 : bars.x + 4 + barW + 16
       drawBar(gx, K / E_MAX, PALETTE.ejecta, 'energy each', emits ? `${fmt(K, 2)} eV` : 'none')
       // The wave prediction — energy per electron grows with the field's
       // strength — drawn AFTER the bar, or the bar's own 22% track washes it out
@@ -155,13 +161,14 @@ export function createPhotoelectric(k: Knobs): Stepper {
       ctx.fillText(
         `${Math.round(LIGHT_SPEED / nu / 1e-9)} nm · ${fmt(photonEnergyEv(nu), 2)} eV per photon`,
         bars.x + 4,
-        14,
+        bars.y - 6,
       )
     },
   }
 }
 
 export function Photoelectric() {
+  const [container, width] = usePhysicsWidth()
   const [nu, setNu] = useState(9.0e14)
   const [bright, setBright] = useState(0.5)
   const [metal, setMetal] = useState<Metal>('sodium')
@@ -173,11 +180,12 @@ export function Photoelectric() {
   metalRef.current = metal
 
   return (
-    <Sim
-      height={300}
+    <div ref={container}><Sim
+      height={width < 520 ? 500 : 300}
+      animated={false}
       create={() => createPhotoelectric({ nu: nuRef, bright: brightRef, metal: metalRef })}
     >
-      <div className="sim-seg" style={{ marginLeft: 0 }}>
+      <div className="sim-seg" style={{ marginLeft: 0, flexWrap: 'wrap' }}>
         {METAL_ORDER.map((m) => (
           <button
             key={m}
@@ -213,6 +221,6 @@ export function Photoelectric() {
         />
         <span>blinding</span>
       </label>
-    </Sim>
+    </Sim></div>
   )
 }

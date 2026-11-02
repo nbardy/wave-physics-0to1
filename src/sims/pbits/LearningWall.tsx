@@ -80,7 +80,6 @@ export interface LearningWallProbe {
 
 export interface LearningWallLayout {
   narrow: boolean
-  tight: boolean
   cell: number
   cols: number
   wall: Rect
@@ -113,7 +112,6 @@ export function learningWallLayout(w: number, h: number): LearningWallLayout {
   const headX = wallX + wallW + (narrow ? 10 : 16)
   const headW = w - headX - margin
   const head: Rect = { x: headX - 2, y: 28, w: headW + 2, h: h - 28 - 8 }
-  const tight = !narrow && headW < 236
   const curve: Rect = narrow
     ? { x: margin, y: 356, w: w - 2 * margin, h: 44 }
     : { x: headX, y: 214, w: headW - 8, h: 78 }
@@ -122,7 +120,6 @@ export function learningWallLayout(w: number, h: number): LearningWallLayout {
     : { x: wallX, y: wallY + wallH + 22, w: 7 * (GLYPH8_SIDE * SET_CELL + 4), h: GLYPH8_SIDE * SET_CELL }
   return {
     narrow,
-    tight,
     cell,
     cols,
     wall: { x: wallX - 4, y: wallY - 4, w: wallW + 8, h: wallH + 6 },
@@ -378,6 +375,11 @@ export function createLearningWall(
       const hx = L.headX
       const gray = 'rgba(85,96,111,0.9)'
       ctx.textAlign = 'left'
+      // The lesson column is ~600 CSS px; the head is 248 px there and the
+      // long strings clip at the canvas edge (live capture, 2026-09-17).
+      // Measure in the current font rather than guess from the width.
+      const fit = (long: string, short: string) =>
+        ctx.measureText(long).width <= L.head.w - 4 ? long : short
       const meanTxt = recent.length ? fmt(recentMean(), 1) : '—'
       const famTxt = recent.length ? `${Math.round(recentFamily() * 100)}%` : '—'
       if (!L.narrow) {
@@ -386,10 +388,17 @@ export function createLearningWall(
         ctx.fillText('one chain, seen as fabric (live)', hx, 40)
         drawInset(ctx, hx, 48, 7)
         ctx.fillText('squares = pixels · dots = hidden layers', hx, 174)
-        ctx.fillText(`${CHAINS} chains · each a ${PATCH_W}×${PATCH_H} Z1 patch · ${K_SWEEPS} sweeps/level`, hx, 187)
+        ctx.fillText(
+          fit(
+            `${CHAINS} chains · each a ${PATCH_W}×${PATCH_H} Z1 patch · ${K_SWEEPS} sweeps/level`,
+            `${CHAINS} chains · ${PATCH_W}×${PATCH_H} patches · ${K_SWEEPS} sweeps/level`,
+          ),
+          hx,
+          187,
+        )
 
         ctx.fillText(
-          L.tight ? 'px wrong vs the nearest of the seven' : 'pixels wrong vs the nearest of the seven, per epoch',
+          fit('pixels wrong vs the nearest of the seven, per epoch', 'px wrong vs the nearest of the seven'),
           hx,
           208,
         )
@@ -411,12 +420,8 @@ export function createLearningWall(
         ctx.fillStyle = INK
         ctx.fillText(
           training()
-            ? L.tight
-              ? 'training here, from coin-toss weights'
-              : 'training here, on this page, from coin-toss weights'
-            : L.tight
-              ? 'trained here, from coin-toss weights'
-              : 'trained here, on this page, from coin-toss weights',
+            ? fit('training here, on this page, from coin-toss weights', 'training here, from coin-toss weights')
+            : fit('trained here, on this page, from coin-toss weights', 'trained here, from coin-toss weights'),
           hx,
           342,
         )
@@ -425,9 +430,10 @@ export function createLearningWall(
         ctx.fillStyle = PALETTE.meter
         ctx.fillText(`this wall: ${finished} dreams`, hx, 366)
         ctx.fillText(
-          L.tight
-            ? `last ${RECENT}: ${meanTxt} px · ${famTxt} in family`
-            : `last ${RECENT}: mean ${meanTxt} px · ${famTxt} within ${FAMILY_PX} px`,
+          fit(
+            `last ${RECENT}: mean ${meanTxt} px · ${famTxt} within ${FAMILY_PX} px`,
+            `last ${RECENT}: ${meanTxt} px · ${famTxt} in family`,
+          ),
           hx,
           382,
         )

@@ -741,11 +741,12 @@ Whether smooth flow can break down with no force at all remains open.
 
 In 1950, a team around Jule Charney and John von Neumann ran the first computer
 weather forecast on ENIAC, and Richardson's plan became practical. The solvers
-behind the figures above, built step by step in the
-<Link to="../navier-stokes" relative="path">previous lesson</Link>, use numerical
-methods developed over the following decades. After adding any outside pushes,
-a solver has three jobs: carry motion with the flow, exchange momentum between
-neighboring layers, and find the pressure that keeps volume balanced.
+behind the figures above use the same numerical steps the
+<Link to="../navier-stokes" relative="path">previous lesson</Link> builds on a
+small periodic grid, methods developed over the following decades. After adding
+any outside pushes, a solver has three jobs: carry motion with the flow,
+exchange momentum between neighboring layers, and find the pressure that keeps
+volume balanced.
 
 The staggered-grid method came from Francis Harlow's group at Los
 Alamos in 1965. The projection step — advance the velocity freely, then solve for

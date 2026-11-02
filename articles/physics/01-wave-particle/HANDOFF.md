@@ -2,7 +2,40 @@
 
 Canonical state for this article. AGENTS.md carries one line pointing here.
 
-## Status
+## Publication review — 2026-11-03
+
+Browser and narrow-layout QA is complete; ready for Nick's requested publication.
+This review used the isolated release checkout, leaving the shared authoring tree
+untouched. The July follow-ups below are historical where superseded here.
+
+All seven figures were inspected in Chromium at 1280px and 390px viewport widths:
+the apparatus and true-scale slit loupe; live photon arrivals and their counted
+histograms; the slit-width crossover against the ray prediction; amplitude addition
+and cancellation; photoelectric threshold, energy and count; path knowledge against
+fringe contrast; and every specimen on the de Broglie ruler.
+
+The phone-width pass found and repaired apparatus-label clipping, overlapping
+slit meters, truncated paired-pane labels, colliding which-path readouts, and
+ruler labels and buttons. The phasor and photoelectric panes now stack below
+520px of actual canvas width; a small physics-local ResizeObserver hook selects
+their heights. Ruler notes and selection buttons wrap. Static parameter studies
+no longer offer a Pause button; PhotonRain retains actual playback controls.
+All changes are presentation-only; optics and sampling mathematics are unchanged.
+
+Every slider was exercised with keyboard Home → End → Home; all four metals
+and five specimens were selected. Additional captures checked the phasor at
+the centre and its first dark fringe, and the photoelectric energy remaining
+fixed while brightness changes from 5% to 100%. PhotonRain accumulated arrivals
+at the high rate, stayed pixel-identical while paused, cleared on Reset, and
+resumed. Fresh navigation produced no browser errors or KaTeX errors. The
+release's shared display-math overflow repair keeps the long equation within
+the narrow page. This is viewport emulation, not a physical-phone touch test.
+
+Validation after the figure repairs: `bun run typecheck` and all 27 assertions
+in `bun run check:figures` pass. Browser captures and control records are under
+`/tmp/physics-p1-*` for this release session. No poster was regenerated.
+
+## Original build status
 
 **BUILT end-to-end 2026-07-31 · `draft` · awaits Nick's read.**
 

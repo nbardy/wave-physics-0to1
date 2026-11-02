@@ -50,7 +50,8 @@ export function createSlitSpread(aRef: { current: number }): Stepper {
       const padX = 12
       const plotW = w - 2 * padX
       const base = h - 30
-      const top = 26
+      const narrow = w < 520
+      const top = narrow ? 62 : 26
       const plotH = base - top
       const peak = peakIntensity(a)
       const toPxX = (x: number) => padX + ((x + SCREEN_HALF) / (2 * SCREEN_HALF)) * plotW
@@ -110,7 +111,7 @@ export function createSlitSpread(aRef: { current: number }): Stepper {
         peak >= 0.01
           ? `peak ${(peak * 100).toFixed(0)}% of unobstructed`
           : `peak ${(peak * 100).toFixed(2)}% of unobstructed`
-      ctx.fillText(bright, padX + plotW - ctx.measureText(bright).width, 26)
+      ctx.fillText(bright, padX + plotW - ctx.measureText(bright).width, narrow ? 46 : 26)
 
       ctx.font = FONT_LABEL
       ctx.fillStyle = 'rgba(85,96,111,0.9)'
@@ -120,7 +121,7 @@ export function createSlitSpread(aRef: { current: number }): Stepper {
       ctx.fillText(right, padX + plotW - ctx.measureText(right).width, h - 10)
       const F = (a * a) / (BENCH.lambda * BENCH.L)
       const fs = `Fresnel number a²/λL = ${F >= 10 ? F.toFixed(0) : F.toFixed(2)}`
-      ctx.fillText(fs, padX + plotW / 2 - ctx.measureText(fs).width / 2, 14)
+      ctx.fillText(fs, padX + plotW / 2 - ctx.measureText(fs).width / 2, narrow ? 30 : 14)
     },
   }
 }
@@ -131,7 +132,7 @@ export function SlitSpread() {
   aRef.current = a
 
   return (
-    <Sim height={280} create={() => createSlitSpread(aRef)}>
+    <Sim height={280} animated={false} create={() => createSlitSpread(aRef)}>
       <label className="sim-slider">
         <span>0.05 mm</span>
         <input

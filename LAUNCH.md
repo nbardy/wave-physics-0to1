@@ -1,3 +1,17 @@
+# Publication — 2026-11-03
+
+Nick requested that the main page link to physics and that all ready work be published. The main page now has a visible Physics navigation link plus About and Projects links. Its GitHub Pages release is `4bbec30907bef64a695e73f3c0375aa9d5881582`.
+
+The physics release publishes nine lessons: wave–particle duality, Einstein–Grossmann II, all three thermodynamic-computing parts, Building a Fluid Simulation IV, fiber bundles III, the existing Navier–Stokes history, and CAD primitives. Superseded versions remain editor drafts. The learned-solver, simulation-error survey, and Jacobian/Hessian articles retain draft status because their documented substantive work is unfinished.
+
+The release includes corrected previews for the selected versions, the existing LearningWall label-fitting repair, responsive wave–particle figures, and scrollable display equations on narrow screens. Static experiment previews use their actual static posters instead of scheduling a needless animation loop.
+
+Validation: TypeScript, production build, publication/catalogue/RSS guards, all 12 previews; 1,504 construction-IV plus 142 construction checks; all three fiber-bundle-III suites; 79 relativity-II checks; CAD including mobile; 63 history plus 40 history-followup checks; 607 thermo assertions across nine suites; and 27 wave–particle figure checks. Browser checks include reader defaults, series navigation, desktop and 390px layouts, control endpoints and return trips, pause/reset, and no page-width overflow. Physical-phone testing remains separate from emulated-mobile review.
+
+The release is built from an isolated committed source checkout through Namesake's `hosting/physics/` configuration. Unrelated shared-tree edits are excluded. The live `/build-info.json` identifies the exact deployed source.
+
+---
+
 # Domain and email launch — 2026-09-11
 
 Final address: **https://physics.nicholasbardy.com/**. This uses Nick’s existing

@@ -92,11 +92,12 @@ try {
         }
         changed = Math.max(changed, n)
       }
-      assert(changed > 100, `${id}: hovering must visibly animate the figure (${changed} changed pixels)`)
+      if (spec.animated === false) assert.equal(changed, 0, `${id}: a declared static experiment must stay still`)
+      else assert(changed > 100, `${id}: hovering must visibly animate the figure (${changed} changed pixels)`)
       const paused = draw()
       assert.deepEqual(draw(), paused, `${id}: leaving hover must freeze the current frame`)
       writeFileSync(`${output}/${id}-moving.png`, canvas.toBuffer('image/png'))
-      console.log(`${id}: still + motion + pause passed; ${changed} moving pixels; ${Math.round(performance.now() - start)} ms`)
+      console.log(`${id}: ${spec.animated === false ? 'static poster' : 'still + motion + pause'} passed; ${changed} moving pixels; ${Math.round(performance.now() - start)} ms`)
     } finally { figure.dispose?.() }
   }
   writeFileSync(`${output}/contact-sheet.png`, sheet.toBuffer('image/png'))

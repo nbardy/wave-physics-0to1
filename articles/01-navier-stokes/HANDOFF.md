@@ -1,6 +1,38 @@
-# HANDOFF — Lesson 01: Building the Navier–Stokes Equations
+# HANDOFF — Lesson 01: Building a Fluid Simulation
 
-## Current state — reconciled 2026-09-22
+## Current state — publication prepared 2026-11-03
+
+**Published default in the release source: IV. Reading alternatives: I, II,
+and III, available with `?draft=true`.** Nick authorized publishing the ready
+physics work on November 3. The September 23 promotion package has now been
+applied: IV comes first and inherits `published`, I becomes an editor-only
+draft, the catalogue title and blurb match IV, and the history link identifies
+the shared numerical steps rather than claiming its wing solver is built in
+IV. The card uses the static returned-dye preview at 720 × 440, with no warmup.
+Deployment and final release verification belong to the November 3 publication
+pass; the source change alone does not establish what production serves.
+
+IV is the complete ~3,400-word article with 13 figure slots described below.
+Its September desktop and emulated-mobile review covered every figure, slider
+return trips, continuous drags, keyboard, option buttons, paused interventions,
+and reset, with no browser or KaTeX errors. A physical-phone touch review has
+not been claimed. The current publication checks require IV as the reader's
+only version and retain I–III for editors.
+
+Fresh November 3 checks: `check:construction-v4` passes 1,504 assertions,
+`check:construction` passes 142, and `check:publication` passes after the IV
+promotion. The measured 48² returned overlap is 0.1598984249190214.
+
+Remaining work is optional: seed `LabFluid` with the hero's two discs, revisit
+the deferred Tesla geometry experiment, and make the shared viscosity output's
+unit label explicit. The learned-solver dependent claims remain recorded in
+`articles/08-learned-solver/HANDOFF.md`; they are not unfinished IV content.
+
+The dated notes below preserve the preparation history and their contemporary
+deployment state. This current-state summary supersedes their publication and
+pending-approval statements.
+
+## IV preparation history — September 2026
 
 **2026-09-23 — IV pre-share edit pass applied (uncommitted).** The detection
 audit at `redrafts/publish-2026-09-23/building-iv-audit.md` was applied to
@@ -22,7 +54,7 @@ cross-link wording, poster re-shoot) is written but not applied:
 decides. Queued after that: seed `LabFluid` with the two discs so act 2 carries
 the hero's dye.
 
-**Published default: I. Completed reading alternatives: II, III, and local IV.** I is the
+**September 22 state: published default I; completed alternatives II, III, and local IV.** I is the
 September construction revision plus the September 17 audit (`d63e4a5`). II is
 the September 12 experiment rebuild, committed in `680c583`. III restores the
 pre-September article for comparison; it is older, and retains the pressure-sign

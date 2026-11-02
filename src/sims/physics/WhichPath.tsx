@@ -49,9 +49,10 @@ export function createWhichPath(dRef: { current: number }): Stepper {
       const V = visibilityFrom(D)
 
       const gap = 14
+      const narrow = w < 520
       const dialW = Math.min(150, w * 0.3)
-      const dial = { x: 2, y: 20, w: dialW, h: h - 44 }
-      const scr = { x: dialW + gap, y: 20, w: w - dialW - gap - 2, h: h - 44 }
+      const dial = { x: 2, y: 20, w: dialW, h: h - (narrow ? 64 : 44) }
+      const scr = { x: dialW + gap, y: 20, w: w - dialW - gap - 2, h: h - (narrow ? 64 : 44) }
 
       // --- left: the relation, drawn ---------------------------------------
       const ox = dial.x + 22
@@ -138,10 +139,10 @@ export function createWhichPath(dRef: { current: number }): Stepper {
       ctx.fillText('what lands on the screen', scr.x + 4, 14)
       ctx.font = FONT_METER
       ctx.fillStyle = PALETTE.pdf
-      ctx.fillText(`fringe contrast, measured  ${fmt(measuredVisibility(D), 2)}`, scr.x + 4, h - 10)
+      ctx.fillText(`fringe contrast, measured  ${fmt(measuredVisibility(D), 2)}`, narrow ? 6 : scr.x + 4, h - (narrow ? 28 : 10))
       const know = `path knowledge ${fmt(D, 2)}`
       ctx.fillStyle = PALETTE.cutoff
-      ctx.fillText(know, scr.x + scr.w - ctx.measureText(know).width, h - 10)
+      ctx.fillText(know, narrow ? 6 : scr.x + scr.w - ctx.measureText(know).width, h - 10)
     },
   }
 }
@@ -152,7 +153,7 @@ export function WhichPath() {
   dRef.current = d
 
   return (
-    <Sim height={280} create={() => createWhichPath(dRef)}>
+    <Sim height={280} animated={false} create={() => createWhichPath(dRef)}>
       <label className="sim-slider">
         <span>know nothing</span>
         <input

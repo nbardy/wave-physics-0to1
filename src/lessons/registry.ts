@@ -170,24 +170,24 @@ export const lessons: Lesson[] = [
     blurb:
       'It cannot be both. It is both. Send photons through two slits one at a time, watch the contradiction assemble itself, and find the rule that makes a paradox compute.',
     tags: ['quantum', 'optics', 'waves', 'probability'],
-    status: { kind: 'draft' },
+    status: { kind: 'published' },
     versions: sole(Physics01),
   },
   {
     id: 'einstein-grossmann',
     preview: { poster: new URL('../assets/lesson-previews/einstein-grossmann.png', import.meta.url).href,
-      width: 720, height: 360, warmup: 96,
-      load: () => import('../sims/physics/MercuryGrade').then(m => m.createMercuryGrade({ current: 0.45 })) },
+      width: 720, height: 360, warmup: 12,
+      load: () => import('../sims/relativity-v2').then(m => m.createMercuryOrbit({ current: 0.002 })) },
     field: 'physics',
     order: 2,
-    title: 'The Draft That Had to Fail',
+    title: 'Einstein, Grossmann, and the Geometry of Gravity',
     blurb:
       'Einstein and Grossmann developed metric gravity before its final field equations. Compare coordinate descriptions, measure tidal separation, and calculate Mercury’s precession.',
     tags: ['geometry', 'history'],
-    status: { kind: 'draft' },
+    status: { kind: 'published' },
     versions: [
-      { label: 'I', author: 'baseline', note: 'Original September draft', Content: Physics02GI },
-      { label: 'II', author: 'Astra', note: 'Fresh rewrite · metric, tides, collaboration, and calculated Mercury precession', status: { kind: 'draft' }, Content: Physics02GII },
+      { label: 'II', author: 'Astra', note: 'Published 3 November 2026 · metric, tides, collaboration, and calculated Mercury precession', Content: Physics02GII },
+      { label: 'I', author: 'baseline', note: 'Original September draft', status: { kind: 'draft' }, Content: Physics02GI },
     ],
   },
   {
@@ -202,7 +202,7 @@ export const lessons: Lesson[] = [
     blurb:
       'Randomly flipping bits can be connected and trained to generate patterns. Small simulations show how the sampling works and compare its results with exact probabilities.',
     tags: ['probability', 'simulation'],
-    status: { kind: 'draft' },
+    status: { kind: 'published' },
     versions: sole(Physics02),
   },
   {
@@ -216,7 +216,7 @@ export const lessons: Lesson[] = [
     blurb:
       'Extropic’s Z1 has fixed wiring. Compiling a probabilistic program onto it means fitting each step to the available connections, then checking how approximation errors accumulate as the steps run.',
     tags: ['probability', 'simulation'],
-    status: { kind: 'draft' },
+    status: { kind: 'published' },
     versions: sole(Physics03),
   },
   {
@@ -230,26 +230,33 @@ export const lessons: Lesson[] = [
     blurb:
       'A diffusion model generates small binary images on a model of Z1. Estimated costs for writing inputs, sampling, readout, and reprogramming show how execution order changes the energy used per image.',
     tags: ['probability', 'simulation'],
-    status: { kind: 'draft' },
+    status: { kind: 'published' },
     versions: sole(Thermo03),
   },
   {
     id: 'navier-stokes',
     preview: { poster: new URL('../assets/lesson-previews/navier-stokes.png', import.meta.url).href,
-      width: 720, height: 360, warmup: 2,
-      load: () => import('../sims/history/flow').then(m => m.createHistoryFlow('prandtl')) },
+      width: 720, height: 440, warmup: 0, animated: false,
+      load: () => import('../sims/construction-v4/ReturnExperiment').then(m => m.createReturnPreview()) },
     field: 'waves',
     order: 1,
-    title: 'Building the Navier–Stokes Equations',
+    title: 'Building a Fluid Simulation',
     blurb:
-      'Meet each piece of fluid motion on its own, see why it alone falls short, then assemble the equation and run it live.',
+      'A grid carries two patches of dye out and back along the same paths, leaving only 16% overlap with their starting shapes. How a fluid simulation moves numbers between cells, computes its own velocity, and which of its checks that passes.',
     tags: ['fluids', 'pde', 'simulation'],
     status: { kind: 'published' },
     versions: [
       {
+        label: 'IV',
+        author: 'baseline',
+        note: 'Published default · 3 November 2026 · put the dye back: how grid updates move fluid, lose detail, and correct volume',
+        Content: Lesson01IV,
+      },
+      {
         label: 'I',
         author: 'baseline',
-        note: 'Construction revision checkpoint · 11 September 2026',
+        status: { kind: 'draft' },
+        note: 'Previous default · 11 September 2026 construction revision',
         Content: Lesson01I,
       },
       {
@@ -266,34 +273,24 @@ export const lessons: Lesson[] = [
         note: 'As it stood before the September revision · 30 July reader-ToM redraft, mounted 16 September for side-by-side reading',
         Content: Lesson01III,
       },
-      {
-        label: 'IV',
-        author: 'working draft',
-        status: { kind: 'draft' },
-        note: 'Put the dye back · how grid updates move fluid, lose detail, and correct volume',
-        Content: Lesson01IV,
-      },
     ],
   },
   {
     id: 'fiber-bundles',
     preview: { poster: new URL('../assets/lesson-previews/fiber-bundles.png', import.meta.url).href,
-      width: 720, height: 340, warmup: 1,
-      crop: { x: 0, y: 30, width: 720, height: 270 },
-      load: () => import('../sims/HopfMonopole').then(m => m.createHopfMonopole({
-        down: false, pressed: false, fx: 0, fy: 0,
-      })) },
+      width: 720, height: 485, warmup: 0, animated: false,
+      load: () => import('../sims/bundles-v3/ABBanner').then(m => m.createABBanner({ current: { flux: 0.5, gauge: 0 } })) },
     field: 'waves',
     order: 2,
     title: 'Fiber Bundles, the Universal Medium',
     blurb:
       'Values in fibers, transport between them, and phases measured around loops. Explore how this geometry describes electromagnetism and how Maxwell’s equations produce waves.',
     tags: ['geometry', 'waves', 'electromagnetism'],
-    status: { kind: 'draft' },
+    status: { kind: 'published' },
     versions: [
-      { label: 'I', author: 'baseline', note: 'Original universal-medium draft', Content: Lesson02I },
-      { label: 'II', author: 'Astra', note: 'Fresh rewrite · fibers, gauge transport, interference, and Maxwell dynamics', status: { kind: 'draft' }, Content: Lesson02II },
-      { label: 'III', author: 'Astra', note: 'The interferometer story · flux, phase, and a wave in the connection', status: { kind: 'draft' }, Content: Lesson02III },
+      { label: 'III', author: 'Astra', note: 'Published 3 November 2026 · the interferometer story, flux, phase, and a wave in the connection', Content: Lesson02III },
+      { label: 'I', author: 'baseline', note: 'Original universal-medium draft', status: { kind: 'draft' }, Content: Lesson02I },
+      { label: 'II', author: 'Astra', note: 'Earlier rewrite · fibers, gauge transport, interference, and Maxwell dynamics', status: { kind: 'draft' }, Content: Lesson02II },
     ],
   },
   {
@@ -380,7 +377,7 @@ export const lessons: Lesson[] = [
     blurb:
       'B-splines, NURBS, T-splines, SubD, and B-rep are not five ways to draw the same surface. Three are bases, one is an authoring mesh, one is topology — and one part carries all of them at once.',
     tags: ['geometry', 'linear-algebra', 'simulation'],
-    status: { kind: 'draft' },
+    status: { kind: 'published' },
     versions: sole(Cad01),
   },
 ]

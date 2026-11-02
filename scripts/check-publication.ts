@@ -50,14 +50,14 @@ for (const lesson of published) {
 // editor holds every reading copy, and `?v=` on a draft label misses loudly.
 const readerBuilding = table.lessonById(reader, 'navier-stokes')!
 const editorBuilding = table.lessonById(editor, 'navier-stokes')!
-assert.deepEqual(readerBuilding.versions.map(v => v.label), ['I'])
-assert.deepEqual(editorBuilding.versions.map(v => v.label), ['I', 'II', 'III', 'IV'])
+assert.deepEqual(readerBuilding.versions.map(v => v.label), ['IV'])
+assert.deepEqual(editorBuilding.versions.map(v => v.label), ['IV', 'I', 'II', 'III'])
 assert.equal(table.versionOf(readerBuilding, 'II'), undefined)
-assert.equal(table.versionOf(readerBuilding, 'IV'), undefined)
-assert.ok(table.versionOf(editorBuilding, 'IV'))
+assert.equal(table.versionOf(readerBuilding, 'I'), undefined)
+assert.ok(table.versionOf(editorBuilding, 'I'))
 assert.ok(table.versionOf(editorBuilding, 'III'))
-assert.equal(table.defaultVersion(readerBuilding).label, 'I')
-assert.ok(!table.tagsInUse(reader).some(({ tag }) => tag === 'quantum'))
+assert.equal(table.defaultVersion(readerBuilding).label, 'IV')
+assert.ok(table.tagsInUse(reader).some(({ tag }) => tag === 'quantum'))
 assert.ok(table.tagsInUse(editor).some(({ tag }) => tag === 'quantum'))
 for (const series of reader.series) {
   for (const id of series.lessonIds) assert.ok(table.lessonById(reader, id))
@@ -93,10 +93,10 @@ assert.equal(demoted.seriesById(demoted.catalogue(EDITOR), 'thermo')!.lessonIds.
 // A published lesson whose every version is a draft is an authoring error. It
 // fails when the registry loads, not silently on one route.
 const orphaned = source.replace(
-  /(label: 'I',\s*author: 'baseline',\s*)(note: 'Construction revision)/,
+  /(label: 'IV',\s*author: 'baseline',\s*)(note: 'Published default)/,
   "$1status: { kind: 'draft' },\n        $2",
 )
-assert.notEqual(orphaned, source, 'the Building lesson\'s version I entry was not found')
+assert.notEqual(orphaned, source, 'the Building lesson\'s version IV entry was not found')
 assert.throws(() => registry(orphaned), /navier-stokes: a published lesson needs at least one published version/)
 
 // RSS has the reader's membership, without importing browser components.

@@ -80,11 +80,18 @@ once real lessons exist.
 
 | # | Lesson | Field | Status |
 |---|--------|-------|--------|
-| P1 | Is Light a Wave or a Particle? | Broad physics | Draft |
-| 01 | Building the Navier–Stokes Equations (part-by-part deep dive) | Waves 0 → 1 | **Published** |
-| 02 | Fiber Bundles, the Universal Medium | Waves 0 → 1 | Draft |
-| 03 | The History of Navier–Stokes (who discovered what, and when) | Waves 0 → 1 | **Published** |
+| P1 | Is Light a Wave or a Particle? | Broad physics | **Published** |
+| P2 | Einstein, Grossmann, and the Geometry of Gravity | Broad physics | **Published (II)** |
+| T1 | A Computer Made of Noise | Thermodynamic computing | **Published** |
+| T2 | Compiling Into Heat | Thermodynamic computing | **Published** |
+| T3 | Diffusion on a Dreaming Machine | Thermodynamic computing | **Published** |
+| 01 | Building a Fluid Simulation | Waves 0 → 1 | **Published (IV)** |
+| 02 | Fiber Bundles, the Universal Medium | Waves 0 → 1 | **Published (III)** |
+| 03 | The History of Navier–Stokes | Waves 0 → 1 | **Published** |
+| 04 | Teaching a Solver to Guess | Waves 0 → 1 | Draft |
+| 05 | Where the Simulation Is Wrong | Waves 0 → 1 | Draft |
 | M1 | The Jacobian and the Hessian | Maths | Draft |
+| C1 | Basis, Cage, and Boundary | CAD maths | **Published** |
 
 House style docs (read in the order AGENTS.md gives): `ESSENCE_OF_VOICE_AND_DESIGN.md`
 (the studied pole) → `NICKS_VOICE.md` (Nick's pole + the blend) → `SLOP.md` (the

@@ -1,3 +1,11 @@
+# Publication — 2026-11-03
+
+Published all three thermodynamic computing lessons in their current complete versions. Kept the 24-sweep LearningWall hero and the existing 4×4 paint-box finale. Included the existing measured label-fitting repair at the 600px article width. All nine thermo validation groups pass: 607 assertions, including full training replay and 640/600/360px label checks.
+
+Nick authorized publishing all ready physics-site work in this chat. Release uses an isolated checkout; unrelated shared-tree edits are excluded. The historical notes below describe earlier states.
+
+---
+
 # P-BIT SERIES HANDOFF — thread restart entry point
 
 Restart map for the three-part thermodynamic computing series: p-bit

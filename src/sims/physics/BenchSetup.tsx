@@ -41,9 +41,9 @@ export function createBenchSetup(): Stepper {
     draw(ctx, w, h) {
       ctx.clearRect(0, 0, w, h)
       const { axisY, pxPerMm, loupePxPerMm } = SETUP
-      const lampX = SETUP.lampX * w
+      const lampX = Math.max(52, SETUP.lampX * w)
       const cardX = SETUP.cardX * w
-      const scrX = SETUP.screenX * w
+      const scrX = Math.min(w - 70, SETUP.screenX * w)
 
       // optical axis, behind everything
       ctx.strokeStyle = 'rgba(120,140,170,0.35)'

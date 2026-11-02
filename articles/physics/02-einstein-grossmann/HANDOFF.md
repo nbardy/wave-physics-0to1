@@ -1,3 +1,11 @@
+# Publication — 2026-11-03
+
+Published Version II as the public default; Version I remains an editor draft. The listing title and Mercury preview now match II. The 79-assertion relativity-v2 suite passes in the release checkout.
+
+Nick authorized publishing all ready physics-site work in this chat. Release uses an isolated checkout; unrelated shared-tree edits are excluded. The historical notes below describe earlier states.
+
+---
+
 # Current state — Version II, 2026-09-22
 
 **Built and checked; draft status retained for reader review.** Fresh article: *Einstein, Grossmann, and the Geometry of Gravity*.
