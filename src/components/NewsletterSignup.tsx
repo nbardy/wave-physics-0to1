@@ -88,6 +88,12 @@ export default function NewsletterSignup({ placement = 'top' }: { placement?: Si
       onSubmit={subscribe}
       aria-label="Email and RSS subscription"
     >
+      <div className="newsletter-nami">
+        <a className="newsletter-nami-link" href="https://nami.build">
+          Check out Nami.Build <span aria-hidden="true">↗</span>
+        </a>
+        <p>An AI fluid dynamics toolset founded by the author of these articles.</p>
+      </div>
       <p className="newsletter-signup-heading">Get emailed every new visual explainer</p>
       <div className="newsletter-signup-controls">
         {state.kind !== 'success' && <input

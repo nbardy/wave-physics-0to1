@@ -11,6 +11,26 @@
   color: var(--ink-soft);
 }
 
+.newsletter-nami {
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #d2e6f8;
+}
+.newsletter-nami-link {
+  display: inline-block;
+  color: #173d62;
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.newsletter-nami-link span { margin-left: 0.2rem; }
+.newsletter-nami p { margin: 0.3rem 0 0; }
+.newsletter-nami-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
 .newsletter-signup-heading {
   display: block;
   margin: 0 0 0.5rem;
