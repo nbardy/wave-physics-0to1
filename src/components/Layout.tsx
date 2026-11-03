@@ -8,6 +8,7 @@ const REVEAL_AFTER = 120 // px scrolled before the header slides in
 
 export default function Layout({ children }: { children: ReactNode }) {
   const { pathname } = useLocation()
+  const browsing = pathname === '/topics' || pathname === '/all'
   const [revealed, setRevealed] = useState(false)
   useEffect(() => {
     const onScroll = () => setRevealed(window.scrollY > REVEAL_AFTER)
@@ -28,7 +29,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           <Link to="/stack-check">Stack&nbsp;check</Link>
         </nav>
       </header>
-      <main className="content">
+      <main className={`content${browsing ? ' content--browse' : ''}`}>
         <DraftBanner />
         {children}
         <div className="newsletter-placement--end">

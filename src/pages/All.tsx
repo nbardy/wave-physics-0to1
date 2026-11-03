@@ -1,8 +1,9 @@
+import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { allLessons, FIELDS, TAGS, TAG_LABEL, tagsInUse, type Catalogue, type Lesson, type Tag } from '../lessons/registry'
+import { allLessons, FIELD_SPEC, FIELDS, TAGS, TAG_LABEL, tagsInUse, type Catalogue, type Lesson, type Tag } from '../lessons/registry'
 import { useCatalogue } from '../lessons/AudienceContext'
-import { TocList } from '../components/Toc'
-import { NewsletterIntro } from '../components/NewsletterSignup'
+import { StatusTag } from '../components/Toc'
+import { LessonPreview } from '../components/LessonPreview'
 import './Topics.css'
 
 type Filter = { kind: 'all' } | { kind: 'tag'; tag: Tag } | { kind: 'unknown'; raw: string }
@@ -19,6 +20,29 @@ function selectLessons(c: Catalogue, filter: Filter): Lesson[] {
   if (filter.kind === 'all') return all
   if (filter.kind === 'tag') return all.filter((l) => l.tags.includes(filter.tag))
   return []
+}
+
+function LessonCard({ lesson, part }: { lesson: Lesson; part?: number }) {
+  const [hovered, setHovered] = useState(false)
+  const [focused, setFocused] = useState(false)
+  return (
+    <Link to={`/lesson/${lesson.id}`} className="browse-card"
+      onPointerEnter={event => { if (event.pointerType !== 'touch') setHovered(true) }}
+      onPointerLeave={() => setHovered(false)}
+      onFocus={event => setFocused(event.currentTarget.matches(':focus-visible'))}
+      onBlur={() => setFocused(false)}>
+      <LessonPreview id={lesson.id} spec={lesson.preview} active={hovered || focused} />
+      <span className="browse-card-caption">
+        <span className="browse-card-meta">
+          {part !== undefined ? <span className="browse-part">Part {String(part).padStart(2, '0')}</span>
+            : <span>{lesson.tags.map(tag => TAG_LABEL[tag]).join(' · ')}</span>}
+          {lesson.status.kind !== 'published' && <StatusTag status={lesson.status} />}
+        </span>
+        <span className="browse-card-title">{lesson.title}</span>
+        <span className="browse-card-arrow" aria-hidden="true">↗</span>
+      </span>
+    </Link>
+  )
 }
 
 export default function All() {
@@ -56,22 +80,23 @@ export default function All() {
   }
 
   return (
-    <div className="home topics-page">
-      <header className="masthead masthead--compact">
-        <p className="masthead-eyebrow">Explore the lessons</p>
-        <h1 className="masthead-title">Topics &amp; series</h1>
-        <p className="masthead-lede">
-          Follow a series from the beginning, or explore a subject below.
-        </p>
-        <p className="topics-summary">
-          {c.lessons.length} lessons · {FIELDS.filter(({ field }) => c.lessons.some((l) => l.field === field)).length} subjects · {c.series.length} series
-        </p>
-        <NewsletterIntro />
+    <div className="topics-page">
+      <header className="browse-header">
+        <Link className="browse-home" to="/">Nick’s Visual Math Lessons</Link>
+        <div className="browse-heading">
+          <h1>Topics &amp; series</h1>
+          <p>{c.lessons.length} visual lessons</p>
+        </div>
+        <nav className="browse-subjects" aria-label="Jump to a subject">
+          {subjects.map(({ field, label, count, anchor }) => (
+            <a key={field} href={`#${anchor}`}>{label}<span>{count}</span></a>
+          ))}
+        </nav>
       </header>
 
       <details className="topics-filters" open={filter.kind !== 'all'}>
         <summary className="topics-filter-label" id="topic-filter-label">
-          Filter lessons by topic
+          Filter by topic
           {filter.kind === 'tag' && <span className="topics-filter-selection">{TAG_LABEL[filter.tag]} · {items.length}</span>}
         </summary>
         <div className="tagbar" role="group" aria-labelledby="topic-filter-label">
@@ -91,63 +116,42 @@ export default function All() {
       </details>
 
       {series.length > 0 && (
-        <section className="topics-section" aria-labelledby="topics-series-heading">
-          <div className="topics-section-heading">
-            <h2 id="topics-series-heading">Series</h2>
-            <p>Read the parts in order.</p>
-          </div>
+        <section className="browse-series-section" aria-label="Series">
           {series.map((entry) => (
-            <article key={entry.id} id={`series-${entry.id}`} className="topics-series">
-              <div className="topics-series-heading">
+            <article key={entry.id} id={`series-${entry.id}`} className="browse-series">
+              <div className="browse-section-heading">
                 <div>
-                  <p className="topics-series-count">{entry.lessonIds.length} parts{entry.parts.length < entry.lessonIds.length ? ` · ${entry.parts.length} matching` : ''}</p>
-                  <h3><Link to={`/series/${entry.id}`}>{entry.title}</Link></h3>
+                  <p className="browse-eyebrow">A series in {entry.lessonIds.length} parts{entry.parts.length < entry.lessonIds.length ? ` · ${entry.parts.length} matching` : ''}</p>
+                  <h2><Link to={`/series/${entry.id}`}>{FIELD_SPEC[entry.field].label}</Link></h2>
                 </div>
-                <Link className="topics-series-start" to={`/series/${entry.id}`}>View series <span aria-hidden="true">→</span></Link>
+                <Link className="browse-series-link" to={`/series/${entry.id}`}>Explore the series <span aria-hidden="true">→</span></Link>
               </div>
-              <ol className="topics-series-parts">
+              <ol className="browse-series-parts">
                 {entry.parts.map(({ lesson, number }) => (
-                  <li key={lesson.id}>
-                    <Link to={`/lesson/${lesson.id}`} className="topics-series-part">
-                      <span className="topics-part-number">{String(number).padStart(2, '0')}</span>
-                      <span>{lesson.title}</span><span aria-hidden="true">→</span>
-                    </Link>
-                  </li>
+                  <li key={lesson.id} value={number}><LessonCard lesson={lesson} part={number} /></li>
                 ))}
               </ol>
             </article>
           ))}
         </section>
       )}
-      <div className="topics-section-heading topics-directory-heading">
-        <h2 id="topics-subjects-heading">Topics</h2>
-        <p>Browse by subject, or filter across them.</p>
-      </div>
-
-      <nav className="topic-directory" aria-label="Jump to a subject">
-        {subjects.map(({ field, label, count, anchor }) => (
-          <a key={field} href={`#${anchor}`} className="topic-directory-link">
-            <span>{label}</span>
-            <span className="topic-directory-count">{count} {count === 1 ? 'lesson' : 'lessons'} <span aria-hidden="true">↗</span></span>
-          </a>
-        ))}
-      </nav>
-
 
       {items.length === 0 ? (
         <p className="all-empty">No lessons match this topic. <button type="button" className="topics-reset" onClick={() => select(null)}>Show all lessons.</button></p>
       ) : (
-        <>
-          {groups.length > 0 && (
-            <section className="topics-section" aria-labelledby="topics-subjects-heading">
-              {groups.map(({ field, label, items: lessons }) => (
-                <div key={field} id={`topic-${field}`} className="topics-group">
-                  <TocList label={`${label} · ${lessons.length}`} items={lessons} compact headingLevel={3} />
-                </div>
-              ))}
+        <div className="browse-groups">
+          {groups.map(({ field, label, items: lessons }) => (
+            <section key={field} id={`topic-${field}`} className="browse-group" aria-labelledby={`heading-${field}`}>
+              <div className="browse-section-heading">
+                <h2 id={`heading-${field}`}>{label}</h2>
+                <span className="browse-count">{lessons.length} {lessons.length === 1 ? 'lesson' : 'lessons'}</span>
+              </div>
+              <ul className="browse-grid">
+                {lessons.map(lesson => <li key={lesson.id}><LessonCard lesson={lesson} /></li>)}
+              </ul>
             </section>
-          )}
-        </>
+          ))}
+        </div>
       )}
       <p className="all-fields"><Link to="/">← All visual lessons</Link></p>
     </div>
